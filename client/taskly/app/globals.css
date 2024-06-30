@@ -1,0 +1,252 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+body,
+html {
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+* {
+  list-style: none;
+  text-decoration: none !important;
+  margin: 0;
+  padding: 0;
+}
+a,
+a:link,
+a:visited,
+a:hover,
+a:active {
+  color: inherit !important;
+}
+.border-gradient-dark-mode-gold-to-black {
+  --border-width: 1px;
+  --border-radius: 600px;
+  background: linear-gradient(white, rgba(205, 152, 90, 0.35));
+  border: 0;
+  position: relative;
+  border-radius: var(--border-radius);
+  z-index: 1;
+}
+.border-gradient-dark-mode-gold-to-black::before {
+  content: "";
+  position: absolute;
+  top: var(--border-width);
+  left: var(--border-width);
+  display: block;
+  height: calc(100% - calc(var(--border-width) * 2));
+  width: calc(100% - calc(var(--border-width) * 2));
+  background: #0d0c0c;
+
+  border-radius: calc(var(--border-radius) - var(--border-width));
+  z-index: -1;
+}
+.text-gradient-black-to-purple {
+  background: linear-gradient(black, rgba(234, 150, 255, 0.55));
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.gap-iconsContainer {
+  gap: clamp(0.8vw, 1vw, 3vw);
+}
+@layer components {
+  a.custom-color-anchor {
+    color: #007aff !important; /* Force la couleur bleue, malgré la règle globale */
+  }
+}
+.fontMenu {
+  font-size: clamp(0.25rem, 1vw + 0.1rem, 4rem);
+}
+.scroll-custom {
+  scrollbar-width: thin; /* Pour Firefox */
+  scrollbar-color: #4b5563 #f3f4f6; /* Pour Firefox, couleur du thumb et du track */
+}
+
+.scroll-custom::-webkit-scrollbar {
+  width: 12px; /* Largeur de la scrollbar pour Chrome, Safari et Edge */
+}
+
+.scroll-custom::-webkit-scrollbar-track {
+  background: transparent; /* Couleur du rail/track pour Chrome, Safari et Edge */
+}
+
+.scroll-custom::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* Couleur du thumb pour Chrome, Safari et Edge */
+  border-radius: 9999px; /* Border-radius du thumb */
+  border: 3px solid transparent; /* Enlève le rail en simulant un border transparent */
+  background-clip: content-box; /* Empêche le fond de déborder dans le border */
+}
+.caret-delete {
+  caret-color: transparent;
+}
+
+.resize-none {
+  resize: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: "none";
+}
+.addMenuElement {
+  position: relative;
+
+  padding: 10px; /* Adjust padding to create space for the pseudo-element border */
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+
+  z-index: 0; /* Ensure content stays on top */
+  box-shadow: -2px 6px 6px rgba(0, 122, 255, 0.25);
+}
+
+.addMenuElement::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+
+  left: 0;
+
+  right: 0;
+
+  bottom: 0;
+
+  border-radius: inherit; /* Apply same border radius */
+
+  padding: 1.5px; /* Adjust padding to create the desired border width */
+
+  background: linear-gradient(90deg, white, rgba(0, 0, 0, 0.75));
+
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+
+  -webkit-mask-composite: destination-out;
+
+  mask-composite: exclude;
+
+  pointer-events: none; /* Ensure interactivity within the div */
+}
+
+.task-menu-dropdown-menu {
+  padding: 10px; /* Adjust padding to create space for the pseudo-element border */
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+
+  z-index: 0; /* Ensure content stays on top */
+  box-shadow: -2px 6px 6px rgba(0, 122, 255, 0.25);
+}
+.task-menu-dropdown-menu::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+
+  left: 0;
+
+  right: 0;
+
+  bottom: 0;
+
+  border-radius: inherit; /* Apply same border radius */
+
+  padding: 1.5px; /* Adjust padding to create the desired border width */
+
+  background: linear-gradient(90deg, white, rgba(0, 0, 0, 0.75));
+
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+
+  -webkit-mask-composite: destination-out;
+
+  mask-composite: exclude;
+
+  pointer-events: none; /* Ensure interactivity within the div */
+}
+
+.arrow-rotated {
+  transform: rotate(180deg);
+}
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+}
+.text-shadow-01 {
+  text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.hide {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 2s ease-in-out, visibility 2s ease-in-out;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 800ms ease-in-out;
+}
+
+.scroll-y-hide::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Firefox */
+.scroll-y-hide {
+  scrollbar-width: none;
+  padding-right: 20px;
+  box-sizing: content-box;
+}
+.scroll-hide::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Firefox */
+.scroll-hide {
+  scrollbar-width: none;
+  box-sizing: content-box;
+}
+.glass-morphism {
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.1),
+    rgba(255, 255, 255, 0)
+  );
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+}
+
+#TaskMenuMain.opacity-0 * {
+  display: none;
+}
+.taskMenuBorderShadow {
+  box-shadow: -2px 6px 6px rgba(0, 122, 255, 0.25);
+}
+.fade-enter {
+  opacity: 0;
+  height: 0;
+}
+.fade-enter-active {
+  opacity: 1;
+  height: auto;
+  transition: opacity 300ms, height 300ms;
+}
+.fade-exit {
+  opacity: 1;
+  height: auto;
+}
+.fade-exit-active {
+  opacity: 0;
+  height: 0;
+  transition: opacity 300ms, height 300ms;
+}
