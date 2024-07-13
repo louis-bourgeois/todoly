@@ -19,32 +19,34 @@ import TaskMenuSectionContainer from "../TaskMenu/TaskMenuSectionContainer";
 const daysOfWeekSundayStart = ["S", "M", "T", "W", "T", "F", "S"];
 const daysOfWeekMondayStart = ["M", "T", "W", "T", "F", "S", "S"];
 
-const DatePicker = ({
-  startOfWeekOnSunday = false,
-  onDateSelect,
-  selectedDate,
-}) => {
+const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [days, setDays] = useState([]);
   const [adjustedDaysOfWeek, setAdjustedDaysOfWeek] = useState(
-    startOfWeekOnSunday ? daysOfWeekSundayStart : daysOfWeekMondayStart
+    startOfWeekOnSunday === "Sunday"
+      ? daysOfWeekSundayStart
+      : daysOfWeekMondayStart
   );
 
   useEffect(() => {
+    console.log("Current Date has changed. The new value is: ", currentDate);
     generateDays(currentDate);
     setAdjustedDaysOfWeek(
-      startOfWeekOnSunday ? daysOfWeekSundayStart : daysOfWeekMondayStart
+      startOfWeekOnSunday === "Sunday"
+        ? daysOfWeekSundayStart
+        : daysOfWeekMondayStart
     );
   }, [currentDate, startOfWeekOnSunday]);
 
   useEffect(() => {
     if (selectedDate) {
+      console.log("there is selected Date", selectedDate, currentDate);
       setCurrentDate(selectedDate); // Ensure currentDate is updated when selectedDate changes
     }
-  }, [selectedDate]);
+  }, [selectedDate, currentDate]);
 
   const generateDays = (date) => {
-    const weekStartsOn = startOfWeekOnSunday ? 0 : 1;
+    const weekStartsOn = startOfWeekOnSunday === "Sunday" ? 0 : 1;
     const start = startOfWeek(startOfMonth(date), { weekStartsOn });
     const end = endOfWeek(endOfMonth(date), { weekStartsOn });
     const daysArray = [];
@@ -98,7 +100,7 @@ const DatePicker = ({
         date = addDays(new Date(), 1);
         break;
       case "Next Week":
-        const weekStartsOn = startOfWeekOnSunday ? 0 : 1;
+        const weekStartsOn = startOfWeekOnSunday === "Sunday" ? 0 : 1;
         date = startOfWeek(addDays(today, 7), { weekStartsOn });
         break;
       case "This Weekend":

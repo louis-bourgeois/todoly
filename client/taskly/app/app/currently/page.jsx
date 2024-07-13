@@ -9,9 +9,11 @@ import { useUser } from "../../../context/UserContext";
 import { useWorkspace } from "../../../context/WorkspaceContext";
 
 export default function Page() {
+  const { workspaces, preferences } = useUser();
+
   const [dates, setDates] = useState([]);
   const { currentWorkspace } = useWorkspace();
-  const { workspaces } = useUser();
+
   const currentWorkspaceName = useMemo(() => {
     console.log("====================================");
     console.log(workspaces);
@@ -52,7 +54,6 @@ export default function Page() {
               <DateHeader
                 index={index}
                 onDateChange={(date) => handleDateChange(index, date)}
-
               />
             </SlideNav>
             <SectionContainer date={dates[index]} />

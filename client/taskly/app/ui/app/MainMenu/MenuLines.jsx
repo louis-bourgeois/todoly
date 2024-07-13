@@ -1,13 +1,25 @@
+import Link from "next/link";
+import React from "react";
+import { useMenu } from "../../../../context/MenuContext";
 import LinesElement from "./LinesElement";
-export default function MenuLines({ children, text, href }) {
+
+const MenuLines = React.memo(({ children, text, href }) => {
+  const { toggleMainMenu } = useMenu();
+
   return (
-    <div className="flex items-center justify-start w-full gap-[3%]">
-      <LinesElement href={href}>{children}</LinesElement>
-      <LinesElement href={href}>
-        <span className="transition duration-300  ease-in-out hover:text-blue">
-          {text}
-        </span>
-      </LinesElement>
+    <div className="button-wrapper m-[5%] my-0 flex items-center justify-between rx-4 py-2">
+      <Link href={href} className="w-full">
+        <div className="relative z-10 flex items-center justify-start w-full">
+          <LinesElement>{children}</LinesElement>
+          <LinesElement>
+            <span className="transition duration-300 ease-in-out">{text}</span>
+          </LinesElement>
+        </div>
+      </Link>
     </div>
   );
-}
+});
+
+MenuLines.displayName = "MenuLines";
+
+export default MenuLines;

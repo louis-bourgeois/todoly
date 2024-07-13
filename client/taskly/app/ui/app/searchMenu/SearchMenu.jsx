@@ -1,251 +1,249 @@
 "use client";
-import Downshift from "downshift";
-import Fuse from "fuse.js";
-import { useContext, useEffect, useRef, useState } from "react";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
-import { MenuContext } from "../../../../context/MenuContext";
+
+import { useRouter } from "next/navigation";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useMenu } from "../../../../context/MenuContext";
 import { useUser } from "../../../../context/UserContext";
-import Blur from "../Blur";
-import Div from "../Div";
-import SearchMenuLibelle from "./SearchMenuLibelle";
+import SearchInput from "./SearchInput";
+import SearchResults from "./SearchResults";
 
-// Définir les commandes
-const commands = [
-  { command: "/add", description: "Open task menu", action: "addTask" },
-  {
-    command: "/deleteTask",
-    description: "Delete a task",
-    action: "deleteTask",
-  },
-  // ... autres commandes
-];
-
-// Configurer Fuse.js
-const fuseOptions = {
-  keys: ["command", "description"],
-  threshold: 0.3,
-};
-const fuse = new Fuse(commands, fuseOptions);
-
-export default function SearchMenu({ visibility }) {
-  const { toggleSearchMenu, isSearchMenuOpen, toggleTaskMenu } =
-    useContext(MenuContext);
-  const { deleteTaskByName, tasks } = useUser();
-
-  const [inputValue, setInputValue] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [isActionMode, setIsActionMode] = useState(false);
-  const inputRef = useRef(null);
-
-  const [pageName, setPageName] = useState("");
+const SearchMenu = () => {
+  const router = useRouter();
+  const { tasks, workspaces, tags, addTag } = useUser();
+  const { toggleTaskMenu, isSearchMenuOpen, toggleSearchMenu } = useMenu();
+  const [query, setQuery] = useState("");
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [selectedTask, setSelectedTask] = useState(null);
+  const [commandMode, setCommandMode] = useState(null);
+  const [placeholder, setPlaceholder] = useState(
+    "Search or type / for commands..."
+  );
+  const [visibility, setVisibility] = useState(isSearchMenuOpen);
+  const menuRef = useRef(null);
 
   useEffect(() => {
-    if (inputValue === "") {
-      setSuggestions([]);
-    }
-  }, [inputValue]);
+    setVisibility(isSearchMenuOpen);
+    resetState();
+  }, [isSearchMenuOpen]);
 
-  useEffect(() => {
-    if (!visibility) {
-      setInputValue(""); // Reset input value when menu is closed
-      setSuggestions([]);
-      setIsActionMode(false);
-    }
-    if (visibility && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [visibility]);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const path = window.location.pathname;
-      const segments = path.split("/").filter(Boolean);
-      const name = segments.includes("app")
-        ? segments.slice(segments.indexOf("app") + 1).join("/")
-        : segments.join("/");
-      const capitalizedPageName =
-        name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();
-      setPageName(capitalizedPageName);
-    }
-  }, []);
-
-  const handleInputChange = (value) => {
-    setInputValue(value);
-    setIsActionMode(false); // Reset action mode on input change
-
-    if (value.startsWith("/")) {
-      // Chercher parmi les commandes
-      const commandResults = fuse.search(value);
-      setSuggestions(commandResults.map((result) => result.item));
+  const filteredResults = useMemo(() => {
+    if (query.startsWith("/")) {
+      // Command mode
+      const commands = [
+        { id: "add", title: "Open add Menu" },
+        { id: "goto", title: "Go to" },
+        { id: "logout", title: "Logout" },
+        { id: "addWorkspace", title: "Add Workspace" },
+        { id: "openMainMenu", title: "Open Main Menu" },
+        { id: "openSettings", title: "Open Settings" },
+        { id: "changeWorkspace", title: "Change Current Workspace" },
+        { id: "deleteWorkspace", title: "Delete Workspace" },
+        { id: "addTag", title: "Add Tag" },
+      ];
+      return commands.filter((cmd) =>
+        cmd.title.toLowerCase().includes(query.slice(1).toLowerCase())
+      );
+    } else if (commandMode === "goto") {
+      return [
+        { id: "currently", title: "Currently" },
+        { id: "all", title: "All" },
+      ];
+    } else if (
+      commandMode === "changeWorkspace" ||
+      commandMode === "deleteWorkspace"
+    ) {
+      return workspaces.map((workspace) => ({
+        id: workspace.id,
+        title: workspace.name,
+      }));
+    } else if (selectedTask) {
+      // Task action mode
+      return [
+        { id: "update", title: `Update task: ${selectedTask.title}` },
+        { id: "delete", title: `Delete task: ${selectedTask.title}` },
+      ];
+    } else if (commandMode === "addTag") {
+      return tags.map((tag) => ({ id: tag.id, title: tag.name }));
     } else {
-      // Chercher parmi les tâches
-      const taskResults = tasks.filter((task) =>
-        task.title.toLowerCase().includes(value.toLowerCase())
+      let filteredTasks = tasks.filter(
+        (task) =>
+          task.title && task.title.toLowerCase().includes(query.toLowerCase())
       );
-      setSuggestions(
-        taskResults.map((task) => ({ title: task.title, id: task.id }))
-      );
+
+      return filteredTasks;
     }
+  }, [query, tasks, selectedTask, commandMode, workspaces, tags]);
+
+  const handleQueryChange = (newQuery) => {
+    setQuery(newQuery);
+    setIsMenuVisible(newQuery.length > 0);
+    setSelectedIndex(-1);
+    setSelectedTask(null);
+    setCommandMode(null);
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === "Tab" && suggestions.length > 0) {
-      e.preventDefault();
-      setInputValue(suggestions[0].title || suggestions[0].command);
-    } else if (e.key === "Enter") {
-      executeCommand(inputValue);
+    if (visibility) {
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        setSelectedIndex((prev) =>
+          prev < filteredResults.length - 1 ? prev + 1 : 0
+        );
+      } else if (e.key === "ArrowUp") {
+        e.preventDefault();
+        setSelectedIndex((prev) =>
+          prev > 0 ? prev - 1 : filteredResults.length - 1
+        );
+      } else if (e.key === "Enter") {
+        e.preventDefault();
+        if (commandMode === "addTag" && query.trim() !== "") {
+          handleAddTag(query.trim());
+        } else {
+          const selectedResult =
+            filteredResults[selectedIndex] || filteredResults[0];
+          handleResultSelection(selectedResult);
+        }
+      }
     }
   };
 
-  const executeCommand = (commandInput) => {
-    const command = commands.find(
-      (cmd) => cmd.command === commandInput.split(" ")[0]
-    );
-    if (command) {
-      const params = commandInput.split(" ").slice(1).join(" ");
-      if (command.action === "addTask") {
-        toggleTaskMenu();
-      } else if (command.action === "deleteTask") {
-        deleteTaskByName(params);
+  const handleResultSelection = (result) => {
+    if (query.startsWith("/")) {
+      // Handle command
+      setCommandMode(result.id);
+      setQuery("");
+      if (result.id === "goto") {
+        setPlaceholder("Select destination");
+      } else if (
+        result.id === "changeWorkspace" ||
+        result.id === "deleteWorkspace"
+      ) {
+        setPlaceholder("Select workspace");
+      } else if (result.id === "addTag") {
+        setPlaceholder("New tag name");
+      } else {
+        handleCommand(result.id);
       }
-      setInputValue(""); // Clear input value after executing command
-      setIsActionMode(false); // Reset action mode
+    } else if (commandMode === "goto") {
+      router.push(`/app/${result.id}`);
+      resetState();
+    } else if (commandMode === "changeWorkspace") {
+      // TODO: Implement change workspace logic
+      console.log("Change to workspace:", result.title);
+      resetState();
+    } else if (commandMode === "deleteWorkspace") {
+      // TODO: Implement delete workspace logic
+      console.log("Delete workspace:", result.title);
+      resetState();
+    } else if (selectedTask) {
+      // Handle task action
+      switch (result.id) {
+        case "update":
+          toggleTaskMenu(selectedTask.id, "", "Task");
+          break;
+        case "delete":
+          // TODO: Implement delete task logic
+          console.log("Delete task:", selectedTask.title);
+          break;
+      }
+      resetState();
     } else {
-      // Check if the input is a task
-      const task = tasks.find((task) => task.title === commandInput);
-      if (task) {
-        // Propose additional actions for the task
-        setSuggestions([
-          {
-            title: `Delete the task "${task.title}"`,
-            action: "deleteTask",
-            id: `delete-${task.id}`,
-          },
-          {
-            title: `Rename the task "${task.title}"`,
-            action: "renameTask",
-            id: `rename-${task.id}`,
-          },
-          {
-            title: `Update the task "${task.title}"`,
-            action: "updateTask",
-            id: `update-${task.id}`,
-          },
-        ]);
-        setIsActionMode(true); // Set action mode
-      }
+      // Handle task selection
+      setSelectedTask(result);
+      setSelectedIndex(-1);
     }
   };
 
-  const handleActionSelect = (actionItem) => {
-    const { action, id } = actionItem;
-    if (action === "deleteTask") {
-      // Add delete logic here
-    } else if (action === "renameTask") {
-      // Add rename logic here
-    } else if (action === "updateTask") {
-      toggleTaskMenu(id.split("-")[1]);
+  const handleCommand = (commandId) => {
+    switch (commandId) {
+      case "add":
+        // TODO: Implement open add menu logic
+        console.log("Open add menu");
+        break;
+      case "logout":
+        // TODO: Implement logout logic
+        console.log("Logout");
+        break;
+      case "addWorkspace":
+        // TODO: Implement add workspace logic
+        console.log("Add workspace");
+        break;
+      case "openMainMenu":
+        // TODO: Implement open main menu logic
+        console.log("Open main menu");
+        break;
+      case "openSettings":
+        // TODO: Implement open settings logic
+        console.log("Open settings");
+        break;
     }
-    setInputValue(""); // Clear input value after executing action
-    toggleSearchMenu();
+    resetState();
   };
+
+  const handleAddTag = (tagName) => {
+    addTag(tagName);
+    resetState();
+  };
+
+  const resetState = () => {
+    setIsMenuVisible(false);
+    setSelectedTask(null);
+    setCommandMode(null);
+    setQuery("");
+    setPlaceholder("Search or type / for commands...");
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuVisible(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [filteredResults, selectedIndex, commandMode, query]);
 
   return (
-    <>
-      <Blur
-        trigger={toggleSearchMenu}
-        show={isSearchMenuOpen}
-        showZ="50"
-        hideZ="0"
-        bg="bg-transparent"
-        fullscreen={true}
-      />
-      <Div
-        styles={`border-none bg-white glass-morphism w-[40vw] flex flex-col absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 transition-all duration-300 rounded-[0.75vw] z-[300] ${
+    <div
+      className={`fixed inset-0 flex items-start justify-center pt-16 z-50 bg-black transition-opacity duration-300 ease-in-out ${
+        visibility ? "bg-opacity-50" : "bg-opacity-0 pointer-events-none"
+      }`}
+      onClick={() => {
+        toggleSearchMenu();
+      }}
+    >
+      <div
+        ref={menuRef}
+        className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 z-[500] -translate-y-[20vh] w-[35vw] mx-auto transition-opacity duration-300 ease-in-out ${
           visibility ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
+        onClick={(e) => e.stopPropagation()} // Add this line
       >
-        <div className="flex-col py-1">
-          <div className="flex justify-between py-1 px-[3%]">
-            <SearchMenuLibelle>{pageName}</SearchMenuLibelle>
-            <SearchMenuLibelle styles="text-blue">Ctrl + K</SearchMenuLibelle>
-          </div>
-          <Downshift
-            inputValue={inputValue}
-            onInputValueChange={handleInputChange}
-            onSelect={(selection) =>
-              selection.action
-                ? handleActionSelect(selection)
-                : executeCommand(selection.title || selection.command)
-            }
-            itemToString={(item) => (item ? item.title || item.command : "")}
-          >
-            {({
-              getInputProps,
-              getItemProps,
-              getMenuProps,
-              isOpen,
-              highlightedIndex,
-              selectedItem,
-            }) => (
-              <div>
-                <input
-                  {...getInputProps({
-                    ref: inputRef,
-                    onKeyDown: handleKeyDown,
-                    placeholder: "Type a command (/) or search a task...",
-                    className:
-                      "bg-transparent w-full my-[1.5%] text-black placeholder:text-black px-[3%] text-xl focus:outline-none",
-                  })}
-                />
-                <hr className="h-[1.5%] my-[1%] bg-[rgba(0,0,0,0.5)]" />
-                <TransitionGroup
-                  component="ul"
-                  {...getMenuProps()}
-                  className="flex flex-col scroll-hide overflow-y-auto py-1 px-[3%] gap-[2%] transition-all duration-300"
-                >
-                  {isOpen &&
-                    suggestions.map((item, index) => (
-                      <CSSTransition
-                        key={item.id || index}
-                        timeout={300}
-                        classNames="fade"
-                      >
-                        <li
-                          {...getItemProps({
-                            key: item.id || index,
-                            index,
-                            item,
-                            style: {
-                              fontSize: "1.2rem",
-                              backgroundColor:
-                                highlightedIndex === index
-                                  ? "lightgray"
-                                  : "white",
-                              fontWeight:
-                                selectedItem === item ? "bold" : "normal",
-                            },
-                            onClick: () => {
-                              if (item.action) {
-                                handleActionSelect(item);
-                              } else {
-                                executeCommand(item.title || item.command);
-                              }
-                            },
-                          })}
-                        >
-                          {item.title || item.command}
-                        </li>
-                      </CSSTransition>
-                    ))}
-                </TransitionGroup>
-              </div>
-            )}
-          </Downshift>
-        </div>
-      </Div>
-    </>
+        <SearchInput
+          query={query}
+          onQueryChange={handleQueryChange}
+          placeholder={placeholder}
+        />
+        {isMenuVisible && (
+          <SearchResults
+            results={filteredResults}
+            selectedIndex={selectedIndex}
+            onItemClick={handleResultSelection}
+          />
+        )}
+      </div>
+    </div>
   );
-}
-// je dois handle les sélections des actions qui s'affichent lorsque l'on clique sur la task
-// est-ce vraiment scalable ???
+};
+export default SearchMenu;

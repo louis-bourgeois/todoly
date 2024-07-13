@@ -2,42 +2,97 @@
 import axios from "axios";
 import { createContext, useContext, useEffect, useState } from "react";
 import { useUser } from "./UserContext";
+import { useUserPreferences } from "./UserPreferencesContext";
 
 const WorkspaceContext = createContext();
 const baseUrl = "http://localhost:3001/api";
 export const useWorkspace = () => useContext(WorkspaceContext);
 
 export const WorkspaceProvider = ({ children }) => {
-  const { workspaces } = useUser();
-
-  const [currentWorkspace, setCurrentWorkspace] = useState(null);
+  const { preferences, setWorkspaces, setSections } = useUser();
+  const { updateUserPreference } = useUserPreferences();
+  const [currentWorkspace, setCurrentWorkspace] = useState("");
+  const [activeWorkspace, setActiveWorkspace] = useState("");
 
   useEffect(() => {
-    if (workspaces && workspaces.length > 0) {
-      const personalWorkspace = workspaces.find(
-        (workspace) => workspace.name === "Personal"
-      );
-      if (personalWorkspace && currentWorkspace === null) {
-        setCurrentWorkspace(personalWorkspace.id);
-      }
+    console.log("====================================");
+    console.log("activeWorkspace has changed", activeWorkspace);
+    console.log("====================================");
+  }, [activeWorkspace]);
+  useEffect(() => {
+    if (
+      preferences?.Current_Workspace &&
+      preferences.Current_Workspace !== currentWorkspace
+    ) {
+      setCurrentWorkspace(preferences.Current_Workspace);
     }
-  }, [workspaces]);
+  }, [preferences]);
 
-  const createWorkspace = async (name, userId) => {
+  useEffect(() => {
+    const updatePref = async () => {
+      if (currentWorkspace) {
+        await updateUserPreference({
+          key: "Current_Workspace",
+          value: currentWorkspace,
+        });
+      }
+    };
+    updatePref();
+  }, [currentWorkspace]);
+
+  const createWorkspace = async (workspace) => {
     try {
-      const response = await axios.post(`${baseUrl}/workspaces`, {
-        name,
-        userId,
+      const { name, linked_sections, collaborators } = workspace;
+      const responseA = await axios.post(
+        `${baseUrl}/workspaces`,
+        { name, linked_sections },
+        { withCredentials: true }
+      );
+      const workspaceId = responseA.data.workspaceId;
+
+      const collaboratorPromises = collaborators.map(async (collaborator) => {
+        try {
+          const response = await axios.post(`${baseUrl}/users/find/`, {
+            username: collaborator.name,
+          });
+          if (response.data.id) {
+            await axios.post(
+              `${baseUrl}/users/${workspaceId}/users/${response.data.id}`
+            );
+          }
+        } catch (err) {
+          console.error(`Error adding collaborator ${collaborator.name}:`, err);
+        }
       });
-      return response.data;
+
+      await Promise.all(collaboratorPromises);
+      setWorkspaces(responseA.data.workspaces);
     } catch (error) {
       console.error("Error creating workspace:", error);
     }
   };
 
+  const updateWorkspace = async (workspaceId, newWorkspaceData) => {
+    console.log("sent : ", newWorkspaceData);
+    try {
+      const response = await axios.post(
+        `${baseUrl}/workspaces/update/${workspaceId}`,
+        { data: newWorkspaceData },
+        { withCredentials: true }
+      );
+      console.log("ok", response.data);
+      const { workspaces, sections } = response.data;
+      console.table("updated sections", sections)
+      setWorkspaces(workspaces);
+      setSections(sections);
+    } catch (error) {}
+  };
   const deleteWorkspace = async (workspaceId) => {
     try {
-      await axios.delete(`${baseUrl}/workspaces/${workspaceId}`);
+      const response = await axios.delete(
+        `${baseUrl}/workspaces/${workspaceId}`
+      );
+      console.log(response.data);
     } catch (error) {
       console.error("Error deleting workspace:", error);
     }
@@ -122,12 +177,15 @@ export const WorkspaceProvider = ({ children }) => {
         createWorkspace,
         deleteWorkspace,
         getWorkspace,
+        updateWorkspace,
         addTaskToWorkspace,
         removeTaskFromWorkspace,
         getUsersFromWorkspace,
         getTasksFromWorkspace,
         addUserToWorkspace,
         removeUserFromWorkspace,
+        activeWorkspace,
+        setActiveWorkspace,
       }}
     >
       {children}

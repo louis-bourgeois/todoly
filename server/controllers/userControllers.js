@@ -1,3 +1,4 @@
+import Preference from "../models/Preference.js";
 import Section from "../models/Section.js";
 import User from "../models/User.js";
 import Workspace from "../models/Workspace.js";
@@ -34,7 +35,7 @@ export async function createUser(req, res) {
       );
 
       const saveData = await user.save();
-      console.log(saveData);
+
       const workspace = new Workspace(
         "Personal",
         "Your default workspace for personal tasks"
@@ -43,6 +44,48 @@ export async function createUser(req, res) {
       const workspaceId = await workspace.save(saveData[0]);
 
       await Section.setWorkspaceId(workspaceId, saveData[1].rows[0].id);
+
+      const preferences_key = [
+        "Default_Main_Page",
+        "Home_Page_Title",
+        "Theme",
+        "Color_Theme",
+        "Allow_Notifications",
+        "Notifications_List",
+        "Language",
+        "TZ",
+        "Date_Format",
+        "Week_Starts_On",
+        "Current_Workspace",
+        "Last_Section",
+        "Sort_By",
+        "Show",
+      ];
+      const preferences_values = [
+        "Currently",
+        "Depending on the time of day + name",
+        "Light",
+        "#007aff",
+        "true",
+        "",
+        "French",
+        "Europe/Paris",
+        "24h",
+        "Monday",
+        workspaceId,
+        saveData[1].rows[0].id,
+        "Importance",
+        "All tasks",
+      ];
+
+      for (let i = 0; i < keys.length; i++) {
+        const preference = new Preference(
+          preferences_key[i],
+          preferences_values[i],
+          saveData[0]
+        );
+        await preference.save();
+      }
 
       return res.status(201).send("User created successfully");
     }
@@ -61,6 +104,14 @@ export async function getUserData(req, res) {
     res.status(404).send("User not found");
   }
 }
+
+export const findUserbyUsername = async (req, res) => {
+  const result = await User.findId(req.body.username);
+
+  if (result.length > 0) {
+    res.status(200).send({ id: result[0][0] });
+  } else res.sendStatus(200);
+};
 
 export const getWorkspacesByUserId = async (req, res) => {
   try {

@@ -3,6 +3,7 @@ import passport from "passport";
 import {
   addUserToWorkspace,
   createUser,
+  findUserbyUsername,
   getUserData,
   getWorkspacesByUserId,
   removeUserFromWorkspace,
@@ -17,6 +18,7 @@ router.get("/me", (req, res) => {
   }
   return res.json({ user: req.user });
 });
+router.post("/find", findUserbyUsername);
 router.post("/register", hashPassword, createUser);
 router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {

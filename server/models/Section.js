@@ -3,26 +3,23 @@ import pool from "../config/dbConfig.js";
 class Section {
   constructor(name, user_id, workspaceId) {
     this.name = name;
-
     this.user_id = user_id;
-    this.workspaceId = workspaceId || null;
+    this.workspaceId = workspaceId;
   }
 
   async save() {
     const client = await pool.connect();
     try {
       await client.query("BEGIN");
-      const query = this.workspaceId
-        ? "INSERT INTO section (name, user_id, workspace_id) VALUES ($1, $2, $3)"
-        : "INSERT INTO section (name, user_id) VALUES ($1, $2)";
+      const query =
+        "INSERT INTO section (name, user_id, workspace_id) VALUES ($1, $2, $3) RETURNING workspace_id";
 
-      const values = this.workspaceId
-        ? [this.name, this.user_id, this.workspaceId]
-        : [this.name, this.user_id];
+      const values = [this.name, this.user_id, this.workspaceId];
 
-      await client.query(query, values);
+      const r = await client.query(query, values);
 
       await client.query("COMMIT");
+      return r;
     } catch (error) {
       await client.query("ROLLBACK");
 
@@ -33,27 +30,27 @@ class Section {
   }
 
   static async find(
-    user_id = undefined,
+    workspaceId = undefined,
     name = undefined,
     sectionId = undefined
   ) {
-    if (!user_id && !sectionId) {
+    if (!workspaceId && !sectionId) {
       throw new Error(
-        "You have to provide a parameter (name | userId or sectionId)!"
+        "You have to provide a parameter (name | workspaceId or sectionId)!"
       );
     }
     try {
       const query = sectionId
         ? "SELECT * FROM section WHERE id = $1"
         : name
-        ? "SELECT * FROM section WHERE name = $1 AND user_id = $2"
-        : "SELECT * FROM section WHERE user_id = $1";
+        ? "SELECT * FROM section WHERE name = $1 AND workspace_id = $2"
+        : "SELECT * FROM section WHERE workspace_id = $1";
 
       const params = sectionId
         ? [sectionId]
         : name
-        ? [name, user_id]
-        : [user_id];
+        ? [name, workspaceId]
+        : [workspaceId];
 
       const { rows } = await pool.query(query, params);
 
@@ -74,11 +71,12 @@ class Section {
     if (newName === currentSection.name) {
       return;
     }
-    const query = `UPDATE section SET name = $1 WHERE id = $2 AND user_id = $3`;
+    const query = `UPDATE section SET name = $1 WHERE id = $2 AND user_id = $3 RETURNING *`;
     const params = [newName, sectionId, userId];
 
     try {
-      await pool.query(query, params);
+      const response = await pool.query(query, params);
+      return response;
     } catch (error) {
       console.error("Error updating section:", error);
       throw new Error("Failed to update section");
@@ -109,7 +107,6 @@ class Section {
     const client = await pool.connect();
     try {
       await client.query("BEGIN");
-      console.log(workspaceId, sectionId);
       const setQuery = `UPDATE section SET workspace_id = $1 WHERE id = $2`;
       await client.query(setQuery, [workspaceId, sectionId]);
       await client.query("COMMIT");

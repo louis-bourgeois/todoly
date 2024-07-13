@@ -1,10 +1,20 @@
 "use client";
 import axios from "axios";
-import { createContext, useContext, useEffect, useState } from "react";
-import { useError } from "./ErrorContext"; // Import the ErrorContext
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
+import { io } from "socket.io-client";
+import { useError } from "./ErrorContext";
 
+const socket = io("http://localhost:3001");
 const UserContext = createContext();
 const baseUrl = "http://localhost:3001/api";
+
 export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
@@ -14,255 +24,387 @@ export const UserProvider = ({ children }) => {
   const [tags, setTags] = useState([]);
   const [workspaces, setWorkspaces] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { handleError } = useError(); // Use handleError from ErrorContext
+  const [preferences, setPreferences] = useState({});
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const { handleError } = useError();
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`${baseUrl}/users/me`, {
-          withCredentials: true,
-        });
-        if (response.status === 200 && response.data.user) {
-          setUser({ ...response.data.user });
-          setTasks(response.data.user.tasks || []);
-          setSections(response.data.user.sections || []);
-          setTags(response.data.user.tags || []);
-          setWorkspaces(response.data.user.workspaces || []);
-        }
-      } catch (error) {
-        setUser(null);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUser();
-  }, []);
+  const fetchUser = useCallback(async () => {
+    if (!isAuthenticated) {
+      setLoading(false);
+      return;
+    }
 
-  const login = async (data) => {
     try {
-      const response = await axios.post(`${baseUrl}/users/login`, data, {
+      const response = await axios.get(`${baseUrl}/users/me`, {
         withCredentials: true,
       });
-      if (response.status === 200) {
-        setUser({ ...response.data.user[1], ...response.data.user[3] });
-        setTasks(response.data.user[1].tasks || []);
-        setSections(response.data.user[1].sections || []);
-        setTags(response.data.user[1].tags || []);
-        setWorkspaces(response.data.user[1].workspaces || []);
-        return response;
+      if (response.status === 200 && response.data.user) {
+        const {
+          tasks = [],
+          sections = [],
+          tags = [],
+          workspaces = [],
+          preferences = [],
+        } = response.data.user;
+        setUser(response.data.user);
+        setTasks(tasks);
+        setSections(sections);
+        setTags(tags);
+        setWorkspaces(workspaces);
+        setPreferences(
+          preferences.reduce(
+            (acc, curr) => ({
+              ...acc,
+              [curr.preference_key]: curr.preference_value,
+            }),
+            {}
+          )
+        );
       }
     } catch (error) {
-      return {
-        status: error.response?.status || 500,
-        data: { message: error.message },
-      };
+      setUser(null);
+      setIsAuthenticated(false);
     } finally {
       setLoading(false);
     }
-  };
+  }, [isAuthenticated]);
 
-  const logout = () => {
-    setUser(null);
-    setTasks(null);
-    setSections(null);
-    setTags(null);
-    setWorkspaces(null);
-  };
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
-  const modifyTask = async (updatedTask, action) => {
-    try {
-      const response = await axios.post(
-        `${baseUrl}/tasks/update`,
-        { task: updatedTask, action },
-        { withCredentials: true }
+  useEffect(() => {
+    const handleTaskAdded = (newTask) => {
+      setTasks((prevTasks) => [...prevTasks, newTask]);
+      setWorkspaces((prevWorkspaces) =>
+        prevWorkspaces.map((workspace) =>
+          workspace.id === newTask.workspace_id
+            ? { ...workspace, tasks: [...workspace.tasks, newTask] }
+            : workspace
+        )
       );
+    };
 
-      if (response.status === 200) {
-        // Mettre à jour les tasks
-        setTasks((prevTasks) =>
-          prevTasks.map((task) =>
+    const handleTaskUpdated = (updatedTask) => {
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === updatedTask.id ? updatedTask : task
+        )
+      );
+      setWorkspaces((prevWorkspaces) =>
+        prevWorkspaces.map((workspace) => ({
+          ...workspace,
+          tasks: workspace.tasks.map((task) =>
             task.id === updatedTask.id ? updatedTask : task
-          )
-        );
+          ),
+        }))
+      );
+    };
 
-        // Mettre à jour les workspaces
-        setWorkspaces((prevWorkspaces) =>
-          prevWorkspaces.map((workspace) => ({
-            ...workspace,
-            tasks: workspace.tasks.map((task) =>
+    const handleTaskDeleted = (taskId) => {
+      setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+      setWorkspaces((prevWorkspaces) =>
+        prevWorkspaces.map((workspace) => ({
+          ...workspace,
+          tasks: workspace.tasks.filter((task) => task.id !== taskId),
+        }))
+      );
+    };
+
+    if (isAuthenticated) {
+      socket.on("taskAdded", handleTaskAdded);
+      socket.on("taskUpdated", handleTaskUpdated);
+      socket.on("taskDeleted", handleTaskDeleted);
+    }
+
+    return () => {
+      socket.off("taskAdded", handleTaskAdded);
+      socket.off("taskUpdated", handleTaskUpdated);
+      socket.off("taskDeleted", handleTaskDeleted);
+    };
+  }, [isAuthenticated]);
+
+  const login = useCallback(
+    async (data) => {
+      try {
+        const response = await axios.post(`${baseUrl}/users/login`, data, {
+          withCredentials: true,
+        });
+        if (response.status === 200) {
+          setIsAuthenticated(true);
+          await fetchUser();
+          return response;
+        }
+      } catch (error) {
+        handleError(error);
+        return {
+          status: error.response?.status || 500,
+          data: { message: error.message },
+        };
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchUser, handleError]
+  );
+
+  const logout = useCallback(() => {
+    setUser(null);
+    setTasks([]);
+    setSections([]);
+    setTags([]);
+    setWorkspaces([]);
+    setPreferences({});
+    setIsAuthenticated(false);
+  }, []);
+
+  const modifyTask = useCallback(
+    async (updatedTask, action) => {
+      try {
+        const response = await axios.post(
+          `${baseUrl}/tasks/update`,
+          { task: updatedTask, action },
+          { withCredentials: true }
+        );
+        if (response.status === 200) {
+          socket.emit("taskUpdated", updatedTask);
+          setTasks((prevTasks) =>
+            prevTasks.map((task) =>
               task.id === updatedTask.id ? updatedTask : task
-            ),
-          }))
-        );
-      }
-    } catch (error) {
-      handleError(error);
-      throw error;
-    }
-  };
-
-  const addTask = async (taskData) => {
-    try {
-      const response = await axios.post(
-        `${baseUrl}/tasks/add`,
-        { taskData },
-        { withCredentials: true }
-      );
-      console.log(response.data);
-      if (response.status === 201 && response.data.tasks) {
-        setTasks(response.data.tasks);
-        setWorkspaces(response.data.workspaces);
-      } else {
-        console.error("Error: No task data in response", response.data);
-      }
-    } catch (error) {
-      console.error(error);
-      handleError(error);
-      throw error;
-    }
-  };
-
-  const deleteTask = async (id) => {
-    try {
-      const response = await axios.delete(`${baseUrl}/tasks/delete/${id}`);
-      if (response.status === 200) {
-        setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
-
-        setWorkspaces((prevWorkspaces) =>
-          prevWorkspaces.map((workspace) => {
-            // Filtrer les tasks du workspace pour supprimer celle avec l'ID donné
-            const updatedTasks = workspace.tasks.filter(
-              (task) => task.id !== id
-            );
-            return {
+            )
+          );
+          setWorkspaces((prevWorkspaces) =>
+            prevWorkspaces.map((workspace) => ({
               ...workspace,
-              tasks: updatedTasks,
-            };
-          })
+              tasks: workspace.tasks.map((task) =>
+                task.id === updatedTask.id ? updatedTask : task
+              ),
+            }))
+          );
+        }
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    },
+    [handleError]
+  );
+
+  const addTask = useCallback(
+    async (taskData) => {
+      try {
+        const response = await axios.post(
+          `${baseUrl}/tasks/add`,
+          { taskData },
+          { withCredentials: true }
         );
+        if (response.status === 201 && response.data.tasks) {
+          const existingTaskIds = new Set(tasks.map((task) => task.id));
+          const newTask = response.data.tasks.find(
+            (task) => !existingTaskIds.has(task.id)
+          );
+          if (newTask) {
+            socket.emit("taskAdded", newTask);
+            setTasks((prevTasks) => [...prevTasks, newTask]);
+            setWorkspaces((prevWorkspaces) =>
+              prevWorkspaces.map((workspace) =>
+                workspace.id === newTask.workspace_id
+                  ? { ...workspace, tasks: [...workspace.tasks, newTask] }
+                  : workspace
+              )
+            );
+            return newTask;
+          } else {
+            throw new Error("Nouvelle tâche non trouvée dans la réponse");
+          }
+        } else {
+          throw new Error("Réponse invalide du serveur");
+        }
+      } catch (error) {
+        handleError(error);
+        throw error;
       }
-    } catch (error) {
-      handleError(error);
-      throw error;
-    }
-  };
+    },
+    [tasks, handleError]
+  );
 
-  const addSection = async (section) => {
-    try {
-      const response = await axios.post(
-        `${baseUrl}/sections/add`,
-        { section, user },
-        { withCredentials: true }
-      );
-
-      if (response.status === 200 && response.data.sections) {
-        setSections(response.data.sections);
-      } else {
-        console.error("Error: No section data in response", response.data);
+  const deleteTask = useCallback(
+    async (id) => {
+      try {
+        const response = await axios.delete(`${baseUrl}/tasks/delete/${id}`);
+        if (response.status === 200) {
+          socket.emit("taskDeleted", id);
+          setTasks((prevTasks) => prevTasks.filter((task) => task.id !== id));
+          setWorkspaces((prevWorkspaces) =>
+            prevWorkspaces.map((workspace) => ({
+              ...workspace,
+              tasks: workspace.tasks.filter((task) => task.id !== id),
+            }))
+          );
+        }
+      } catch (error) {
+        handleError(error);
+        throw error;
       }
-    } catch (error) {
-      handleError(error);
-      throw new Error(error);
-    }
-  };
+    },
+    [handleError]
+  );
 
-  const modifySection = async (newName, sectionId) => {
-    try {
-      const response = await axios.post(
-        `${baseUrl}/sections/update`,
-        { newName: newName, sectionId: sectionId },
-        { withCredentials: true }
-      );
-      setSections(response.data.user_sections);
-    } catch (error) {
-      handleError(error);
-      throw new Error(error);
-    }
-  };
-
-  const deleteSection = async (id) => {
-    try {
-      const response = await axios.delete(`${baseUrl}/sections/delete/${id}`, {
-        withCredentials: true,
-      });
-      if (response.status === 200) {
-        setSections((prev) =>
-          prev.filter(
-            (section) => section.id !== id || section.name === "Other"
-          )
+  const addSection = useCallback(
+    async (section) => {
+      try {
+        const response = await axios.post(
+          `${baseUrl}/sections/add`,
+          { section, user },
+          { withCredentials: true }
         );
+        if (response.status === 200 && response.data.sections) {
+          setSections(response.data.sections);
+        }
+      } catch (error) {
+        handleError(error);
+        throw error;
       }
-    } catch (error) {
-      handleError(error);
-      throw error;
-    }
-  };
+    },
+    [user, handleError]
+  );
 
-  const addTag = async (name) => {
-    try {
-      const response = await axios.post(
-        `${baseUrl}/tags/add`,
-        { name },
-        { withCredentials: true }
-      );
-      if (response.status === 200 && response.data.tags) {
+  const modifySection = useCallback(
+    async (newName, sectionId) => {
+      try {
+        const response = await axios.post(
+          `${baseUrl}/sections/update`,
+          { newName, sectionId },
+          { withCredentials: true }
+        );
+        setSections(response.data.user_sections);
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    },
+    [handleError]
+  );
+
+  const deleteSection = useCallback(
+    async (id) => {
+      try {
+        const response = await axios.delete(
+          `${baseUrl}/sections/delete/${id}`,
+          { withCredentials: true }
+        );
+        if (response.status === 200) {
+          setSections((prev) =>
+            prev.filter(
+              (section) => section.id !== id || section.name === "Other"
+            )
+          );
+        }
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    },
+    [handleError]
+  );
+
+  const addTag = useCallback(
+    async (name) => {
+      try {
+        const response = await axios.post(
+          `${baseUrl}/tags/add`,
+          { name },
+          { withCredentials: true }
+        );
+        if (response.status === 200 && response.data.tags) {
+          setTags(response.data.tags);
+          return response.data.tags;
+        }
+      } catch (error) {
+        handleError(error);
+        throw error;
+      }
+    },
+    [handleError]
+  );
+
+  const updateTag = useCallback(
+    async (name, id) => {
+      try {
+        const response = await axios.post(
+          `${baseUrl}/tags/update`,
+          { newName: name, id },
+          { withCredentials: true }
+        );
         setTags(response.data.tags);
-        return response.data.tags;
-      } else {
-        console.error("Error: No tags data in response", response.data);
+      } catch (error) {
+        handleError(error);
+        throw error;
       }
-    } catch (error) {
-      handleError(error);
-      throw new Error(error);
-    }
-  };
+    },
+    [handleError]
+  );
 
-  const updateTag = async (name, id) => {
+  const getUserWorkspaces = useCallback(async () => {
     try {
-      const response = await axios.post(
-        `${baseUrl}/tags/update`,
-        { newName: name, id: id },
-        { withCredentials: true }
-      );
-      setTags(response.data.tags);
-    } catch (error) {
-      handleError(error);
-      throw new Error(error);
-    }
-  };
-
-  const getUserWorkspaces = async () => {
-    try {
-      const data = axios.get(`${baseUrl}/users/workspaces`, {
+      const response = await axios.get(`${baseUrl}/users/workspaces`, {
         withCredentials: true,
       });
-      setWorkspaces(data);
-    } catch (error) {}
-  };
+      setWorkspaces(response.data);
+    } catch (error) {
+      handleError(error);
+    }
+  }, [handleError]);
+
+  const contextValue = useMemo(
+    () => ({
+      user,
+      login,
+      loading,
+      logout,
+      isAuthenticated,
+      tasks,
+      modifyTask,
+      addTask,
+      deleteTask,
+      addSection,
+      modifySection,
+      deleteSection,
+      sections,
+      setSections,
+      addTag,
+      updateTag,
+      tags,
+      getUserWorkspaces,
+      workspaces,
+      setWorkspaces,
+      preferences,
+      setPreferences,
+    }),
+    [
+      user,
+      login,
+      loading,
+      logout,
+      isAuthenticated,
+      tasks,
+      modifyTask,
+      addTask,
+      deleteTask,
+      addSection,
+      modifySection,
+      deleteSection,
+      sections,
+      addTag,
+      updateTag,
+      tags,
+      getUserWorkspaces,
+      workspaces,
+      preferences,
+    ]
+  );
 
   return (
-    <UserContext.Provider
-      value={{
-        user,
-        login,
-        loading,
-        logout,
-        tasks,
-        modifyTask,
-        addTask,
-        deleteTask,
-        addSection,
-        modifySection,
-        deleteSection,
-        sections,
-        addTag,
-        updateTag,
-        tags,
-        getUserWorkspaces,
-        workspaces,
-      }}
-    >
-      {children}
-    </UserContext.Provider>
+    <UserContext.Provider value={contextValue}>{children}</UserContext.Provider>
   );
 };

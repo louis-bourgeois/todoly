@@ -1,11 +1,10 @@
 export default function TaskMenuSectionContainer({
   flex = true,
   children,
-
-  
   moreRoundedCorners,
   flexCol = false,
   othersStyles = "",
+  ...props
 }) {
   return (
     <div
@@ -14,6 +13,7 @@ export default function TaskMenuSectionContainer({
       } rounded-[20px] ${
         moreRoundedCorners ? `rounded-${moreRoundedCorners}-[3.125vw]` : ""
       } ${othersStyles}`}
+      {...props}
     >
       {children}
     </div>

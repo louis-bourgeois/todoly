@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useUser } from "../../../../context/UserContext";
 
 export default function TitleInput({
@@ -10,9 +10,8 @@ export default function TitleInput({
   setCanSubmit,
   task,
   setTask,
+  placeholder = "Title",
 }) {
-
-
   const { modifyTask } = useUser();
   const taskTitleRef = useRef(null);
 
@@ -59,7 +58,7 @@ export default function TitleInput({
         ref={taskTitleRef}
         type="text"
         disabled={!visibility}
-        placeholder={id ? titleValue : "Title"}
+        placeholder={id ? titleValue : placeholder}
         value={titleValue}
         onChange={(e) => handleTitleInputChange(e)}
         className={`${

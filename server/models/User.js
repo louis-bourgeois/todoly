@@ -1,5 +1,6 @@
 import pool from "../config/dbConfig.js";
 import { isUUID } from "../utils/validate.js";
+import Preference from "./Preference.js";
 import Section from "./Section.js";
 import Tag from "./Tag.js";
 import Task from "./Task.js";
@@ -97,11 +98,21 @@ class User {
       }
 
       const hash_password = await this.getHashPassword(id);
-      const tasks = await this.getTasks(id);
-      userData.tasks = tasks;
-      userData.sections = await Section.find(id);
       userData.tags = await Tag.find(id);
       userData.workspaces = await this.findWorkspacesByUserId(id);
+
+      userData.preferences = await this.getPreferences(id);
+
+      userData.tasks = [];
+      userData.sections = [];
+      await Promise.all(
+        userData.workspaces.map(async (workspace) => {
+          const tasks = await this.getTasks(workspace.id);
+          const sections = await this.getSections(workspace.id);
+          userData.tasks.push(...tasks);
+          userData.sections.push(...sections);
+        })
+      );
       users.push(id, userData, hash_password);
     }
 
@@ -120,7 +131,7 @@ class User {
       },
       {
         value: username,
-        query: "SELECT id FROM user_profile WHERE username = $1",
+        query: "SELECT id FROM user_profile WHERE username = $1  LIMIT 1",
       },
       {
         value: phone_number,
@@ -156,14 +167,12 @@ class User {
 
   static async getData(data, id) {
     const validColumns = {
-      all: "user_profile.username, user_profile.first_name, user_profile.last_name, user_contact.email, user_contact.phone_number, user_preferences.preferred_language, user_preferences.second_language",
+      all: "user_profile.username, user_profile.first_name, user_profile.last_name, user_contact.email, user_contact.phone_number",
       username: "user_profile.username",
       first_name: "user_profile.first_name",
       last_name: "user_profile.last_name",
       email: "user_contact.email",
       phone_number: "user_contact.phone_number",
-      preferred_language: "user_preferences.preferred_language",
-      second_language: "user_preferences.second_language",
     };
 
     if (!(data in validColumns)) {
@@ -174,7 +183,6 @@ class User {
 
     const query = `SELECT ${validColumns[data]} FROM user_profile
                    LEFT JOIN user_contact ON user_profile.id = user_contact.user_id
-                   LEFT JOIN user_preferences ON user_profile.id = user_preferences.user_id
                    WHERE user_profile.id = $1`;
     const { rows } = await pool.query(query, [id]);
 
@@ -225,12 +233,25 @@ class User {
     if (id) {
       try {
         const tasks = await Task.find(id);
+
         return tasks;
       } catch (error) {
         console.error(error);
       }
     } else {
       console.error("no id");
+    }
+  }
+
+  static async getPreferences(id) {
+    if (id) {
+      try {
+        const preferences = await Preference.getUserPreferences(id, "*");
+        return preferences;
+      } catch (error) {
+        console.error(error);
+        throw new Error(error);
+      }
     }
   }
 
@@ -241,6 +262,7 @@ class User {
       INNER JOIN user_workspaces uw ON w.id = uw.workspace_id
       WHERE uw.user_id = $1`;
     const { rows } = await pool.query(query, [id]);
+
     const detailedRows = await Promise.all(
       rows.map(async (row) => {
         const tasks = await Workspace.findTasksByWorkspaceId(row.id);
@@ -248,6 +270,7 @@ class User {
         return { ...row, tasks, users };
       })
     );
+
     return detailedRows;
   }
   static async addUserToWorkspace(userId, workspaceId) {

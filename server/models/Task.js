@@ -52,7 +52,7 @@ class Task {
 
       const linked_section = isUUID(this.linked_section)
         ? this.linked_section
-        : (await Section.find(this.owner_id, "Other"))[0].id;
+        : (await Section.find(this.workspaceId, "Other"))[0].id;
 
       const insertTask =
         "INSERT INTO task (user_id,linked_section) VALUES ($1, $2) RETURNING id";
@@ -87,6 +87,7 @@ class Task {
       const twProps = [taskId, this.workspaceId];
       await client.query(twQuery, twProps);
       await client.query("COMMIT");
+      return result.rows[0].id;
     } catch (e) {
       await client.query("ROLLBACK");
 
@@ -107,62 +108,61 @@ class Task {
       client.release();
     }
   }
-  static async find(userId = undefined, taskId = undefined) {
-    let query = `SELECT t.id, t.creation_date, tp.title, tp.due_date, tp.status, tp.priority, tp.tags, tp.description, t.linked_section, tw.workspace_id
-
-                 FROM task t
-
-                 INNER JOIN task_properties tp ON t.id = tp.task_id
-                 INNER JOIN task_workspaces tw ON t.id = tw.task_id
-                 `;
+  static async find(workspaceId = false, taskId = false) {
+    let query = `
+      SELECT t.id, t.creation_date, tp.title, tp.due_date, tp.status, tp.priority, tp.tags, tp.description, t.linked_section, tw.workspace_id
+      FROM task t
+      INNER JOIN task_properties tp ON t.id = tp.task_id
+      INNER JOIN task_workspaces tw ON t.id = tw.task_id
+    `;
 
     let queryParams = [];
 
+    if (workspaceId && taskId) {
+      query += " WHERE tw.workspace_id = $1 AND t.id = $2";
+      queryParams = [workspaceId, taskId];
+    } else if (workspaceId) {
+      query += " WHERE tw.workspace_id = $1";
+      queryParams = [workspaceId];
+    } else if (taskId) {
+      query += " WHERE t.id = $1";
+      queryParams = [taskId];
+    } else {
+      return [];
+    }
+
     try {
-      if (userId && taskId) {
-        query += " WHERE t.user_id = $1 AND t.id = $2";
-
-        queryParams = [userId, taskId];
-      } else if (userId) {
-        query += " WHERE t.user_id = $1";
-
-        queryParams = [userId];
-      } else if (taskId) {
-        query += " WHERE t.id = $1";
-
-        queryParams = [taskId];
-      } else {
-        return [];
-      }
-
       const result = await pool.query(query, queryParams);
 
       result.rows = result.rows.map((row) => {
-        const dueDate = new Date(row.due_date);
+        if (row.due_date) {
+          const dueDate = new Date(row.due_date);
+          dueDate.setUTCDate(dueDate.getUTCDate() + 1); // Add one day in UTC
 
-        // Ajouter un jour en UTC
-        dueDate.setUTCDate(dueDate.getUTCDate() + 1);
+          const year = dueDate.getUTCFullYear();
+          const month = String(dueDate.getUTCMonth() + 1).padStart(2, "0");
+          const day = String(dueDate.getUTCDate()).padStart(2, "0");
+          const formattedDate = `${year}-${month}-${day}`;
 
-        // Obtenir la date au format "yyyy-MM-dd" en UTC
-        const year = dueDate.getUTCFullYear();
-        const month = String(dueDate.getUTCMonth() + 1).padStart(2, "0");
-        const day = String(dueDate.getUTCDate()).padStart(2, "0");
-        const formattedDate = `${year}-${month}-${day}`;
-
-        return {
-          ...row,
-          tags: JSON.stringify(row.tags),
-          due_date: formattedDate,
-        };
+          return {
+            ...row,
+            tags: JSON.stringify(row.tags),
+            due_date: formattedDate,
+          };
+        } else {
+          return {
+            ...row,
+            tags: JSON.stringify(row.tags),
+          };
+        }
       });
-
       return result.rows;
     } catch (error) {
-      console.error("Error fetching tasks:", error);
-
+      console.error("Error executing find query:", error);
       throw error;
     }
   }
+
   static async delete(taskId) {
     const client = await pool.connect();
 
@@ -193,6 +193,7 @@ class Task {
     }
   }
   static async update(updatedTask) {
+    console.log("updated task id", updatedTask.id);
     const [currentTask] = await this.find(undefined, updatedTask.id);
 
     if (!currentTask) {
@@ -205,6 +206,7 @@ class Task {
 
     // Determine if specific fields are updated
     const linkedSectionUpdated = columnsToUpdate.includes("linked_section");
+    const workspaceIdUpdated = columnsToUpdate.includes("workspace_id");
     const dueDateUpdated = columnsToUpdate.includes("dueDate");
 
     // Handle dueDate to due_date conversion
@@ -215,10 +217,18 @@ class Task {
     }
 
     // Tables to update based on the fields that have changed
-    const tablesToUpdate = columnsToUpdate.includes("linked_section")
-      ? ["task"]
-      : [];
-    if (columnsToUpdate.some((col) => col !== "linked_section")) {
+    const tablesToUpdate = [];
+    if (linkedSectionUpdated) {
+      tablesToUpdate.push("task");
+    }
+    if (workspaceIdUpdated) {
+      tablesToUpdate.push("task_workspaces");
+    }
+    if (
+      columnsToUpdate.some(
+        (col) => col !== "linked_section" && col !== "workspace_id"
+      )
+    ) {
       tablesToUpdate.push("task_properties");
     }
 
@@ -237,7 +247,10 @@ class Task {
       for (const col of columnsToUpdate) {
         if (
           (table === "task" && col === "linked_section") ||
-          (table === "task_properties" && col !== "linked_section")
+          (table === "task_workspaces" && col === "workspace_id") ||
+          (table === "task_properties" &&
+            col !== "linked_section" &&
+            col !== "workspace_id")
         ) {
           setParts.push(`${col} = $${paramIndex++}`);
           queryParams.push(changes[col]);
@@ -246,11 +259,9 @@ class Task {
       if (queryParams.length > 0) {
         queryParams.push(updatedTask.id);
         const sqlQuery = `UPDATE ${table} SET ${setParts.join(", ")} WHERE ${
-          table === "task_properties" ? "task_id" : "id"
+          table !== "task" ? "task_id" : "id"
         } = $${paramIndex}`;
-
         await pool.query(sqlQuery, queryParams);
-      } else {
       }
     }
   }

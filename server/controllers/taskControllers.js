@@ -1,15 +1,15 @@
+import { io } from "../index.js";
 import Task from "../models/Task.js";
 import User from "../models/User.js";
 import { isUUID } from "../utils/validate.js";
 
 export async function updateTask(req, res) {
+  console.log("task data received", req.body);
   try {
     const { task } = req.body;
-    console.log("====================================");
-    console.log(task);
-    console.log("====================================");
-    await Task.update(task);
 
+    await Task.update(task);
+    io.emit("taskUpdated", task);
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
@@ -39,9 +39,22 @@ export async function addTask(req, res) {
       newTaskData.workspaceId
     );
 
-    await task.save();
-    const user_tasks = await Task.find(user_id);
+    const newTaskId = await task.save();
+
+    // Récupérez la tâche complète après l'enregistrement
+    const savedTask = await Task.find(undefined, newTaskId);
+
     const updated_user_workspaces = await User.findWorkspacesByUserId(user_id);
+    const user_tasks = [];
+    await Promise.all(
+      updated_user_workspaces.map(async (workspace) => {
+        const tasks = await Task.find(workspace.id);
+        user_tasks.push(...tasks);
+      })
+    );
+
+    io.emit("taskAdded", savedTask);
+
     res.status(201).json({
       message: "Task added successfully",
       tasks: user_tasks,
@@ -62,10 +75,11 @@ export async function addTask(req, res) {
     } else {
       res
         .status(500)
-        .json({ title: "Internal Server Error", subtitle: error.message }); // Changed from 400 to 500 and added JSON response
+        .json({ title: "Internal Server Error", subtitle: error.message });
     }
   }
 }
+
 export async function deleteTask(req, res) {
   const uuid = req.params.id;
 
@@ -73,7 +87,9 @@ export async function deleteTask(req, res) {
 
   if (uuid_isOK) {
     await Task.delete(uuid);
+    io.emit("taskDeleted", uuid);
   }
+
   res.sendStatus(200);
 }
 
@@ -91,6 +107,7 @@ export const addTaskToWorkspace = async (req, res) => {
   const { workspaceId, taskId } = req.params;
   try {
     await Task.addTaskToWorkspace(taskId, workspaceId);
+    io.emit("taskAddedToWorkspace", taskId);
     res.status(201).send("Task added to workspace");
   } catch (error) {
     res.status(400).send(error.message);
@@ -101,6 +118,7 @@ export const removeTaskFromWorkspace = async (req, res) => {
   const { workspaceId, taskId } = req.params;
   try {
     await Task.removeTaskFromWorkspace(taskId, workspaceId);
+    io.emit("taskRemovedFromWorkspace", taskId);
     res.status(200).send("Task removed from workspace");
   } catch (error) {
     res.status(400).send(error.message);

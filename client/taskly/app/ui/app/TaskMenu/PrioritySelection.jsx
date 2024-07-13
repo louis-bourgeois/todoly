@@ -1,5 +1,5 @@
 import { useUser } from "../../../../context/UserContext";
-import { Counter } from "./Counter";
+import { Counter } from "./note/Counter";
 import TaskMenuSectionContainer from "./TaskMenuSectionContainer";
 
 export default function PrioritySelection({

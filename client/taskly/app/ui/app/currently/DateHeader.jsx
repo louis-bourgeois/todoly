@@ -41,6 +41,8 @@ const DateHeader = ({ index, onDateChange }) => {
   const handleCurrentWorkspaceDropdownClick = (name) => {
     const workspace = workspaces.find((workspace) => workspace.name === name);
     if (workspace) setCurrentWorkspace(workspace.id);
+    setMenuOpen((prev) => !prev)
+    
   };
 
   const prevFutureDateRef = useRef();

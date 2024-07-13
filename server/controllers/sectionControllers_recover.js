@@ -13,7 +13,16 @@ export async function addSection(req, res) {
 
     const newSection = new Section(section.name, userId, section.workspace_id);
     await newSection.save();
-    const user_sections = await Section.find(userId);
+    const user_workspaces = await User.findWorkspacesByUserId(userId);
+
+    const user_sections = [];
+    await Promise.all(
+      user_workspaces.map(async (workspace) => {
+        const sections = await Section.find(workspace.id);
+        user_sections.push(...sections);
+      })
+    );
+
     res
       .status(200)
       .json({ message: "Section added successfully", sections: user_sections });
@@ -36,8 +45,22 @@ export async function updateSection(req, res) {
   const userId = found_user[0][0];
 
   try {
-    await Section.update(req.body.newName, req.body.sectionId, userId);
-    const user_sections = await Section.find(userId);
+    const response = await Section.update(
+      req.body.newName,
+      req.body.sectionId,
+      userId
+    );
+
+    const user_sections = [];
+    const user_workspaces = await User.findWorkspacesByUserId(userId);
+  
+    await Promise.all(
+      user_workspaces.map(async (workspace) => {
+        const sections = await Section.find(workspace.id);
+        user_sections.push(...sections);
+      })
+    );
+
     res.status(200).json({
       message: "Section updated successfully",
       user_sections,
