@@ -1,12 +1,10 @@
 import { useState } from "react";
-import { useUser } from "../../../../../../context/UserContext";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import DropdownMenu from "../DropdownMenu";
 import SectionTitle from "../SectionTitle";
 
 export default function Layout({ transitionStyles }) {
-  const { preferences } = useUser();
-  const { updateUserPreference } = useUserPreferences();
+  const { updateUserPreference, preferences } = useUserPreferences();
   const [defaultMainPage, setDefaultMainPage] = useState(
     preferences?.Default_Main_Page
   );

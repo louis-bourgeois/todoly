@@ -1,12 +1,10 @@
 import { addDays, format, getDate } from "date-fns";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useUser } from "../../../../context/UserContext";
 import { useWorkspace } from "../../../../context/WorkspaceContext";
 import { convertDateObjIntoDueDateType } from "../../../utils/utils";
 
 const DateHeader = ({ index, onDateChange }) => {
-  const { setCurrentWorkspace, currentWorkspace } = useWorkspace();
-  const { workspaces } = useUser();
+  const { setCurrentWorkspace, currentWorkspace, workspaces } = useWorkspace();
 
   const { futureDate, dayLabel, dateNumber } = useMemo(() => {
     const today = new Date();
@@ -41,8 +39,7 @@ const DateHeader = ({ index, onDateChange }) => {
   const handleCurrentWorkspaceDropdownClick = (name) => {
     const workspace = workspaces.find((workspace) => workspace.name === name);
     if (workspace) setCurrentWorkspace(workspace.id);
-    setMenuOpen((prev) => !prev)
-    
+    setMenuOpen((prev) => !prev);
   };
 
   const prevFutureDateRef = useRef();

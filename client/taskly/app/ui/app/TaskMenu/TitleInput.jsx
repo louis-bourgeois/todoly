@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useUser } from "../../../../context/UserContext";
+import { useTask } from "../../../../context/TaskContext";
 
 export default function TitleInput({
   id,
@@ -12,7 +13,7 @@ export default function TitleInput({
   setTask,
   placeholder = "Title",
 }) {
-  const { modifyTask } = useUser();
+  const { modifyTask } = useTask();
   const taskTitleRef = useRef(null);
 
   const handleTitleInputChange = (e) => {

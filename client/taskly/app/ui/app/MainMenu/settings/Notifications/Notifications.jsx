@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import { useUser } from "../../../../../../context/UserContext";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import CheckboxContainer from "../CheckboxContainer";
 import SectionTitle from "../SectionTitle";
 import Switcher from "../Switcher";
 
 export default function Notifications({ transitionStyles }) {
-  const { preferences } = useUser();
-  const { updateUserPreference } = useUserPreferences();
+  const { updateUserPreference, preferences } = useUserPreferences();
   const [allowNotifications, setAllowNotifications] = useState(
     JSON.parse(preferences.Allow_Notification.toLowerCase())
   );

@@ -1,7 +1,8 @@
+import { useUserPreferences } from "../../../../context/UserPreferencesContext";
+
 export default function ElementForm({ transitionStyles, id, visibility }) {
-  const { addTask, modifyTask, deleteTask, tasks, sections, preferences } =
-    useUser();
-  const { setActiveTask } = useTask();
+  const { preferences } = useUserPreferences();
+  const { setActiveTask, addTask, modifyTask, deleteTask, tasks } = useTask();
   const [task, setTask] = useState(null);
   const [titleValue, setTitleValue] = useState("");
   const [status, setStatus] = useState("todo");

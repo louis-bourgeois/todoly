@@ -4,8 +4,6 @@ import { useMenu } from "../../../../context/MenuContext";
 import LinesElement from "./LinesElement";
 
 const MenuLines = React.memo(({ children, text, href }) => {
-  const { toggleMainMenu } = useMenu();
-
   return (
     <div className="button-wrapper m-[5%] my-0 flex items-center justify-between rx-4 py-2">
       <Link href={href} className="w-full">

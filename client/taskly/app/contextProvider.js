@@ -1,28 +1,34 @@
+import { AuthProvider } from "../context/AuthContext";
 import { ErrorProvider } from "../context/ErrorContext";
 import { MenuProvider } from "../context/MenuContext";
 import { NotificationsProvider } from "../context/NotificationsContext";
 import { SectionProvider } from "../context/SectionContext";
+import { TagProvider } from "../context/TagContext";
 import { TaskProvider } from "../context/TaskContext";
 import { UserProvider } from "../context/UserContext";
 import { UserPreferencesProvider } from "../context/UserPreferencesContext";
 import { WorkspaceProvider } from "../context/WorkspaceContext";
 
 const AppProviders = ({ children }) => (
-  <NotificationsProvider>
-    <ErrorProvider>
-      <UserProvider>
-        <UserPreferencesProvider>
-          <WorkspaceProvider>
-            <TaskProvider>
-              <SectionProvider>
-                <MenuProvider>{children}</MenuProvider>
-              </SectionProvider>
-            </TaskProvider>
-          </WorkspaceProvider>
-        </UserPreferencesProvider>
-      </UserProvider>
-    </ErrorProvider>
-  </NotificationsProvider>
+  <AuthProvider>
+    <NotificationsProvider>
+      <ErrorProvider>
+        <UserProvider>
+          <UserPreferencesProvider>
+            <WorkspaceProvider>
+              <TaskProvider>
+                <SectionProvider>
+                  <TagProvider>
+                    <MenuProvider>{children}</MenuProvider>
+                  </TagProvider>
+                </SectionProvider>
+              </TaskProvider>
+            </WorkspaceProvider>
+          </UserPreferencesProvider>
+        </UserProvider>
+      </ErrorProvider>
+    </NotificationsProvider>
+  </AuthProvider>
 );
 
 export default AppProviders;

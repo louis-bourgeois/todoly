@@ -1,13 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { useUser } from "../../../../../../context/UserContext";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import Circle from "../Circle";
 import DropdownMenu from "../DropdownMenu";
 import SectionTitle from "../SectionTitle";
 
 export default function Appearance({ transitionStyles }) {
-  const { preferences } = useUser();
-  const { updateUserPreference } = useUserPreferences();
+  const { updateUserPreference, preferences } = useUserPreferences();
   const [theme, setTheme] = useState(preferences?.Theme);
   const [selectedCircle, setSelectedCircle] = useState(null);
 

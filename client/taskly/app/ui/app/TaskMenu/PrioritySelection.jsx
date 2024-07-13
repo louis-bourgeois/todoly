@@ -1,3 +1,4 @@
+import { useTask } from "../../../../context/TaskContext";
 import { useUser } from "../../../../context/UserContext";
 import { Counter } from "./note/Counter";
 import TaskMenuSectionContainer from "./TaskMenuSectionContainer";
@@ -10,7 +11,7 @@ export default function PrioritySelection({
   priority,
   setPriority,
 }) {
-  const { modifyTask } = useUser();
+  const { modifyTask } = useTask();
   const handlePriorityChange = (value) => {
     setPriority(value);
     if (id) {

@@ -5,11 +5,12 @@ import SlickCarousel from "@/ui/app/SlickCarousel";
 import Slide from "@/ui/app/Slide";
 import { useEffect, useState } from "react";
 import { useMenu } from "../../../context/MenuContext";
-import { useUser } from "../../../context/UserContext";
+import { useUserPreferences } from "../../../context/UserPreferencesContext";
 import { useWorkspace } from "../../../context/WorkspaceContext";
 
 export default function Page() {
-  const { workspaces, preferences } = useUser();
+  const { workspaces } = useWorkspace();
+  const { preferences } = useUserPreferences;
   const { toggleTaskMenu } = useMenu();
 
   const { setActiveWorkspace } = useWorkspace();

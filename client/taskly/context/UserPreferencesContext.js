@@ -1,15 +1,39 @@
 "use client";
 import axios from "axios";
-import { createContext, useContext } from "react";
-import { useUser } from "./UserContext";
-
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useAuth } from "./AuthContext";
 const UserPreferencesContext = createContext();
 const baseUrl = "http://localhost:3001/api";
 
 export const useUserPreferences = () => useContext(UserPreferencesContext);
 
 export const UserPreferencesProvider = ({ children }) => {
-  const { setPreferences } = useUser();
+  const [preferences, setPreferences] = useState({});
+  const { isAuthenticated } = useAuth();
+
+  const fetchPreferences = useCallback(async () => {
+    if (!isAuthenticated) return;
+
+    try {
+      const response = await axios.get(`${baseUrl}/preferences`, {
+        withCredentials: true,
+      });
+      setPreferences(response.data.preferences);
+    } catch (error) {
+      console.error("Error fetching preferences:", error);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    fetchPreferences();
+  }, [fetchPreferences]);
+
   const addUserPreference = async (data) => {
     try {
       const { key, value } = data;
@@ -60,7 +84,13 @@ export const UserPreferencesProvider = ({ children }) => {
 
   return (
     <UserPreferencesContext.Provider
-      value={{ updateUserPreference, addUserPreference, getUserPreferences }}
+      value={{
+        updateUserPreference,
+        addUserPreference,
+        getUserPreferences,
+        preferences,
+        setPreferences,
+      }}
     >
       {children}
     </UserPreferencesContext.Provider>

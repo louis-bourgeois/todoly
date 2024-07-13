@@ -12,7 +12,6 @@ export default function SectionSelectContainer({
   workspaceSections,
   setWorkspaceSections,
 }) {
-  const { sections } = useUser();
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const inputRef = useRef(null);

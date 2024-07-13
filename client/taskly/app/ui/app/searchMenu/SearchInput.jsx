@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useMenu } from "../../../../context/MenuContext";
 const SearchInput = ({ query, onQueryChange, placeholder }) => {
   const [localQuery, setLocalQuery] = useState(query);
-  const { toggleTaskMenu, isSearchMenuOpen } = useMenu();
+  const {  isSearchMenuOpen } = useMenu();
   const inputRef = useRef();
 
   useEffect(() => {

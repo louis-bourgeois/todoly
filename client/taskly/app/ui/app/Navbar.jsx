@@ -5,6 +5,7 @@ import Blur from "ui/app/Blur";
 import NavButton from "ui/app/NavButton";
 import { useMenu } from "../../../context/MenuContext";
 import { useUser } from "../../../context/UserContext";
+import { useUserPreferences } from "../../../context/UserPreferencesContext";
 import MainMenu from "./MainMenu/MainMenu";
 
 const TITLES = {
@@ -17,7 +18,8 @@ const TITLES = {
 
 export default function Navbar() {
   const router = useRouter();
-  const { user, loading, preferences } = useUser();
+  const { user, loading } = useUser();
+  const { preferences } = useUserPreferences();
   const { toggleTaskMenu, toggleSearchMenu } = useMenu();
 
   const [showMenu, setShowMenu] = useState(false);

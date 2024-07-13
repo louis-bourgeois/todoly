@@ -1,6 +1,13 @@
 "use client";
 import axios from "axios";
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useAuth } from "./AuthContext";
 import { useUser } from "./UserContext";
 import { useUserPreferences } from "./UserPreferencesContext";
 
@@ -13,12 +20,24 @@ export const WorkspaceProvider = ({ children }) => {
   const { updateUserPreference } = useUserPreferences();
   const [currentWorkspace, setCurrentWorkspace] = useState("");
   const [activeWorkspace, setActiveWorkspace] = useState("");
+  const { isAuthenticated } = useAuth();
+  
+  const fetchWorkspaces = useCallback(async () => {
+    if (!isAuthenticated) return;
 
+    try {
+      const response = await axios.get(`${baseUrl}/users/workspaces`, {
+        withCredentials: true,
+      });
+      setWorkspaces(response.data);
+    } catch (error) {
+      console.error("Error fetching workspaces:", error);
+    }
+  }, [isAuthenticated]);
   useEffect(() => {
-    console.log("====================================");
-    console.log("activeWorkspace has changed", activeWorkspace);
-    console.log("====================================");
-  }, [activeWorkspace]);
+    fetchWorkspaces();
+  }, [fetchWorkspaces]);
+
   useEffect(() => {
     if (
       preferences?.Current_Workspace &&
@@ -82,7 +101,7 @@ export const WorkspaceProvider = ({ children }) => {
       );
       console.log("ok", response.data);
       const { workspaces, sections } = response.data;
-      console.table("updated sections", sections)
+      console.table("updated sections", sections);
       setWorkspaces(workspaces);
       setSections(sections);
     } catch (error) {}

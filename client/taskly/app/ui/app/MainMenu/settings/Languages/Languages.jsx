@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
-import { useUser } from "../../../../../../context/UserContext";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import Circle from "../Circle";
 import DropdownMenu from "../DropdownMenu";
 import SectionTitle from "../SectionTitle";
 
 export default function Languages({ transitionStyles }) {
-  const { preferences } = useUser();
-  const { updateUserPreference } = useUserPreferences();
+  const { updateUserPreference, preferences } = useUserPreferences();
   const [settings, setSettings] = useState({
     language: preferences?.Language,
     tz: preferences?.TZ,

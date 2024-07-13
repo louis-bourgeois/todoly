@@ -16,9 +16,8 @@ export default function WorkspaceForm({
   visibility,
   setShowContent,
 }) {
-  const { workspaces, sections } = useUser();
   const { isTaskMenuOpen, toggleTaskMenu } = useMenu();
-  const { createWorkspace, updateWorkspace, setActiveWorkspace } =
+  const { createWorkspace, updateWorkspace, setActiveWorkspace, workspaces } =
     useWorkspace();
   const [workspace, setWorkspace] = useState(null);
   const [workspaceSections, setWorkspaceSections] = useState([]);

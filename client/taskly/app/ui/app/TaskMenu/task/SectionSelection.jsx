@@ -3,6 +3,7 @@ import { useError } from "../../../../../context/ErrorContext";
 import { useUser } from "../../../../../context/UserContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
+import { useTask } from "../../../../../context/TaskContext";
 
 export default function SectionSelection({
   linked_section_name,
@@ -17,8 +18,7 @@ export default function SectionSelection({
   const [editingSectionId, setEditingSectionId] = useState(null);
   const { handleError } = useError();
   const { currentWorkspace } = useWorkspace();
-  const { sections, modifySection, deleteSection, addSection, modifyTask } =
-    useUser();
+  const {modifyTask} = useTask()
   const [isEditingNewSection, setIsEditingNewSection] = useState(false);
   const [newSection, setNewSection] = useState({
     name: "",

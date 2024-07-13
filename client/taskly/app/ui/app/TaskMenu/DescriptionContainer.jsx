@@ -1,3 +1,4 @@
+import { useTask } from "../../../../context/TaskContext";
 import { useUser } from "../../../../context/UserContext";
 import TaskMenuSectionContainer from "./TaskMenuSectionContainer";
 
@@ -8,7 +9,7 @@ export default function DescriptionContainer({
   task,
   setTask,
 }) {
-  const { modifyTask } = useUser();
+  const { modifyTask } = useTask();
   const handleDescriptionChange = async (e) => {
     const value = e.target.value;
     setDescriptionValue(value);

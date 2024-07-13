@@ -1,11 +1,10 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useUser } from "../../../../context/UserContext";
 import { useUserPreferences } from "../../../../context/UserPreferencesContext";
 import DropdownMenu from "../MainMenu/settings/DropdownMenu";
 
 const ViewsMenu = ({ options, isOpen, onClose }) => {
-  const { updateUserPreference } = useUserPreferences();
-  const { preferences } = useUser();
+  const { updateUserPreference, preferences } = useUserPreferences();
+
   const [selectedOptions, setSelectedOptions] = useState({
     "Sort by": preferences?.Sort_By || "Importance",
     Show: preferences?.Show || "All tasks",

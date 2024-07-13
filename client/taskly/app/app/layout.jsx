@@ -7,16 +7,20 @@ import TaskMenu from "@/ui/app/TaskMenu/TaskMenu.jsx";
 import ViewsMenu from "@/ui/app/viewsMenu/ViewsMenu.jsx";
 import { redirect } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext.js";
 import { useMenu } from "../../context/MenuContext.js";
 import { NotificationsContext } from "../../context/NotificationsContext.js";
 import { useTask } from "../../context/TaskContext.js";
 import { useUser } from "../../context/UserContext.js";
+import { useUserPreferences } from "../../context/UserPreferencesContext.js";
 import { useWorkspace } from "../../context/WorkspaceContext.js";
 
 export default function AppLayout({ children }) {
-  const { user, loading, preferences } = useUser();
-  const { notificationsList } = useContext(NotificationsContext);
+  const { loading } = useAuth();
   const { activeTask } = useTask();
+  const { user } = useUser();
+  const { activeWorkspace } = useWorkspace();
+  const { preferences } = useUserPreferences();
   const {
     isTaskMenuOpen,
     toggleSearchMenu,
@@ -24,9 +28,8 @@ export default function AppLayout({ children }) {
     toggleViewsMenu,
     element,
   } = useMenu();
+  const { notificationsList } = useContext(NotificationsContext);
   const [hasRedirected, setHasRedirected] = useState(false);
-
-  const { activeWorkspace } = useWorkspace();
 
   useEffect(() => {
     console.log("isViewsMenuOpen changed:", isViewsMenuOpen);

@@ -4,6 +4,8 @@ import Slider from "react-slick";
 import { useError } from "../../../../../context/ErrorContext";
 import { useUser } from "../../../../../context/UserContext";
 import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
+import { useTag } from "../../../../../context/TagContext";
+import { useTask } from "../../../../../context/TaskContext";
 
 export default function TagSelect({
   id,
@@ -12,7 +14,8 @@ export default function TagSelect({
   setTaskTags,
   task,
 }) {
-  const { modifyTask, addTag, updateTag, tags } = useUser();
+  const {modifyTask} = useTask()
+  const {addTag, updateTag, tags} = useTag()
   const { handleError } = useError();
   const newTagInputRef = useRef(null);
   const [isAddingTag, setIsAddingTag] = useState(false);

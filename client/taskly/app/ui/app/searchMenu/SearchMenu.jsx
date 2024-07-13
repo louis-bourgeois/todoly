@@ -3,14 +3,20 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useMenu } from "../../../../context/MenuContext";
+import { useTag } from "../../../../context/TagContext";
+import { useTask } from "../../../../context/TaskContext";
 import { useUser } from "../../../../context/UserContext";
+import { useWorkspace } from "../../../../context/WorkspaceContext";
 import SearchInput from "./SearchInput";
 import SearchResults from "./SearchResults";
 
 const SearchMenu = () => {
   const router = useRouter();
-  const { tasks, workspaces, tags, addTag } = useUser();
-  const { toggleTaskMenu, isSearchMenuOpen, toggleSearchMenu } = useMenu();
+  const { addTag } = useUser();
+  const { tasks } = useTask();
+  const { tags } = useTag();
+  const { workspaces } = useWorkspace();
+ const { toggleTaskMenu, isSearchMenuOpen, toggleSearchMenu } = useMenu();
   const [query, setQuery] = useState("");
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);

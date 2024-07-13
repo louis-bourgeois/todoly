@@ -7,7 +7,7 @@ import AnchorPoint from "ui/AnchorPoint";
 import Form from "ui/Form";
 import Input from "ui/Input";
 import PasswordInputContainer from "ui/auth/PasswordInputContainer";
-import { useUser } from "../../context/UserContext";
+import { useAuth } from "../../context/AuthContext";
 export default function FormMenu({
   display,
   mainTitle,
@@ -28,7 +28,7 @@ export default function FormMenu({
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const [error, setError] = useState("");
-  const { login } = useUser();
+  const { login } = useAuth();
 
   const [passwordMatch, setPasswordMatch] = useState(true);
   const errors = [

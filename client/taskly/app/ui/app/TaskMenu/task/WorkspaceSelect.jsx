@@ -12,8 +12,8 @@ export default function WorkspaceSelect({
   menuOpen,
   setMenuOpen,
 }) {
-  const { workspaces, sections, modifyTask } = useUser();
-  const { currentWorkspace, setCurrentWorkspace } = useWorkspace();
+  const { modifyTask } = useUser();
+  const { currentWorkspace, setCurrentWorkspace, workspaces } = useWorkspace();
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
 
   useEffect(() => {

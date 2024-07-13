@@ -1,20 +1,20 @@
 "use client";
 import Task from "@/ui/app/Task/Task";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useMenu } from "../../../../context/MenuContext";
 import { useTask } from "../../../../context/TaskContext";
-import { useUser } from "../../../../context/UserContext";
 import { useWorkspace } from "../../../../context/WorkspaceContext";
 
 export default function SectionContainer({
   date = undefined,
   selectedWorkspace = undefined,
 }) {
-  const { tasks, sections } = useUser();
+  const { tasks } = useTask();
+
   const { currentWorkspace } = useWorkspace();
-  const { activeTask, setActiveTask } = useTask();
+
   const { toggleTaskMenu } = useMenu();
-  const [workspace, setWorkspace] = useState(currentWorkspace);
+
 
   const expandTask = (taskId) => {
     if (taskId !== activeTask) {

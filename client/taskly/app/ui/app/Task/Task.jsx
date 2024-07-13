@@ -1,6 +1,6 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useUser } from "../../../../context/UserContext";
+import { useTask } from "../../../../context/TaskContext";
 
 const colors = {
   todo: "bg-white",
@@ -9,7 +9,7 @@ const colors = {
 };
 
 export default function Task({ task, onTaskClick }) {
-  const { modifyTask } = useUser();
+  const { modifyTask } = useTask();
   const [taskStatus, setTaskStatus] = useState(task.status);
   const [taskTags, setTaskTags] = useState(() => JSON.parse(task.tags));
   const [taskDescription, setTaskDescription] = useState(task.description);

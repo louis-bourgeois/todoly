@@ -5,11 +5,10 @@ import SlideNav from "@/ui/app/currently/SlideNav";
 import SlickCarousel from "@/ui/app/SlickCarousel";
 import Slide from "@/ui/app/Slide";
 import { useMemo, useState } from "react";
-import { useUser } from "../../../context/UserContext";
 import { useWorkspace } from "../../../context/WorkspaceContext";
 
 export default function Page() {
-  const { workspaces, preferences } = useUser();
+  const { workspaces } = useWorkspace();
 
   const [dates, setDates] = useState([]);
   const { currentWorkspace } = useWorkspace();

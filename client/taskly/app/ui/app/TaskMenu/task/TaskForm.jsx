@@ -24,12 +24,10 @@ export default function TaskForm({
   elementType,
   handleElementTypeChange,
 }) {
-  const { addTask, modifyTask, deleteTask, tasks, sections, preferences } =
-    useUser();
   const { isTaskMenuOpen, toggleTaskMenu } = useMenu();
   const { currentWorkspace } = useWorkspace();
-  const { setActiveTask } = useTask();
-  const { updateUserPreference } = useUserPreferences();
+  const { setActiveTask, addTask, modifyTask, deleteTask, tasks } = useTask();
+  const { updateUserPreference, preferences } = useUserPreferences();
 
   const [task, setTask] = useState(null);
   const [titleValue, setTitleValue] = useState("");
