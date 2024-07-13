@@ -135,8 +135,9 @@ server/.pnp.*
 
 # client
 
-client/node_modules/
-client/taskly/node_modules
+node_modules/
+**/node_modules/
+client/taskly/node_modules/
 client/taskly/.next/
 client/taskly/.swc/
 client/taskly/.*.env
