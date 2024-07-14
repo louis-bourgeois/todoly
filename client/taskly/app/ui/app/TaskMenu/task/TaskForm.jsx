@@ -2,8 +2,8 @@
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useMenu } from "../../../../../context/MenuContext";
+import { useSection } from "../../../../../context/SectionContext";
 import { useTask } from "../../../../../context/TaskContext";
-import { useUser } from "../../../../../context/UserContext";
 import { useUserPreferences } from "../../../../../context/UserPreferencesContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import DatePicker from "../../DatePicker/DatePicker";
@@ -28,6 +28,7 @@ export default function TaskForm({
   const { currentWorkspace } = useWorkspace();
   const { setActiveTask, addTask, modifyTask, deleteTask, tasks } = useTask();
   const { updateUserPreference, preferences } = useUserPreferences();
+  const { sections } = useSection();
 
   const [task, setTask] = useState(null);
   const [titleValue, setTitleValue] = useState("");

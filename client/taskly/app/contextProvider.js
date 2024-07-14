@@ -15,20 +15,19 @@ const AppProviders = ({ children }) => (
       <ErrorProvider>
         <UserProvider>
           <UserPreferencesProvider>
-            <WorkspaceProvider>
-              <TaskProvider>
-                <SectionProvider>
+            <SectionProvider>
+              <WorkspaceProvider>
+                <TaskProvider>
                   <TagProvider>
                     <MenuProvider>{children}</MenuProvider>
                   </TagProvider>
-                </SectionProvider>
-              </TaskProvider>
-            </WorkspaceProvider>
+                </TaskProvider>
+              </WorkspaceProvider>
+            </SectionProvider>
           </UserPreferencesProvider>
         </UserProvider>
       </ErrorProvider>
     </NotificationsProvider>
   </AuthProvider>
 );
-
 export default AppProviders;

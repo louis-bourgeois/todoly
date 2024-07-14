@@ -1,10 +1,12 @@
 import { addDays, format, getDate } from "date-fns";
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useMenu } from "../../../../context/MenuContext"; // Import useMenu
 import { useWorkspace } from "../../../../context/WorkspaceContext";
 import { convertDateObjIntoDueDateType } from "../../../utils/utils";
 
 const DateHeader = ({ index, onDateChange }) => {
   const { setCurrentWorkspace, currentWorkspace, workspaces } = useWorkspace();
+  const { toggleViewsMenu } = useMenu(); // Use toggleViewsMenu from useMenu
 
   const { futureDate, dayLabel, dateNumber } = useMemo(() => {
     const today = new Date();
@@ -62,6 +64,27 @@ const DateHeader = ({ index, onDateChange }) => {
         {dayLabel || format(futureDate, "EEEE", dateOptions)}
       </h2>
       <div className="flex items-center gap-[0.7vw] relative">
+        {" "}
+        <button
+          onClick={toggleViewsMenu} // Trigger viewsMenu toggle
+          className="mr-4 p-2 rounded-full hover:bg-blue hover:bg-opacity-10 transition-colors duration-200 w-[50%] flex justify-between"
+        >
+          <svg
+            viewBox="0 0 24 24"
+            width="24"
+            height="24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+            className="text-blue"
+          >
+            <path
+              d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM19 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM5 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+              fill="currentColor"
+              stroke="currentColor"
+              strokeWidth="2"
+            />
+          </svg>
+        </button>
         <div
           className="addMenuElement cursor-pointer rounded-full flex items-center justify-between p-[1vw]"
           onClick={() => setMenuOpen((prev) => !prev)}

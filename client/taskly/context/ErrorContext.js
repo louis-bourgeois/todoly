@@ -8,8 +8,7 @@ export const ErrorProvider = ({ children }) => {
   const { addNotification, notificationsList } =
     useContext(NotificationsContext);
 
-  useEffect(() => {
-  }, [notificationsList]);
+  useEffect(() => {}, [notificationsList]);
 
   const handleError = (error) => {
     console.error(error); // Log the error for debugging

@@ -1,6 +1,18 @@
 import Tag from "../models/Tag.js";
 import User from "../models/User.js";
 
+export async function getTag(req, res) {
+  try {
+    const found_user = await User.findId(undefined, req.user.email, undefined);
+    const userId = found_user[0][0];
+    const tags = await Tag.find(userId);
+    return res.status(200).json({ tags: tags });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Error updating tag" });
+  }
+}
+
 export async function addTag(req, res) {
   try {
     const { name } = req.body;

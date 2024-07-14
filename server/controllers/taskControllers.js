@@ -3,6 +3,19 @@ import Task from "../models/Task.js";
 import User from "../models/User.js";
 import { isUUID } from "../utils/validate.js";
 
+export async function getTask(req, res) {
+  try {
+    const found_user = await User.findId(undefined, req.user.email, undefined);
+    const userId = found_user[0][0];
+
+    const tasks = await Task.find(false, false, userId);
+    return res.status(200).json({ tasks: tasks });
+  } catch (error) {
+    console.error(err);
+    return res.status(500).json({ message: "Error getting task" });
+  }
+}
+
 export async function updateTask(req, res) {
   console.log("task data received", req.body);
   try {
@@ -54,10 +67,10 @@ export async function addTask(req, res) {
     );
 
     io.emit("taskAdded", savedTask);
-
+    console.log("tasks : ", user_tasks);
     res.status(201).json({
       message: "Task added successfully",
-      tasks: user_tasks,
+      savedTask: savedTask,
       workspaces: updated_user_workspaces,
     });
   } catch (error) {

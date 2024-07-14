@@ -61,6 +61,11 @@ export default function Navbar() {
   }, [user, loading, router]);
 
   useEffect(() => {
+    console.log("====================================");
+    console.log("pref has changed", preferences);
+    console.log("====================================");
+  }, [preferences]);
+  useEffect(() => {
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
     return () => window.removeEventListener("resize", updateDimensions);
@@ -111,7 +116,7 @@ export default function Navbar() {
           >
             <Image
               ref={elementRef}
-              src="/user/photo_profil_google.jpeg"
+              src={`${user ? "/user/photo_profil_google.jpeg" : ""}`}
               alt="Profile Picture"
               width={150}
               height={150}

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
-import { useUser } from "../../../../../context/UserContext";
+import { useSection } from "../../../../../context/SectionContext";
 
 const fuseOptions = { keys: ["name"], threshold: 0.3 };
 
@@ -12,6 +12,7 @@ export default function SectionSelectContainer({
   workspaceSections,
   setWorkspaceSections,
 }) {
+  const { sections } = useSection();
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const inputRef = useRef(null);

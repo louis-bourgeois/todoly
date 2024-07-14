@@ -6,10 +6,10 @@ import SectionTitle from "../SectionTitle";
 export default function Layout({ transitionStyles }) {
   const { updateUserPreference, preferences } = useUserPreferences();
   const [defaultMainPage, setDefaultMainPage] = useState(
-    preferences?.Default_Main_Page
+    preferences.Default_Main_Page
   );
   const [homePageTitle, setHomePageTitle] = useState(
-    preferences?.Home_Page_Title
+    preferences.Home_Page_Title
   );
 
   const handleMainPageChange = (value) => {
@@ -22,7 +22,6 @@ export default function Layout({ transitionStyles }) {
     setHomePageTitle(value);
     updateUserPreference({ key: "Home_Page_Title", value: value });
   };
-
   return (
     <div
       className={`flex flex-col w-full px-[4%] mt-[4%] gap-[1.75vh] justify-start ${transitionStyles}`}

@@ -2,9 +2,24 @@ import Section from "../models/Section.js";
 import User from "../models/User.js";
 import { isUUID } from "../utils/validate.js";
 
+export async function getSection(req, res) {
+  try {
+    const found_user = await User.findId(undefined, req.user.email, undefined);
+    const userId = found_user[0][0];
+    const sections = await Section.find(
+      undefined,
+      undefined,
+      undefined,
+      userId
+    );
+    console.log("log of sections", sections);
+    return res.status(200).json({ sections: sections });
+  } catch (error) {}
+}
+
 export async function addSection(req, res) {
   try {
-    const user = req.body.user;
+    const user = req.user;
 
     const found_user = await User.findId(undefined, user.email, undefined);
 
@@ -53,7 +68,7 @@ export async function updateSection(req, res) {
 
     const user_sections = [];
     const user_workspaces = await User.findWorkspacesByUserId(userId);
-  
+
     await Promise.all(
       user_workspaces.map(async (workspace) => {
         const sections = await Section.find(workspace.id);

@@ -32,21 +32,26 @@ class Section {
   static async find(
     workspaceId = undefined,
     name = undefined,
-    sectionId = undefined
+    sectionId = undefined,
+    userId = undefined
   ) {
-    if (!workspaceId && !sectionId) {
+    if (!workspaceId && !sectionId && !userId) {
       throw new Error(
         "You have to provide a parameter (name | workspaceId or sectionId)!"
       );
     }
     try {
-      const query = sectionId
+      const query = userId
+        ? "SELECT * FROM section WHERE user_id = $1"
+        : sectionId
         ? "SELECT * FROM section WHERE id = $1"
         : name
         ? "SELECT * FROM section WHERE name = $1 AND workspace_id = $2"
         : "SELECT * FROM section WHERE workspace_id = $1";
 
-      const params = sectionId
+      const params = userId
+        ? [userId]
+        : sectionId
         ? [sectionId]
         : name
         ? [name, workspaceId]

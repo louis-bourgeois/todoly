@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSection } from "../../../../../context/SectionContext";
 import { useUser } from "../../../../../context/UserContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import TaskMenuButton from "../TaskMenuButton";
@@ -13,6 +14,7 @@ export default function WorkspaceSelect({
   setMenuOpen,
 }) {
   const { modifyTask } = useUser();
+  const { sections } = useSection();
   const { currentWorkspace, setCurrentWorkspace, workspaces } = useWorkspace();
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
 

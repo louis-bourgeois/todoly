@@ -4,16 +4,18 @@ import {
   addTaskToWorkspace,
   checkTaskInWorkspace,
   deleteTask,
+  getTask,
   removeTaskFromWorkspace,
   updateTask,
 } from "../controllers/taskControllers.js";
 
 const router = express.Router();
 
+router.get("/", getTask);
+
 router.post("/update", updateTask);
 
 router.post("/add", addTask);
-
 
 router.delete("/delete/:id", deleteTask);
 

@@ -7,6 +7,8 @@ import {
 
 const router = express.Router();
 
+router.get("/", getUserPreferences);
+
 router.post("/update", updatePreference);
 
 router.post("/", addPreference);

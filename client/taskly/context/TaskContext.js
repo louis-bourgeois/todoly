@@ -40,9 +40,9 @@ export const TaskProvider = ({ children }) => {
         { taskData },
         { withCredentials: true }
       );
-      if (response.status === 201 && response.data.task) {
-        setTasks((prevTasks) => [...prevTasks, response.data.task]);
-        socket.emit("taskAdded", response.data.task);
+      if (response.status === 201 && response.data.savedTask) {
+        setTasks((prev) => [...prev, response.data.savedTask[0]]);
+        socket.emit("taskAdded", response.data.savedTask);
       }
     } catch (error) {
       console.error("Error adding task:", error);
@@ -107,6 +107,9 @@ export const TaskProvider = ({ children }) => {
       socket.off("taskDeleted", handleTaskDeleted);
     };
   }, [fetchTasks]);
+  useEffect(() => {
+    console.log("task has updated", [tasks]);
+  });
 
   return (
     <TaskContext.Provider

@@ -1,7 +1,14 @@
 import express from "express";
-import { addTag, deleteTag, updateTag } from "../controllers/tagControllers.js";
+import {
+  addTag,
+  deleteTag,
+  getTag,
+  updateTag,
+} from "../controllers/tagControllers.js";
 
 const router = express.Router();
+
+router.get("/", getTag);
 
 router.post("/update", updateTag);
 

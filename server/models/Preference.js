@@ -24,7 +24,6 @@ class Preference {
   }
 
   static async update(userId, key, newValue) {
-
     const client = await pool.connect();
     try {
       const query =
@@ -45,6 +44,7 @@ class Preference {
           "SELECT * FROM user_preferences WHERE user_id = $1",
           [userId]
         );
+        console.log(result.rows);
         return result.rows;
       } else {
         const placeholders = keys.map((_, index) => `$${index + 2}`).join(", ");

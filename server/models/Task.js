@@ -108,9 +108,9 @@ class Task {
       client.release();
     }
   }
-  static async find(workspaceId = false, taskId = false) {
+  static async find(workspaceId = false, taskId = false, userId = false) {
     let query = `
-      SELECT t.id, t.creation_date, tp.title, tp.due_date, tp.status, tp.priority, tp.tags, tp.description, t.linked_section, tw.workspace_id
+      SELECT t.*,  tp.*, tw.*
       FROM task t
       INNER JOIN task_properties tp ON t.id = tp.task_id
       INNER JOIN task_workspaces tw ON t.id = tw.task_id
@@ -127,6 +127,9 @@ class Task {
     } else if (taskId) {
       query += " WHERE t.id = $1";
       queryParams = [taskId];
+    } else if (userId) {
+      query += "WHERE t.user_id = $1";
+      queryParams = [userId];
     } else {
       return [];
     }

@@ -5,14 +5,11 @@ import SlickCarousel from "@/ui/app/SlickCarousel";
 import Slide from "@/ui/app/Slide";
 import { useEffect, useState } from "react";
 import { useMenu } from "../../../context/MenuContext";
-import { useUserPreferences } from "../../../context/UserPreferencesContext";
 import { useWorkspace } from "../../../context/WorkspaceContext";
 
 export default function Page() {
   const { workspaces } = useWorkspace();
-  const { preferences } = useUserPreferences;
   const { toggleTaskMenu } = useMenu();
-
   const { setActiveWorkspace } = useWorkspace();
   const [expandedWorkspace, setExpandedWorkspace] = useState(null);
   const [filteredTasks, setFilteredTasks] = useState({});
@@ -35,38 +32,6 @@ export default function Page() {
       return w.tasks.map((task) => ({ ...task, workspace_id: w.id }));
     });
 
-    // Sort tasks
-    switch (preferences.Sort_By) {
-      case "Creation date":
-        allTasks.sort(
-          (a, b) => new Date(b.creation_date) - new Date(a.creation_date)
-        );
-        break;
-      case "Tags":
-        // TODO / Implement here
-        break;
-      case "Importance":
-        allTasks.sort((a, b) => b.priority - a.priority);
-        break;
-      case "Last updated":
-        // TODO / Implement here ex: je pense on fait comme ça
-        allTasks.sort(
-          (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
-        );
-        break;
-    }
-
-    // Filter tasks
-    switch (preferences.Show) {
-      case "Completed only":
-        allTasks = allTasks.filter((task) => task.status === "done");
-        break;
-      case "Todo only":
-        allTasks = allTasks.filter((task) => task.status !== "done");
-        break;
-      // 'All tasks' doesn't need filtering
-    }
-
     // Group tasks by workspace
     const tasksByWorkspace = allTasks.reduce((acc, task) => {
       if (!acc[task.workspace_id]) {
@@ -77,7 +42,7 @@ export default function Page() {
     }, {});
 
     setFilteredTasks(tasksByWorkspace);
-  }, [workspaces, preferences.Sort_By, preferences.Show]);
+  }, [workspaces]);
 
   const handleAddWorkspace = () => {
     toggleTaskMenu("", "", "Workspace");

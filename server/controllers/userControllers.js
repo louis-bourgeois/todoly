@@ -114,8 +114,10 @@ export const findUserbyUsername = async (req, res) => {
 };
 
 export const getWorkspacesByUserId = async (req, res) => {
+  const found_user = await User.findId(undefined, req.user.email, undefined);
+  const userId = found_user[0][0];
   try {
-    const workspaces = await User.findWorkspacesByUserId();
+    const workspaces = await User.findWorkspacesByUserId(userId);
 
     res.status(200).json(workspaces);
   } catch (error) {

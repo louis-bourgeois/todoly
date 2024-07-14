@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMenu } from "../../../../../context/MenuContext";
-import { useUser } from "../../../../../context/UserContext";
+import { useSection } from "../../../../../context/SectionContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import CollaboratorSelectContainer from "./CollaboratorSelectContainer";
 import ElementPickerLibelle from "./ElementPickerLibelle";
@@ -19,6 +19,7 @@ export default function WorkspaceForm({
   const { isTaskMenuOpen, toggleTaskMenu } = useMenu();
   const { createWorkspace, updateWorkspace, setActiveWorkspace, workspaces } =
     useWorkspace();
+  const { sections } = useSection();
   const [workspace, setWorkspace] = useState(null);
   const [workspaceSections, setWorkspaceSections] = useState([]);
   const [collaborators, setCollaborators] = useState([]);

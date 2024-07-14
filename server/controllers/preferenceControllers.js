@@ -36,10 +36,14 @@ export async function addPreference(req, res) {
 }
 
 export async function getUserPreferences(req, res) {
+
   try {
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
-    await Preference.getUserPreferences(userId, req.body.keys);
+    const keys = req.body.keys || "*";
+    const preferences = await Preference.getUserPreferences(userId, keys);
+    console.log("end", preferences);
+    return res.status(200).json({ preferences: preferences });
   } catch (error) {
     res
       .status(500)

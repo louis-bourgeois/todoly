@@ -2,6 +2,7 @@ import { useUserPreferences } from "../../../../context/UserPreferencesContext";
 
 export default function ElementForm({ transitionStyles, id, visibility }) {
   const { preferences } = useUserPreferences();
+  const { sections } = useSection();
   const { setActiveTask, addTask, modifyTask, deleteTask, tasks } = useTask();
   const [task, setTask] = useState(null);
   const [titleValue, setTitleValue] = useState("");

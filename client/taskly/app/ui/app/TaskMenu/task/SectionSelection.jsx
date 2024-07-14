@@ -1,9 +1,9 @@
 import { useRef, useState } from "react";
 import { useError } from "../../../../../context/ErrorContext";
-import { useUser } from "../../../../../context/UserContext";
+import { useSection } from "../../../../../context/SectionContext";
+import { useTask } from "../../../../../context/TaskContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
-import { useTask } from "../../../../../context/TaskContext";
 
 export default function SectionSelection({
   linked_section_name,
@@ -17,8 +17,9 @@ export default function SectionSelection({
 }) {
   const [editingSectionId, setEditingSectionId] = useState(null);
   const { handleError } = useError();
+  const { sections, addSection, modifySection, deleteSection } = useSection();
   const { currentWorkspace } = useWorkspace();
-  const {modifyTask} = useTask()
+  const { modifyTask } = useTask();
   const [isEditingNewSection, setIsEditingNewSection] = useState(false);
   const [newSection, setNewSection] = useState({
     name: "",

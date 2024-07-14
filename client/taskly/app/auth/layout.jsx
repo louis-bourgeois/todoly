@@ -1,20 +1,15 @@
 "use client";
 import { redirect } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 import { useUser } from "../../context/UserContext";
+import { useUserPreferences } from "../../context/UserPreferencesContext";
 export default function AuthLayout({ children }) {
-  const {loading} = useAuth();
+  const { loading } = useAuth();
 
-  const { user} = useUser();
+  const { user } = useUser();
 
-  const {
-
-    preferences,
-
-  } = useUserPreferences();
-
-  
-  const { handleError } = useError();
+  const { preferences } = useUserPreferences();
 
   const [isChecking, setIsChecking] = useState(true);
   useEffect(() => {
