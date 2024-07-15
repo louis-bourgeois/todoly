@@ -8,7 +8,6 @@ const nextConfig = {
         destination: "/",
         permanent: true,
       },
-      { source: "/app", destination: "/", permanent: true },
     ];
   },
 };

@@ -18,9 +18,10 @@ export const useTask = () => useContext(TaskContext);
 
 export const TaskProvider = ({ children }) => {
   const [tasks, setTasks] = useState([]);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, checkAuth } = useAuth();
   const [activeTask, setActiveTask] = useState(null);
   const fetchTasks = useCallback(async () => {
+
     if (!isAuthenticated) return;
 
     try {

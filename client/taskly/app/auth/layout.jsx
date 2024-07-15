@@ -1,28 +1,34 @@
 "use client";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useUser } from "../../context/UserContext";
 import { useUserPreferences } from "../../context/UserPreferencesContext";
+
 export default function AuthLayout({ children }) {
-  const { loading } = useAuth();
-
-  const { user } = useUser();
-
-  const { preferences } = useUserPreferences();
-
+  const router = useRouter();
+  const { loading, isAuthenticated, checkAuth } = useAuth();
+  const { preferences, loading: preferencesLoading } = useUserPreferences();
   const [isChecking, setIsChecking] = useState(true);
+
   useEffect(() => {
-    if (user && !loading) {
-      if (preferences.Default_Main_Page) {
-        redirect("/app/" + preferences.Default_Main_Page.toLowerCase());
+    const verifyAuth = async () => {
+      if (loading) {
+        await checkAuth();
       }
-    } else {
-      setIsChecking(false);
-    }
-  }, [user, loading]);
-  if (isChecking) {
-    return null;
+
+      if (isAuthenticated && preferencesLoading) {
+        router.push(`/app/${preferences.Default_Home_Page.toLowerCase()}`);
+      } else {
+        setIsChecking(false);
+      }
+    };
+
+    verifyAuth();
+  }, [isAuthenticated, loading, preferences, checkAuth, router]);
+
+  if (isChecking || loading) {
+    return <div>Loading...</div>; // ou un composant de chargement plus élaboré
   }
+
   return <>{children}</>;
 }

@@ -10,11 +10,19 @@ module.exports = {
       zIndex: {
         40: "40",
       },
-      screens: {
-        "3xl": "1919px",
-        "4xl": "2199px",
-        "5xl": "2559px",
+      boxShadow: {
+        shadow_01: "0px 6px 8px 3px rgba(0, 0, 0, 0.25)",
       },
+      screens: {
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1536px",
+        "3xl": "1720px",
+        "4xl": "1920px",
+      },
+
       fontFamily: {
         poppins: ["var(--font-poppins)"],
         inter: ["var(--font-inter)"],

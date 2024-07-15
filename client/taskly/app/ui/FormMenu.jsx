@@ -8,6 +8,7 @@ import Form from "ui/Form";
 import Input from "ui/Input";
 import PasswordInputContainer from "ui/auth/PasswordInputContainer";
 import { useAuth } from "../../context/AuthContext";
+import { useUserPreferences } from "../../context/UserPreferencesContext";
 export default function FormMenu({
   display,
   mainTitle,
@@ -24,6 +25,7 @@ export default function FormMenu({
   newUser,
 }) {
   const router = useRouter();
+  const { preferences } = useUserPreferences();
   const [formData, setFormData] = useState(formDataArray);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
@@ -105,7 +107,8 @@ export default function FormMenu({
       case "Log in":
         const res = await login(formData);
         if (res && res.status === 200) {
-          router.push("/app");
+          console.log("bah oe mdrr");
+          router.push("/app/currently");
         } else {
           console.log(res.status);
           switch (res.status) {
@@ -116,14 +119,14 @@ export default function FormMenu({
               setError("unauthorized");
               break;
             case 500:
-              setError("Internal Servor Error");
+              setError("Internal Server Error");
               break;
           }
-
-          return null;
         }
+        break;
     }
   };
+
   const cleanFormData = (formData) => {
     const {
       confirm_password,
@@ -281,6 +284,7 @@ export default function FormMenu({
             value={submitValue}
             additionalStyles="p-2 border-black text-3xl mt-[2rem] font-black w-full cursor-pointer hover:scale-105 transition ease-in-out"
             disabled={!passwordMatch}
+      
           />
         </Form>{" "}
         <Link href={bottomMessageHREF} passHref legacyBehavior>

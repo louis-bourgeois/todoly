@@ -16,11 +16,11 @@ export const useTag = () => useContext(TagContext);
 
 export const TagProvider = ({ children }) => {
   const [tags, setTags] = useState([]);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, checkAuth } = useAuth();
 
   const fetchTags = useCallback(async () => {
-    if (!isAuthenticated) return;
 
+    if (!isAuthenticated) return;
     try {
       const response = await axios.get(`${baseUrl}/tags`, {
         withCredentials: true,

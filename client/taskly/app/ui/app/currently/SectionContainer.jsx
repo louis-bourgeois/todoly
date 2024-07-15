@@ -39,7 +39,6 @@ export default function SectionContainer({
   );
 
   useEffect(() => {
-    console.log("Filtered sections:", filteredSections);
     const taskMap = new Map();
     let allTasks = tasks;
 
@@ -87,10 +86,6 @@ export default function SectionContainer({
     });
     setSectionsTask(new Map(taskMap));
   }, [tasks, filteredSections, date, preferences]);
-
-  useEffect(() => {
-    console.log("Tasks or sections updated", tasks, sections);
-  }, [tasks, sections]);
 
   return (
     <div className="w-full h-[87.5%] overflow-x-auto">

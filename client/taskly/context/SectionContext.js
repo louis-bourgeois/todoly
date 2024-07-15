@@ -16,9 +16,10 @@ export const useSection = () => useContext(SectionContext);
 
 export const SectionProvider = ({ children }) => {
   const [sections, setSections] = useState([]);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, checkAuth } = useAuth();
 
   const fetchSections = useCallback(async () => {
+
     if (!isAuthenticated) return;
 
     try {

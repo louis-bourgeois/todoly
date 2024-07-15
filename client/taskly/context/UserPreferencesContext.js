@@ -18,7 +18,8 @@ export const useUserPreferences = () => useContext(UserPreferencesContext);
 
 export const UserPreferencesProvider = ({ children }) => {
   const [preferences, setPreferences] = useState({});
-  const { isAuthenticated } = useAuth();
+  const [loading, setLoading] = useState(true);
+  const { isAuthenticated, checkAuth } = useAuth();
   const preferencesLoaded = useRef(false);
 
   function transformPreferences(preferencesArray) {
@@ -29,9 +30,12 @@ export const UserPreferencesProvider = ({ children }) => {
   }
 
   const fetchPreferences = useCallback(async () => {
-    console.log("fetch");
-    if (!isAuthenticated || preferencesLoaded.current) return;
+    if (!isAuthenticated || preferencesLoaded.current) {
+      setLoading(false);
+      return;
+    }
 
+    setLoading(true);
     try {
       const response = await axios.get(`${baseUrl}/preferences`, {
         withCredentials: true,
@@ -40,20 +44,21 @@ export const UserPreferencesProvider = ({ children }) => {
       preferencesLoaded.current = true;
     } catch (error) {
       console.error("Error fetching preferences:", error);
+    } finally {
+      setLoading(false);
     }
-  }, [isAuthenticated, setPreferences]);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     fetchPreferences();
   }, [fetchPreferences]);
 
   useEffect(() => {
-    console.log("====================================");
-    console.log("update preferences", preferences);
-    console.log("====================================");
+    console.log("Preferences updated:", preferences);
   }, [preferences]);
 
   const addUserPreference = async (data) => {
+    setLoading(true);
     try {
       const { key, value } = data;
       await axios.post(
@@ -64,39 +69,44 @@ export const UserPreferencesProvider = ({ children }) => {
       setPreferences((prev) => ({ ...prev, [key]: value }));
     } catch (error) {
       console.error("Failed to add user preference:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const updateUserPreference = async (newData) => {
-    console.trace("update");
+    setLoading(true);
     try {
       const { key, value } = newData;
-      const response = await axios.post(
+      await axios.post(
         `${baseUrl}/preferences/update`,
         { key, value },
         { withCredentials: true }
       );
-
       setPreferences((prev) => ({
         ...prev,
         [key]: value,
       }));
     } catch (error) {
       console.error("Failed to update user preference:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const getUserPreferences = async (keys = "*") => {
-    console.log("get");
+    setLoading(true);
     try {
       const response = await axios.get(
         `${baseUrl}/preferences/`,
         { params: { keys } },
         { withCredentials: true }
       );
+      setLoading(false);
       return response.data;
     } catch (error) {
       console.error("Failed to get user preferences:", error);
+      setLoading(false);
       return null;
     }
   };
@@ -108,8 +118,9 @@ export const UserPreferencesProvider = ({ children }) => {
       getUserPreferences,
       preferences,
       setPreferences,
+      loading,
     }),
-    [preferences]
+    [preferences, loading]
   );
 
   return (

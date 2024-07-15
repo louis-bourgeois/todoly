@@ -2,7 +2,8 @@
   "compilerOptions": {
     "paths": {
       "@/*": ["./app/*"],
-      "ui/*": ["./app/ui/*"]
+      "ui/*": ["./app/ui/*"],
+      "mobile/*": ["./app/ui/_mobile"]
     }
   }
 }

@@ -17,7 +17,7 @@ const TITLES = {
 };
 
 export default function Navbar() {
-  const router = useRouter();
+
   const { user, loading } = useUser();
   const { preferences } = useUserPreferences();
   const { toggleTaskMenu, toggleSearchMenu } = useMenu();
@@ -53,18 +53,6 @@ export default function Navbar() {
       setMarginTop(adjustedTop);
     }
   }, [showMenu]);
-
-  useEffect(() => {
-    if (!user && !loading) {
-      router.push("/auth");
-    }
-  }, [user, loading, router]);
-
-  useEffect(() => {
-    console.log("====================================");
-    console.log("pref has changed", preferences);
-    console.log("====================================");
-  }, [preferences]);
   useEffect(() => {
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
@@ -130,7 +118,7 @@ export default function Navbar() {
           </div>
         </li>
         <li>
-          <h1 className="text-[4em] font-black">
+          <h1 className="text-[3em] font-black">
             {preferences.Home_Page_Title ===
             "Depending on the time of day + name" ? (
               <>

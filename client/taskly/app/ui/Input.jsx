@@ -16,6 +16,7 @@ export default function Input({
   return (
     <input
       id={id}
+      onTouchStart={(e) => e.target.click()}
       value={value}
       name={name}
       type={
