@@ -6,7 +6,7 @@ const Div = forwardRef(({ children, styles, absolute, notBorder, _id = "", ...pr
       id={_id}
       ref={ref}
       className={`${styles} ${absolute ? "absolute" : ""} shadow-xl ${
-        notBorder ? "" : "border border-blue"
+        notBorder ? "" : "border border-dominant"
       }`}
       {...props} // Passer les attributs supplémentaires au div
     >

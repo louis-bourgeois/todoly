@@ -96,7 +96,7 @@ export default function SectionSelection({
 
   return (
     <TaskMenuSectionContainer othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer">
-      <h2 className="pl-[4%] font-bold text-4xl">
+      <h2 className="pl-[4%] font-bold text-2xl">
         {linked_section_name || "Section"}
       </h2>
       <svg
@@ -127,7 +127,7 @@ export default function SectionSelection({
         }`}
       >
         <div
-          className="opacity-100 p-2 cursor-pointer hover:text-blue transition transition-color"
+          className="opacity-100 p-2 cursor-pointer hover:text-dominant transition transition-color"
           onClick={handleAddSection}
         >
           Add Section
@@ -149,7 +149,7 @@ export default function SectionSelection({
                 />
               ) : (
                 <span
-                  className="cursor-pointer flex-grow p-1 hover:text-blue"
+                  className="cursor-pointer flex-grow p-1 hover:text-dominant"
                   onClick={() => {
                     handleSelectSection(section);
                     if (id) {
@@ -164,7 +164,7 @@ export default function SectionSelection({
                 <>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="cursor-pointer hover:text-blue ml-2 transition transition-color"
+                    className="cursor-pointer hover:text-dominant ml-2 transition transition-color"
                     viewBox="0 0 24 24"
                     width="24"
                     height="24"
@@ -180,7 +180,7 @@ export default function SectionSelection({
                     />
                   </svg>
                   <button
-                    className="ml-2 hover:text-blue"
+                    className="ml-2 hover:text-dominant"
                     onClick={() => setEditingSectionId(section.id)}
                   >
                     Edit

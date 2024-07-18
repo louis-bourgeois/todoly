@@ -353,3 +353,16 @@ input:checked + .slider:before {
   border: 0.3vw solid white;
   border-radius: 100vw;
 }
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+}
+
+input[type="date"] {
+  padding-right: 2.5rem;
+}
+
+input[type="date"]::-ms-clear,
+input[type="date"]::-ms-reveal {
+  display: none;
+}

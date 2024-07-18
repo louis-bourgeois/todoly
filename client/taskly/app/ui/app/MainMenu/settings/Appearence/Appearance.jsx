@@ -86,7 +86,7 @@ export default function Appearance({ transitionStyles }) {
                 className="rounded-[10px] w-[87.5%] h-[5vh]"
               ></div>
               <Circle
-                borderColor="blue"
+                borderColor="dominant"
                 onColorChange={onColorChange}
                 isSelected={selectedCircle === index}
               />

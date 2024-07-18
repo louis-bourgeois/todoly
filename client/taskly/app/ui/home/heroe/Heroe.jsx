@@ -10,11 +10,11 @@ export default function Heroe({ subtitle, darkMode }) {
           }
         >
           Clarify{" "}
-          <span className={darkMode ? " text-blue" : " text-[#d2a5a5]"}>
+          <span className={darkMode ? " text-dominant" : " text-[#d2a5a5]"}>
             Today
           </span>
           , Simplify{" "}
-          <span className={darkMode ? " text-blue" : " text-[#d2a5a5]"}>
+          <span className={darkMode ? " text-dominant" : " text-[#d2a5a5]"}>
             Tommorow
           </span>
           .

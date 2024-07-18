@@ -40,7 +40,7 @@ export default function ElementPickerLibelle({
         {elements.map((el) => (
           <div
             key={el}
-            className="opacity-100 p-2 cursor-pointer hover:text-blue transition transition-color"
+            className="opacity-100 p-2 cursor-pointer hover:text-dominant transition transition-color"
             onClick={() => handleElementTypeChange(el)}
           >
             {el.charAt(0).toUpperCase() + el.slice(1)}

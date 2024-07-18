@@ -247,7 +247,7 @@ export default function TaskForm({
               othersStyles={`w-full h-[25%] items-center justify-left font-bold text-4xl`}
               flex
             >
-              <span>{id ? "Delete" : "Create"}</span>
+              <span className="text-2xl">{id ? "Delete" : "Create"}</span>
             </TaskMenuButton>
           </div>
         </div>

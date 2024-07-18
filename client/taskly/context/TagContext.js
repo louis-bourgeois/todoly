@@ -19,7 +19,6 @@ export const TagProvider = ({ children }) => {
   const { isAuthenticated, checkAuth } = useAuth();
 
   const fetchTags = useCallback(async () => {
-
     if (!isAuthenticated) return;
     try {
       const response = await axios.get(`${baseUrl}/tags`, {
@@ -36,12 +35,14 @@ export const TagProvider = ({ children }) => {
   }, [fetchTags]);
 
   const addTag = useCallback(async (name) => {
+    console.log(name);
     try {
       const response = await axios.post(
         `${baseUrl}/tags/add`,
         { name },
         { withCredentials: true }
       );
+      console.log(response.data, response.status);
       if (response.status === 200 && response.data.tags) {
         setTags(response.data.tags);
         return response.data.tags;

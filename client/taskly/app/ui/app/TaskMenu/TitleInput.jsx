@@ -36,8 +36,6 @@ export default function TitleInput({
 
   const getTextSizeClass = (text) => {
     const textSizeClasses = [
-      { length: 4, class: "text-7xl" },
-      { length: 5, class: "text-6xl" },
       { length: 6, class: "text-5xl" },
       { length: 8, class: "text-4xl" },
       { length: 10, class: "text-3xl" },
@@ -64,7 +62,7 @@ export default function TitleInput({
         onChange={(e) => handleTitleInputChange(e)}
         className={`${
           !visibility && "cursor-default"
-        } bg-transparent text-center w-full p-8 focus:outline-none text-blue font-bold placeholder-blue ${getTextSizeClass(
+        } bg-transparent text-center w-full p-8 focus:outline-none text-dominant font-bold placeholder-dominant ${getTextSizeClass(
           titleValue
         )}`}
       />

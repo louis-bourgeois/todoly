@@ -204,8 +204,8 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
                   ? isPastDate(day)
                     ? "text-gray-400 cursor-default"
                     : isSelectedDate(day)
-                    ? "text-blue"
-                    : "text-black hover:text-blue hover:scale-110 active:scale-95"
+                    ? "text-dominant"
+                    : "text-black hover:text-dominant hover:scale-110 active:scale-95"
                   : "text-gray-300 cursor-default opacity-0"
               }`}
               onClick={() =>

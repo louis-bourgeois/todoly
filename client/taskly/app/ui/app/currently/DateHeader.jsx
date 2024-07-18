@@ -57,17 +57,17 @@ const DateHeader = ({ index, onDateChange }) => {
 
   return (
     <div className="relative flex w-full justify-between items-center">
-      <h2 className="select-none text-5xl font-extralight">
+      <h2 className="select-none text-3xl font-extralight">
         {(dateNumber < 10 ? "0" : "") + dateNumber}
       </h2>
-      <h2 className="select-none text-5xl font-bold">
+      <h2 className="select-none text-3xl font-bold">
         {dayLabel || format(futureDate, "EEEE", dateOptions)}
       </h2>
       <div className="flex items-center gap-[0.7vw] relative">
         {" "}
         <button
           onClick={toggleViewsMenu} // Trigger viewsMenu toggle
-          className="mr-4 p-2 rounded-full hover:bg-blue hover:bg-opacity-10 transition-colors duration-200 w-[50%] flex justify-between"
+          className="mr-4 p-2 rounded-full hover:bg-dominant hover:bg-opacity-10 transition-colors duration-200 w-[50%] flex justify-between"
         >
           <svg
             viewBox="0 0 24 24"
@@ -75,7 +75,7 @@ const DateHeader = ({ index, onDateChange }) => {
             height="24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="text-blue"
+            className="text-dominant"
           >
             <path
               d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM19 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM5 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
@@ -122,7 +122,7 @@ const DateHeader = ({ index, onDateChange }) => {
               <button
                 key={index}
                 onClick={() => handleCurrentWorkspaceDropdownClick(name)}
-                className="hover:text-blue transition-colors duration-300"
+                className="hover:text-dominant transition-colors duration-300"
               >
                 {name}
               </button>

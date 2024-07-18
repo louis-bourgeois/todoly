@@ -34,7 +34,14 @@ export default function SectionContainer({
   );
 
   const filteredSections = useMemo(
-    () => sections.filter((section) => section.workspace_id === workspace),
+    () =>
+      sections
+        .filter((section) => section.workspace_id === workspace)
+        .sort((a, b) => {
+          if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
+          if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
+          return 0;
+        }),
     [sections, workspace]
   );
 
@@ -88,7 +95,7 @@ export default function SectionContainer({
   }, [tasks, filteredSections, date, preferences]);
 
   return (
-    <div className="w-full h-[87.5%] overflow-x-auto">
+    <div className="w-full h-[87.5%] overflow-x-auto ">
       <div className="flex h-full">
         {filteredSections.map((section) => {
           const sectionTasksList = sectionTasks.get(section.id) || [];
@@ -104,7 +111,7 @@ export default function SectionContainer({
             >
               <div className="sticky top-0 z-[300] pb-4 bg-white bg-opacity-70 backdrop-filter backdrop-blur-sm border-b border-gray-200 shadow-sm rounded-[20px] mt-2 p-5">
                 <div className="flex justify-between items-center w-full">
-                  <h1 className="font-bold text-4xl">{section.name}</h1>
+                  <h1 className="font-bold text-xl">{section.name}</h1>
                 </div>
               </div>
               <div className="flex flex-col gap-[2vh]">

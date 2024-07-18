@@ -22,7 +22,7 @@ const SearchResults = ({ results, selectedIndex, onItemClick }) => {
                 group relative overflow-hidden w-full rounded-[0.5vw] mx-[1vw] my-[0.5vw] px-[2vw] py-[1vw] text-[1vw] cursor-pointer transition-all duration-300 ease-in-out`}
               >
                 <span className="relative z-10">{item.title}</span>
-                <span className="absolute inset-0 bg-blue-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" />
+                <span className="absolute inset-0 bg-dominant-100 opacity-0 group-hover:opacity-100 transition-opacity duration-300 ease-in-out" />
               </li>
             </div>
           ))}

@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useTask } from "./TaskContext";
 import { useWorkspace } from "./WorkspaceContext";
 
@@ -17,11 +17,15 @@ export const MenuProvider = ({ children }) => {
   const [isTaskMenuOpen, setIsTaskMenuOpen] = useState(false);
   const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(false);
   const [isViewsMenuOpen, setIsViewsMenuOpen] = useState(false);
+  const [isMobileViewsMenuOpen, setIsMobileViewsMenuOpen] = useState(false);
   const [element, setElement] = useState("");
+  const [cardType, setCardType] = useState("default");
 
   const { setActiveTask } = useTask();
   const { setActiveWorkspace } = useWorkspace();
-
+  useEffect(() => {
+    console.log("changed : ", isMobileViewsMenuOpen);
+  }, [isMobileViewsMenuOpen]);
   const toggleTaskMenu = (taskId = "", workspaceId = "", el) => {
     const availableElements = ["Workspace", "Task"];
     if (el !== "" && availableElements.includes(el)) {
@@ -54,6 +58,10 @@ export const MenuProvider = ({ children }) => {
     toggleViewsMenu,
     element,
     setElement,
+    isMobileViewsMenuOpen,
+    setIsMobileViewsMenuOpen,
+    cardType,
+    setCardType,
   };
 
   return <MenuContext.Provider value={value}>{children}</MenuContext.Provider>;

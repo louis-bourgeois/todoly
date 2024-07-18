@@ -2,10 +2,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import Slider from "react-slick";
 import { useError } from "../../../../../context/ErrorContext";
-import { useUser } from "../../../../../context/UserContext";
-import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
 import { useTag } from "../../../../../context/TagContext";
 import { useTask } from "../../../../../context/TaskContext";
+import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
 
 export default function TagSelect({
   id,
@@ -14,8 +13,8 @@ export default function TagSelect({
   setTaskTags,
   task,
 }) {
-  const {modifyTask} = useTask()
-  const {addTag, updateTag, tags} = useTag()
+  const { modifyTask } = useTask();
+  const { addTag, updateTag, tags } = useTag();
   const { handleError } = useError();
   const newTagInputRef = useRef(null);
   const [isAddingTag, setIsAddingTag] = useState(false);
@@ -157,7 +156,7 @@ export default function TagSelect({
       othersStyles={`justify-between ${id ? "h-[98%]" : "h-[77.5%]"}`}
     >
       <div className="flex justify-between items-center m-[1%]">
-        <h2 className="p-[3%] font-bold text-4xl">Tag(s)</h2>
+        <h2 className="p-[3%] font-bold text-2xl">Tag(s)</h2>
         <button
           className="justify-center items-center font-bold"
           onClick={() => handleAddTag("")}
@@ -165,7 +164,7 @@ export default function TagSelect({
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
-            className="flex justify-center items-center text-blue"
+            className="flex justify-center items-center text-dominant"
             aria-label="Add"
             fill="currentColor"
             width="60"
@@ -194,7 +193,7 @@ export default function TagSelect({
             />
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              className="cursor-pointer hover:text-blue transition transition-color"
+              className="cursor-pointer hover:text-dominant transition transition-color"
               viewBox="0 0 24 24"
               width="24"
               height="24"

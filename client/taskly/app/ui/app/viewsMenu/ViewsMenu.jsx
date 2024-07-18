@@ -98,7 +98,7 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
           {renderMenuContent()}
           <button
             onClick={handleConfirm}
-            className="w-full py-2 bg-blue text-white rounded-full hover:bg-opacity-80 transition-colors duration-200 text-lg font-semibold mt-4"
+            className="w-full py-2 bg-dominant text-white rounded-full hover:bg-opacity-80 transition-colors duration-200 text-lg font-semibold mt-4"
           >
             Confirm
           </button>

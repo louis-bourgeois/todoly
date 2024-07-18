@@ -12,13 +12,10 @@ export const ScreenProvider = ({ children }) => {
       setIsMobile(window.innerWidth < 1024);
     };
 
-    // Check on initial load
     checkScreenSize();
 
-    // Add event listener for window resize
     window.addEventListener("resize", checkScreenSize);
 
-    // Cleanup
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 

@@ -1,7 +1,7 @@
 export default function MobileSearchInput({ children }) {
   return (
     <>
-      <div className="flex rounded-full justify-start px-[15px] border py-[10px] items-center shadow-shadow_01">
+      <div className="flex rounded-full justify-start px-[15px] border py-[10px] mr-[2.5%] items-center shadow-shadow_01 w-3/4">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="19"

@@ -33,7 +33,7 @@ const SearchInput = ({ query, onQueryChange, placeholder }) => {
         value={localQuery}
         onChange={handleInputChange}
         placeholder={placeholder}
-        className="w-full h-[7vh] min-h-[40px] px-[2vw] py-[1vw] text-[1.2vw] text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 ease-in-out shadow-sm hover:shadow-md"
+        className="w-full h-[7vh] min-h-[40px] px-[2vw] py-[1vw] text-[1.2vw] text-gray-700 bg-white border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-dominant-500 focus:border-transparent transition-all duration-300 ease-in-out shadow-sm hover:shadow-md"
       />
       <svg
         className="absolute right-[2vw] top-1/2 transform -translate-y-1/2 w-[1.5vw] h-[1.5vw] min-w-[20px] min-h-[20px] text-gray-400"

@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Blur from "ui/app/Blur";
 import NavButton from "ui/app/NavButton";
@@ -17,7 +16,6 @@ const TITLES = {
 };
 
 export default function Navbar() {
-
   const { user, loading } = useUser();
   const { preferences } = useUserPreferences();
   const { toggleTaskMenu, toggleSearchMenu } = useMenu();
@@ -118,11 +116,11 @@ export default function Navbar() {
           </div>
         </li>
         <li>
-          <h1 className="text-[3em] font-black">
+          <h1 className="text-5xl font-black">
             {preferences.Home_Page_Title ===
             "Depending on the time of day + name" ? (
               <>
-                {title} <span className="text-blue">{name}</span>
+                {title} <span className="text-dominant">{name}</span>
               </>
             ) : (
               preferences.Home_Page_Title
@@ -131,7 +129,7 @@ export default function Navbar() {
         </li>
         <li className="flex max-w-[17.5%] gap-iconsContainer items-center justify-center h-full mr-[0.5vw]">
           <NavButton
-            styles="border border-blue rounded-full shadow-2xl"
+            styles="border border-dominant rounded-full shadow-2xl"
             onClick={toggleSearchMenu}
           >
             <svg
@@ -151,7 +149,7 @@ export default function Navbar() {
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
-              className="flex justify-center items-center text-blue"
+              className="flex justify-center items-center text-dominant"
               aria-label="Add"
               fill="currentColor"
             >

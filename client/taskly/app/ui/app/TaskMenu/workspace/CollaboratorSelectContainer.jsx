@@ -132,7 +132,7 @@ export default function CollaboratorSelectContainer({
           }}
         />
       </div>
-      <button className="h-[10%] hover:text-blue transition transition-color ease-in-out duration-300">
+      <button className="h-[10%] hover:text-dominant transition transition-color ease-in-out duration-300">
         Copy link
       </button>
     </div>

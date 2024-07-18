@@ -28,13 +28,13 @@ export default function MobileHeader() {
   }, []);
 
   return (
-    <header className="w-full">
-      <h1 className="text-4xl font-black">
+    <header className="w-full px-[17.5px]">
+      <h1 className="text-2xl font-black">
         {preferences?.Home_Page_Title ===
         "Depending on the time of day + name" ? (
           <>
             {title}{" "}
-            <span className="text-blue">{user?.first_name || "User"}</span>
+            <span className="text-dominant">{user?.first_name || "User"}</span>
           </>
         ) : (
           preferences?.Home_Page_Title || "Welcome"

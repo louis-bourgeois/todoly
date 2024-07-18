@@ -6,7 +6,7 @@ export default function LoginHeroe({ handle, darkMode, h1, button }) {
       <button
         onClick={handle}
         className={`${
-          darkMode ? " border border-blue" : ""
+          darkMode ? " border border-dominant" : ""
         } shadow-[0_2px_40px_rgba(0,0,0.1)] hover:scale-110 transition text-3xl font-black rounded-full mt-[3vh]  px-[8vw] py-[1vh]`}
       >
         {button}

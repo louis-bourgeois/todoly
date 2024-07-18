@@ -243,7 +243,7 @@ export default function FormMenu({
                     {e.message}{" "}
                     {e.href && e.anchor && (
                       <Link href={e.href} passHref legacyBehavior>
-                        <AnchorPoint styles="text-blue">{e.anchor}</AnchorPoint>
+                        <AnchorPoint styles="text-dominant">{e.anchor}</AnchorPoint>
                       </Link>
                     )}
                   </p>
@@ -284,7 +284,6 @@ export default function FormMenu({
             value={submitValue}
             additionalStyles="p-2 border-black text-3xl mt-[2rem] font-black w-full cursor-pointer hover:scale-105 transition ease-in-out"
             disabled={!passwordMatch}
-      
           />
         </Form>{" "}
         <Link href={bottomMessageHREF} passHref legacyBehavior>

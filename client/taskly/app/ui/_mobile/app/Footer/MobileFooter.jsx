@@ -5,7 +5,7 @@ import MobileSearchInput from "./SearchSections/searchMenu/MobileSearchInput";
 
 export default function MobileFooter() {
   return (
-    <footer className="h-[15dvh] w-full flex flex-col items-center justify-between gap-[7.5px]">
+    <footer className=" px-[17.5px] h-[15dvh] w-full flex flex-col items-center justify-between gap-[2vh]">
       <MobileSearchSection>
         <MobileSearchInput />
         <MobileMainButtons />

@@ -37,10 +37,10 @@ export default function Layout({ transitionStyles }) {
         type="text"
         onChange={handleHomePageTitleChange}
         value={homePageTitle}
-        className="border border-black h-[4.5vh] flex justify-between rounded-[10px] placeholder:text-base text-right px-5"
+        className="border border-black h-[4.5vh] text-base flex justify-between rounded-[10px] placeholder:text-base text-right px-5"
       />
 
-      <button className="font-bold text-2xl rounded-full border border-black hover:scale-105 active:scale-100 hover:text-blue transition-all duration-200 ease-out m-[3%] p-[3%]">
+      <button className="font-bold text-l rounded-full border border-black hover:scale-105 active:scale-100 hover:text-dominant transition-all duration-200 ease-out m-[3%] p-[3%]">
         Customise the Add Menu
       </button>
     </div>

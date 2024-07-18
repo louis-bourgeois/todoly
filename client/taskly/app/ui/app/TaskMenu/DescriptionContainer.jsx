@@ -23,7 +23,7 @@ export default function DescriptionContainer({
   return (
     <TaskMenuSectionContainer
       flex={false}
-      othersStyles="font-bold text-4xl w-[55%]"
+      othersStyles="font-bold text-2xl w-[55%]"
     >
       <h2 className="pb-0 p-[2%]">Description</h2>
       <textarea

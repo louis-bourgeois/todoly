@@ -55,7 +55,7 @@ export default function WorkspaceSelect({
       othersStyles="h-[80%] flex flex-col justify-between"
       moreRoundedCorners="tr"
     >
-      <h2 className="text-3xl font-bold">Workspace</h2>
+      <h2 className="text-2xl font-bold">Workspace</h2>
 
       <div className="flex items-center gap-[0.7vw] relative">
         <div
@@ -91,7 +91,7 @@ export default function WorkspaceSelect({
                 <button
                   key={workspace.id}
                   onClick={() => handleWorkspaceChange(workspace.id)}
-                  className="hover:text-blue transition-colors duration-300 w-full text-left py-1"
+                  className="hover:text-dominant transition-colors duration-300 w-full text-left py-1"
                 >
                   {workspace.name}
                 </button>
@@ -105,7 +105,7 @@ export default function WorkspaceSelect({
         othersStyles="glass-morphism flex justify-center items-center hover:scale-105 m-1"
         onClick={() => handleNewWorkspaceClick("Workspace", "Task")}
       >
-        <span className="text-xl font-bold">Build a new Workspace</span>
+        <span className="text-l font-bold">Build a new Workspace</span>
       </TaskMenuButton>
     </TaskMenuSectionContainer>
   );

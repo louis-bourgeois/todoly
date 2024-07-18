@@ -19,7 +19,6 @@ export const SectionProvider = ({ children }) => {
   const { isAuthenticated, checkAuth } = useAuth();
 
   const fetchSections = useCallback(async () => {
-
     if (!isAuthenticated) return;
 
     try {
@@ -54,6 +53,7 @@ export const SectionProvider = ({ children }) => {
   }, []);
 
   const modifySection = useCallback(async (newName, sectionId) => {
+    console.log(newName, sectionId);
     try {
       const response = await axios.post(
         `${baseUrl}/sections/update`,
@@ -70,6 +70,8 @@ export const SectionProvider = ({ children }) => {
   }, []);
 
   const deleteSection = useCallback(async (id) => {
+    console.log(id);
+
     try {
       const response = await axios.delete(`${baseUrl}/sections/delete/${id}`, {
         withCredentials: true,

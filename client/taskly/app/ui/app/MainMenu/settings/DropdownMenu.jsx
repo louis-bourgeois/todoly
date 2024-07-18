@@ -31,7 +31,7 @@ export default function DropdownMenu({ title, onSelect, options }) {
         {options.map((option) => (
           <div
             key={option}
-            className="cursor-pointer hover:text-blue transition-all duration-300"
+            className="cursor-pointer hover:text-dominant transition-all duration-300"
             onClick={() => {
               setMenuOpen(false);
               if (typeof onSelect === "function") {
@@ -39,7 +39,7 @@ export default function DropdownMenu({ title, onSelect, options }) {
               }
             }}
           >
-            <span className="text-black hover:text-blue transition transition-color ease">
+            <span className="text-black hover:text-dominant transition transition-color ease ">
               {option}
             </span>
           </div>

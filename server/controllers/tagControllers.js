@@ -43,6 +43,7 @@ export async function addTag(req, res) {
       .json({ message: "Tag added successfully", tags: user_tags });
   } catch (error) {
     console.error(error);
+    console.error(error);
     res.status(500).json({
       title: "Server error",
       subtitle: "Failed to add tag. Please try again.",
@@ -55,7 +56,9 @@ export async function updateTag(req, res) {
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
     const { newName, id } = req.body;
-
+    console.log("====================================");
+    console.log("new namd", newName, req.body);
+    console.log("====================================");
     if (!newName || newName.trim() === "") {
       return res.status(400).json({
         title: "Invalid tag name",

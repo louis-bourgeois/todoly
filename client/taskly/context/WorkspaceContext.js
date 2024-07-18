@@ -234,6 +234,7 @@ export const WorkspaceProvider = ({ children }) => {
       addTaskToWorkspace,
       removeTaskFromWorkspace,
       getUsersFromWorkspace,
+      
       getTasksFromWorkspace,
       addUserToWorkspace,
       removeUserFromWorkspace,

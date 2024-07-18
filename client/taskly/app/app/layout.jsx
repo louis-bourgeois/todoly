@@ -1,6 +1,7 @@
 "use client";
 import MobileFooter from "@/ui/_mobile/app/Footer/MobileFooter.jsx";
 import MobileHeader from "@/ui/_mobile/app/Header/MobileHeader.jsx";
+import MobileViewsMenu from "@/ui/_mobile/viewsMenu/MobileViewsMenu.jsx";
 import Navbar from "@/ui/app/Navbar.jsx";
 import NotificationMenu from "@/ui/app/NotificationMenu/NotificationMenu.jsx";
 import NotificationWrapper from "@/ui/app/NotificationWrapper/NotificationWrapper.jsx";
@@ -23,8 +24,13 @@ export default function AppLayout({ children }) {
   const { activeTask } = useTask();
   const { user } = useUser();
   const { activeWorkspace } = useWorkspace();
-  const { isTaskMenuOpen, toggleSearchMenu, isViewsMenuOpen, toggleViewsMenu } =
-    useMenu();
+  const {
+    isTaskMenuOpen,
+    toggleSearchMenu,
+    isViewsMenuOpen,
+    toggleViewsMenu,
+    isMobileViewsMenuOpen,
+  } = useMenu();
   const { notificationsList } = useContext(NotificationsContext);
 
   const router = useRouter();
@@ -44,18 +50,40 @@ export default function AppLayout({ children }) {
     };
   }, []);
 
+  // useEffect(() => {
+  //   console.log("ok", loading, isAuthenticated);
+  //   const verifyAuth = async () => {
+  //     if (!loading && !isAuthenticated) {
+  //       await checkAuth();
+  //       if (!isAuthenticated) {
+  //         console.log("ok", router.push("/auth/login"));
+  //       }
+  //     }
+  //   };
+  //   verifyAuth();
+  // }, [loading, isAuthenticated, checkAuth, router]);
+
+  // if (loading) {
+  //   return <div>Loading...</div>;
+  // }
+  // if (!isAuthenticated) {
+  //   return null;
+  // }
+
   if (isMobile) {
     return (
       <>
+        <MobileViewsMenu isVisible={isMobileViewsMenuOpen} />
         <MobileHeader />
         {children}
         <MobileFooter />
       </>
     );
-  } else {
+  }  else {
     return (
       <>
         <Navbar user={user} />
+
         {isViewsMenuOpen && (
           <ViewsMenu
             options={[

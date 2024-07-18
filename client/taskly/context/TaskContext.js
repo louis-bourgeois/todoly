@@ -21,7 +21,6 @@ export const TaskProvider = ({ children }) => {
   const { isAuthenticated, checkAuth } = useAuth();
   const [activeTask, setActiveTask] = useState(null);
   const fetchTasks = useCallback(async () => {
-
     if (!isAuthenticated) return;
 
     try {
@@ -35,6 +34,9 @@ export const TaskProvider = ({ children }) => {
   }, [isAuthenticated]);
 
   const addTask = useCallback(async (taskData) => {
+    console.log("====================================");
+    console.log("add task", taskData);
+    console.log("====================================");
     try {
       const response = await axios.post(
         `${baseUrl}/tasks/add`,

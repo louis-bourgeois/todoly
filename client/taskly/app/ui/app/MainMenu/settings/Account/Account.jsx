@@ -62,7 +62,7 @@ export default function Account({ transitionStyles, setLayout }) {
       </div>
       <div className="flex flex-col gap-[2%] justify-center items-center w-1/2">
         <div className="flex justify-around items-center gap-[1vw]">
-          <h2 className="font-extrabold text-4xl">Louis Bourgeois</h2>
+          <h2 className="font-extrabold text-2xl">Louis Bourgeois</h2>
           <svg
             width="20"
             height="20"

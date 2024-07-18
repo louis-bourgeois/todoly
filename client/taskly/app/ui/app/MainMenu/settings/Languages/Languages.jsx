@@ -64,19 +64,19 @@ export default function Languages({ transitionStyles }) {
       <div className="flex-col flex justify-start gap-[0.5vw]">
         <div className="flex justify-start w-full items-center gap-[2.5vw]">
           <Circle
-            borderColor="blue"
+            borderColor="dominant"
             onClick={toggleDateFormat}
             isSelected={settings.dateFormat === "12h"}
           />
-          <h2 className="text-blue font-bold">12h Date Format</h2>
+          <h2 className="text-dominant font-bold">12h Date Format</h2>
         </div>
         <div className="flex justify-start w-full items-center gap-[2.5vw]">
           <Circle
-            borderColor="blue"
+            borderColor="dominant"
             onClick={toggleWeekStart}
             isSelected={settings.weekStartOn === "Sunday"}
           />
-          <h2 className="text-blue font-bold">Week Starts on Sunday</h2>
+          <h2 className="text-dominant font-bold">Week Starts on Sunday</h2>
         </div>
       </div>
     </div>

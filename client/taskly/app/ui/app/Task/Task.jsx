@@ -4,7 +4,7 @@ import { useTask } from "../../../../context/TaskContext";
 
 const colors = {
   todo: "bg-white",
-  done: "bg-blue",
+  done: "bg-dominant",
   in_progress: "bg-yellow-500",
 };
 
@@ -42,9 +42,11 @@ export default function Task({ task, onTaskClick }) {
           onClick={handleTaskDoneClick}
           className={`z-40 transition-all ${taskCircleColor} cursor-pointer border border-black min-w-[1.5rem] min-h-[1.5rem] rounded-full mx-5`}
         />
-        <h3 className="font-bold text-3xl px-5 font-inter">{task.title}</h3>
+        <h3 className="font-bold text-xl px-5 font-inter">{task.title}</h3>
       </div>
-      <p className="font-light text-left pb-2 px-5 text-s">{taskDescription}</p>
+      <p className="font-light text-left pb-2 px-5 text-xs">
+        {taskDescription}
+      </p>
       <div className="pt-2 pb-2 px-5 w-full flex justify-end">
         {taskTags.map((taskTag, index) => (
           <div key={index} className="flex justify-right items-center">

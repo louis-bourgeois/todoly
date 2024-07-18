@@ -39,7 +39,7 @@ export default function Navbar({
             text
             additionalStyles={`transition ease-in-out ${
               darkMode
-                ? "text-white hover:text-blue"
+                ? "text-white hover:text-dominant"
                 : "text-grey hover:text-black"
             }`}
           >
@@ -48,7 +48,7 @@ export default function Navbar({
         ))}
         {connectButons && (
           <>
-            <NavItem text additionalStyles="ml-auto text-blue font-light">
+            <NavItem text additionalStyles="ml-auto text-dominant font-light">
               <Link href="auth/login">Log in</Link>
             </NavItem>
             <Link href="auth/signup">
@@ -57,8 +57,8 @@ export default function Navbar({
                 additionalStyles={`${
                   darkMode
                     ? "border-gradient-dark-mode-gold-to-black"
-                    : "border-1 border-blue rounded-full"
-                } p-5 px-10 font-semibold text-blue transition ease-in-out delay-100 hover:scale-105 hover:shadow-2xl shadow-lg`}
+                    : "border-1 border-dominant rounded-full"
+                } p-5 px-10 font-semibold text-dominant transition ease-in-out delay-100 hover:scale-105 hover:shadow-2xl shadow-lg`}
               >
                 Start
               </NavItem>

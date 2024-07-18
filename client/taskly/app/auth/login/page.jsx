@@ -30,7 +30,7 @@ export default function Page() {
         show={showComponent}
         showZ="30"
         hideZ="0"
-        bg="bg-blue/[.05]"
+        bg="bg-dominant/[.05]"
         fullscreen={true}
       ></Blur>
       <FormMenu
