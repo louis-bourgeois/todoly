@@ -15,7 +15,7 @@ export default function MobileSectionContainer({
   const { sections, modifySection, deleteSection } = useSection();
   const { preferences } = useUserPreferences();
   const { currentWorkspace } = useWorkspace();
-  const { toggleTaskMenu } = useMenu();
+  const { toggleTaskMenu, setCardType } = useMenu();
 
   const workspace = useMemo(
     () => selectedWorkspace?.id || currentWorkspace,
@@ -25,6 +25,8 @@ export default function MobileSectionContainer({
   const expandTask = useCallback(
     (taskId) => {
       console.log(taskId);
+      setActiveTask(taskId);
+      setCardType("Task");
     },
     [activeTask, setActiveTask, toggleTaskMenu]
   );

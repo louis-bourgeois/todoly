@@ -4,7 +4,7 @@ export default function MobileMainButtons() {
   const { cardType, setCardType } = useMenu();
 
   const handleClick = () => {
-    setCardType(cardType === "Add" ? "default" : "Add");
+    setCardType(cardType === "Add" ? "Currently" : "Add");
   };
 
   return (

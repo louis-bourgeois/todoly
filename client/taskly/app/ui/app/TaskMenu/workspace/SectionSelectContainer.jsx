@@ -16,7 +16,10 @@ export default function SectionSelectContainer({
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const inputRef = useRef(null);
-  const fuse = new Fuse(sections, fuseOptions);
+  const fuse = new Fuse(
+    sections.filter((section) => section.name.toLowerCase() !== "other"),
+    fuseOptions
+  );
 
   useEffect(() => {
     if (inputValue === "") {
@@ -139,7 +142,11 @@ export default function SectionSelectContainer({
               <TransitionGroup component={null}>
                 {isOpen &&
                   suggestions
-                    .filter((section) => !workspaceSections.includes(section))
+                    .filter(
+                      (section) =>
+                        !workspaceSections.includes(section) &&
+                        section.name.toLowerCase() !== "other"
+                    )
                     .map((section, index) => (
                       <CSSTransition
                         key={section.id}

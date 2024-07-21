@@ -31,7 +31,7 @@ export default function TaskLayout({ id }) {
     if (id) {
       return;
     }
-    setCardType("default");
+    setCardType("Currently");
     const taskData = {
       title: taskTitle,
       status: status.toLowerCase().replace(/\s+/g, ""),
@@ -42,6 +42,9 @@ export default function TaskLayout({ id }) {
       description: taskDescription,
       workspaceId: currentWorkspace,
     };
+    console.log("====================================");
+    console.log(taskData);
+    console.log("====================================");
     await addTask(taskData);
   }, [
     taskTitle,
@@ -87,12 +90,12 @@ export default function TaskLayout({ id }) {
           taskDescription={taskDescription}
           setTaskDescription={setTaskDescription}
         />
-        <TagManager
-          taskTags={taskTags}
-          setTaskTags={setTaskTags}
-          handleTagsChange={handleTagsChange}
-        />
-      </div>{" "}
+      </div>
+      <TagManager
+        taskTags={taskTags}
+        setTaskTags={setTaskTags}
+        handleTagsChange={handleTagsChange}
+      />
       <DatePicker dueDate={dueDate} handleDateChange={handleDateChange} />
       <PriorityCounter priority={priority} setPriority={setPriority} />
       <TaskLayoutFooter

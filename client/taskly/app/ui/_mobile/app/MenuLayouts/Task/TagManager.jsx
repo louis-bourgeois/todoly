@@ -65,8 +65,11 @@ const TagManager = ({ taskTags, setTaskTags, handleTagsChange }) => {
       const updatedTags = await addTag(newTagName);
       const addedTag = updatedTags.find((tag) => tag.name === newTagName);
       if (addedTag) {
-        setTaskTags((prev) => [...prev, addedTag]);
-        handleTagsChange([...taskTags, addedTag]);
+        const newTaskTags = Array.isArray(taskTags)
+          ? [...taskTags, addedTag]
+          : [addedTag];
+        setTaskTags(newTaskTags);
+        handleTagsChange(newTaskTags);
       } else {
         throw new Error("Added tag not found in response");
       }
@@ -108,8 +111,11 @@ const TagManager = ({ taskTags, setTaskTags, handleTagsChange }) => {
 
   const handleRemoveTag = useCallback(
     (tagId) => {
-      setTaskTags((prev) => prev.filter((tag) => tag.id !== tagId));
-      handleTagsChange(taskTags.filter((tag) => tag.id !== tagId));
+      const newTaskTags = Array.isArray(taskTags)
+        ? taskTags.filter((tag) => tag.id !== tagId)
+        : [];
+      setTaskTags(newTaskTags);
+      handleTagsChange(newTaskTags);
     },
     [taskTags, setTaskTags, handleTagsChange]
   );
@@ -118,16 +124,13 @@ const TagManager = ({ taskTags, setTaskTags, handleTagsChange }) => {
     async (tagId, newName) => {
       try {
         await updateTag(newName, tagId);
-        setTaskTags((prev) =>
-          prev.map((tag) =>
-            tag.id === tagId ? { ...tag, name: newName } : tag
-          )
-        );
-        handleTagsChange(
-          taskTags.map((tag) =>
-            tag.id === tagId ? { ...tag, name: newName } : tag
-          )
-        );
+        const newTaskTags = Array.isArray(taskTags)
+          ? taskTags.map((tag) =>
+              tag.id === tagId ? { ...tag, name: newName } : tag
+            )
+          : [];
+        setTaskTags(newTaskTags);
+        handleTagsChange(newTaskTags);
       } catch (error) {
         console.error("Failed to update tag", error);
         handleError(error);
@@ -140,8 +143,11 @@ const TagManager = ({ taskTags, setTaskTags, handleTagsChange }) => {
     async (tagId) => {
       try {
         await deleteTag(tagId);
-        setTaskTags((prev) => prev.filter((tag) => tag.id !== tagId));
-        handleTagsChange(taskTags.filter((tag) => tag.id !== tagId));
+        const newTaskTags = Array.isArray(taskTags)
+          ? taskTags.filter((tag) => tag.id !== tagId)
+          : [];
+        setTaskTags(newTaskTags);
+        handleTagsChange(newTaskTags);
       } catch (error) {
         console.error("Failed to delete tag", error);
         handleError(error);
@@ -152,10 +158,13 @@ const TagManager = ({ taskTags, setTaskTags, handleTagsChange }) => {
 
   const handleAddExistingTag = useCallback(
     (tag) => {
-      if (!taskTags.some((t) => t.id === tag.id)) {
-        setTaskTags((prev) => [...prev, tag]);
-        handleTagsChange([...taskTags, tag]);
-      }
+      const newTaskTags = Array.isArray(taskTags)
+        ? taskTags.some((t) => t.id === tag.id)
+          ? taskTags
+          : [...taskTags, tag]
+        : [tag];
+      setTaskTags(newTaskTags);
+      handleTagsChange(newTaskTags);
     },
     [taskTags, setTaskTags, handleTagsChange]
   );
@@ -182,7 +191,7 @@ const TagManager = ({ taskTags, setTaskTags, handleTagsChange }) => {
     <div className="flex flex-col items-start px-4">
       <h2 className="text-lg font-bold text-black mb-2">Tag(s)</h2>
       <div className="flex flex-wrap gap-2 mb-4 w-full justify-center">
-        {taskTags.length > 0 ? (
+        {Array.isArray(taskTags) && taskTags.length > 0 ? (
           taskTags.map((tag) => (
             <EditableTag
               key={tag.id}

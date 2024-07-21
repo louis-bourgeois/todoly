@@ -30,24 +30,57 @@ const ButtonContent = memo(({ label, isDropdown, isOpen }) => (
 const DropdownContent = memo(
   ({ options, onOptionClick, isOpen, buttonRect, maxVisibleOptions = 5 }) => {
     const [hoveredIndex, setHoveredIndex] = useState(null);
+    const dropdownRef = useRef(null);
+
+    useEffect(() => {
+      if (isOpen && buttonRect && dropdownRef.current) {
+        const updatePosition = () => {
+          const { bottom, left, width } = buttonRect;
+          const { innerHeight, innerWidth } = window;
+          const dropdownRect = dropdownRef.current.getBoundingClientRect();
+
+          let top = bottom;
+          let leftPos = left;
+
+          // Check if dropdown would go off-screen vertically
+          if (top + dropdownRect.height > innerHeight) {
+            // Position above the button if it would go off-screen
+            top = bottom - dropdownRect.height - buttonRect.height;
+          }
+
+          // Check if dropdown would go off-screen horizontally
+          if (left + dropdownRect.width > innerWidth) {
+            leftPos = innerWidth - dropdownRect.width;
+          }
+
+          dropdownRef.current.style.top = `${top}px`;
+          dropdownRef.current.style.left = `${leftPos}px`;
+          dropdownRef.current.style.width = `${width}px`;
+        };
+
+        updatePosition();
+        window.addEventListener("scroll", updatePosition);
+        window.addEventListener("resize", updatePosition);
+
+        return () => {
+          window.removeEventListener("scroll", updatePosition);
+          window.removeEventListener("resize", updatePosition);
+        };
+      }
+    }, [isOpen, buttonRect]);
 
     if (!buttonRect) return null;
 
-    const dropdownStyle = {
-      position: "absolute",
-      top: `${buttonRect.bottom + window.scrollY}px`,
-      left: `${buttonRect.left + window.scrollX}px`,
-      width: `${buttonRect.width}px`,
-      maxHeight: `${maxVisibleOptions * 37}px`,
-      opacity: isOpen ? 1 : 0,
-      transform: `scale(${isOpen ? 1 : 0.95})`,
-      visibility: isOpen ? "visible" : "hidden",
-    };
-
     return createPortal(
       <div
-        className="z-50 bg-white rounded-md shadow-lg overflow-auto transition-all duration-300 ease-in-out"
-        style={dropdownStyle}
+        ref={dropdownRef}
+        className="z-50 bg-white rounded-md shadow-lg overflow-auto transition-all duration-300 ease-in-out fixed"
+        style={{
+          maxHeight: `${maxVisibleOptions * 37}px`,
+          opacity: isOpen ? 1 : 0,
+          transform: `scale(${isOpen ? 1 : 0.95})`,
+          visibility: isOpen ? "visible" : "hidden",
+        }}
       >
         {options.map((option, index) => (
           <button
@@ -83,6 +116,7 @@ const Button = memo(
     onOptionClick,
     onClick,
     maxVisibleOptions = 5,
+    setState = null,
   }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [buttonRect, setButtonRect] = useState(null);
@@ -92,13 +126,16 @@ const Button = memo(
     const handleClick = useCallback(() => {
       if (isDropdown) {
         setIsOpen((prev) => !prev);
+        if (setState) {
+          setState((prev) => !prev);
+        }
         if (buttonRef.current) {
           setButtonRect(buttonRef.current.getBoundingClientRect());
         }
       } else if (onClick) {
         onClick();
       }
-    }, [isDropdown, onClick]);
+    }, [isDropdown, onClick, setState]);
 
     const handleOptionClick = useCallback(
       (option) => {
@@ -118,7 +155,7 @@ const Button = memo(
       };
 
       const handleScroll = () => {
-        if (buttonRef.current) {
+        if (buttonRef.current && isOpen) {
           setButtonRect(buttonRef.current.getBoundingClientRect());
         }
       };
@@ -132,7 +169,7 @@ const Button = memo(
         window.removeEventListener("scroll", handleScroll);
         window.removeEventListener("resize", handleScroll);
       };
-    }, []);
+    }, [isOpen]);
 
     const buttonClasses = `
       ${dominant ? "bg-dominant text-white" : "bg-black text-white"}

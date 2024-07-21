@@ -366,3 +366,17 @@ input[type="date"]::-ms-clear,
 input[type="date"]::-ms-reveal {
   display: none;
 }
+@keyframes fadeInOut {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  10%,
+  90% {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in-out {
+  animation: fadeInOut 5s ease-in-out;
+}

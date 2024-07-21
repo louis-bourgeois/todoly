@@ -1,32 +1,39 @@
+import React, { useMemo } from "react";
 import CardTransition from "./CardTransition";
 
+const CARD_HEIGHTS = {
+  default: "2xs:h-[62.5vh] xs:h-[65vh]",
+  Add: {
+    Task: "2xs:h-[62.5vh] xs:h-[65vh]",
+    Workspace: "2xs:h-[35vh] xs:h-[40vh]",
+    Note: "2xs:h-[62.5vh] xs:h-[65vh]",
+  },
+  Task: "2xs:h-[60vh] xs:h-[62.5vh]",
+  other: "2xs:h-[62.5vh] xs:h-[70vh]",
+};
+
 const Card = ({ children, cardType, el }) => {
-  const getCardHeight = () => {
-    switch (cardType) {
-      case "default":
-        return "2xs:h-[62.5vh] xs:h-[65vh]";
-      case "Add":
-        return el === "Task"
-          ? "2xs:h-[62.5vh] xs:h-[65vh]"
-          : el === "Workspace"
-          ? "2xs:h-[62.5vh] xs:h-[65vh]"
-          : "2xs:h-[62.5vh] xs:h-[65vh]";
-      default:
-        return "2xs:h-[70vh] xs:h-[75vh]";
+  const cardHeight = useMemo(() => {
+    if (cardType === "Add" && el) {
+      return CARD_HEIGHTS.Add[el] || CARD_HEIGHTS.other;
     }
-  };
+    return CARD_HEIGHTS[cardType] || CARD_HEIGHTS.other;
+  }, [cardType, el]);
 
   return (
     <div
-      className={`transition-all duration-500 ease-[cubic-bezier(1,0,0,1)] relative w-[calc(100vw-35px)] my-5`}
+      className="transition-all duration-500 ease-[cubic-bezier(1,0,0,1)] relative w-[calc(100vw-35px)] my-5"
+      role="region"
+      aria-label={`${cardType} card`}
     >
       <div
         className="absolute inset-0 rounded-[20px] shadow-shadow_card"
         style={{ transform: "translate(0, 0)" }}
+        aria-hidden="true"
       ></div>
       <CardTransition
         cardType={cardType}
-        className={`relative ${getCardHeight()} rounded-[20px] bg-white overflow-hidden flex flex-col`}
+        className={`relative ${cardHeight} rounded-[20px] bg-white overflow-hidden flex flex-col`}
       >
         {children}
       </CardTransition>
@@ -34,4 +41,4 @@ const Card = ({ children, cardType, el }) => {
   );
 };
 
-export default Card;
+export default React.memo(Card);

@@ -44,15 +44,17 @@ export default function MobileTask({ task, onClick }) {
 
         {shortTitle && tags.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 ml-2">
-            {tags.map((tag, index) => (
-              <div
-                key={index}
-                className="flex items-center bg-gray-100 rounded-full px-2 py-1"
-              >
-                <div className="w-1.5 h-1.5 rounded-full bg-black mr-1" />
-                <span className="text-2xs text-gray-700">{tag.name}</span>
-              </div>
-            ))}
+            {Array.isArray(tags) &&
+              tags.length > 0 &&
+              tags.map((tag, index) => (
+                <div
+                  key={index}
+                  className="flex items-center bg-gray-100 rounded-full px-2 py-1"
+                >
+                  <div className="w-1.5 h-1.5 rounded-full bg-black mr-1" />
+                  <span className="text-2xs text-gray-700">{tag.name}</span>
+                </div>
+              ))}
           </div>
         )}
       </div>
