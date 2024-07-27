@@ -58,7 +58,6 @@ export const updateWorkspace = async (req, res) => {
       sections: sections,
     });
   } catch (error) {
-    console.error("Error updating workspace:", error);
     res
       .status(500)
       .json({ error: "An error occurred while updating the workspace" });
@@ -82,9 +81,12 @@ export const getWorkspace = async (req, res) => {
 };
 
 export const deleteWorkspace = async (req, res) => {
+  const user = req.user;
+  const found_user = await User.findId(undefined, user.email, undefined);
+  const userId = found_user[0][0];
   const { workspaceId } = req.params;
   try {
-    await Workspace.deleteById(workspaceId);
+    await Workspace.deleteById(workspaceId, userId);
     res.status(200).send("Workspace deleted");
   } catch (error) {
     res.status(400).send(error.message);

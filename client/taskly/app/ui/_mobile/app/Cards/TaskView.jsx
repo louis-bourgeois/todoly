@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useError } from "../../../../../context/ErrorContext";
+import { useMenu } from "../../../../../context/MenuContext";
 import { useTask } from "../../../../../context/TaskContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import DatePicker from "../MenuLayouts/Task/DatePicker";
@@ -8,12 +9,15 @@ import TagManager from "../MenuLayouts/Task/TagManager";
 import TaskLayoutDescription from "../MenuLayouts/Task/TaskLayoutDescription";
 import TaskLayoutFooter from "../MenuLayouts/Task/TaskLayoutFooter";
 import TaskLayoutHeader from "../MenuLayouts/Task/TaskLayoutHeader";
-
+const capitalize = (str) => {
+  if (typeof str !== "string" || str.length === 0) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
 export default function TaskView({ id }) {
-  const { tasks, modifyTask } = useTask();
+  const { tasks, modifyTask, deleteTask } = useTask();
   const { workspaces } = useWorkspace();
   const { handleError } = useError();
-
+  const [lastUrlSegment, setLastUrlSegment] = useState("");
   const [task, setTask] = useState(null);
   const [taskTitle, setTaskTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -22,6 +26,7 @@ export default function TaskView({ id }) {
   const [status, setStatus] = useState("");
   const [dueDate, setDueDate] = useState(null);
   const [tags, setTags] = useState([]);
+  const { cardType, setCardType } = useMenu();
   const [priority, setPriority] = useState(5);
 
   useEffect(() => {
@@ -30,7 +35,7 @@ export default function TaskView({ id }) {
       setTask(foundTask);
       setTaskTitle(foundTask.title || "");
       setDescription(foundTask.description || "");
-      setLinkedSection(foundTask.linked_section || "");
+      setLinkedSection(foundTask.linked_section || []);
       setWorkspaceId(foundTask.workspace_id || "");
       setStatus(foundTask.status || "");
       setDueDate(foundTask.due_date || null);
@@ -39,7 +44,14 @@ export default function TaskView({ id }) {
     }
   }, [id, tasks]);
 
-  const handlemodifyTask = useCallback(async () => {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const segments = window.location.pathname.split("/");
+      setLastUrlSegment(segments[segments.length - 1]);
+    }
+  }, [cardType]);
+
+  const handleModifyTask = useCallback(async () => {
     if (task) {
       const updatedTask = {
         ...task,
@@ -55,7 +67,8 @@ export default function TaskView({ id }) {
       try {
         await modifyTask(updatedTask);
         console.log("Task updated successfully");
-        // Vous pouvez ajouter ici une notification ou un message de succès
+        // You can add a notification or success message here
+        setCardType(capitalize(lastUrlSegment));
       } catch (error) {
         console.error("Failed to update task", error);
         handleError(error);
@@ -75,13 +88,27 @@ export default function TaskView({ id }) {
     handleError,
   ]);
 
-  const handleTagsChange = useCallback(async (newTags) => {
+  const handleTagsChange = useCallback((newTags) => {
     setTags(newTags);
   }, []);
 
   const handleDateChange = (e) => {
     setDueDate(e.target.value);
   };
+
+  const handleDeleteTask = useCallback(async () => {
+    try {
+      if (id) {
+        await deleteTask(id);
+        setCardType(capitalize(lastUrlSegment));
+      } else {
+        console.error("id is not defined");
+      }
+    } catch (error) {
+      console.error("Error in handleDeleteTask:", error);
+      handleError(error);
+    }
+  }, [id, lastUrlSegment, setCardType, deleteTask, handleError]);
 
   if (!task) {
     return <div>The requested task is not available at this time</div>;
@@ -93,9 +120,11 @@ export default function TaskView({ id }) {
         <TaskLayoutHeader
           taskTitle={taskTitle}
           setTaskTitle={setTaskTitle}
-          handleTaskClick={handlemodifyTask}
+          handleTaskClick={handleModifyTask}
           buttonLabel="Update"
           isEditMode={true}
+          handleDeleteTask={handleDeleteTask}
+          lastUrlSegment={lastUrlSegment}
         />
         <TaskLayoutDescription
           taskDescription={description}
@@ -106,13 +135,13 @@ export default function TaskView({ id }) {
         taskTags={tags}
         setTaskTags={setTags}
         handleTagsChange={handleTagsChange}
-      />{" "}
+      />
       <DatePicker dueDate={dueDate} handleDateChange={handleDateChange} />
       <PriorityCounter priority={priority} setPriority={setPriority} />
       <TaskLayoutFooter
         status={status}
         setStatus={setStatus}
-        selectedSection={linkedSection || ""}
+        selectedSection={linkedSection[0] || ""}
         setSelectedSection={(sectionId) => setLinkedSection([sectionId])}
         selectedWorkspace={workspaceId}
         setSelectedWorkspace={setWorkspaceId}

@@ -202,7 +202,6 @@ class Workspace {
     const client = await pool.connect();
     try {
       await client.query("BEGIN");
-
       // Check if the user has permission to delete the workspace
       const permissionCheck = await client.query(
         "SELECT * FROM user_workspaces WHERE workspace_id = $1 AND user_id = $2",
@@ -222,7 +221,7 @@ class Workspace {
         client.query("DELETE FROM user_workspaces WHERE workspace_id = $1", [
           workspaceId,
         ]),
-        client.query("DELETE FROM sections WHERE workspace_id = $1", [
+        client.query("DELETE FROM section WHERE workspace_id = $1", [
           workspaceId,
         ]),
         client.query("DELETE FROM workspace WHERE id = $1 RETURNING name", [
@@ -253,7 +252,9 @@ class Workspace {
       console.error(
         `Error deleting workspace ${workspaceId}: ${error.message}`
       );
-      throw error;
+      throw new Error(
+        `Error deleting workspace ${workspaceId}: ${error.message}`
+      );
     } finally {
       client.release();
     }

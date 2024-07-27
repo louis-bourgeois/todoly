@@ -28,7 +28,7 @@ export default function MobileTask({ task, onClick }) {
   return (
     <div
       onClick={() => onClick(task.id)}
-      className="cursor-pointer flex flex-col justify-center items-start bg-ternary rounded-lg p-3 shadow-md hover:shadow-shadow_card transition-shadow duration-300"
+      className="overflow-x-clip cursor-pointer flex flex-col justify-center items-start bg-ternary rounded-lg p-3 shadow-md hover:shadow-shadow_card transition-shadow duration-300"
     >
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-start items-center">

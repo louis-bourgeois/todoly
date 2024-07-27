@@ -176,7 +176,6 @@ export default function TaskForm({
             id={id}
             setTask={setTask}
             taskTags={taskTags}
-            modifyTask={modifyTask}
             setTaskTags={setTaskTags}
             task={task}
           />

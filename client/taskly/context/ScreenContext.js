@@ -1,11 +1,11 @@
 // contexts/ScreenContext.js
 "use client";
-import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const ScreenContext = createContext();
 
 export const ScreenProvider = ({ children }) => {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(null);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -13,16 +13,15 @@ export const ScreenProvider = ({ children }) => {
     };
 
     checkScreenSize();
-
     window.addEventListener("resize", checkScreenSize);
 
     return () => window.removeEventListener("resize", checkScreenSize);
   }, []);
 
-  const value = useMemo(() => ({ isMobile }), [isMobile]);
-
   return (
-    <ScreenContext.Provider value={value}>{children}</ScreenContext.Provider>
+    <ScreenContext.Provider value={{ isMobile }}>
+      {children}
+    </ScreenContext.Provider>
   );
 };
 

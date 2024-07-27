@@ -22,15 +22,19 @@ export default function Appearance({ transitionStyles }) {
     }
   }, [preferences]);
 
-  const handleThemeClick = (value) => {
+  const handleThemeClick = async (value) => {
     setTheme(value);
-    updateUserPreference({ key: "Theme", value });
+    await updateUserPreference({ key: "Theme", value });
   };
 
-  const handleCircleClick = (index, siblingDiv) => {
+  const handleCircleClick = async (index, siblingDiv) => {
     setSelectedCircle(index);
     const bgColor = window.getComputedStyle(siblingDiv).backgroundColor;
-    updateUserPreference({ key: "Color_Theme", value: rgbToHex(bgColor) });
+    console.log(rgbToHex(bgColor));
+    await updateUserPreference({
+      key: "Color_Theme",
+      value: rgbToHex(bgColor),
+    });
   };
 
   const rgbToHex = (rgb) => {
@@ -54,6 +58,8 @@ export default function Appearance({ transitionStyles }) {
   };
 
   const rows = [
+    { color: "#ffffff" },
+    { color: "#f7f4ed" },
     { color: "#007AFF" },
     { color: "#DE9F9F" },
     { color: "#71EAE2" },
@@ -78,12 +84,15 @@ export default function Appearance({ transitionStyles }) {
           return (
             <div
               key={index}
-              className="w-full flex justify-between items-center"
+              className={`w-full flex justify-between items-center`}
             >
               <div
                 ref={siblingRef}
                 style={{ backgroundColor: row.color }}
-                className="rounded-[10px] w-[87.5%] h-[5vh]"
+                className={`rounded-[10px] w-[87.5%] h-[5vh]  ${
+                  (row.color === "#ffffff" || row.color === "#f7f4ed") &&
+                  "border border-black"
+                }`}
               ></div>
               <Circle
                 borderColor="dominant"

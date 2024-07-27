@@ -3,6 +3,7 @@ import { ErrorProvider } from "../context/ErrorContext";
 import { MenuProvider } from "../context/MenuContext";
 import { NotificationsProvider } from "../context/NotificationsContext";
 import { ScreenProvider } from "../context/ScreenContext";
+import { MobileSearchProvider } from "../context/searchContext";
 import { SectionProvider } from "../context/SectionContext";
 import { TagProvider } from "../context/TagContext";
 import { TaskProvider } from "../context/TaskContext";
@@ -13,9 +14,9 @@ import ScreenWrapper from "./ScreenWrapper";
 
 const AppProviders = ({ children }) => (
   <ScreenProvider>
-    <AuthProvider>
-      <NotificationsProvider>
-        <ErrorProvider>
+    <NotificationsProvider>
+      <ErrorProvider>
+        <AuthProvider>
           <UserProvider>
             <UserPreferencesProvider>
               <SectionProvider>
@@ -23,7 +24,9 @@ const AppProviders = ({ children }) => (
                   <TaskProvider>
                     <TagProvider>
                       <MenuProvider>
-                        <ScreenWrapper>{children}</ScreenWrapper>
+                        <MobileSearchProvider>
+                          <ScreenWrapper>{children}</ScreenWrapper>
+                        </MobileSearchProvider>
                       </MenuProvider>
                     </TagProvider>
                   </TaskProvider>
@@ -31,9 +34,10 @@ const AppProviders = ({ children }) => (
               </SectionProvider>
             </UserPreferencesProvider>
           </UserProvider>
-        </ErrorProvider>
-      </NotificationsProvider>
-    </AuthProvider>
+        </AuthProvider>
+      </ErrorProvider>
+    </NotificationsProvider>
   </ScreenProvider>
 );
+
 export default AppProviders;

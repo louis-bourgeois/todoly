@@ -8,7 +8,6 @@ export async function getTag(req, res) {
     const tags = await Tag.find(userId);
     return res.status(200).json({ tags: tags });
   } catch (err) {
-    console.error(err);
     return res.status(500).json({ message: "Error updating tag" });
   }
 }
@@ -17,10 +16,7 @@ export async function addTag(req, res) {
   try {
     const { name } = req.body;
     if (!name || name.trim() === "") {
-      return res.status(400).json({
-        title: "Invalid tag name",
-        subtitle: "Tag name cannot be empty.",
-      });
+      return res.status(400).json("Tag name cannot be empty.");
     }
 
     const found_user = await User.findId(undefined, req.user.email, undefined);
@@ -29,10 +25,7 @@ export async function addTag(req, res) {
     // Check if tag already exists for this user
     const existingTag = await Tag.find(userId, name.trim());
     if (existingTag.length > 0) {
-      return res.status(400).json({
-        title: "Duplicate tag",
-        subtitle: "This tag already exists for the user.",
-      });
+      return res.status(400).json("Duplicate tag");
     }
 
     const tag = new Tag(name.trim(), userId);
@@ -42,12 +35,7 @@ export async function addTag(req, res) {
       .status(200)
       .json({ message: "Tag added successfully", tags: user_tags });
   } catch (error) {
-    console.error(error);
-    console.error(error);
-    res.status(500).json({
-      title: "Server error",
-      subtitle: "Failed to add tag. Please try again.",
-    });
+    res.status(500).json("Failed to add tag. Please try again.");
   }
 }
 
@@ -57,13 +45,10 @@ export async function updateTag(req, res) {
     const userId = found_user[0][0];
     const { newName, id } = req.body;
     console.log("====================================");
-    console.log("new namd", newName, req.body);
+    console.log("new name", newName, req.body);
     console.log("====================================");
     if (!newName || newName.trim() === "") {
-      return res.status(400).json({
-        title: "Invalid tag name",
-        subtitle: "Tag name cannot be empty.",
-      });
+      return res.status(400).json("Tag name cannot be empty.");
     }
 
     // Check if new tag name already exists for this user
@@ -82,11 +67,7 @@ export async function updateTag(req, res) {
       tags: user_tags,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({
-      title: "Failed to update tag",
-      subtitle: "An error occurred while updating the tag.",
-    });
+    res.status(500).json("An error occurred while updating the tag");
   }
 }
 
@@ -96,9 +77,6 @@ export async function deleteTag(req, res) {
     await Tag.delete(id);
     res.status(200).json({ message: "Tag deleted successfully" });
   } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .json({ title: "Failed to delete tag", subtitle: error.message });
+    res.status(500).json(error.message);
   }
 }

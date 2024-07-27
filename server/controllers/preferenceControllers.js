@@ -3,6 +3,7 @@ import User from "../models/User.js";
 
 export async function updatePreference(req, res) {
   try {
+    console.log(req.body);
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
 
@@ -10,7 +11,6 @@ export async function updatePreference(req, res) {
     const preferences = await Preference.getUserPreferences(userId, "*");
     res.status(200).send(preferences);
   } catch (error) {
-    console.error(error);
     res
       .status(500)
       .json({ message: "Error updating user preference", error: error });
@@ -36,13 +36,11 @@ export async function addPreference(req, res) {
 }
 
 export async function getUserPreferences(req, res) {
-
   try {
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
     const keys = req.body.keys || "*";
     const preferences = await Preference.getUserPreferences(userId, keys);
-    console.log("end", preferences);
     return res.status(200).json({ preferences: preferences });
   } catch (error) {
     res

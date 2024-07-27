@@ -31,7 +31,8 @@ export default function TagSelect({
 
   const handleTagsChange = useCallback(
     async (newTags) => {
-      if (id && newTags) {
+      if (id && newTags && task) {
+        console.log(task);
         const updatedTask = { ...task, tags: JSON.stringify(newTags) };
         setTask(updatedTask);
         await modifyTask(updatedTask, "post");
@@ -41,10 +42,10 @@ export default function TagSelect({
   );
 
   useEffect(() => {
-    if (taskTags.length > 0) {
+    if (taskTags) {
       handleTagsChange(taskTags);
     }
-  }, [taskTags, handleTagsChange]);
+  }, [taskTags]);
 
   const handleAddTag = useCallback(
     (name = "", id = undefined) => {
@@ -144,7 +145,9 @@ export default function TagSelect({
     },
     [taskTags, handleAddTag, handleError]
   );
-
+  useEffect(() => {
+    console.log(taskTags);
+  }, [taskTags, tags]);
   const handleDeleteTag = useCallback((index) => {
     setTaskTags((prev) => prev.filter((_, i) => i !== index));
   }, []);
@@ -174,42 +177,43 @@ export default function TagSelect({
         </button>
       </div>
       <div className="flex flex-col items-start overflow-y-auto">
-        {taskTags.map((tag, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between mb-2 rounded-full addMenuElement m-2"
-          >
-            <input
-              ref={
-                index === taskTags.length - 1 && isAddingTag
-                  ? newTagInputRef
-                  : null
-              }
-              type="text"
-              value={tag.name}
-              onChange={(e) => handleNewTagChange(index, e.target.value)}
-              onBlur={() => handleNewTagBlur(index)}
-              className="border-none text-base bg-transparent focus:outline-none focus:ring-0"
-            />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="cursor-pointer hover:text-dominant transition transition-color"
-              viewBox="0 0 24 24"
-              width="24"
-              height="24"
-              onClick={() => handleDeleteTag(index)}
+        {Array.isArray(taskTags) &&
+          taskTags.map((tag, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between mb-2 rounded-full addMenuElement m-2"
             >
-              <path
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M6 18L18 6M6 6l12 12"
+              <input
+                ref={
+                  index === taskTags.length - 1 && isAddingTag
+                    ? newTagInputRef
+                    : null
+                }
+                type="text"
+                value={tag.name}
+                onChange={(e) => handleNewTagChange(index, e.target.value)}
+                onBlur={() => handleNewTagBlur(index)}
+                className="border-none text-base bg-transparent focus:outline-none focus:ring-0"
               />
-            </svg>
-          </div>
-        ))}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="cursor-pointer hover:text-dominant transition transition-color"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                onClick={() => handleDeleteTag(index)}
+              >
+                <path
+                  fill="none"
+                  stroke="currentColor"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </div>
+          ))}
       </div>
       <div className="flex flex-col w-[97%] ml-auto">
         <Slider {...settings}>

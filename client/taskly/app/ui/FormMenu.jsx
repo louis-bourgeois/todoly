@@ -2,13 +2,14 @@
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
-import AnchorPoint from "ui/AnchorPoint";
+import { useCallback, useState } from "react";
 import Form from "ui/Form";
 import Input from "ui/Input";
 import PasswordInputContainer from "ui/auth/PasswordInputContainer";
 import { useAuth } from "../../context/AuthContext";
-import { useUserPreferences } from "../../context/UserPreferencesContext";
+import { useError } from "../../context/ErrorContext";
+import CTA from "./landing_page/CTA";
+
 export default function FormMenu({
   display,
   mainTitle,
@@ -25,195 +26,168 @@ export default function FormMenu({
   newUser,
 }) {
   const router = useRouter();
-  const { preferences } = useUserPreferences();
   const [formData, setFormData] = useState(formDataArray);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
-  const [error, setError] = useState("");
   const { login } = useAuth();
+  const { handleError } = useError();
+  const [isChecked, setIsChecked] = useState(false);
+  const [disabled, setDisabled] = useState(false);
+  const [passwordMismatchError, setPasswordMismatchError] = useState("");
 
-  const [passwordMatch, setPasswordMatch] = useState(true);
-  const errors = [
-    {
-      error: "already exist",
-      message: "We already know about you,",
-      anchor: "log in.",
-      href: "/auth/login",
-    },
-    {
-      error: "unauthorized",
-      message: "Password is incorrect.",
-      anchor: undefined,
-      href: undefined,
-    },
-    {
-      error: "username already taken",
-      message: "This username is already taken!",
-      anchor: undefined,
-      href: undefined,
-    },
-    {
-      error: "Internal Servor Error",
-      message: "Server Error (500), ",
-      anchor: "report here",
-      href: "/support/report",
-    },
-    {
-      error: "not found",
-      message: "We don't know about you :(,",
-      anchor: "please sign up.",
-      href: "/auth/signup",
-    },
-    {
-      error: "password doesn't match",
-      message: "The passwords are not the same!",
-      anchor: undefined,
-      href: undefined,
-    },
-  ];
+  const handleChange = useCallback(
+    (e) => {
+      const { name, value } = e.target;
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+      if (
+        (name === "password" || name === "confirm_password") &&
+        confirmPassword
+      ) {
+        setFormData((prev) => {
+          const newPassword = name === "password" ? value : prev.password;
+          const newConfirmPassword =
+            name === "confirm_password" ? value : prev.confirm_password;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-    if (
-      (name === "password" || name === "confirm_password") &&
-      confirmPassword
-    ) {
-      setFormData((prev) => {
-        // On utilise les valeurs les plus récentes de formData
-        const isMatch =
-          name === "password"
-            ? value === prev.confirm_password
-            : prev.password === value;
-        setPasswordMatch(isMatch);
-        if (!isMatch) {
-          setError("password doesn't match");
-        } else {
-          setError("Internal Servor Error");
-        }
-        return prev; // On retourne prev sans le modifier
-      });
-    }
-  };
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-    switch (action) {
-      case "Sign up":
+          // Check if both fields are empty
+          if (!newPassword && !newConfirmPassword) {
+            setPasswordMismatchError("");
+          } else if (newPassword !== newConfirmPassword) {
+            setPasswordMismatchError("The passwords are not the same!");
+          } else {
+            setPasswordMismatchError("");
+          }
+
+          return {
+            ...prev,
+            [name]: value,
+          };
+        });
+      }
+    },
+    [confirmPassword]
+  );
+
+  const handleFormSubmit = useCallback(
+    async (e) => {
+      e.preventDefault();
+      if (passwordMismatchError) {
+        return; // Don't submit if passwords don't match
+      }
+      if (action === "Sign up") {
         addUser(formData);
-        break;
-      case "Log in":
-        const res = await login(formData);
-        if (res && res.status === 200) {
-          console.log("bah oe mdrr");
-          router.push("/app/currently");
-        } else {
-          console.log(res.status);
-          switch (res.status) {
-            case 404:
-              setError("not found");
-              break;
-            case 401:
-              setError("unauthorized");
-              break;
-            case 500:
-              setError("Internal Server Error");
-              break;
+        setDisabled(true);
+      } else if (action === "Log in") {
+        try {
+          const res = await login(formData);
+          if (res && res.status === 200) {
+            router.push("/app/currently");
+          }
+        } catch (error) {
+          handleError(error);
+        }
+      }
+    },
+    [action, formData, login, router, handleError, passwordMismatchError]
+  );
+
+  const addUser = useCallback(
+    async (data) => {
+      const {
+        confirm_password,
+        "terms and conditions checkbox": termsConditions,
+        ...cleanedFormData
+      } = data;
+      try {
+        const result = await axios.post(
+          "http://localhost:3001/api/users/register",
+          { data: cleanedFormData }
+        );
+        if (result.status === 201) {
+          const res = await login(formData);
+          if (res && res.status === 200) {
+            router.push("/app");
+          } else {
+            handleError({
+              response: { data: { errorType: "UNAUTHORIZED_SIGNUP" } },
+            });
           }
         }
-        break;
-    }
-  };
-
-  const cleanFormData = (formData) => {
-    const {
-      confirm_password,
-      "terms and conditions checkbox": termsConditions,
-      ...cleanedFormData
-    } = formData;
-
-    return cleanedFormData;
-  };
-  const addUser = async (data) => {
-    data = cleanFormData(formData);
-    const result = await axios.post(
-      "http://localhost:3001/api/users/register",
-      {
-        data,
+      } catch (err) {
+        handleError(err);
       }
-    );
-    console.log(result);
+    },
+    [formData, login, router, handleError]
+  );
 
-    if (result.data === "already exist") {
-      setError("already exist");
-    } else if (result.data === "username already taken") {
-      setError("username already taken");
-    } else if (result.status === 201) {
-      const res = await login(formData);
-      if (res && res.status === 200) {
-        router.push("/app");
-      } else {
-        console.log(
-          "anormal error : user unauthorised from signup form ?",
-          res
-        );
-        setError(res.statusText);
-        return null;
-      }
-    }
+  const handleCheckboxChange = (e) => {
+    setIsChecked(e.target.checked);
   };
+
   return (
     <div
-      className={`rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.5)] bg-white transition-opacity ease-in-out duration-1000 ${
+      className={`rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.5)] bg-landing_page_bg transition-opacity ease-in-out duration-1000 ${
         display ? "opacity-100" : "opacity-0"
-      } ${"absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 "} ${
+      } absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 ${
         display ? "z-30" : "z-0"
       }`}
     >
-      {" "}
-      {/* faut adapter dans le theme tailwind le 3xl pr le border radius */}{" "}
-      <div className="m-10 flex flex-col justify-center items-center gap-10 ">
+      <style jsx>{`
+        .custom-checkbox {
+          width: 20px;
+          height: 20px;
+          border: 2px solid #959595;
+          border-radius: 50%;
+          display: inline-block;
+          position: relative;
+          cursor: pointer;
+        }
+        .custom-checkbox::after {
+          content: "";
+          position: absolute;
+          width: 12px;
+          height: 12px;
+          background-color: #007aff; /* Replace with your dominant color */
+          border-radius: 50%;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%) scale(0);
+          transition: transform 0.2s ease-in-out;
+        }
+        input:checked + .custom-checkbox::after {
+          transform: translate(-50%, -50%) scale(1);
+        }
+      `}</style>
+      <div className="m-6 flex flex-col justify-center items-center gap-6">
         {libelle && (
-          <p className="self-start font-extralight text-3xl">{libelle}</p>
+          <p className="self-start font-extralight text-1.5xl">{libelle}</p>
         )}
         {mainTitle && (
-          <h3 className="text-6xl font-bold self-start text-gradient-black-to-purple">
+          <h3 className="text-3xl font-bold self-start text-dominant mb-2">
             {mainTitle}
           </h3>
         )}
-        <Form onSubmit={handleFormSubmit} onChange={handleChange}>
+        <Form
+          onSubmit={handleFormSubmit}
+          onChange={handleChange}
+          className="space-y-4"
+        >
           {inputs.map((input, index) => (
             <Input
               key={index}
-              type={input.type}
-              name={input.name}
-              autoComplete={input.autoComplete}
-              placeholder={input.placeholder}
-              additionalStyles={input.additionalStyles}
-              pattern={input.pattern}
-              inputMode={input.inputMode}
-              autoDimensions={!(input.width || input.height)}
-              flexShrinkGrow
-              required
-              onChange={
-                input.type === "email"
-                  ? () => {
-                      setError("");
-                    }
-                  : undefined
-              }
+              {...input}
+              additionalStyles="bg-landing_page_bg text-xl font-light"
             />
           ))}
-
           {password && (
             <PasswordInputContainer
               name="password"
               placeholder={`${
                 action === "Log in"
                   ? "Enter your password"
-                  : action === "Sign up" && "Enter a strong password"
+                  : "Enter a strong password"
               }`}
               setVisibilityState={setPasswordVisible}
               visibilityState={passwordVisible}
@@ -231,46 +205,30 @@ export default function FormMenu({
               newUser={true}
             />
           )}
-          {error &&
-            errors.map((e, index) => {
-              console.log(e.error === error);
-              if (e.error === error) {
-                return (
-                  <p
-                    className="text-red-800 text-right text-xl ml-auto"
-                    key={index}
-                  >
-                    {e.message}{" "}
-                    {e.href && e.anchor && (
-                      <Link href={e.href} passHref legacyBehavior>
-                        <AnchorPoint styles="text-dominant">{e.anchor}</AnchorPoint>
-                      </Link>
-                    )}
-                  </p>
-                );
-              } else {
-                return null; // Retourne null si la condition n'est pas remplie
-              }
-            })}
-
+          {passwordMismatchError && (
+            <p className="text-red-500 text-sm">{passwordMismatchError}</p>
+          )}
           {termsConditions && (
-            <div className="mr-auto ml-2 flex gap-10 w-full mt-[2rem]">
-              <Input
-                type="checkbox"
-                name="terms and conditions checkbox"
-                id="terms and conditions checkbox"
-                additionalStyles="p-2 border border-grey rounded-2xl w-5 rounded-full"
-                required
-              />
-
+            <div className="flex items-center gap-4 w-full mt-4">
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  name="terms and conditions checkbox"
+                  className="sr-only"
+                  required
+                  checked={isChecked}
+                  onChange={handleCheckboxChange}
+                />
+                <span className="custom-checkbox"></span>
+              </label>
               <label
                 htmlFor="terms and conditions checkbox"
-                className="flex-grow-2 text-xl text-black italic"
+                className="flex-grow text-sm text-black italic cursor-pointer"
               >
                 I have read and accepted the{" "}
                 <Link href="/legal/conditions" passHref legacyBehavior>
                   <a className="custom-color-anchor">conditions</a>
-                </Link>
+                </Link>{" "}
                 and{" "}
                 <Link href="/legal/terms" passHref legacyBehavior>
                   <a className="custom-color-anchor">terms of use</a>
@@ -279,16 +237,16 @@ export default function FormMenu({
               </label>
             </div>
           )}
-          <Input
-            type="submit"
-            value={submitValue}
-            additionalStyles="p-2 border-black text-3xl mt-[2rem] font-black w-full cursor-pointer hover:scale-105 transition ease-in-out"
-            disabled={!passwordMatch}
+          <CTA
+            type="secondary"
+            title={submitValue}
+            disabled={disabled || !!passwordMismatchError}
+            className="w-4/5 h-12 mt-4 text-xl"
           />
-        </Form>{" "}
+        </Form>
         <Link href={bottomMessageHREF} passHref legacyBehavior>
-          <a className="custom-color-anchor">{bottomMessage}</a>
-        </Link>{" "}
+          <a className="text-dominant text-sm mt-2">{bottomMessage}</a>
+        </Link>
       </div>
     </div>
   );

@@ -11,24 +11,26 @@ export default function MobileSectionContainer({
   date,
   selectedWorkspace = undefined,
 }) {
-  const { tasks, activeTask, setActiveTask } = useTask();
+  const { tasks, setActiveTask } = useTask();
   const { sections, modifySection, deleteSection } = useSection();
   const { preferences } = useUserPreferences();
-  const { currentWorkspace } = useWorkspace();
-  const { toggleTaskMenu, setCardType } = useMenu();
+  const { currentWorkspace, setCurrentWorkspace } = useWorkspace();
+  const { setCardType } = useMenu();
 
-  const workspace = useMemo(
-    () => selectedWorkspace?.id || currentWorkspace,
-    [selectedWorkspace, currentWorkspace]
-  );
-
+  const workspace = selectedWorkspace?.id || currentWorkspace;
+  useEffect(() => {
+    console.log(tasks);
+  }, [tasks]);
   const expandTask = useCallback(
     (taskId) => {
+      const foundTask = tasks.find((task) => task.id === taskId);
+      console.log("fdddd", foundTask, tasks);
+      setCurrentWorkspace(foundTask.workspace_id);
+      setCardType("Task");
       console.log(taskId);
       setActiveTask(taskId);
-      setCardType("Task");
     },
-    [activeTask, setActiveTask, toggleTaskMenu]
+    [setCardType]
   );
 
   const filteredSections = useMemo(
@@ -82,72 +84,48 @@ export default function MobileSectionContainer({
         (task) =>
           task &&
           task.linked_section === section.id &&
-          (!date || task.due_date === date)
+          (selectedWorkspace || task.due_date === date)
       );
       if (sectionTasksFiltered.length > 0) {
         taskMap.set(section.id, sectionTasksFiltered);
       }
     });
     return taskMap;
-  }, [tasks, filteredSections, date, preferences]);
+  }, [tasks, filteredSections, date, preferences, selectedWorkspace]);
 
-  const allSections = useMemo(() => {
-    const sectionsWithTasks = [];
-    const sectionsWithoutTasks = [];
-
-    filteredSections.forEach((section, index) => {
-      const sectionTasksList = sectionTasks.get(section.id) || [];
-      if (sectionTasksList.length > 0) {
-        sectionsWithTasks.push({ section, tasks: sectionTasksList, index });
-      } else {
-        sectionsWithoutTasks.push({ section, tasks: [], index });
-      }
-    });
-
-    return [...sectionsWithTasks, ...sectionsWithoutTasks];
-  }, [filteredSections, sectionTasks, sections]);
-  useEffect(() => {
-    console.log("Sections changed:", sections);
-  }, [sections]);
-
-  useEffect(() => {
-    console.log("Tasks changed:", tasks);
-  }, [tasks]);
-
-  useEffect(() => {
-    console.log("FilteredSections changed:", filteredSections);
-  }, [filteredSections]);
-
-  useEffect(() => {
-    console.log("SectionTasks changed:", sectionTasks);
-  }, [sectionTasks]);
-
-  useEffect(() => {
-    console.log("AllSections changed:", allSections);
-  }, [allSections]);
+  const sectionsWithTasks = useMemo(() => {
+    return filteredSections.filter((section) => sectionTasks.has(section.id));
+  }, [filteredSections, sectionTasks]);
 
   return (
-    <div className="w-full h-full overflow-y-auto flex flex-col justify-start gap-[25px]">
-      {allSections.map(({ section, tasks }, newIndex) => (
+    <div className="w-full h-full overflow-y-auto  flex flex-col justify-start gap-[25px]">
+      {sectionsWithTasks.map((section, index) => (
         <div
-          key={`${section.id}-${tasks.length}-${tasks
+          key={`${section.id}-${
+            sectionTasks.get(section.id).length
+          }-${sectionTasks
+            .get(section.id)
             .map((task) => task.id)
             .join("-")}`}
           className="flex flex-col gap-[12px]"
         >
           <SectionHeader
-            index={newIndex}
+            index={index}
             section={section}
             onSectionNameChange={modifySection}
             deleteSection={deleteSection}
           />
           <div
             className={`grid grid-cols-2 gap-4 px-[16px] ${
-              newIndex === allSections.length - 1 && "mb-[15px]"
+              index === sectionsWithTasks.length - 1 && "mb-[15px]"
             }`}
           >
-            {tasks.map((task) => (
-              <MobileTask key={task.id} task={task} onClick={expandTask} />
+            {sectionTasks.get(section.id).map((task) => (
+              <MobileTask
+                key={task.id}
+                task={task}
+                onClick={() => expandTask(task.id)}
+              />
             ))}
           </div>
         </div>

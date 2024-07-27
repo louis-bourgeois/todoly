@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid"; // Use UUID for unique ID generation
 
 export const NotificationsContext = createContext();
@@ -7,7 +7,13 @@ export const NotificationsContext = createContext();
 export const NotificationsProvider = ({ children }) => {
   const [notificationsList, setNotificationLists] = useState([]);
 
+  useEffect(() => {
+    console.log("====================================");
+    console.log(notificationsList);
+    console.log("====================================");
+  }, [notificationsList]);
   const addNotification = (notificationData) => {
+    console.log(notificationData);
     const newNotification = {
       id: uuidv4(),
       ...notificationData,

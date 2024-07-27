@@ -3,15 +3,16 @@ import Card from "@/ui/_mobile/app/Cards/Card";
 import MobileCardHeader from "@/ui/_mobile/app/Cards/Card_header/MobileCardHeader";
 import MobileSectionContainer from "@/ui/_mobile/app/Cards/SectionContainer/MobileSectionContainer";
 import TaskView from "@/ui/_mobile/app/Cards/TaskView.jsx";
+import WorkspaceView from "@/ui/_mobile/app/Cards/WorkspaceView.jsx";
+import MobileMainMenu from "@/ui/_mobile/app/Footer/MainMenu/MobileMainMenu.jsx";
 import MobileFooter from "@/ui/_mobile/app/Footer/MobileFooter.jsx";
+import MobileSearchResults from "@/ui/_mobile/app/Footer/SearchSections/searchMenu/MobileSearchResults.jsx";
 import MobileHeader from "@/ui/_mobile/app/Header/MobileHeader.jsx";
 import NoteLayout from "@/ui/_mobile/app/MenuLayouts/Note/NoteLayout";
 import TaskLayout from "@/ui/_mobile/app/MenuLayouts/Task/TaskLayout";
 import WorkspaceLayout from "@/ui/_mobile/app/MenuLayouts/Workspace/WorkspaceLayout";
 import MobileViewsMenu from "@/ui/_mobile/viewsMenu/MobileViewsMenu.jsx";
 import Navbar from "@/ui/app/Navbar.jsx";
-import NotificationMenu from "@/ui/app/NotificationMenu/NotificationMenu.jsx";
-import NotificationWrapper from "@/ui/app/NotificationWrapper/NotificationWrapper.jsx";
 import SearchMenu from "@/ui/app/searchMenu/SearchMenu.jsx";
 import TaskMenu from "@/ui/app/TaskMenu/TaskMenu.jsx";
 import ViewsMenu from "@/ui/app/viewsMenu/ViewsMenu.jsx";
@@ -66,21 +67,22 @@ export default function AppLayout({ children }) {
   const [showAddWorkspaceBubble, setShowAddWorkspaceBubble] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentCardType, setCurrentCardType] = useState(cardType);
-  const timeoutRef = useRef(null);
+  const transitionTimeoutRef = useRef(null);
+
   const swiperRef = useRef(null);
   const router = useRouter();
-
+  const [nextCardType, setNextCardType] = useState(null);
   const currentWorkspaceTasks =
     workspaces.find((w) => w.id === currentWorkspace)?.tasks || [];
-  console.log("====================================");
-  console.log(workspaces, currentWorkspaceTasks, currentWorkspace);
-  console.log("====================================");
   const sortedTasks = [
     ...currentWorkspaceTasks.filter((task) => task.id === activeTask),
     ...currentWorkspaceTasks.filter((task) => task.id !== activeTask),
   ];
   useEffect(() => {
     setCurrentCardType(cardType);
+    console.log("====================================");
+    console.trace(cardType);
+    console.log("====================================");
   }, [cardType]);
   useEffect(() => {
     const handleKeyDown = (event) => {
@@ -105,14 +107,27 @@ export default function AppLayout({ children }) {
   useEffect(() => {
     if (cardType !== currentCardType) {
       setIsTransitioning(true);
-      swiperRef.current.swiper.slideTo(0, 0);
-      const timer = setTimeout(() => {
-        setCurrentCardType(cardType);
+      setNextCardType(cardType);
+      if (swiperRef.current && swiperRef.current.swiper) {
+        swiperRef.current.swiper.slideTo(0);
+      }
+      // Début de la transition
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
+      }
 
+      transitionTimeoutRef.current = setTimeout(() => {
+        setCurrentCardType(cardType);
         setIsTransitioning(false);
-      }, 300);
-      return () => clearTimeout(timer);
+        setNextCardType(null);
+      }, 300); // Durée de la transition en ms
     }
+
+    return () => {
+      if (transitionTimeoutRef.current) {
+        clearTimeout(transitionTimeoutRef.current);
+      }
+    };
   }, [cardType, currentCardType]);
 
   const handleDontShowAgain = async () => {
@@ -133,7 +148,14 @@ export default function AppLayout({ children }) {
     return MenuComponent ? <MenuComponent /> : null;
   };
 
-  const renderCardContent = (task, index) => {
+  const renderCardContent = (task, index, workspace = null) => {
+    const getDateForIndex = (index) => {
+      const today = new Date();
+      const date = new Date(today);
+      date.setDate(today.getDate() + index);
+      return date.toISOString().split("T")[0]; // Format YYYY-MM-DD
+    };
+
     const cardTypes = {
       Currently: () => (
         <Card
@@ -144,11 +166,30 @@ export default function AppLayout({ children }) {
           <CardContent cardType={currentCardType}>
             <MobileCardHeader index={index} />
             <ScrollableContent>
-              <MobileSectionContainer />
+              <MobileSectionContainer date={getDateForIndex(index)} />
             </ScrollableContent>
           </CardContent>
         </Card>
       ),
+      All: () => {
+        console.log("====================================");
+        console.log("All is rendered");
+        console.log("====================================");
+        return (
+          <Card
+            cardType={currentCardType}
+            isVisible={true}
+            isTransitioning={isTransitioning}
+          >
+            <CardContent cardType={currentCardType}>
+              <MobileCardHeader index={index} workspace={workspace} />
+              <ScrollableContent>
+                <MobileSectionContainer selectedWorkspace={workspace} />
+              </ScrollableContent>
+            </CardContent>
+          </Card>
+        );
+      },
       Add: () => {
         const el = ELEMENTS[index % ELEMENTS.length];
         return (
@@ -175,16 +216,38 @@ export default function AppLayout({ children }) {
           </CardContent>
         </Card>
       ),
-      Default: () => (
+      Workspace: () => (
         <Card
           cardType={currentCardType}
           isVisible={true}
           isTransitioning={isTransitioning}
         >
-          <CardContent el={currentCardType}>
-            {renderMenu(currentCardType)}
+          <CardContent cardType={currentCardType}>
+            {workspace ? (
+              <WorkspaceView id={workspace.id}></WorkspaceView>
+            ) : (
+              <div>No task selected</div>
+            )}
           </CardContent>
         </Card>
+      ),
+      Search: () => (
+        <Card
+          cardType={currentCardType}
+          isVisible={true}
+          isTransitioning={isTransitioning}
+        >
+          <CardContent cardType={currentCardType}>
+            <MobileSearchResults />
+          </CardContent>
+        </Card>
+      ),
+      Default: () => (
+        <Card
+          cardType={currentCardType}
+          isVisible={true}
+          isTransitioning={isTransitioning}
+        ></Card>
       ),
     };
 
@@ -209,12 +272,28 @@ export default function AppLayout({ children }) {
   // if (!isAuthenticated) {
   //   return null;
   // }
-  if (isMobile) {
+
+  if (isMobile && cardType === "Profile") {
+    return (
+      <>
+        {children}
+        <footer className="px-[17.5px] w-full flex flex-col items-center justify-between gap-[2vh]">
+          <MobileMainMenu />
+        </footer>
+      </>
+    );
+  }
+  if (isMobile && cardType !== "Profile") {
     return (
       <>
         <MobileViewsMenu isVisible={isMobileViewsMenuOpen} />
         <MobileHeader />
-        <div className="w-full overflow-visible">
+
+        <div
+          className={`w-full overflow-visible ${
+            cardType === "Search" && "mt-auto"
+          }`}
+        >
           <Swiper
             ref={swiperRef}
             slidesPerView={1}
@@ -226,24 +305,59 @@ export default function AppLayout({ children }) {
             {currentCardType === "Task" && sortedTasks.length > 0 ? (
               sortedTasks.map((task, index) => (
                 <SwiperSlide key={task.id}>
-                  <CardWrapper>{renderCardContent(task, index)}</CardWrapper>
+                  <CardWrapper cardType={currentCardType}>
+                    {renderCardContent(task, index)}
+                  </CardWrapper>
                 </SwiperSlide>
               ))
-            ) : currentCardType === "Currently" ? (
+            ) : currentCardType === "Workspace" ? (
+              workspaces
+                .sort((a, b) => b.tasks.length - a.tasks.length)
+                .map((workspace, index) => (
+                  <SwiperSlide key={index}>
+                    <CardWrapper cardType={currentCardType}>
+                      {renderCardContent(null, index, workspace)}
+                    </CardWrapper>
+                  </SwiperSlide>
+                ))
+            ) : currentCardType === "Currently" ||
+              nextCardType === "Currently" ? (
               [...Array(SLIDE_NUMBER)].map((_, index) => (
                 <SwiperSlide key={index}>
-                  <CardWrapper>{renderCardContent(null, index)}</CardWrapper>
+                  <CardWrapper cardType={currentCardType}>
+                    {renderCardContent(null, index)}
+                  </CardWrapper>
                 </SwiperSlide>
               ))
+            ) : currentCardType === "All" || nextCardType === "All" ? (
+              workspaces
+                .sort((a, b) => b.tasks.length - a.tasks.length)
+                .map((workspace, index) => (
+                  <SwiperSlide key={index}>
+                    <CardWrapper cardType={currentCardType}>
+                      {renderCardContent(null, index, workspace)}
+                    </CardWrapper>
+                  </SwiperSlide>
+                ))
             ) : currentCardType === "Add" ? (
               [...Array(ELEMENTS.length)].map((_, index) => (
                 <SwiperSlide key={index}>
-                  <CardWrapper>{renderCardContent(null, index)}</CardWrapper>
+                  <CardWrapper cardType={currentCardType}>
+                    {renderCardContent(null, index)}
+                  </CardWrapper>
                 </SwiperSlide>
               ))
+            ) : currentCardType === "Search" ? (
+              <SwiperSlide>
+                <CardWrapper cardType={currentCardType}>
+                  {renderCardContent(null, null)}
+                </CardWrapper>
+              </SwiperSlide>
             ) : (
               <SwiperSlide>
-                <CardWrapper>{renderCardContent(null, 0)}</CardWrapper>
+                <CardWrapper cardType={currentCardType}>
+                  {renderCardContent(null, 0)}
+                </CardWrapper>
               </SwiperSlide>
             )}
           </Swiper>
@@ -284,28 +398,21 @@ export default function AppLayout({ children }) {
           workspaceId={activeWorkspace}
           visibility={isTaskMenuOpen}
         />
-        <NotificationWrapper>
-          {notificationsList
-            .slice()
-            .reverse()
-            .map((notification) => (
-              <NotificationMenu data={notification} key={notification.id} />
-            ))}
-        </NotificationWrapper>
         {children}
       </>
     );
   }
 }
 
-const CardWrapper = ({ children }) => (
-  <div className="flex items-center justify-center h-full">{children}</div>
+const CardWrapper = ({ children, cardType }) => (
+  <div className={`flex items-center justify-center h-full`}>{children}</div>
 );
 
 const CardContent = ({ children, el, cardType }) => (
   <div
     className={`relative w-full h-full flex flex-col ${
-      (el === "Task" || cardType === "Task") && "justify-between pb-[8px]"
+      (el === "Task" || cardType === "Task" || cardType === "Workspace") &&
+      "justify-between pb-[8px]"
     }`}
   >
     {children}

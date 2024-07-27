@@ -1,28 +1,74 @@
 "use client";
-import { poppins } from "@/font";
+
+import { usePathname } from "next/navigation";
+import { useEffect, useMemo, useState } from "react";
 import { useScreen } from "../context/ScreenContext.js";
+import { useUserPreferences } from "../context/UserPreferencesContext.js";
+
+const VALID_THEMES = ["#ffffff,#de9f9f", "#000000", "#f7f4ed"];
+const DEFAULT_BG = "#FFF";
 
 export default function ScreenWrapper({ children }) {
   const { isMobile } = useScreen();
+  const pathname = usePathname();
+  const [isMounted, setIsMounted] = useState(false);
+  const { preferences } = useUserPreferences();
 
-  if (isMobile) {
-    return (
-      <html
-        lang="en"
-        className={`${poppins.className} h-full w-full overflow-hidden`}
-      >
-        <body className="text-shadow-01 h-full overflow-hidden">
-          <main className="flex flex-col items-start justify-between h-full py-[20px]">
-            {children}
-          </main>
-        </body>
-      </html>
-    );
+  const bg = useMemo(() => {
+    const colorTheme = preferences.Color_Theme?.toLowerCase();
+    return VALID_THEMES.includes(colorTheme) ? colorTheme : DEFAULT_BG;
+  }, [preferences.Color_Theme]);
+
+  useEffect(() => {
+    setIsMounted(true);
+    if (isMobile) {
+      document.body.classList.add("overflow-hidden");
+    } else {
+      document.body.classList.remove("overflow-hidden");
+    }
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [isMobile]);
+
+  if (!isMounted) {
+    return null; // ou un spinner de chargement
+  }
+
+  let wrapperClassName = "text-shadow-01 ";
+  if (
+    [
+      "/",
+      "/auth/",
+      "/auth/login",
+      "/auth/signup",
+      "/features",
+      "/pricing",
+    ].includes(pathname)
+  ) {
+    wrapperClassName += `h-[100vh] overflow-y-auto overflow-x-none flex flex-col items-center gap-[30vh] ${
+      !isMobile && "px-[9vw]"
+    } `;
+  } else if (isMobile) {
+    wrapperClassName += "h-full w-full";
+  } else {
+    wrapperClassName += "h-full";
   }
 
   return (
-    <html lang="en" className={`${poppins.className} h-full`}>
-      <body className="text-shadow-01 h-full">{children}</body>
-    </html>
+    <div
+      className={`${wrapperClassName} ${
+        !isMobile && "absolute w-[100vw] h-[100vh] inset-0 z-0"
+      }`}
+      style={{ backgroundColor: bg }}
+    >
+      {isMobile ? (
+        <main className="flex flex-col items-start justify-between h-full py-[20px]">
+          {children}
+        </main>
+      ) : (
+        children
+      )}
+    </div>
   );
 }

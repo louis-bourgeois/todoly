@@ -11,6 +11,10 @@ server/.pnpm-debug.log*
 # Diagnostic reports (https://nodejs.org/api/report.html)
 server/report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
+# demo folder
+demo
+demo/*
+
 # yarn
 server/./yarn.lock
 
@@ -147,8 +151,10 @@ client/taskly/.env
 .vscode
 
 
+# logo files
+illustrator_logo
+illustrator_logo/*
 
-
-
+# screenshots' folder
 Screeens/
 Screeens/*

@@ -36,7 +36,7 @@ export default function Page() {
       <FormMenu
         display={showComponent}
         absolute
-        mainTitle="Welcome back to Taskly"
+        mainTitle="Welcome back to Todoly"
         libelle="User data"
         inputs={inputs}
         password
@@ -46,11 +46,7 @@ export default function Page() {
         bottomMessageHREF="/auth/signup"
         submitValue="Log in"
       ></FormMenu>
-      <LoginHeroe
-        handle={handleClick}
-        h1="Welcome to Taskly"
-        button={action}
-      />
+      <LoginHeroe handle={handleClick} h1="Welcome to Todoly" button={action} />
     </>
   );
 }

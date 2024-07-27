@@ -120,7 +120,7 @@ export default function WorkspaceLayoutSection({
     (e) => {
       if (e.key === "Enter" && inputValue.trim() !== "") {
         if (isCollaborator) {
-          onItemSelect({ name: inputValue.trim() });
+          onItemSelect({ username: inputValue.trim() });
         } else if (suggestions.length > 0) {
           onItemSelect(suggestions[0]);
         }

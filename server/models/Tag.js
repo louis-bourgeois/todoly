@@ -45,7 +45,6 @@ class Tag {
       const { rows } = await pool.query(query, params);
       return rows;
     } catch (error) {
-      console.error(error);
       throw error;
     }
   }

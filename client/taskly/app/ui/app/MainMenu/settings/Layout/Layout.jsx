@@ -12,15 +12,15 @@ export default function Layout({ transitionStyles }) {
     preferences.Home_Page_Title
   );
 
-  const handleMainPageChange = (value) => {
+  const handleMainPageChange = async (value) => {
     setDefaultMainPage(value);
-    updateUserPreference({ key: "Default_Main_Page", value: value });
+    await updateUserPreference({ key: "Default_Main_Page", value: value });
   };
 
-  const handleHomePageTitleChange = (event) => {
+  const handleHomePageTitleChange = async (event) => {
     const value = event.target.value;
     setHomePageTitle(value);
-    updateUserPreference({ key: "Home_Page_Title", value: value });
+    await updateUserPreference({ key: "Home_Page_Title", value: value });
   };
   return (
     <div

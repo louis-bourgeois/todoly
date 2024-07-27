@@ -2,9 +2,11 @@
 
 import { useCallback, useContext, useEffect, useRef } from "react";
 import { NotificationsContext } from "../../../../context/NotificationsContext";
+import NotificationMenu from "../NotificationMenu/NotificationMenu";
 
 export default function NotificationWrapper({ children }) {
-  const { deleteNotification } = useContext(NotificationsContext);
+  const { deleteNotification, notificationsList } =
+    useContext(NotificationsContext);
   const parentRef = useRef(null);
 
   const checkIfTopExceeded = useCallback(() => {
@@ -97,9 +99,14 @@ export default function NotificationWrapper({ children }) {
   return (
     <div
       ref={parentRef}
-      className="scroll-y-hide z-[70] fixed bottom-0 right-0 max-w-[25vw] max-h-[50vh] flex flex-col items-center p-10 pb-0 overflow-auto"
+      className="scroll-y-hide z-[200] fixed bottom-0 right-0 max-w-[25vw] max-h-[50vh] flex flex-col items-center p-10 pb-0 overflow-auto"
     >
-      {children}
+      {notificationsList
+        .slice()
+        .reverse()
+        .map((notification) => (
+          <NotificationMenu data={notification} key={notification.id} />
+        ))}
     </div>
   );
 }

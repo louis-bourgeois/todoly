@@ -110,7 +110,6 @@ passport.use(
         return cb("User not found");
       }
     } catch (error) {
-      console.error(error);
       return cb(error);
     }
   })

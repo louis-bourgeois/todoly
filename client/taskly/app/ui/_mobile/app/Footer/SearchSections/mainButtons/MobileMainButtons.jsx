@@ -1,10 +1,26 @@
+import { useEffect, useState } from "react";
 import { useMenu } from "../../../../../../../context/MenuContext";
 
 export default function MobileMainButtons() {
   const { cardType, setCardType } = useMenu();
+  const [lastUrlSegment, setLastUrlSegment] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const segments = window.location.pathname.split("/");
+      setLastUrlSegment(segments[segments.length - 1]);
+    }
+  }, []);
+
+  const capitalize = (s) =>
+    s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
 
   const handleClick = () => {
-    setCardType(cardType === "Add" ? "Currently" : "Add");
+    const newCardType =
+      cardType === "Add" || cardType === "Task" || cardType === "Workspace"
+        ? capitalize(lastUrlSegment)
+        : "Add";
+    setCardType(newCardType);
   };
 
   return (
@@ -27,7 +43,11 @@ export default function MobileMainButtons() {
           viewBox="0 0 50 47"
           fill="none"
           className={`absolute top-0 left-0 smooth-rotate ${
-            cardType === "Add" ? "rotate-45" : "rotate-0"
+            cardType === "Add" ||
+            cardType === "Task" ||
+            cardType === "Workspace"
+              ? "rotate-45"
+              : "rotate-0"
           }`}
         >
           <path

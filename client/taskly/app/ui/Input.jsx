@@ -27,37 +27,64 @@ const Input = forwardRef(
       }
     };
 
+    const inputType = isPassword ? (visible ? "text" : "password") : type;
+
+    const baseClasses = `
+      focus:outline-none
+      h-full
+      font-light
+      appearance-none
+      bg-landing_page_bg
+      text-gray-700
+      transition-all duration-200 ease-in-out
+      w-full
+      flex items-center
+      leading-tight 
+    `;
+
+    const conditionalClasses = `
+      ${flexShrinkGrow ? "flex-grow flex-shrink" : ""}
+      ${disabled ? "cursor-not-allowed opacity-50" : ""}
+      ${isPassword ? "w-full" : "border border-grey rounded-2xl"}
+      ${autoDimensions ? "min-w-[300px]" : ""}
+    `;
+
+    const className =
+      `${baseClasses} ${conditionalClasses} ${additionalStyles}`.trim();
+
+    // CSS for placeholder and input text alignment
+    const inputCSS = `
+      .custom-input::placeholder {
+        font-size: var(--placeholder-size);
+        font-weight: 300;
+ 
+      }
+      .custom-input {  
+      padding: 1rem ;
+      font-size: var(--placeholder-size);
+        display: flex;
+        align-items: center;
+      }
+    `;
+
     return (
-      <input
-        ref={ref}
-        id={id}
-        value={value}
-        name={name}
-        type={isPassword ? (visible ? "text" : "password") : type}
-        autoComplete={autoComplete}
-        placeholder={placeholder}
-        className={`
-        ${flexShrinkGrow ? "flex-grow flex-shrink" : ""}
-        ${disabled ? "cursor-not-allowed opacity-50" : ""}
-        ${
-          isPassword
-            ? "w-full focus:border-none border-none focus:outline-none"
-            : "border border-grey rounded-2xl px-3 py-2"
-        }
-        ${autoDimensions ? "min-w-[300px] min-h-[60px]" : ""}
-        ${additionalStyles}
-        appearance-none
-        bg-white
-        text-gray-700
-        focus:outline-none focus:ring-2 focus:ring-dominant-500
-        transition-all duration-200 ease-in-out
-        text-base
-        w-full
-      `}
-        required={required}
-        onChange={handleChange}
-        disabled={disabled}
-      />
+      <>
+        <style>{inputCSS}</style>
+        <input
+          ref={ref}
+          id={id}
+          value={value}
+          name={name}
+          type={inputType}
+          autoComplete={autoComplete}
+          placeholder={placeholder}
+          className={`${className} pb-1 custom-input`}
+          required={required}
+          onChange={handleChange}
+          disabled={disabled}
+          style={{ "--placeholder-size": "1rem" }}
+        />
+      </>
     );
   }
 );

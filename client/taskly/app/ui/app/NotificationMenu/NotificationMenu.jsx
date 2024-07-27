@@ -21,8 +21,8 @@ export default function NotificationMenu({ data }) {
       } max-w-[25vw] max-h-[20vh] flex flex-col gap-[20px] p-5 mr-0  mb-5 z-[150] transition duration-150 ease-out transition-all`}
       data-id={data.id}
     >
-      <div className="flex justify-between items-center gap-4 transition duration-150 ease-out transition-all">
-        <h1 className="text-2xl font-bold transition duration-150 ease-out transition-all">
+      <div className="flex justify-between items-center gap-4 duration-150 ease-out transition-all">
+        <h1 className="text-2xl font-bold duration-150 ease-out transition-all">
           {data?.title}
         </h1>
         <svg

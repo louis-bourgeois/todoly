@@ -8,6 +8,7 @@ import {
   useEffect,
   useState,
 } from "react";
+import { useError } from "./ErrorContext";
 
 const AuthContext = createContext();
 const baseUrl = "http://localhost:3001/api";
@@ -15,6 +16,7 @@ const baseUrl = "http://localhost:3001/api";
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
+  const { handleError } = useError();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
@@ -31,7 +33,7 @@ export const AuthProvider = ({ children }) => {
         return response;
       }
     } catch (error) {
-      console.error("Login error:", error);
+      handleError(error);
       setIsAuthenticated(false);
       setLoading(false);
       return {
@@ -62,10 +64,6 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.get(`${baseUrl}/users/me`, {
         withCredentials: true,
       });
-      console.log(
-        "response status state of check auth",
-        response.status === 200
-      );
       setIsAuthenticated(response.status === 200);
     } catch (error) {
       setIsAuthenticated(false);

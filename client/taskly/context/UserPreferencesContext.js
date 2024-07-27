@@ -53,10 +53,6 @@ export const UserPreferencesProvider = ({ children }) => {
     fetchPreferences();
   }, [fetchPreferences]);
 
-  useEffect(() => {
-    console.log("Preferences updated:", preferences);
-  }, [preferences]);
-
   const addUserPreference = async (data) => {
     setLoading(true);
     try {

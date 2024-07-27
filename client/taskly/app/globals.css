@@ -1,6 +1,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --overused-grotesk-trim-top: 0.1em;
+  --overused-grotesk-trim-bottom: 0.2em;
+  --overused-grotesk-line-height: 0.8;
+}
+
+html {
+  font-family: var(--font-overused-grotesk);
+}
+
+body {
+  line-height: var(--overused-grotesk-line-height);
+}
+
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div {
+  padding-top: var(--overused-grotesk-trim-top);
+  padding-bottom: var(--overused-grotesk-trim-bottom);
+}
+
+
+.text-trim-adjust {
+  display: inline-block;
+  line-height: var(--overused-grotesk-line-height);
+  padding-top: var(--overused-grotesk-trim-top);
+  padding-bottom: var(--overused-grotesk-trim-bottom);
+}
+
 body,
 html {
   margin: 0;
@@ -276,7 +313,7 @@ input[type="number"] {
 
 .switch {
   position: relative;
-  width: 14%;
+
   height: 34px;
 }
 
@@ -379,4 +416,30 @@ input[type="date"]::-ms-reveal {
 
 .animate-fade-in-out {
   animation: fadeInOut 5s ease-in-out;
+}
+@keyframes settings-hover {
+  0% {
+    transform: rotate(0deg);
+  }
+  10% {
+    transform: rotate(-10deg);
+  }
+  20% {
+    transform: rotate(9deg);
+  }
+  30% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-settings-hover {
+  animation: settings-hover 5s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
+  animation-play-state: paused;
+}
+
+.animate-settings-hover:hover {
+  animation-play-state: running;
 }

@@ -1,8 +1,9 @@
 "use client";
+import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
+import { useScreen } from "./ScreenContext";
 import { useTask } from "./TaskContext";
 import { useWorkspace } from "./WorkspaceContext";
-
 const MenuContext = createContext();
 
 export const useMenu = () => {
@@ -14,15 +15,32 @@ export const useMenu = () => {
 };
 
 export const MenuProvider = ({ children }) => {
+  const pathname = usePathname();
   const [isTaskMenuOpen, setIsTaskMenuOpen] = useState(false);
   const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(false);
   const [isViewsMenuOpen, setIsViewsMenuOpen] = useState(false);
   const [isMobileViewsMenuOpen, setIsMobileViewsMenuOpen] = useState(false);
   const [element, setElement] = useState("");
-  const [cardType, setCardType] = useState("default");
+  const { isMobile } = useScreen();
+  const [cardType, setCardType] = useState("");
 
   const { setActiveTask } = useTask();
   const { setActiveWorkspace } = useWorkspace();
+
+  useEffect(() => {
+    const updateCardType = () => {
+      const lastSegment = pathname.split("/").pop();
+      console.log(
+        "setting card type to : ",
+        lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).toLowerCase()
+      );
+      setCardType(
+        lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).toLowerCase()
+      );
+    };
+    console.log("setting card type to change");
+    updateCardType();
+  }, [pathname]);
   useEffect(() => {
     console.log("changed : ", isMobileViewsMenuOpen);
   }, [isMobileViewsMenuOpen]);

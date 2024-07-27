@@ -25,7 +25,6 @@ export const WorkspaceProvider = ({ children }) => {
   const { setSections } = useSection();
 
   const fetchWorkspaces = useCallback(async () => {
-
     if (!isAuthenticated) return;
 
     try {
@@ -124,7 +123,9 @@ export const WorkspaceProvider = ({ children }) => {
   const deleteWorkspace = useCallback(
     async (workspaceId) => {
       try {
-        await axios.delete(`${baseUrl}/workspaces/${workspaceId}`);
+        await axios.delete(`${baseUrl}/workspaces/${workspaceId}`, {
+          withCredentials: true,
+        });
         await fetchWorkspaces();
       } catch (error) {
         console.error("Error deleting workspace:", error);
@@ -234,7 +235,7 @@ export const WorkspaceProvider = ({ children }) => {
       addTaskToWorkspace,
       removeTaskFromWorkspace,
       getUsersFromWorkspace,
-      
+
       getTasksFromWorkspace,
       addUserToWorkspace,
       removeUserFromWorkspace,

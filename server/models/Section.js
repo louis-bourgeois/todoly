@@ -83,7 +83,6 @@ class Section {
       const response = await pool.query(query, params);
       return response;
     } catch (error) {
-      console.error("Error updating section:", error);
       throw new Error("Failed to update section");
     }
   }

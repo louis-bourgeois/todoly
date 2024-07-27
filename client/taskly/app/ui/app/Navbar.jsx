@@ -30,8 +30,9 @@ export default function Navbar() {
   const elementRef = useRef(null);
   const containerRef = useRef(null);
 
-  const name = useMemo(() => user?.first_name || "guest", [user?.first_name]);
-
+  const name = useMemo(() => {
+    return user ? user.first_name : "guest";
+  }, [user]);
   const title = useMemo(() => {
     const currentHour = new Date().getHours();
     if (currentHour >= 23 || currentHour < 6) return TITLES.night;
@@ -102,7 +103,7 @@ export default function Navbar() {
           >
             <Image
               ref={elementRef}
-              src={`${user ? "/user/photo_profil_google.jpeg" : ""}`}
+              src={`${"/user/photo_profil_google.jpeg"}`}
               alt="Profile Picture"
               width={150}
               height={150}

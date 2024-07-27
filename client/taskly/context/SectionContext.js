@@ -25,7 +25,7 @@ export const SectionProvider = ({ children }) => {
       const response = await axios.get(`${baseUrl}/sections`, {
         withCredentials: true,
       });
-      console.log("res of sections", response.data);
+
       setSections(response.data.sections);
     } catch (error) {
       console.error("Error fetching sections:", error);
@@ -53,7 +53,6 @@ export const SectionProvider = ({ children }) => {
   }, []);
 
   const modifySection = useCallback(async (newName, sectionId) => {
-    console.log(newName, sectionId);
     try {
       const response = await axios.post(
         `${baseUrl}/sections/update`,
@@ -70,8 +69,6 @@ export const SectionProvider = ({ children }) => {
   }, []);
 
   const deleteSection = useCallback(async (id) => {
-    console.log(id);
-
     try {
       const response = await axios.delete(`${baseUrl}/sections/delete/${id}`, {
         withCredentials: true,

@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useRef } from "react";
-import { useUser } from "../../../../context/UserContext";
 import { useTask } from "../../../../context/TaskContext";
 
 export default function TitleInput({

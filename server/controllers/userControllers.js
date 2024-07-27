@@ -17,14 +17,22 @@ export async function checkUser(req, res, next) {
 }
 export async function createUser(req, res) {
   try {
+    console.log("Starting createUser function");
+    console.log("Request body:", req.body);
+
     const result = await User.find(req.body.data, true);
+    console.log("User.find result:", result);
 
     if (result === true) {
+      console.log("User already exists");
       return res.status(409).send("already exist");
     } else if (result === "username already taken") {
+      console.log("Username already taken");
       return res.status(409).send(result);
     } else {
+      console.log("Creating new user");
       const data = req.body.data;
+      console.log("User data:", data);
 
       const user = new User(
         data.username,
@@ -33,17 +41,24 @@ export async function createUser(req, res) {
         data.email,
         data.hashPassword
       );
+      console.log("User object created:", user);
 
       const saveData = await user.save();
+      console.log("User saved, saveData:", saveData);
 
+      console.log("Creating workspace");
       const workspace = new Workspace(
         "Personal",
         "Your default workspace for personal tasks"
       );
+      console.log("Workspace object created:", workspace);
 
       const workspaceId = await workspace.save(saveData[0]);
+      console.log("Workspace saved, workspaceId:", workspaceId);
 
+      console.log("Setting workspace ID for section");
       await Section.setWorkspaceId(workspaceId, saveData[1].rows[0].id);
+      console.log("Workspace ID set for section");
 
       const preferences_key = [
         "Default_Main_Page",
@@ -78,20 +93,33 @@ export async function createUser(req, res) {
         "All tasks",
       ];
 
-      for (let i = 0; i < keys.length; i++) {
+      console.log("Preferences keys:", preferences_key);
+      console.log("Preferences values:", preferences_values);
+
+      console.log("Starting to save preferences");
+      for (let i = 0; i < preferences_key.length; i++) {
+        console.log(
+          `Saving preference ${i + 1}/${preferences_key.length}: ${
+            preferences_key[i]
+          }`
+        );
         const preference = new Preference(
           preferences_key[i],
           preferences_values[i],
           saveData[0]
         );
         await preference.save();
+        console.log(`Preference ${i + 1} saved`);
       }
+      console.log("All preferences saved");
 
+      console.log("User creation process completed successfully");
       return res.status(201).send("User created successfully");
     }
   } catch (e) {
-    console.error("Error creating user:", e);
-    return res.status(500).send("An error occurred while creating the user.");
+    console.error("Error in createUser function:", e);
+    console.error("Error stack:", e.stack);
+    return res.status(500).json(e);
   }
 }
 

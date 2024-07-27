@@ -11,7 +11,6 @@ export async function getTask(req, res) {
     const tasks = await Task.find(false, false, userId);
     return res.status(200).json({ tasks: tasks });
   } catch (error) {
-    console.error(err);
     return res.status(500).json({ message: "Error getting task" });
   }
 }
@@ -25,8 +24,6 @@ export async function updateTask(req, res) {
     io.emit("taskUpdated", task);
     res.sendStatus(200);
   } catch (err) {
-    console.error(err);
-
     res.status(500).json({ message: "Error updating task" });
   }
 }
@@ -74,21 +71,12 @@ export async function addTask(req, res) {
       workspaces: updated_user_workspaces,
     });
   } catch (error) {
-    console.error("Error adding task:", error);
-
     if (error.message.includes("A task with the title")) {
-      res
-        .status(409)
-        .json({ title: "Title already used", subtitle: error.message });
+      res.status(409).json("Title already used");
     } else if (error.message.includes("title is too long")) {
-      res.status(409).json({
-        title: "The new task's title is too long",
-        subtitle: error.message,
-      });
+      res.status(409).json("The new task's title is too long");
     } else {
-      res
-        .status(500)
-        .json({ title: "Internal Server Error", subtitle: error.message });
+      res.status(500).json(error.message);
     }
   }
 }

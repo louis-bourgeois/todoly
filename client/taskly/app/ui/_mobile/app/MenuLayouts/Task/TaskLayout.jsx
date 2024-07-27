@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "swiper/css";
 import "swiper/css/navigation";
 import { useError } from "../../../../../../context/ErrorContext";
@@ -11,27 +11,39 @@ import TagManager from "./TagManager";
 import TaskLayoutDescription from "./TaskLayoutDescription";
 import TaskLayoutFooter from "./TaskLayoutFooter";
 import TaskLayoutHeader from "./TaskLayoutHeader";
-
+const capitalize = (str) => {
+  if (typeof str !== "string" || str.length === 0) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
 export default function TaskLayout({ id }) {
   const [taskTitle, setTaskTitle] = useState("");
   const { currentWorkspace } = useWorkspace();
   const [taskDescription, setTaskDescription] = useState("");
   const [task, setTask] = useState();
-  const { setCardType } = useMenu();
+  const { setCardType, cardType } = useMenu();
   const [taskTags, setTaskTags] = useState([]);
   const [status, setStatus] = useState("To Do");
-  const { modifyTask, addTask } = useTask();
+  const { modifyTask, addTask, deleteTask } = useTask();
   const { handleError } = useError();
   const [selectedWorkspace, setSelectedWorkspace] = useState("");
   const [priority, setPriority] = useState(5);
   const [dueDate, setDueDate] = useState(null);
   const [selectedSection, setSelectedSection] = useState("");
+  const [lastUrlSegment, setLastUrlSegment] = useState("");
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const segments = window.location.pathname.split("/");
+      setLastUrlSegment(segments[segments.length - 1]);
+    }
+  }, [cardType]);
 
   const handleTaskClick = useCallback(async () => {
     if (id) {
       return;
     }
-    setCardType("Currently");
+
+    setCardType(capitalize(lastUrlSegment));
     const taskData = {
       title: taskTitle,
       status: status.toLowerCase().replace(/\s+/g, ""),
@@ -47,6 +59,8 @@ export default function TaskLayout({ id }) {
     console.log("====================================");
     await addTask(taskData);
   }, [
+    id,
+    lastUrlSegment,
     taskTitle,
     status,
     selectedSection,
@@ -55,8 +69,8 @@ export default function TaskLayout({ id }) {
     taskTags,
     taskDescription,
     currentWorkspace,
-    id,
     addTask,
+    setCardType,
   ]);
 
   const handleTagsChange = useCallback(
@@ -74,6 +88,7 @@ export default function TaskLayout({ id }) {
     },
     [id, task, modifyTask, handleError]
   );
+
   const handleDateChange = (e) => {
     setDueDate(e.target.value);
   };
@@ -85,7 +100,9 @@ export default function TaskLayout({ id }) {
           taskTitle={taskTitle}
           setTaskTitle={setTaskTitle}
           handleTaskClick={handleTaskClick}
+          isEditMode={!!id}
         />
+
         <TaskLayoutDescription
           taskDescription={taskDescription}
           setTaskDescription={setTaskDescription}

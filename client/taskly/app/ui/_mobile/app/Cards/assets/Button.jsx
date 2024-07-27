@@ -1,4 +1,11 @@
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { createPortal } from "react-dom";
 
 const ButtonContent = memo(({ label, isDropdown, isOpen }) => (
@@ -106,18 +113,21 @@ const DropdownContent = memo(
   }
 );
 
-const Button = memo(
-  ({
-    label,
-    dominant = false,
-    light = false,
-    className = "",
-    options = [],
-    onOptionClick,
-    onClick,
-    maxVisibleOptions = 5,
-    setState = null,
-  }) => {
+const Button = forwardRef(
+  (
+    {
+      label,
+      dominant = false,
+      light = false,
+      className = "",
+      options = [],
+      onOptionClick,
+      onClick,
+      maxVisibleOptions = 5,
+      setState = null,
+    },
+    ref
+  ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [buttonRect, setButtonRect] = useState(null);
     const buttonRef = useRef(null);

@@ -9,6 +9,7 @@ import {
 } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "./AuthContext";
+import { useError } from "./ErrorContext";
 
 const TaskContext = createContext();
 const baseUrl = "http://localhost:3001/api";
@@ -17,6 +18,7 @@ const socket = io("http://localhost:3001");
 export const useTask = () => useContext(TaskContext);
 
 export const TaskProvider = ({ children }) => {
+  const { handleError } = useError();
   const [tasks, setTasks] = useState([]);
   const { isAuthenticated, checkAuth } = useAuth();
   const [activeTask, setActiveTask] = useState(null);
@@ -29,7 +31,7 @@ export const TaskProvider = ({ children }) => {
       });
       setTasks(response.data.tasks);
     } catch (error) {
-      console.error("Error fetching tasks:", error);
+      handleError(error);
     }
   }, [isAuthenticated]);
 
@@ -48,7 +50,7 @@ export const TaskProvider = ({ children }) => {
         socket.emit("taskAdded", response.data.savedTask);
       }
     } catch (error) {
-      console.error("Error adding task:", error);
+      handleError(error);
     }
   }, []);
 
@@ -68,7 +70,7 @@ export const TaskProvider = ({ children }) => {
         socket.emit("taskUpdated", updatedTask);
       }
     } catch (error) {
-      console.error("Error modifying task:", error);
+      handleError(error);
     }
   }, []);
 
@@ -82,7 +84,7 @@ export const TaskProvider = ({ children }) => {
         socket.emit("taskDeleted", taskId);
       }
     } catch (error) {
-      console.error("Error deleting task:", error);
+      handleError(error);
     }
   }, []);
 
@@ -110,10 +112,6 @@ export const TaskProvider = ({ children }) => {
       socket.off("taskDeleted", handleTaskDeleted);
     };
   }, [fetchTasks]);
-  useEffect(() => {
-    console.log("task has updated", [tasks]);
-  });
-
   return (
     <TaskContext.Provider
       value={{

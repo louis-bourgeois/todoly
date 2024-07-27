@@ -1,6 +1,5 @@
 import Link from "next/link";
 import React from "react";
-import { useMenu } from "../../../../context/MenuContext";
 import LinesElement from "./LinesElement";
 
 const MenuLines = React.memo(({ children, text, href }) => {

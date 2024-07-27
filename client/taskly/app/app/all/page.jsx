@@ -8,6 +8,7 @@ import { useMenu } from "../../../context/MenuContext";
 import { useWorkspace } from "../../../context/WorkspaceContext";
 
 export default function Page() {
+  const { setCardType } = useMenu();
   const { workspaces } = useWorkspace();
   const { toggleTaskMenu } = useMenu();
   const { setActiveWorkspace } = useWorkspace();
@@ -70,17 +71,15 @@ export default function Page() {
               }`}
             >
               <SlideNav key={index}>
-                <div className="flex justify-between ">
+                <div className="flex justify-between items-center gap-2">
                   {" "}
-                  <h2 className="text-xl font-extrabold px-5">
-                    {workspace.name}
-                  </h2>
+                  <h2 className="text-3xl font-extrabold">{workspace.name}</h2>
                   <button
                     onClick={() => {
                       setActiveWorkspace(workspace.id);
                       toggleTaskMenu();
                     }}
-                    className="mr-4 p-2 rounded-full hover:bg-blue hover:bg-opacity-10 transition-colors duration-200"
+                    className="mr-4 px-2 mt-1.5 rounded-full hover:bg-blue hover:bg-opacity-10 transition-colors duration-200"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"

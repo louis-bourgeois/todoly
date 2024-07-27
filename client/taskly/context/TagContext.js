@@ -25,6 +25,7 @@ export const TagProvider = ({ children }) => {
         withCredentials: true,
       });
       setTags(response.data.tags);
+      console.log(response.data.tags);
     } catch (error) {
       console.error("Error fetching tags:", error);
     }
@@ -45,6 +46,7 @@ export const TagProvider = ({ children }) => {
       console.log(response.data, response.status);
       if (response.status === 200 && response.data.tags) {
         setTags(response.data.tags);
+
         return response.data.tags;
       }
     } catch (error) {

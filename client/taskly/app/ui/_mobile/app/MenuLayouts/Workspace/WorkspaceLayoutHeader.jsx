@@ -5,6 +5,7 @@ const WorkspaceLayoutHeader = ({
   workspaceTitle,
   setWorkspaceTitle,
   handleWorkspaceClick,
+  update = false,
 }) => (
   <div className="flex w-full justify-between items-center pt-2 px-4">
     <input
@@ -14,7 +15,11 @@ const WorkspaceLayoutHeader = ({
       placeholder="A simple to do."
       className="w-full text-2xl font-bold placeholder:text-2xl placeholder:text-grey focus:outline-none"
     />
-    <Button label="Create" dominant={true} onClick={handleWorkspaceClick} />
+    <Button
+      label={update ? "Update" : "Create"}
+      dominant={true}
+      onClick={handleWorkspaceClick}
+    />
   </div>
 );
 

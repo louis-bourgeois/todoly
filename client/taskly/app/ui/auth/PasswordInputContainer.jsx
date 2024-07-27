@@ -10,6 +10,7 @@ export default function PasswordInputContainer({
   setVisibilityState,
   autoDimensions,
   newUser,
+  additionalStyles,
 }) {
   const toggleVisibility = (e) => {
     e.preventDefault();
@@ -17,8 +18,8 @@ export default function PasswordInputContainer({
   };
   return (
     <div
-      className={`w-full sp-2 border border-grey rounded-2xl px-3 flex ${
-        autoDimensions && "min-w-[300px] min-h-[60px]"
+      className={`w-full sp-2 border border-grey rounded-2xl pr-2 flex ${
+        autoDimensions && "min-w-[300px] "
       }`}
     >
       <Input
@@ -29,6 +30,9 @@ export default function PasswordInputContainer({
         autoDimensions={autoDimensions ? "true" : "false"}
         visible={visibilityState}
         required="true"
+        additionalStyles={
+          additionalStyles + " bg-transparent border-none rounded-2xl"
+        }
       />
       <button
         onClick={(e) => {

@@ -81,19 +81,17 @@ export default function WorkspaceForm({
     if (!foundWorkspace) return;
 
     const uniqueSectionIds = [
-      ...new Set(foundWorkspace.tasks.map((t) => t.linked_section)),
+      ...new Set(
+        sections.filter((s) => {
+          return s.workspace_id === id;
+        })
+      ),
     ];
-
     console.log("Found Workspace:", foundWorkspace);
     setWorkspace(foundWorkspace);
     setCollaborators(foundWorkspace.users || []);
     setNameValue(foundWorkspace.name);
-
-    const workspaceSectionObjects = sections.filter((section) =>
-      uniqueSectionIds.includes(section.id)
-    );
-
-    setWorkspaceSections(workspaceSectionObjects);
+    setWorkspaceSections(uniqueSectionIds);
   }, [id, workspaces, sections]);
 
   const resetWorkspaceForm = () => {

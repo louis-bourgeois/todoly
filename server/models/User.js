@@ -154,7 +154,7 @@ class User {
           }
         });
       } catch (error) {
-        console.error("Error executing query:", error.stack);
+        throw error
       }
     }
 
@@ -213,7 +213,6 @@ class User {
         const sections = await Section.find(id);
         return sections;
       } catch (error) {
-        console.error(error);
         throw error;
       }
     }
@@ -224,7 +223,6 @@ class User {
         const tags = await Tag.find(id);
         return tags;
       } catch (error) {
-        console.error(error);
         throw error;
       }
     }
@@ -236,7 +234,7 @@ class User {
 
         return tasks;
       } catch (error) {
-        console.error(error);
+        throw error;
       }
     } else {
       console.error("no id");
@@ -249,8 +247,7 @@ class User {
         const preferences = await Preference.getUserPreferences(id, "*");
         return preferences;
       } catch (error) {
-        console.error(error);
-        throw new Error(error);
+        throw error;
       }
     }
   }

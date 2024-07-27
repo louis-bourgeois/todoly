@@ -5,7 +5,7 @@ import SectionContainer from "@/ui/app/currently/SectionContainer";
 import SlideNav from "@/ui/app/currently/SlideNav";
 import SlickCarousel from "@/ui/app/SlickCarousel";
 import Slide from "@/ui/app/Slide";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useMenu } from "../../../context/MenuContext";
 import { useScreen } from "../../../context/ScreenContext";
 
@@ -15,10 +15,6 @@ export default function Page() {
   const { isMobile } = useScreen();
   const { setCardType } = useMenu();
   const [dates, setDates] = useState([]);
-
-  useEffect(() => {
-    setCardType("Currently");
-  }, [setCardType]);
 
   const handleDateChange = useCallback((index, date) => {
     setDates((prevDates) => {

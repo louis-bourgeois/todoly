@@ -12,9 +12,10 @@ export async function getSection(req, res) {
       undefined,
       userId
     );
-    console.log("log of sections", sections);
     return res.status(200).json({ sections: sections });
-  } catch (error) {}
+  } catch (error) {
+    res.status(500).json(error.message)
+  }
 }
 
 export async function addSection(req, res) {
@@ -42,14 +43,10 @@ export async function addSection(req, res) {
       .status(200)
       .json({ message: "Section added successfully", sections: user_sections });
   } catch (error) {
-    console.error(error);
     if (error.status === 400) {
-      res.status(400).json({
-        title: "This section already exists",
-        subtitle: error.message,
-      });
+      res.status(400).json(error.message);
     } else {
-      res.status(500).json({ title: "Failed to add section", subtitle: error });
+      res.status(500).json(error);
     }
   }
 }
@@ -60,11 +57,7 @@ export async function updateSection(req, res) {
   const userId = found_user[0][0];
 
   try {
-    const response = await Section.update(
-      req.body.newName,
-      req.body.sectionId,
-      userId
-    );
+    await Section.update(req.body.newName, req.body.sectionId, userId);
 
     const user_sections = [];
     const user_workspaces = await User.findWorkspacesByUserId(userId);
@@ -82,9 +75,7 @@ export async function updateSection(req, res) {
     });
   } catch (error) {
     console.error(error);
-    res
-      .status(500)
-      .json({ title: "Failed to update section", subtitle: error });
+    res.status(500).json(error);
   }
 }
 
@@ -105,14 +96,6 @@ export async function deleteSection(req, res) {
     await Section.delete(sectionId, userId);
     return res.sendStatus(200);
   } catch (error) {
-    if (error.message.includes("There are still tasks in it")) {
-      return res.status(409).json({
-        title: "You cannot delete this section",
-        subtitle: error.message,
-      });
-    }
-    return res
-      .status(500)
-      .json({ title: "Failed to delete section", subtitle: error.message });
+    return res.status(500).json(error.message);
   }
 }

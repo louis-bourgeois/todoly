@@ -100,7 +100,7 @@ class Task {
           );
         case "22001":
           throw new Error(
-            "The title is too long, please make sure it doesn't exceed 32 characters!"
+            "The title is too long, please make sure it doesn't exceed 128 characters!"
           );
       }
       throw e;
