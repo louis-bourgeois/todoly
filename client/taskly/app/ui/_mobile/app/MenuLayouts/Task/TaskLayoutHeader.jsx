@@ -8,6 +8,7 @@ const TaskLayoutHeader = ({
   handleTaskClick,
   isEditMode = false,
   lastUrlSegment = "",
+  disabled = false,
 }) => {
   return (
     <div className="flex w-full justify-between items-center pt-2 px-4 gap-2">
@@ -22,6 +23,7 @@ const TaskLayoutHeader = ({
         label={isEditMode ? "Update" : "Create"}
         dominant={true}
         onClick={handleTaskClick}
+        disabled={disabled}
       />
       {isEditMode && (
         <button onClick={handleDeleteTask} className="cursor-pointer">

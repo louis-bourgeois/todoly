@@ -62,28 +62,33 @@ export default function AppLayout({ children }) {
     toggleViewsMenu,
     isMobileViewsMenuOpen,
     cardType,
+    currentCardType: contextCurrentCardType,
+    nextCardType: contextNextCardType,
+    setCurrentCardType: setContextCurrentCardType,
+    setNextCardType: setContextNextCardType,
   } = useMenu();
+
   const { notificationsList } = useContext(NotificationsContext);
   const [showAddWorkspaceBubble, setShowAddWorkspaceBubble] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentCardType, setCurrentCardType] = useState(cardType);
+  const [nextCardType, setNextCardType] = useState(null);
   const transitionTimeoutRef = useRef(null);
 
   const swiperRef = useRef(null);
   const router = useRouter();
-  const [nextCardType, setNextCardType] = useState(null);
   const currentWorkspaceTasks =
     workspaces.find((w) => w.id === currentWorkspace)?.tasks || [];
   const sortedTasks = [
     ...currentWorkspaceTasks.filter((task) => task.id === activeTask),
     ...currentWorkspaceTasks.filter((task) => task.id !== activeTask),
   ];
+
   useEffect(() => {
     setCurrentCardType(cardType);
-    console.log("====================================");
-    console.trace(cardType);
-    console.log("====================================");
-  }, [cardType]);
+    setContextCurrentCardType(cardType);
+  }, [cardType, setContextCurrentCardType]);
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.ctrlKey && event.key === "k") {
@@ -108,6 +113,7 @@ export default function AppLayout({ children }) {
     if (cardType !== currentCardType) {
       setIsTransitioning(true);
       setNextCardType(cardType);
+      setContextNextCardType(cardType);
       if (swiperRef.current && swiperRef.current.swiper) {
         swiperRef.current.swiper.slideTo(0);
       }
@@ -118,8 +124,10 @@ export default function AppLayout({ children }) {
 
       transitionTimeoutRef.current = setTimeout(() => {
         setCurrentCardType(cardType);
+        setContextCurrentCardType(cardType);
         setIsTransitioning(false);
         setNextCardType(null);
+        setContextNextCardType(null);
       }, 300); // Durée de la transition en ms
     }
 
@@ -128,7 +136,12 @@ export default function AppLayout({ children }) {
         clearTimeout(transitionTimeoutRef.current);
       }
     };
-  }, [cardType, currentCardType]);
+  }, [
+    cardType,
+    currentCardType,
+    setContextCurrentCardType,
+    setContextNextCardType,
+  ]);
 
   const handleDontShowAgain = async () => {
     await addUserPreference({
@@ -172,9 +185,6 @@ export default function AppLayout({ children }) {
         </Card>
       ),
       All: () => {
-        console.log("====================================");
-        console.log("All is rendered");
-        console.log("====================================");
         return (
           <Card
             cardType={currentCardType}
@@ -226,7 +236,7 @@ export default function AppLayout({ children }) {
             {workspace ? (
               <WorkspaceView id={workspace.id}></WorkspaceView>
             ) : (
-              <div>No task selected</div>
+              <div>No workspace selected</div>
             )}
           </CardContent>
         </Card>
@@ -242,36 +252,43 @@ export default function AppLayout({ children }) {
           </CardContent>
         </Card>
       ),
-      Default: () => (
-        <Card
-          cardType={currentCardType}
-          isVisible={true}
-          isTransitioning={isTransitioning}
-        ></Card>
-      ),
+      Default: () => {
+        return (
+          <Card
+            cardType={currentCardType}
+            isVisible={true}
+            isTransitioning={isTransitioning}
+          >
+            <CardContent cardType={currentCardType}>
+              <div>Default card content</div>
+            </CardContent>
+          </Card>
+        );
+      },
     };
 
-    return (cardTypes[currentCardType] || cardTypes.Default)();
+    const CardComponent = cardTypes[currentCardType] || cardTypes.Default;
+    return CardComponent();
   };
-  // useEffect(() => {
-  //   console.log("ok", loading, isAuthenticated);
-  //   const verifyAuth = async () => {
-  //     if (!loading && !isAuthenticated) {
-  //       await checkAuth();
-  //       if (!isAuthenticated) {
-  //         console.log("ok", router.push("/auth/login"));
-  //       }
-  //     }
-  //   };
-  //   verifyAuth();
-  // }, [loading, isAuthenticated, checkAuth, router]);
 
-  // if (loading) {
-  //   return <div>Loading...</div>;
-  // }
-  // if (!isAuthenticated) {
-  //   return null;
-  // }
+  useEffect(() => {
+    const verifyAuth = async () => {
+      if (!loading && !isAuthenticated) {
+        await checkAuth();
+        if (!isAuthenticated) {
+          router.push("/auth/login");
+        }
+      }
+    };
+    verifyAuth();
+  }, [loading, isAuthenticated, checkAuth, router]);
+
+  if (loading) {
+    return null;
+  }
+  if (!isAuthenticated) {
+    return null;
+  }
 
   if (isMobile && cardType === "Profile") {
     return (
@@ -404,20 +421,24 @@ export default function AppLayout({ children }) {
   }
 }
 
-const CardWrapper = ({ children, cardType }) => (
-  <div className={`flex items-center justify-center h-full`}>{children}</div>
-);
+const CardWrapper = ({ children, cardType }) => {
+  return (
+    <div className={`flex items-center justify-center h-full`}>{children}</div>
+  );
+};
 
-const CardContent = ({ children, el, cardType }) => (
-  <div
-    className={`relative w-full h-full flex flex-col ${
-      (el === "Task" || cardType === "Task" || cardType === "Workspace") &&
-      "justify-between pb-[8px]"
-    }`}
-  >
-    {children}
-  </div>
-);
+const CardContent = ({ children, el, cardType }) => {
+  return (
+    <div
+      className={`relative w-full h-full flex flex-col ${
+        (el === "Task" || cardType === "Task" || cardType === "Workspace") &&
+        "justify-between pb-[8px]"
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
 
 const ScrollableContent = ({ children }) => {
   const layers = 8; // Nombre de couches pour le dégradé

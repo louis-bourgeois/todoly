@@ -1,5 +1,7 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+const defaultTheme = require("tailwindcss/defaultTheme");
+
+module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -14,7 +16,7 @@ export default {
       sm: "0.875rem",
       base: "1rem",
       m: "1.25rem",
-      lg: "1.50rem",
+      lg: "1.5rem",
       xl: "1.75rem",
       "2xl": "2rem",
       "2.5xl": "2.5rem",
@@ -34,34 +36,32 @@ export default {
       screens: {
         "2xs": "200px",
         xs: "400px",
-        sm: "640px",
-        md: "768px",
-        lg: "1024px",
-        xl: "1280px",
-        "2xl": "1536px",
+        ...defaultTheme.screens,
         "3xl": "1720px",
         "4xl": "1920px",
         "5xl": "2510px",
       },
       fontFamily: {
-        poppins: ["var(--font-poppins)"],
-        inter: ["var(--font-inter)"],
-        overusedGrotesk: ["var(--font-overused-grotesk)"],
+        poppins: ["var(--font-poppins)", ...defaultTheme.fontFamily.sans],
+        inter: ["var(--font-inter)", ...defaultTheme.fontFamily.sans],
+        overusedGrotesk: [
+          "var(--font-overused-grotesk)",
+          ...defaultTheme.fontFamily.sans,
+        ],
       },
       letterSpacing: {
-        "overused-grotesk": "-0.025em", // -2.5%
+        "overused-grotesk": "-0.025em",
       },
       lineHeight: {
-        "overused-grotesk": "var(--overused-grotesk-line-height, 0.75)", // Réduit de 0.8 à 0.75
+        "overused-grotesk": "var(--overused-grotesk-line-height, 0.75)",
       },
       padding: {
-        "text-trim-top": "var(--overused-grotesk-trim-top, 0.05em)", // Réduit de 0.1em à 0.05em
-        "text-trim-bottom": "var(--overused-grotesk-trim-bottom, 0.25em)", // Augmenté de 0.2em à 0.25em
+        "text-trim-top": "var(--overused-grotesk-trim-top, 0.05em)",
+        "text-trim-bottom": "var(--overused-grotesk-trim-bottom, 0.25em)",
       },
       colors: {
         ternary: "#E8F3FF",
         pink: "#de9f9f",
-        light_blue: "#",
         black: "#0D0C0C",
         dominant: "#007aff",
         grey: "#959595",

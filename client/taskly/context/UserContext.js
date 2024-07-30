@@ -7,10 +7,11 @@ import {
   useEffect,
   useState,
 } from "react";
+import { config } from "../config";
 import { useAuth } from "./AuthContext";
 
 const UserContext = createContext();
-const baseUrl = "http://localhost:3001/api";
+const baseUrl = `${config.apiUrl}/api`;
 
 export const useUser = () => useContext(UserContext);
 

@@ -6,11 +6,23 @@ export default function MobileMainButtons() {
   const [lastUrlSegment, setLastUrlSegment] = useState("");
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const segments = window.location.pathname.split("/");
-      setLastUrlSegment(segments[segments.length - 1]);
+    function updateLastUrlSegment() {
+      if (typeof window !== "undefined") {
+        const segments = window.location.pathname.split("/");
+        const newLastSegment = segments[segments.length - 1] || "home";
+        setLastUrlSegment(newLastSegment);
+      }
     }
-  }, []);
+
+    // Initial update
+    updateLastUrlSegment();
+
+    // Listen for changes in the URL
+    window.addEventListener("popstate", updateLastUrlSegment);
+
+    // Cleanup
+    return () => window.removeEventListener("popstate", updateLastUrlSegment);
+  }, [window.location.pathname]);
 
   const capitalize = (s) =>
     s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();

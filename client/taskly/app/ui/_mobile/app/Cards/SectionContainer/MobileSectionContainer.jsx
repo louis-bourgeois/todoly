@@ -1,5 +1,5 @@
 import MobileTask from "@/ui/_mobile/task/MobileTask";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { useMenu } from "../../../../../../context/MenuContext";
 import { useSection } from "../../../../../../context/SectionContext";
 import { useTask } from "../../../../../../context/TaskContext";
@@ -18,19 +18,17 @@ export default function MobileSectionContainer({
   const { setCardType } = useMenu();
 
   const workspace = selectedWorkspace?.id || currentWorkspace;
-  useEffect(() => {
-    console.log(tasks);
-  }, [tasks]);
+
   const expandTask = useCallback(
     (taskId) => {
+      console.log(taskId);
       const foundTask = tasks.find((task) => task.id === taskId);
       console.log("fdddd", foundTask, tasks);
       setCurrentWorkspace(foundTask.workspace_id);
       setCardType("Task");
-      console.log(taskId);
       setActiveTask(taskId);
     },
-    [setCardType]
+    [setCardType, tasks, setCurrentWorkspace, setActiveTask]
   );
 
   const filteredSections = useMemo(

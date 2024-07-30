@@ -15,7 +15,7 @@ const MobileCardHeader = ({ index = 0, workspace = null }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const { currentWorkspace, workspaces, setCurrentWorkspace, deleteWorkspace } =
     useWorkspace();
-  const isAllView = workspace && cardType === "All";
+  const isAllView = workspace;
 
   useEffect(() => {
     if (!isAllView) {
@@ -33,10 +33,9 @@ const MobileCardHeader = ({ index = 0, workspace = null }) => {
     return { dayLabel, formattedDate };
   }, [index]);
 
-  const formattedTime = useMemo(
-    () => format(currentTime, "HH:mm"),
-    [currentTime]
-  );
+  const formattedTime = useMemo(() => {
+    return format(currentTime, "HH:mm");
+  }, [currentTime]);
 
   const handleCurrentWorkspaceDropdownClick = useCallback(
     (workspaceId) => {
@@ -45,14 +44,16 @@ const MobileCardHeader = ({ index = 0, workspace = null }) => {
     [setCurrentWorkspace]
   );
 
-  const currentWorkspaceName = useMemo(
-    () => workspaces.find((w) => w.id === currentWorkspace)?.name || "",
-    [workspaces, currentWorkspace]
-  );
+  const currentWorkspaceName = useMemo(() => {
+    const name = workspaces.find((w) => w.id === currentWorkspace)?.name || "";
+    return name;
+  }, [workspaces, currentWorkspace]);
+
   const handleDeleteWorkspace = async () => {
-    console.warn("! This is not reversible, are you sure ?", workspace.id);
+    console.warn("Deleting workspace:", workspace.id);
     await deleteWorkspace(workspace.id);
   };
+
   return (
     <div className="z-50 relative flex flex-col items-start justify-center px-4 pt-[10px] rounded-xl bg-white">
       <div className="relative z-10 w-full">

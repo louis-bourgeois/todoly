@@ -8,12 +8,13 @@ import {
   useMemo,
   useState,
 } from "react";
+import { config } from "../config";
 import { useAuth } from "./AuthContext";
 import { useSection } from "./SectionContext";
 import { useUserPreferences } from "./UserPreferencesContext";
 
 const WorkspaceContext = createContext();
-const baseUrl = "http://localhost:3001/api";
+const baseUrl = `${config.apiUrl}/api`;
 export const useWorkspace = () => useContext(WorkspaceContext);
 
 export const WorkspaceProvider = ({ children }) => {
@@ -28,6 +29,7 @@ export const WorkspaceProvider = ({ children }) => {
     if (!isAuthenticated) return;
 
     try {
+      console.log("getting workspaces");
       const response = await axios.get(`${baseUrl}/users/workspaces`, {
         withCredentials: true,
       });

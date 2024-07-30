@@ -5,8 +5,12 @@ import { useWorkspace } from "../../../../../../context/WorkspaceContext";
 import WorkspaceLayoutDescription from "./WorkspaceLayoutDescription";
 import WorkspaceLayoutHeader from "./WorkspaceLayoutHeader";
 import WorkspaceLayoutSection from "./WorkspaceLayoutSection";
+const capitalize = (str) => {
+  if (typeof str !== "string" || str.length === 0) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
 
-export default function WorkspaceLayout({ prevCardType }) {
+export default function WorkspaceLayout() {
   const textareaRef = useRef(null);
   const { sections } = useSection();
   const { createWorkspace } = useWorkspace();
@@ -15,6 +19,27 @@ export default function WorkspaceLayout({ prevCardType }) {
   const [workspaceTitle, setWorkspaceTitle] = useState("");
   const [workspaceDescription, setWorkspaceDescription] = useState("");
   const { setCardType } = useMenu();
+  const [lastUrlSegment, setLastUrlSegment] = useState("");
+
+  useEffect(() => {
+    function updateLastUrlSegment() {
+      if (typeof window !== "undefined") {
+        const segments = window.location.pathname.split("/");
+        const newLastSegment = segments[segments.length - 1] || "home";
+        console.log("New last URL segment:", newLastSegment);
+        setLastUrlSegment(newLastSegment);
+      }
+    }
+
+    // Initial update
+    updateLastUrlSegment();
+
+    // Listen for changes in the URL
+    window.addEventListener("popstate", updateLastUrlSegment);
+
+    // Cleanup
+    return () => window.removeEventListener("popstate", updateLastUrlSegment);
+  }, []);
 
   useEffect(() => {
     const textarea = textareaRef.current;
@@ -70,7 +95,9 @@ export default function WorkspaceLayout({ prevCardType }) {
     try {
       await createWorkspace(workspaceData);
       console.log("Workspace created:", workspaceData);
-      setCardType("Currently");
+      const newCardType = capitalize(lastUrlSegment);
+      console.log("Setting new cardType:", newCardType);
+      setCardType(newCardType);
       setCollaborators([]);
       setWorkspaceSections([]);
       setWorkspaceDescription("");

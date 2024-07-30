@@ -125,6 +125,7 @@ const Button = forwardRef(
       onClick,
       maxVisibleOptions = 5,
       setState = null,
+      disabled = false,
     },
     ref
   ) => {
@@ -196,6 +197,7 @@ const Button = forwardRef(
       <>
         <button
           ref={buttonRef}
+          disabled={disabled}
           onClick={handleClick}
           className={buttonClasses}
           aria-haspopup={isDropdown}

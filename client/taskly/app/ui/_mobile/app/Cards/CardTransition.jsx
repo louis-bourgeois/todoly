@@ -1,23 +1,42 @@
 import { useEffect, useRef, useState } from "react";
 
-const CardTransition = ({ cardType, children, className }) => {
+const CardTransition = ({ cardType, children, className, isTransitioning }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [content, setContent] = useState(children);
   const prevCardTypeRef = useRef(cardType);
+  const transitionTimerRef = useRef(null);
+
+  useEffect(() => {
+    console.log(`CardTransition: cardType=${cardType}, isVisible=${isVisible}`);
+  }, [cardType, isVisible]);
 
   useEffect(() => {
     if (prevCardTypeRef.current !== cardType) {
       setIsVisible(false);
-      const timer = setTimeout(() => {
+
+      // Clear any existing timer
+      if (transitionTimerRef.current) {
+        clearTimeout(transitionTimerRef.current);
+      }
+
+      transitionTimerRef.current = setTimeout(() => {
         setContent(children);
         setIsVisible(true);
+        transitionTimerRef.current = null;
       }, 300);
 
       prevCardTypeRef.current = cardType;
-      return () => clearTimeout(timer);
     } else {
       setContent(children);
+      setIsVisible(true);
     }
+
+    // Cleanup function
+    return () => {
+      if (transitionTimerRef.current) {
+        clearTimeout(transitionTimerRef.current);
+      }
+    };
   }, [cardType, children]);
 
   return (

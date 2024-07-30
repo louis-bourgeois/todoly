@@ -15,6 +15,24 @@ export default function TaskLayoutFooter({
 
   const [selectedSectionName, setSelectedSectionName] = useState("");
 
+  // Fonction pour trouver la section "Other" dans le workspace actuel
+  const findOtherSection = useCallback(() => {
+    return sections.find(
+      (s) => s.name === "Other" && s.workspace_id === currentWorkspace
+    );
+  }, [sections, currentWorkspace]);
+
+  // Effet pour initialiser la section sélectionnée
+  useEffect(() => {
+    if (!selectedSection) {
+      const otherSection = findOtherSection();
+      if (otherSection) {
+        setSelectedSection(otherSection.id);
+      }
+    }
+  }, [selectedSection, setSelectedSection, findOtherSection]);
+
+  // Effet pour mettre à jour le nom de la section sélectionnée
   useEffect(() => {
     const section = sections.find((s) => s.id === selectedSection);
     setSelectedSectionName(section ? section.name : "");
@@ -36,12 +54,14 @@ export default function TaskLayoutFooter({
 
   const handleSectionDropdownClick = useCallback(
     (option) => {
-      const selectedSection = sections.find((s) => s.name === option);
+      const selectedSection = sections.find(
+        (s) => s.name === option && s.workspace_id === currentWorkspace
+      );
       if (selectedSection) {
         setSelectedSection(selectedSection.id);
       }
     },
-    [sections, setSelectedSection]
+    [sections, setSelectedSection, currentWorkspace]
   );
 
   const handleWorkspaceDropdownClick = useCallback(
@@ -50,17 +70,32 @@ export default function TaskLayoutFooter({
       if (selectedWorkspace) {
         setSelectedWorkspace(selectedWorkspace.id);
         setCurrentWorkspace(selectedWorkspace.id);
+        // Réinitialiser la section sélectionnée à "Other" dans le nouveau workspace
+        const otherSection = sections.find(
+          (s) => s.name === "Other" && s.workspace_id === selectedWorkspace.id
+        );
+        if (otherSection) {
+          setSelectedSection(otherSection.id);
+        }
       }
     },
-    [workspaces, setSelectedWorkspace]
+    [
+      workspaces,
+      setSelectedWorkspace,
+      setCurrentWorkspace,
+      sections,
+      setSelectedSection,
+    ]
   );
 
   const sectionOptions = useMemo(
     () =>
       sections
-        .filter((s) => s.name !== "Other" && s.id !== selectedSection)
+        .filter(
+          (s) => s.workspace_id === currentWorkspace && s.id !== selectedSection
+        )
         .map((s) => s.name),
-    [sections, selectedSection]
+    [sections, selectedSection, currentWorkspace]
   );
 
   const workspaceOptions = useMemo(
@@ -72,11 +107,11 @@ export default function TaskLayoutFooter({
     <div className="px-4 w-full flex justify-center items-center gap-[0.65vw]">
       <Button
         label={status}
-        options={["To Do", "Done", "In Progress"]}
+        options={["To Do", "Done"]}
         onOptionClick={handleStatusDropdownClick}
       />
       <Button
-        label={selectedSectionName || "Select Section"}
+        label={selectedSectionName || "Other"}
         options={sectionOptions}
         onOptionClick={handleSectionDropdownClick}
       />

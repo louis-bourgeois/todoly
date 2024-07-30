@@ -3,22 +3,36 @@ import CTA from "./CTA";
 
 const Navbar = ({ logo: Logo }) => {
   return (
-    <nav className="flex justify-between py-[1vh] w-full">
-      <div className="items-center flex gap-[11.33px] justify-center">
-        <Logo></Logo>
-        <span className="font-bold font-smooth antialiased text-m">
+    <nav className="flex flex-col sm:flex-row justify-between py-4 w-full px-4">
+      <div className="flex items-center gap-3 justify-center mb-4 sm:mb-0">
+        <div className="w-10 h-10 flex items-center justify-center">
+          <Logo className="w-full h-full" />
+        </div>
+        <span className="font-bold font-smooth antialiased text-xl">
           Todo<span className="text-dominant">ly</span>
-        </span>{" "}
+        </span>
       </div>
-      <div className="flex items-center justify-center gap-[48px]">
-        <Link href={"/features"}>
-          <CTA title={"Feature"} type="ghost"></CTA>
+      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
+        <Link href="/features" className="w-full sm:w-auto">
+          <CTA
+            title="Features"
+            type="ghost"
+            className="w-full py-3 px-6 text-lg"
+          />
         </Link>
-        <Link href={"/pricing"}>
-          <CTA title={"Pricing"} type="ghost"></CTA>
+        <Link href="/pricing" className="w-full sm:w-auto">
+          <CTA
+            title="Pricing"
+            type="ghost"
+            className="w-full py-3 px-6 text-lg"
+          />
         </Link>
-        <Link href={"/auth/login"}>
-          <CTA title={"Login"} type="secondary"></CTA>
+        <Link href="/auth/login" className="w-full sm:w-auto">
+          <CTA
+            title="Login"
+            type="secondary"
+            className="w-full py-3 px-6 text-lg"
+          />
         </Link>
       </div>
     </nav>

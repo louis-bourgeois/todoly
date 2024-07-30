@@ -1,9 +1,10 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { createContext, useContext, useEffect, useState } from "react";
-import { useScreen } from "./ScreenContext";
 import { useTask } from "./TaskContext";
+import { useUserPreferences } from "./UserPreferencesContext";
 import { useWorkspace } from "./WorkspaceContext";
+
 const MenuContext = createContext();
 
 export const useMenu = () => {
@@ -16,34 +17,41 @@ export const useMenu = () => {
 
 export const MenuProvider = ({ children }) => {
   const pathname = usePathname();
+  const { preferences } = useUserPreferences();
   const [isTaskMenuOpen, setIsTaskMenuOpen] = useState(false);
   const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(false);
   const [isViewsMenuOpen, setIsViewsMenuOpen] = useState(false);
   const [isMobileViewsMenuOpen, setIsMobileViewsMenuOpen] = useState(false);
   const [element, setElement] = useState("");
-  const { isMobile } = useScreen();
-  const [cardType, setCardType] = useState("");
+
+  const [cardType, setCardType] = useState(preferences.Default_Main_Page);
+  const [currentCardType, setCurrentCardType] = useState(cardType);
+  const [nextCardType, setNextCardType] = useState(null);
 
   const { setActiveTask } = useTask();
   const { setActiveWorkspace } = useWorkspace();
 
   useEffect(() => {
+    console.log("Initial cardType:", cardType);
+    console.log("Initial currentCardType:", currentCardType);
+    console.log("Initial nextCardType:", nextCardType);
+  }, []);
+
+  useEffect(() => {
     const updateCardType = () => {
       const lastSegment = pathname.split("/").pop();
-      console.log(
-        "setting card type to : ",
-        lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).toLowerCase()
-      );
-      setCardType(
-        lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).toLowerCase()
-      );
+      const newCardType =
+        lastSegment.charAt(0).toUpperCase() +
+        lastSegment.slice(1).toLowerCase();
+      setCardType(newCardType);
     };
-    console.log("setting card type to change");
     updateCardType();
   }, [pathname]);
+
   useEffect(() => {
-    console.log("changed : ", isMobileViewsMenuOpen);
-  }, [isMobileViewsMenuOpen]);
+    setCurrentCardType(cardType);
+  }, [cardType]);
+
   const toggleTaskMenu = (taskId = "", workspaceId = "", el) => {
     const availableElements = ["Workspace", "Task"];
     if (el !== "" && availableElements.includes(el)) {
@@ -58,13 +66,12 @@ export const MenuProvider = ({ children }) => {
     if (workspaceId) setActiveWorkspace(workspaceId);
   };
 
-  const toggleSearchMenu = () => setIsSearchMenuOpen((prev) => !prev);
+  const toggleSearchMenu = () => {
+    setIsSearchMenuOpen((prev) => !prev);
+  };
 
   const toggleViewsMenu = () => {
-    setIsViewsMenuOpen((prev) => {
-      console.log("Toggling ViewsMenu. New state:", !prev);
-      return !prev;
-    });
+    setIsViewsMenuOpen((prev) => !prev);
   };
 
   const value = {
@@ -80,8 +87,11 @@ export const MenuProvider = ({ children }) => {
     setIsMobileViewsMenuOpen,
     cardType,
     setCardType,
+    currentCardType,
+    setCurrentCardType,
+    nextCardType,
+    setNextCardType,
   };
-
   return <MenuContext.Provider value={value}>{children}</MenuContext.Provider>;
 };
 
