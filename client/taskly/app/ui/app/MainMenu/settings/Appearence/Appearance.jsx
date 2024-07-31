@@ -5,7 +5,7 @@ import DropdownMenu from "../DropdownMenu";
 import SectionTitle from "../SectionTitle";
 
 export default function Appearance({ transitionStyles }) {
-  const { updateUserPreference, preferences } = useUserPreferences();
+  const { updatePreference, preferences } = useUserPreferences();
   const [theme, setTheme] = useState(preferences?.Theme);
   const [selectedCircle, setSelectedCircle] = useState(null);
 
@@ -24,14 +24,14 @@ export default function Appearance({ transitionStyles }) {
 
   const handleThemeClick = async (value) => {
     setTheme(value);
-    await updateUserPreference({ key: "Theme", value });
+    await updatePreference({ key: "Theme", value });
   };
 
   const handleCircleClick = async (index, siblingDiv) => {
     setSelectedCircle(index);
     const bgColor = window.getComputedStyle(siblingDiv).backgroundColor;
     console.log(rgbToHex(bgColor));
-    await updateUserPreference({
+    await updatePreference({
       key: "Color_Theme",
       value: rgbToHex(bgColor),
     });

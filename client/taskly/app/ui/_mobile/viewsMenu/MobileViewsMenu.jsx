@@ -7,7 +7,7 @@ const SORT_BY_OPTIONS = ["Creation date", "Tags", "Importance", "Last updated"];
 const SHOW_OPTIONS = ["All tasks", "Completed only", "Todo only"];
 
 const MobileViewsMenu = ({ isVisible }) => {
-  const { preferences, updateUserPreference } = useUserPreferences();
+  const { preferences, updatePreference } = useUserPreferences();
   const { setIsMobileViewsMenuOpen } = useMenu();
   const [isSortByOpen, setIsSortByOpen] = useState(false);
   const [isShowOpen, setIsShowOpen] = useState(false);
@@ -35,13 +35,13 @@ const MobileViewsMenu = ({ isVisible }) => {
 
   useEffect(() => {
     const handleOutsideClick = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
+      if (e.target.classList.contains("mobile-views-menu-overlay")) {
         handleClose();
       }
     };
 
     const handleKeyDown = (e) => {
-      if (e.key === "Escape") {
+      if (e.key === "Escape" && isVisible) {
         handleClose();
       }
       if (e.key === "Tab") {
@@ -59,24 +59,27 @@ const MobileViewsMenu = ({ isVisible }) => {
       }
     };
 
-    document.addEventListener("mousedown", handleOutsideClick);
-    document.addEventListener("keydown", handleKeyDown);
+    if (isVisible) {
+      document.addEventListener("click", handleOutsideClick);
+      document.addEventListener("keydown", handleKeyDown);
+    }
+
     return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
+      document.removeEventListener("click", handleOutsideClick);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [handleClose]);
+  }, [handleClose, isVisible]);
 
   const handleOptionClick = useCallback(
     async (preferenceName, option) => {
-      await updateUserPreference({ key: preferenceName, value: option });
+      await updatePreference({ key: preferenceName, value: option });
       if (preferenceName === "Sort_By") {
         setIsSortByOpen(false);
       } else if (preferenceName === "Show") {
         setIsShowOpen(false);
       }
     },
-    [updateUserPreference]
+    [updatePreference]
   );
 
   const renderDropdown = (
@@ -93,7 +96,11 @@ const MobileViewsMenu = ({ isVisible }) => {
       <Button
         label={preferences[preferenceName]}
         options={options}
-        onOptionClick={(option) => handleOptionClick(preferenceName, option)}
+        onOptionClick={(option) => {
+          if (isOpen) {
+            handleOptionClick(preferenceName, option);
+          }
+        }}
         setState={setIsOpen}
         className="bg-black text-white rounded-full py-1 px-2.5 text-xs"
         aria-haspopup="listbox"
@@ -113,7 +120,7 @@ const MobileViewsMenu = ({ isVisible }) => {
       const updateHeight = () => {
         const viewportHeight = window.innerHeight;
         const contentHeight = contentRef.current.scrollHeight;
-        const maxHeight = Math.min(contentHeight, viewportHeight * 0.9); // 90% of viewport height
+        const maxHeight = Math.min(contentHeight, viewportHeight * 0.9);
         menuRef.current.style.height = `${maxHeight}px`;
       };
 
@@ -131,7 +138,7 @@ const MobileViewsMenu = ({ isVisible }) => {
       role="dialog"
       aria-modal="true"
       aria-labelledby="mobile-views-menu-title"
-      className={`fixed inset-0 bg-black transition-opacity duration-300 ease-in-out z-50 ${
+      className={`fixed inset-0 bg-black transition-opacity duration-300 ease-in-out z-50 mobile-views-menu-overlay ${
         isVisible ? "bg-opacity-50" : "bg-opacity-0 pointer-events-none"
       } ${isVisible ? "visible" : "invisible"}`}
     >
@@ -140,6 +147,7 @@ const MobileViewsMenu = ({ isVisible }) => {
         className={`p-8 py-2.5 fixed bottom-0 left-0 right-0 bg-white rounded-t-3xl shadow-shadow_01 transform transition-all duration-300 ease-in-out ${
           isVisible ? "translate-y-0" : "translate-y-full"
         } overflow-auto`}
+        onClick={(e) => e.stopPropagation()}
       >
         <div ref={contentRef} className="menu-content flex flex-col">
           <h3

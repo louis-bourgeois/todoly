@@ -1,31 +1,34 @@
 import { useEffect, useState } from "react";
+import { useScreen } from "../../../../../../context/ScreenContext";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import CheckboxContainer from "../CheckboxContainer";
 import SectionTitle from "../SectionTitle";
 import Switcher from "../Switcher";
 
 export default function Notifications({ transitionStyles }) {
-  const { updateUserPreference, preferences } = useUserPreferences();
+  const { updatePreference, preferences } = useUserPreferences();
   const [allowNotifications, setAllowNotifications] = useState(
     JSON.parse(preferences.Allow_Notification.toLowerCase())
   );
   const [notificationsList, setNotificationsList] = useState(
     preferences?.Notifications_List || []
   );
+  const { isMobile } = useScreen();
 
   useEffect(() => {
-    updateUserPreference({
+    updatePreference({
       key: "Allow_Notifications",
       value: allowNotifications.toString(),
     });
-  }, [allowNotifications]);
+    console.log(preferences);
+  }, [allowNotifications, updatePreference]);
 
   useEffect(() => {
-    updateUserPreference({
+    updatePreference({
       key: "Notifications_List",
       value: notificationsList.toString(),
     });
-  }, [notificationsList]);
+  }, [notificationsList, updatePreference]);
 
   const notifications = [
     { name: "Daily Recap" },
@@ -35,23 +38,17 @@ export default function Notifications({ transitionStyles }) {
 
   const handleNotificationChange = (notificationName) => {
     setNotificationsList((prevList) => {
-      // Si prevList est une chaîne de caractères, la convertir en tableau
-      if (typeof prevList === "string") {
-        prevList = prevList.split(",");
-      }
-
-      // Vérifier si prevList contient la notification
-      if (prevList.includes(notificationName)) {
-        return prevList.filter((name) => name !== notificationName);
-      } else {
-        return [...prevList, notificationName];
-      }
+      const list =
+        typeof prevList === "string" ? prevList.split(",") : prevList;
+      return list.includes(notificationName)
+        ? list.filter((name) => name !== notificationName)
+        : [...list, notificationName];
     });
   };
 
   return (
     <div
-      className={`flex flex-col w-full px-[4%] mt-[4%] gap-[1.75vh] justify-start ${transitionStyles}`}
+      className={`flex flex-col w-full px-[4%] mt-[4%] gap-[1.75vh] ${transitionStyles}`}
     >
       <div className="flex justify-between items-center">
         <SectionTitle>Notification</SectionTitle>
@@ -66,7 +63,9 @@ export default function Notifications({ transitionStyles }) {
           isChecked={notificationsList.includes(notification.name)}
           onChange={() => handleNotificationChange(notification.name)}
         >
-          <span>{notification.name}</span>
+          <span className={isMobile ? "text-sm" : "text-base"}>
+            {notification.name}
+          </span>
         </CheckboxContainer>
       ))}
     </div>

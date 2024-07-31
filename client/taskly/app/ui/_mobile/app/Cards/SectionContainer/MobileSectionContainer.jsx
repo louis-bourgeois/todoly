@@ -111,6 +111,7 @@ export default function MobileSectionContainer({
             index={index}
             section={section}
             onSectionNameChange={modifySection}
+            allowEditing={section.name !== "Other"}
             deleteSection={deleteSection}
           />
           <div

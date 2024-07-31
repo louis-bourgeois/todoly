@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMenu } from "../../../../../context/MenuContext";
 import { useSection } from "../../../../../context/SectionContext";
+import { useUser } from "../../../../../context/UserContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import WorkspaceLayoutDescription from "../MenuLayouts/Workspace/WorkspaceLayoutDescription";
 import WorkspaceLayoutHeader from "../MenuLayouts/Workspace/WorkspaceLayoutHeader";
@@ -9,6 +10,7 @@ import WorkspaceLayoutSection from "../MenuLayouts/Workspace/WorkspaceLayoutSect
 const WorkspaceView = ({ id }) => {
   const textareaRef = useRef(null);
   const { sections } = useSection();
+  const { user } = useUser();
   const { workspaces, updateWorkspace } = useWorkspace();
   const [workspace, setWorkspace] = useState(null);
   const [workspaceSections, setWorkspaceSections] = useState([]);
@@ -147,15 +149,17 @@ const WorkspaceView = ({ id }) => {
             {collaborators.map((collab, index) => (
               <span
                 key={index}
-                className="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded flex items-center"
+                className="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-1 rounded flex items-center"
               >
                 {collab.username}
-                <button
-                  onClick={() => handleRemoveCollaborator(index)}
-                  className="ml-1 text-blue-800 hover:text-blue-900"
-                >
-                  ×
-                </button>
+                {collab.username !== user.username && (
+                  <button
+                    onClick={() => handleRemoveCollaborator(index)}
+                    className="ml-1 text-blue-800 hover:text-blue-900 "
+                  >
+                    ×
+                  </button>
+                )}
               </span>
             ))}
           </div>
@@ -178,12 +182,14 @@ const WorkspaceView = ({ id }) => {
                 className="bg-black text-white hover:text-dominant transition-colors text-xs font-medium mr-2 px-2.5 py-0.5 rounded flex items-center"
               >
                 {section.name}
-                <button
-                  onClick={() => handleRemoveSection(section.id)}
-                  className="ml-1 bg-black text-white hover:text-dominant transition-colors"
-                >
-                  ×
-                </button>
+                {workspace.name !== "Personal" && section.name !== "Other" && (
+                  <button
+                    onClick={() => handleRemoveSection(section.id)}
+                    className="ml-1 bg-black text-white hover:text-dominant transition-colors"
+                  >
+                    ×
+                  </button>
+                )}
               </span>
             ))}
           </div>

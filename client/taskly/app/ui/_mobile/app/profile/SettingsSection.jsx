@@ -92,7 +92,7 @@ const SettingsSection = React.memo(
                     : type === "primary"
                     ? "border-none bg-CTA_bg"
                     : ""
-                }`}
+                } min-w-[150px]`}
               />
             </div>
           );

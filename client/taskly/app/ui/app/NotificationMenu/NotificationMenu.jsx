@@ -1,70 +1,84 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { NotificationsContext } from "../../../../context/NotificationsContext";
-import Div from "../Div";
 
-export default function NotificationMenu({ data }) {
+export default function NotificationMenu({ data, isMobile }) {
   const { deleteNotification } = useContext(NotificationsContext);
+  const [isVisible, setIsVisible] = useState(true);
+  const [isHovered, setIsHovered] = useState(false);
 
-  const handleDelete = (id) => {
-    document.getElementById(data.id).classList.add("fade-out");
-    setTimeout(() => {
-      deleteNotification(id);
-    }, 800);
+  useEffect(() => {
+    let fadeOutTimer;
+    if (!isVisible) {
+      fadeOutTimer = setTimeout(() => {
+        deleteNotification(data.id);
+      }, 300); // Match this with the animation duration
+    }
+    return () => clearTimeout(fadeOutTimer);
+  }, [isVisible, data.id, deleteNotification]);
+
+  const handleDelete = () => {
+    setIsVisible(false);
   };
 
   return (
-    <Div
-      id={data.id}
-      notBorder
-      styles={`hover:scale-105 rounded-[13px] ${
-        data?.error ? "bg-[#FF8B8B]" : "bg-[#DBECFF]"
-      } max-w-[25vw] max-h-[20vh] flex flex-col gap-[20px] p-5 mr-0  mb-5 z-[150] transition duration-150 ease-out transition-all`}
-      data-id={data.id}
+    <div
+      className={`
+        ${data?.error ? "bg-[#FF8B8B]" : "bg-[#DBECFF]"}
+        ${isMobile ? "w-full" : "w-[25vw]"}
+        rounded-[13px] flex flex-col gap-2 p-3 pb-0 z-[150]
+        transition-all duration-300 ease-in-out
+        ${isHovered ? "scale-105" : "scale-100"}
+        ${isVisible ? "opacity-100" : "opacity-0"}
+      `}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        animation: isVisible ? "none" : "fadeOut 0.3s ease-out forwards",
+      }}
     >
-      <div className="flex justify-between items-center gap-4 duration-150 ease-out transition-all">
-        <h1 className="text-2xl font-bold duration-150 ease-out transition-all">
+      <div className="flex justify-between items-center">
+        <h1 className={`font-bold ${isMobile ? "text-lg" : "text-xl"}`}>
           {data?.title}
         </h1>
-        <svg
-          className="cursor-pointer hover:rotate-90 transition-all duration-1000ms"
-          onClick={() => handleDelete(data.id)}
-          width="20"
-          height="20"
-          viewBox="0 0 100 100"
-          xmlns="http://www.w3.org/2000/svg"
+        <button
+          onClick={handleDelete}
+          className={`focus:outline-none transition-transform duration-300 ${
+            isHovered ? "rotate-90" : "rotate-0"
+          }`}
         >
-          <line
-            x1="10"
-            y1="50"
-            x2="90"
-            y2="50"
-            stroke="black"
-            strokeWidth="10"
-            strokeLinecap="round"
-            transform="rotate(45 50 50)"
-          />
-          <line
-            x1="50"
-            y1="10"
-            x2="50"
-            y2="90"
-            stroke="black"
-            strokeWidth="10"
-            strokeLinecap="round"
-            transform="rotate(45 50 50)"
-          />
-        </svg>
+          <svg
+            width={isMobile ? "16" : "20"}
+            height={isMobile ? "16" : "20"}
+            viewBox="0 0 100 100"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <line
+              x1="10"
+              y1="90"
+              x2="90"
+              y2="10"
+              stroke="black"
+              strokeWidth="10"
+              strokeLinecap="round"
+            />
+            <line
+              x1="10"
+              y1="10"
+              x2="90"
+              y2="90"
+              stroke="black"
+              strokeWidth="10"
+              strokeLinecap="round"
+            />
+          </svg>
+        </button>
       </div>
-      <div className="flex justify-between transition duration-150 ease-out transition-all">
-        <p className="transition duration-150 ease-out transition-all">
-          {data?.subtitle}
-        </p>
-        <div className="flex justify-betweentransition duration-150 ease-out transition-all">
-          <p className="transition duration-150 ease-out transition-all">
-            {data?.tagName}
-          </p>
-        </div>
-      </div>
-    </Div>
+      <p className={`${isMobile ? "text-sm" : "text-base"} leading-relaxed`}>
+        {data?.subtitle}
+      </p>
+      <p className={`text-right ${isMobile ? "text-xs" : "text-sm"}`}>
+        {data?.tagName}
+      </p>
+    </div>
   );
 }

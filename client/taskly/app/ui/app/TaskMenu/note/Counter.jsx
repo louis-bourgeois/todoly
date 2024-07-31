@@ -3,9 +3,11 @@ import { useEffect, useState } from "react";
 
 export const Counter = ({ visibility, onChange, initialCount }) => {
   const [count, setCount] = useState(initialCount);
+  const [inputValue, setInputValue] = useState(initialCount.toString());
 
   useEffect(() => {
     setCount(initialCount);
+    setInputValue(initialCount.toString());
   }, [initialCount]);
 
   if (!visibility) {
@@ -16,6 +18,7 @@ export const Counter = ({ visibility, onChange, initialCount }) => {
     if (count < 10) {
       const newCount = count + 1;
       setCount(newCount);
+      setInputValue(newCount.toString());
       onChange(newCount);
     }
   };
@@ -24,31 +27,62 @@ export const Counter = ({ visibility, onChange, initialCount }) => {
     if (count > 1) {
       const newCount = count - 1;
       setCount(newCount);
+      setInputValue(newCount.toString());
       onChange(newCount);
     }
   };
 
   const handleChange = (e) => {
-    const value = parseInt(e.target.value, 10);
-    if (value >= 1 && value <= 10) {
-      setCount(value);
-      onChange(value);
+    const value = e.target.value;
+    setInputValue(value);
+
+    const numValue = parseInt(value, 10);
+    if (!isNaN(numValue) && numValue >= 1 && numValue <= 10) {
+      setCount(numValue);
+      onChange(numValue);
+    }
+  };
+
+  const handleBlur = () => {
+    if (inputValue === "" || isNaN(parseInt(inputValue, 10))) {
+      setInputValue(count.toString());
+    } else {
+      const numValue = Math.max(1, Math.min(10, parseInt(inputValue, 10)));
+      setCount(numValue);
+      setInputValue(numValue.toString());
+      onChange(numValue);
     }
   };
 
   return (
-    <div className="flex items-center justify-center bg-transparent ">
+    <div className="flex items-center justify-center bg-transparent">
       <button
         onClick={handleDecrement}
-        className="w-12 h-12 flex items-center justify-center rounded-full "
+        className="w-12 h-12 flex items-center justify-center rounded-full"
       >
-        &lt;
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
       </button>
       <input
-        type="number"
-        value={count}
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        value={inputValue}
         onChange={handleChange}
-        className="w-12 h-12 text-center bg-transparent no-arrows"
+        onBlur={handleBlur}
+        className="w-12 h-12 text-center bg-transparent"
         min="1"
         max="10"
       />
@@ -56,7 +90,20 @@ export const Counter = ({ visibility, onChange, initialCount }) => {
         onClick={handleIncrement}
         className="w-12 h-12 flex items-center justify-center rounded-full"
       >
-        &gt;
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M9 5l7 7-7 7"
+          />
+        </svg>
       </button>
     </div>
   );

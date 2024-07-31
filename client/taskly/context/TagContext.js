@@ -26,7 +26,6 @@ export const TagProvider = ({ children }) => {
         withCredentials: true,
       });
       setTags(response.data.tags);
-      console.log(response.data.tags);
     } catch (error) {
       console.error("Error fetching tags:", error);
     }
@@ -37,14 +36,12 @@ export const TagProvider = ({ children }) => {
   }, [fetchTags]);
 
   const addTag = useCallback(async (name) => {
-    console.log(name);
     try {
       const response = await axios.post(
         `${baseUrl}/tags/add`,
         { name },
         { withCredentials: true }
       );
-      console.log(response.data, response.status);
       if (response.status === 200 && response.data.tags) {
         setTags(response.data.tags);
 

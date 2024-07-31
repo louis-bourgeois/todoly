@@ -5,7 +5,7 @@ import DropdownMenu from "../DropdownMenu";
 import SectionTitle from "../SectionTitle";
 
 export default function Languages({ transitionStyles }) {
-  const { updateUserPreference, preferences } = useUserPreferences();
+  const { updatePreference, preferences } = useUserPreferences();
   const [settings, setSettings] = useState({
     language: preferences?.Language,
     tz: preferences?.TZ,
@@ -28,7 +28,7 @@ export default function Languages({ transitionStyles }) {
       [key]: value,
     }));
     try {
-      await updateUserPreference({ key, value });
+      await updatePreference({ key, value });
       console.log("Mise à jour réussie:", key, value);
     } catch (error) {
       console.error("Erreur lors de la mise à jour:", error);

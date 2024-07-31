@@ -62,7 +62,7 @@ const DropdownContent = memo(
 
           dropdownRef.current.style.top = `${top}px`;
           dropdownRef.current.style.left = `${leftPos}px`;
-          dropdownRef.current.style.width = `${width}px`;
+          dropdownRef.current.style.width = `${width + width/8}px`; // Ajout de 20px à la largeur du bouton
         };
 
         updatePosition();
@@ -81,7 +81,7 @@ const DropdownContent = memo(
     return createPortal(
       <div
         ref={dropdownRef}
-        className="z-50 bg-white rounded-md shadow-lg overflow-auto transition-all duration-300 ease-in-out fixed"
+        className="z-50 flex flex-col justify-center bg-white rounded-md shadow-lg overflow-auto transition-all duration-300 ease-in-out fixed"
         style={{
           maxHeight: `${maxVisibleOptions * 37}px`,
           opacity: isOpen ? 1 : 0,
@@ -92,7 +92,7 @@ const DropdownContent = memo(
         {options.map((option, index) => (
           <button
             key={index}
-            className="relative block w-full text-left px-4 py-2 text-xs text-gray-700 overflow-hidden"
+            className="text-center relative block w-full px-4 py-2 text-xs text-gray-700 overflow-hidden"
             onClick={() => onOptionClick(option)}
             onMouseEnter={() => setHoveredIndex(index)}
             onMouseLeave={() => setHoveredIndex(null)}

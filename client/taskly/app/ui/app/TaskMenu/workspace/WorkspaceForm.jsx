@@ -20,7 +20,6 @@ export default function WorkspaceForm({
   const { createWorkspace, updateWorkspace, setActiveWorkspace, workspaces } =
     useWorkspace();
   const { sections } = useSection();
-  const [workspace, setWorkspace] = useState(null);
   const [workspaceSections, setWorkspaceSections] = useState([]);
   const [collaborators, setCollaborators] = useState([]);
   const [isTransitioning, setIsTransitioning] = useState(false);
@@ -88,7 +87,6 @@ export default function WorkspaceForm({
       ),
     ];
     console.log("Found Workspace:", foundWorkspace);
-    setWorkspace(foundWorkspace);
     setCollaborators(foundWorkspace.users || []);
     setNameValue(foundWorkspace.name);
     setWorkspaceSections(uniqueSectionIds);
@@ -96,7 +94,6 @@ export default function WorkspaceForm({
 
   const resetWorkspaceForm = () => {
     setActiveWorkspace("");
-    setWorkspace(null);
     setWorkspaceSections([]);
     setCollaborators([]);
     setNameValue("");
@@ -119,7 +116,7 @@ export default function WorkspaceForm({
           value={nameValue}
           disabled={!visibility}
           placeholder={id ? "Edit Workspace" : "New Workspace"}
-          className="w-full text-right placeholder:text-black placeholder:text-5xl text-black text-5xl bg-transparent h-full focus:outline-none"
+          className="w-full text-right placeholder:text-black placeholder:text-4xl text-black text-5xl bg-transparent h-full focus:outline-none"
         />
         <div className="flex-grow" />
       </div>
@@ -127,6 +124,7 @@ export default function WorkspaceForm({
         <SectionSelectContainer
           setWorkspaceSections={setWorkspaceSections}
           workspaceSections={workspaceSections}
+          id={id}
         />
         <div className="h-[95%] rounded-[20px] w-[50%] flex flex-col justify-between">
           <CollaboratorSelectContainer
@@ -135,7 +133,7 @@ export default function WorkspaceForm({
           />
           <button
             onClick={handleWorkspaceAction}
-            className="addMenuElement glass-morphism h-[15%] rounded-[20px] text-4xl font-bold hover:scale-105 active:scale-100 transition-transform duration-100 ease-in"
+            className="addMenuElement glass-morphism h-[15%] rounded-[20px] text-2xl hover:scale-105 active:scale-100 transition-transform duration-100 ease-in"
           >
             {id ? "Update" : "Create"}
           </button>

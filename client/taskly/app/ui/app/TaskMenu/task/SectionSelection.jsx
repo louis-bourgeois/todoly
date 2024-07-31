@@ -1,14 +1,12 @@
 import { useRef, useState } from "react";
 import { useError } from "../../../../../context/ErrorContext";
 import { useSection } from "../../../../../context/SectionContext";
-import { useTask } from "../../../../../context/TaskContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
 
 export default function SectionSelection({
   linked_section_name,
-  setLinked_section_name,
-  setLinked_section,
+  handleSectionChange,
   id,
   task,
   setTask,
@@ -19,7 +17,6 @@ export default function SectionSelection({
   const { handleError } = useError();
   const { sections, addSection, modifySection, deleteSection } = useSection();
   const { currentWorkspace } = useWorkspace();
-  const { modifyTask } = useTask();
   const [isEditingNewSection, setIsEditingNewSection] = useState(false);
   const [newSection, setNewSection] = useState({
     name: "",
@@ -53,20 +50,8 @@ export default function SectionSelection({
   };
 
   const handleSelectSection = (section) => {
-    setLinked_section(section.id);
+    handleSectionChange(section.id, section.name);
     setMenuOpen(false);
-    setLinked_section_name(section.name);
-    if (id) {
-      handleSectionChange(section.id);
-    }
-  };
-
-  const handleSectionChange = (idValue) => {
-    if (id) {
-      const updatedTask = { ...task, linked_section: idValue };
-      setTask(updatedTask);
-      modifyTask(updatedTask, "post");
-    }
   };
 
   const handleAddSection = () => {
@@ -94,10 +79,17 @@ export default function SectionSelection({
     }
   };
 
+  const filteredSections = sections.filter(
+    (section) => section.workspace_id === currentWorkspace
+  );
+
   return (
-    <TaskMenuSectionContainer othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer">
+    <TaskMenuSectionContainer
+      othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer"
+      onClick={() => setMenuOpen((prev) => !prev)}
+    >
       <h2 className="pl-[4%] font-bold text-2xl">
-        {linked_section_name || "Section"}
+        {linked_section_name || "Select a workspace"}
       </h2>
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -109,7 +101,10 @@ export default function SectionSelection({
         viewBox="0 0 29 29"
         width="62.5"
         height="62.5"
-        onClick={(e) => setMenuOpen((prev) => !prev)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setMenuOpen((prev) => !prev);
+        }}
       >
         <path
           fill="none"
@@ -124,71 +119,78 @@ export default function SectionSelection({
       <div
         className={`absolute top-full mt-2 left-0 right-0 bg-white shadow-lg rounded-lg transition-opacity duration-300 z-50 ${
           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        }`}
+        } ${filteredSections.length > 4 ? "max-h-60 overflow-y-auto" : ""}`}
       >
         <div
           className="opacity-100 p-2 cursor-pointer hover:text-dominant transition transition-color"
-          onClick={handleAddSection}
+          onClick={(e) => {
+            e.stopPropagation();
+            handleAddSection();
+          }}
         >
           Add Section
         </div>
-        {sections
-          .filter((section) => section.workspace_id === currentWorkspace)
-          .map((section) => (
-            <div key={section.id} className="flex items-center p-2">
-              {editingSectionId === section.id ? (
-                <input
-                  type="text"
-                  className="cursor-pointer flex-grow p-1 border-b border-gray-300 focus:outline-none"
-                  value={section.name}
-                  onChange={(e) => handleSectionNameChange(e, section.id)}
-                  onKeyDown={(e) => {
-                    if (e.code === "Enter") setEditingSectionId(null);
-                  }}
-                  onBlur={() => setEditingSectionId(null)}
-                />
-              ) : (
-                <span
-                  className="cursor-pointer flex-grow p-1 hover:text-dominant"
-                  onClick={() => {
-                    handleSelectSection(section);
-                    if (id) {
-                      handleSectionChange(section.id);
-                    }
+        {filteredSections.map((section) => (
+          <div
+            key={section.id}
+            className="flex items-center p-2"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSelectSection(section);
+            }}
+          >
+            {editingSectionId === section.id ? (
+              <input
+                type="text"
+                className="cursor-pointer flex-grow p-1 border-b border-gray-300 focus:outline-none"
+                value={section.name}
+                onChange={(e) => handleSectionNameChange(e, section.id)}
+                onKeyDown={(e) => {
+                  if (e.code === "Enter") setEditingSectionId(null);
+                }}
+                onBlur={() => setEditingSectionId(null)}
+                onClick={(e) => e.stopPropagation()}
+              />
+            ) : (
+              <span className="cursor-pointer flex-grow p-1 hover:text-dominant">
+                {section.name}
+              </span>
+            )}
+            {section.name !== "Other" && (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="cursor-pointer hover:text-dominant ml-2 transition transition-color"
+                  viewBox="0 0 24 24"
+                  width="24"
+                  height="24"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteSection(section.id);
                   }}
                 >
-                  {section.name}
-                </span>
-              )}
-              {section.name !== "Other" && (
-                <>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="cursor-pointer hover:text-dominant ml-2 transition transition-color"
-                    viewBox="0 0 24 24"
-                    width="24"
-                    height="24"
-                    onClick={() => handleDeleteSection(section.id)}
-                  >
-                    <path
-                      fill="none"
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M6 18L18 6M6 6l12 12"
-                    />
-                  </svg>
-                  <button
-                    className="ml-2 hover:text-dominant"
-                    onClick={() => setEditingSectionId(section.id)}
-                  >
-                    Edit
-                  </button>
-                </>
-              )}
-            </div>
-          ))}
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+                <button
+                  className="ml-2 hover:text-dominant"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setEditingSectionId(section.id);
+                  }}
+                >
+                  Edit
+                </button>
+              </>
+            )}
+          </div>
+        ))}
         {isEditingNewSection && (
           <div className="p-2">
             <input
@@ -205,6 +207,7 @@ export default function SectionSelection({
               }
               onKeyDown={(e) => handleNewSectionKeyPress(e)}
               onBlur={handleNewSectionBlur}
+              onClick={(e) => e.stopPropagation()}
             />
           </div>
         )}

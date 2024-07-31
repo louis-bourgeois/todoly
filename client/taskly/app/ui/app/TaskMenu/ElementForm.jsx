@@ -45,7 +45,7 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
   useEffect(() => {
     if (linked_section) {
       console.log("update:", linked_section);
-      updateUserPreference({ key: "Last_Section", value: linked_section });
+      updatePreference({ key: "Last_Section", value: linked_section });
     }
   }, [linked_section]);
 

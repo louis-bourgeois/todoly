@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSection } from "../../../../../context/SectionContext";
 import { useUser } from "../../../../../context/UserContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
@@ -17,6 +17,7 @@ export default function WorkspaceSelect({
   const { sections } = useSection();
   const { currentWorkspace, setCurrentWorkspace, workspaces } = useWorkspace();
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
+  const menuRef = useRef(null);
 
   useEffect(() => {
     if (task) {
@@ -50,6 +51,10 @@ export default function WorkspaceSelect({
     setMenuOpen(false);
   };
 
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev);
+  };
+
   return (
     <TaskMenuSectionContainer
       othersStyles="h-[80%] flex flex-col justify-between"
@@ -60,18 +65,18 @@ export default function WorkspaceSelect({
       <div className="flex items-center gap-[0.7vw] relative">
         <div
           className="addMenuElement cursor-pointer rounded-full flex items-center justify-between p-[1vw] w-full"
-          onClick={() => setMenuOpen((prev) => !prev)}
+          onClick={toggleMenu}
         >
           {workspaces.find((workspace) => workspace.id === selectedWorkspace)
             ?.name || "Select Workspace"}
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`ml-2 transition-transform duration-500 ${
+            className={`ml-2 transition-transform duration-300 ${
               menuOpen ? "rotate-180" : ""
             }`}
             viewBox="0 0 29 29"
-            width="24"
-            height="24"
+            width="32"
+            height="32"
           >
             <path
               fill="none"
@@ -84,21 +89,24 @@ export default function WorkspaceSelect({
             />
           </svg>
         </div>
-        {menuOpen && (
-          <div className="absolute top-full overflow-y-auto max-h-[10vh] mt-2 left-0 bg-white shadow-lg rounded-lg z-50 w-full">
-            <div className="p-2 text-center text-black flex flex-col items-start">
-              {workspaces.map((workspace) => (
-                <button
-                  key={workspace.id}
-                  onClick={() => handleWorkspaceChange(workspace.id)}
-                  className="hover:text-dominant transition-colors duration-300 w-full text-left py-1"
-                >
-                  {workspace.name}
-                </button>
-              ))}
-            </div>
+        <div
+          ref={menuRef}
+          className={`max-h-[108px] absolute top-full mt-2 left-0 bg-white shadow-lg rounded-lg z-50 w-full transition-all duration-300 ease-in-out ${
+            menuOpen ? " opacity-100 visible" : "max-h-0 opacity-0 invisible"
+          }`}
+        >
+          <div className="max-h-[104px] overflow-y-auto flex flex-col">
+            {workspaces.map((workspace) => (
+              <button
+                key={workspace.id}
+                onClick={() => handleWorkspaceChange(workspace.id)}
+                className="hover:text-dominant transition-colors duration-300 w-full text-left py-2 px-4"
+              >
+                {workspace.name}
+              </button>
+            ))}
           </div>
-        )}
+        </div>
       </div>
 
       <TaskMenuButton

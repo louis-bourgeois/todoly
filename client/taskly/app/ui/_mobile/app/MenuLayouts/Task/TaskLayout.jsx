@@ -29,7 +29,9 @@ export default function TaskLayout({ id }) {
   const { handleError } = useError();
   const [selectedWorkspace, setSelectedWorkspace] = useState("");
   const [priority, setPriority] = useState(5);
-  const [dueDate, setDueDate] = useState(null);
+  const [dueDate, setDueDate] = useState(
+    new Date().toISOString().split("T")[0]
+  );
   const [selectedSection, setSelectedSection] = useState("");
   const [lastUrlSegment, setLastUrlSegment] = useState("");
 
@@ -43,13 +45,8 @@ export default function TaskLayout({ id }) {
       }
     }
 
-    // Initial update
     updateLastUrlSegment();
-
-    // Listen for changes in the URL
     window.addEventListener("popstate", updateLastUrlSegment);
-
-    // Cleanup
     return () => window.removeEventListener("popstate", updateLastUrlSegment);
   }, []);
 
@@ -71,6 +68,7 @@ export default function TaskLayout({ id }) {
     if (taskTitle.length > 0 && selectedSection && currentWorkspace && status) {
       console.log("Setting new cardType:", newCardType);
       setCardType(newCardType);
+
       const taskData = {
         title: taskTitle,
         status: status.toLowerCase().replace(/\s+/g, ""),
@@ -143,7 +141,8 @@ export default function TaskLayout({ id }) {
               taskTitle.length > 0 &&
               selectedSection &&
               currentWorkspace &&
-              status
+              status &&
+              0 < priority < 11
             )
           }
         />

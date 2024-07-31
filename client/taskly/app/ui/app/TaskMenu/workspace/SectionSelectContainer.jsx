@@ -5,14 +5,17 @@ import { CSSTransition, TransitionGroup } from "react-transition-group";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import { useSection } from "../../../../../context/SectionContext";
+import { useWorkspace } from "../../../../../context/WorkspaceContext";
 
 const fuseOptions = { keys: ["name"], threshold: 0.3 };
 
 export default function SectionSelectContainer({
   workspaceSections,
   setWorkspaceSections,
+  id,
 }) {
   const { sections } = useSection();
+  const { workspaces } = useWorkspace();
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const inputRef = useRef(null);
@@ -20,6 +23,15 @@ export default function SectionSelectContainer({
     sections.filter((section) => section.name.toLowerCase() !== "other"),
     fuseOptions
   );
+
+  const allowedToDelete = (() => {
+    const personalWorkspace = workspaces?.find((w) => w.name === "Personal");
+    if (!personalWorkspace) {
+      console.warn("Personal workspace not found in the list of workspaces.");
+      return false;
+    }
+    return id !== personalWorkspace.id;
+  })();
 
   useEffect(() => {
     if (inputValue === "") {
@@ -56,7 +68,7 @@ export default function SectionSelectContainer({
 
   return (
     <div className="h-[95%] rounded-[20px] w-[55%] addMenuElement glass-morphism flex flex-col justify-start gap-[7.5%] items-center">
-      <h1 className="text-4xl font-extrabold">Sections</h1>
+      <h1 className="text-3xl font-bold">Sections</h1>
       <Downshift
         inputValue={inputValue}
         onInputValueChange={handleInputChange}
@@ -101,7 +113,7 @@ export default function SectionSelectContainer({
                     <feColorMatrix
                       in="SourceAlpha"
                       type="matrix"
-                      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+                      values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                       result="hardAlpha"
                     />
                     <feOffset dy="4" />
@@ -144,7 +156,7 @@ export default function SectionSelectContainer({
                   suggestions
                     .filter(
                       (section) =>
-                        !workspaceSections.includes(section) &&
+                        !workspaceSections.some((s) => s.id === section.id) &&
                         section.name.toLowerCase() !== "other"
                     )
                     .map((section, index) => (
@@ -176,27 +188,29 @@ export default function SectionSelectContainer({
         {workspaceSections.map((section, index) => (
           <div key={section.id || index} className="mb-3">
             <div className="p-2 addMenuElement rounded-full flex justify-between items-center">
-              <span className="text-center block">{section.name}</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                className="cursor-pointer"
-                onClick={() =>
-                  setWorkspaceSections((prev) =>
-                    prev.filter((s) => s.id !== section.id)
-                  )
-                }
-              >
-                <path
-                  d="M18 6L6 18M6 6l12 12"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <span className="text-center block">{section.name}</span>{" "}
+              {allowedToDelete && (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  className="cursor-pointer"
+                  onClick={() =>
+                    setWorkspaceSections((prev) =>
+                      prev.filter((s) => s.id !== section.id)
+                    )
+                  }
+                >
+                  <path
+                    d="M18 6L6 18M6 6l12 12"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              )}
             </div>
           </div>
         ))}

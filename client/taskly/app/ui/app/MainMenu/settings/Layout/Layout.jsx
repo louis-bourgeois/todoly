@@ -4,7 +4,7 @@ import DropdownMenu from "../DropdownMenu";
 import SectionTitle from "../SectionTitle";
 
 export default function Layout({ transitionStyles }) {
-  const { updateUserPreference, preferences } = useUserPreferences();
+  const { updatePreference, preferences } = useUserPreferences();
   const [defaultMainPage, setDefaultMainPage] = useState(
     preferences.Default_Main_Page
   );
@@ -14,13 +14,13 @@ export default function Layout({ transitionStyles }) {
 
   const handleMainPageChange = async (value) => {
     setDefaultMainPage(value);
-    await updateUserPreference({ key: "Default_Main_Page", value: value });
+    await updatePreference({ key: "Default_Main_Page", value: value });
   };
 
   const handleHomePageTitleChange = async (event) => {
     const value = event.target.value;
     setHomePageTitle(value);
-    await updateUserPreference({ key: "Home_Page_Title", value: value });
+    await updatePreference({ key: "Home_Page_Title", value: value });
   };
   return (
     <div

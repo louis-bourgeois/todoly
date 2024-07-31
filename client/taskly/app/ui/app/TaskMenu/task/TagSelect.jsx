@@ -1,6 +1,9 @@
 "use client";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Slider from "react-slick";
+import "swiper/css";
+import "swiper/css/free-mode";
+import { FreeMode } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { useError } from "../../../../../context/ErrorContext";
 import { useTag } from "../../../../../context/TagContext";
 import { useTask } from "../../../../../context/TaskContext";
@@ -18,21 +21,11 @@ export default function TagSelect({
   const { handleError } = useError();
   const newTagInputRef = useRef(null);
   const [isAddingTag, setIsAddingTag] = useState(false);
-
-  const settings = {
-    dots: false,
-    arrows: false,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3,
-    slidesToScroll: 1,
-    swipeToSlide: true,
-  };
+  const swiperRef = useRef(null);
 
   const handleTagsChange = useCallback(
     async (newTags) => {
       if (id && newTags && task) {
-        console.log(task);
         const updatedTask = { ...task, tags: JSON.stringify(newTags) };
         setTask(updatedTask);
         await modifyTask(updatedTask, "post");
@@ -42,10 +35,16 @@ export default function TagSelect({
   );
 
   useEffect(() => {
-    if (taskTags) {
+    if (taskTags && task && JSON.stringify(taskTags) !== task.tags) {
       handleTagsChange(taskTags);
     }
-  }, [taskTags]);
+  }, [taskTags, task, handleTagsChange]);
+
+  useEffect(() => {
+    if (swiperRef.current && swiperRef.current.swiper) {
+      swiperRef.current.swiper.update();
+    }
+  }, [tags]);
 
   const handleAddTag = useCallback(
     (name = "", id = undefined) => {
@@ -145,9 +144,7 @@ export default function TagSelect({
     },
     [taskTags, handleAddTag, handleError]
   );
-  useEffect(() => {
-    console.log(taskTags);
-  }, [taskTags, tags]);
+
   const handleDeleteTag = useCallback((index) => {
     setTaskTags((prev) => prev.filter((_, i) => i !== index));
   }, []);
@@ -215,33 +212,39 @@ export default function TagSelect({
             </div>
           ))}
       </div>
-      <div className="flex flex-col w-[97%] ml-auto">
-        <Slider {...settings}>
-          {tags.map((tag, index) => {
-            // Initialiser existingNamesInTaskTags en dehors de map pour éviter la réinitialisation
-            let existingNamesInTaskTags = taskTags.map((t) => t.name);
-
-            // Vérifier si tag.name existe dans existingNamesInTaskTags
-            if (existingNamesInTaskTags.includes(tag.name)) {
-              return null; // Utilisez 'null' pour ne rien rendre dans map
+      <div className="w-[97%] h-[60px] ml-auto">
+        <Swiper
+          ref={swiperRef}
+          modules={[FreeMode]}
+          freeMode={true}
+          slidesPerView="auto"
+          spaceBetween={10}
+          className="h-full"
+          observer={true}
+          observeParents={true}
+        >
+          {tags.map((tag) => {
+            if (
+              taskTags.some(
+                (t) => t.name.toLowerCase() === tag.name.toLowerCase()
+              )
+            ) {
+              return null;
             }
-
             return (
-              <div key={index} className="">
+              <SwiperSlide key={tag.id} style={{ width: "auto" }}>
                 <button
-                  key={index}
                   onClick={() => handleTagClick(tag)}
-                  className="cursor-pointer hover:scale-105 transition-transform transition transition-all flex h-[50%] items-center justify-center bg-white rounded-[20px] my-2 p-2"
-                  style={{
-                    boxShadow: "0px 4px 4px 0px rgba(0, 122, 255, 0.25)",
-                  }}
+                  className="cursor-pointer hover:scale-105 transition-all flex items-center justify-center bg-white rounded-[20px] h-10 px-4 shadow-md"
                 >
-                  <p className="text-xs font-bold">{tag.name}</p>
+                  <span className="text-xs font-bold whitespace-nowrap">
+                    {tag.name}
+                  </span>
                 </button>
-              </div>
+              </SwiperSlide>
             );
           })}
-        </Slider>
+        </Swiper>
       </div>
     </TaskMenuSectionContainer>
   );

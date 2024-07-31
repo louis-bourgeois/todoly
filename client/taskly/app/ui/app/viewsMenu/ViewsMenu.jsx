@@ -3,7 +3,7 @@ import { useUserPreferences } from "../../../../context/UserPreferencesContext";
 import DropdownMenu from "../MainMenu/settings/DropdownMenu";
 
 const ViewsMenu = ({ options, isOpen, onClose }) => {
-  const { updateUserPreference, preferences } = useUserPreferences();
+  const { updatePreference, preferences } = useUserPreferences();
 
   const [selectedOptions, setSelectedOptions] = useState({
     "Sort by": preferences?.Sort_By || "Importance",
@@ -51,14 +51,14 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
 
   const handleConfirm = useCallback(async () => {
     await Promise.all([
-      updateUserPreference({
+      updatePreference({
         key: "Sort_By",
         value: selectedOptions["Sort by"],
       }),
-      updateUserPreference({ key: "Show", value: selectedOptions["Show"] }),
+      updatePreference({ key: "Show", value: selectedOptions["Show"] }),
     ]);
     closeMenu();
-  }, [updateUserPreference, selectedOptions, closeMenu]);
+  }, [updatePreference, selectedOptions, closeMenu]);
 
   const renderMenuContent = useCallback(
     () =>

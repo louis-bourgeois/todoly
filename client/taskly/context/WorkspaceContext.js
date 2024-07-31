@@ -18,18 +18,18 @@ const baseUrl = `${config.apiUrl}/api`;
 export const useWorkspace = () => useContext(WorkspaceContext);
 
 export const WorkspaceProvider = ({ children }) => {
-  const { updateUserPreference, preferences } = useUserPreferences();
-  const [currentWorkspace, setCurrentWorkspace] = useState("");
-  const [activeWorkspace, setActiveWorkspace] = useState("");
+  const { updatePreference, preferences } = useUserPreferences();
+
+  const [currentWorkspace, setCurrentWorkspace] = useState(null);
+  const [activeWorkspace, setActiveWorkspace] = useState(null);
   const [workspaces, setWorkspaces] = useState([]);
-  const { isAuthenticated, checkAuth } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { setSections } = useSection();
 
   const fetchWorkspaces = useCallback(async () => {
     if (!isAuthenticated) return;
 
     try {
-      console.log("getting workspaces");
       const response = await axios.get(`${baseUrl}/users/workspaces`, {
         withCredentials: true,
       });
@@ -56,13 +56,13 @@ export const WorkspaceProvider = ({ children }) => {
     async (newWorkspace) => {
       if (newWorkspace !== currentWorkspace) {
         setCurrentWorkspace(newWorkspace);
-        await updateUserPreference({
+        await updatePreference({
           key: "Current_Workspace",
           value: newWorkspace,
         });
       }
     },
-    [currentWorkspace, updateUserPreference]
+    [currentWorkspace, updatePreference]
   );
 
   const createWorkspace = useCallback(
@@ -74,8 +74,9 @@ export const WorkspaceProvider = ({ children }) => {
           { name, linked_sections },
           { withCredentials: true }
         );
-        const workspaceId = response.data.workspaceId;
 
+        const workspaceId = response.data.workspaceId;
+        setSections(response.data.sections);
         await Promise.all(
           collaborators.map(async (collaborator) => {
             try {
@@ -97,6 +98,7 @@ export const WorkspaceProvider = ({ children }) => {
         );
 
         await fetchWorkspaces();
+        setCurrentWorkspace(workspaceId);
       } catch (error) {
         console.error("Error creating workspace:", error);
       }
@@ -115,6 +117,7 @@ export const WorkspaceProvider = ({ children }) => {
         const { workspaces, sections } = response.data;
         setWorkspaces(workspaces);
         setSections(sections);
+        setCurrentWorkspace(workspaceId);
       } catch (error) {
         console.error("Error updating workspace:", error);
       }
@@ -125,10 +128,14 @@ export const WorkspaceProvider = ({ children }) => {
   const deleteWorkspace = useCallback(
     async (workspaceId) => {
       try {
-        await axios.delete(`${baseUrl}/workspaces/${workspaceId}`, {
+        const res = await axios.delete(`${baseUrl}/workspaces/${workspaceId}`, {
           withCredentials: true,
         });
         await fetchWorkspaces();
+        setSections(res.data.sections);
+        if (currentWorkspace === workspaceId) {
+          setCurrentWorkspace(workspaces.find((w) => w.name === "Personal").id);
+        }
       } catch (error) {
         console.error("Error deleting workspace:", error);
       }

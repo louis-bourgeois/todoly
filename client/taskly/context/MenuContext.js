@@ -28,14 +28,8 @@ export const MenuProvider = ({ children }) => {
   const [currentCardType, setCurrentCardType] = useState(cardType);
   const [nextCardType, setNextCardType] = useState(null);
 
-  const { setActiveTask } = useTask();
-  const { setActiveWorkspace } = useWorkspace();
-
-  useEffect(() => {
-    console.log("Initial cardType:", cardType);
-    console.log("Initial currentCardType:", currentCardType);
-    console.log("Initial nextCardType:", nextCardType);
-  }, []);
+  const { setActiveTask, activeTask } = useTask();
+  const { setActiveWorkspace, activeWorkspace } = useWorkspace();
 
   useEffect(() => {
     const updateCardType = () => {
@@ -52,18 +46,20 @@ export const MenuProvider = ({ children }) => {
     setCurrentCardType(cardType);
   }, [cardType]);
 
-  const toggleTaskMenu = (taskId = "", workspaceId = "", el) => {
+  useEffect(() => {
+    console.log(activeTask, activeWorkspace);
+  }, [activeTask, activeWorkspace]);
+  const toggleTaskMenu = (taskId = null, workspaceId = null, el) => {
+    setActiveTask(taskId);
+    setActiveWorkspace(workspaceId);
     const availableElements = ["Workspace", "Task"];
+    console.log(el);
     if (el !== "" && availableElements.includes(el)) {
       setElement(el);
-    } else if (el !== "") {
+    } else if (el) {
       console.error("Invalid passed el props in menuContext/taskMenu");
     }
-
     setIsTaskMenuOpen((prev) => !prev);
-
-    if (taskId) setActiveTask(taskId);
-    if (workspaceId) setActiveWorkspace(workspaceId);
   };
 
   const toggleSearchMenu = () => {

@@ -29,7 +29,7 @@ export default function PasswordInputContainer({
         placeholder={placeholder}
         autoDimensions={autoDimensions ? "true" : "false"}
         visible={visibilityState}
-        required="true"
+        required={true}
         additionalStyles={
           additionalStyles + " bg-transparent border-none rounded-2xl"
         }

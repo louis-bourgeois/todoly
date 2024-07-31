@@ -7,7 +7,6 @@ export default function TitleInput({
   visibility,
   titleValue,
   setTitleValue,
-  setCanSubmit,
   task,
   setTask,
   placeholder = "Title",
@@ -21,9 +20,7 @@ export default function TitleInput({
     if (id) {
       const updatedTask = { ...task, title: newValue };
       setTask(updatedTask);
-      modifyTask(updatedTask, "post");
-    } else {
-      setCanSubmit(!!newValue.length);
+      //modifyTask(updatedTask, "post");
     }
   };
 

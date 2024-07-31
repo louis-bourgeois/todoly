@@ -56,7 +56,7 @@ const DateHeader = ({ index, onDateChange }) => {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="relative flex w-full justify-between items-center">
+    <div className="relative flex w-full justify-between items-center z-[301]">
       <h2 className="select-none text-3xl font-extralight">
         {(dateNumber < 10 ? "0" : "") + dateNumber}
       </h2>
@@ -117,7 +117,7 @@ const DateHeader = ({ index, onDateChange }) => {
             menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
-          <div className="p-2 text-center text-gray-500 flex flex-col items-start">
+          <div className="p-2 text-center text-gray-500 flex flex-col items-start gap-3 z-50">
             {workspacesName.map((name, index) => (
               <button
                 key={index}

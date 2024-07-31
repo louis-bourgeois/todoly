@@ -45,6 +45,7 @@ export const SectionProvider = ({ children }) => {
         { withCredentials: true }
       );
       if (response.status === 200 && response.data.sections) {
+        console.log("");
         setSections(response.data.sections);
       }
     } catch (error) {

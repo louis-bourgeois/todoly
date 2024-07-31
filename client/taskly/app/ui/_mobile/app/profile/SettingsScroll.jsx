@@ -50,7 +50,7 @@ const sections = [
 ];
 
 const SettingsScroll = () => {
-  const { updateUserPreference, preferences } = useUserPreferences();
+  const { updatePreference, preferences } = useUserPreferences();
   const [notificationsList, setNotificationsList] = useState([]);
   const [allowNotifications, setAllowNotifications] = useState(false);
   const [dateFormat, setDateFormat] = useState(false);
@@ -74,20 +74,20 @@ const SettingsScroll = () => {
   const handlePreferenceChange = useCallback(
     (key, value) => {
       console.log("Preference change:", key, value);
-      updateUserPreference({ key, value: String(value) });
+      updatePreference({ key, value: String(value) });
     },
-    [updateUserPreference]
+    [updatePreference]
   );
 
   const handleNotificationToggle = useCallback(() => {
     const newValue = !allowNotifications;
     console.log("Toggling notifications:", newValue);
     setAllowNotifications(newValue);
-    updateUserPreference({
+    updatePreference({
       key: "Allow_Notification",
       value: newValue.toString(),
     });
-  }, [allowNotifications, updateUserPreference]);
+  }, [allowNotifications, updatePreference]);
 
   const handleNotificationListChange = useCallback(
     (notificationName) => {
@@ -100,33 +100,33 @@ const SettingsScroll = () => {
           newList = [...currentList, notificationName];
         }
         console.log("New notifications list:", newList);
-        updateUserPreference({
+        updatePreference({
           key: "Notifications_List",
           value: newList.join(","),
         });
         return newList;
       });
     },
-    [updateUserPreference]
+    [updatePreference]
   );
 
   const handleDateFormatToggle = useCallback(() => {
     const newValue = !dateFormat;
     setDateFormat(newValue);
-    updateUserPreference({
+    updatePreference({
       key: "Date_Format",
       value: newValue ? "24h" : "12h",
     });
-  }, [dateFormat, updateUserPreference]);
+  }, [dateFormat, updatePreference]);
 
   const handleWeekStartToggle = useCallback(() => {
     const newValue = !weekStartsSunday;
     setWeekStartsSunday(newValue);
-    updateUserPreference({
+    updatePreference({
       key: "Week_Starts_On",
       value: newValue ? "Sunday" : "Monday",
     });
-  }, [weekStartsSunday, updateUserPreference]);
+  }, [weekStartsSunday, updatePreference]);
 
   const memoizedSections = useMemo(() => sections, []);
 

@@ -17,12 +17,11 @@ import SearchMenu from "@/ui/app/searchMenu/SearchMenu.jsx";
 import TaskMenu from "@/ui/app/TaskMenu/TaskMenu.jsx";
 import ViewsMenu from "@/ui/app/viewsMenu/ViewsMenu.jsx";
 import { useRouter } from "next/navigation";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useAuth } from "../../context/AuthContext.js";
 import { useMenu } from "../../context/MenuContext.js";
-import { NotificationsContext } from "../../context/NotificationsContext.js";
 import { useScreen } from "../../context/ScreenContext.js";
 import { useTask } from "../../context/TaskContext.js";
 import { useUser } from "../../context/UserContext.js";
@@ -68,7 +67,6 @@ export default function AppLayout({ children }) {
     setNextCardType: setContextNextCardType,
   } = useMenu();
 
-  const { notificationsList } = useContext(NotificationsContext);
   const [showAddWorkspaceBubble, setShowAddWorkspaceBubble] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [currentCardType, setCurrentCardType] = useState(cardType);
@@ -77,12 +75,16 @@ export default function AppLayout({ children }) {
 
   const swiperRef = useRef(null);
   const router = useRouter();
-  const currentWorkspaceTasks =
-    workspaces.find((w) => w.id === currentWorkspace)?.tasks || [];
-  const sortedTasks = [
-    ...currentWorkspaceTasks.filter((task) => task.id === activeTask),
-    ...currentWorkspaceTasks.filter((task) => task.id !== activeTask),
-  ];
+  const currentWorkspaceTasks = useMemo(() => {
+    return workspaces.find((w) => w.id === currentWorkspace)?.tasks || [];
+  }, [workspaces, currentWorkspace]);
+
+  const sortedTasks = useMemo(() => {
+    return [
+      ...currentWorkspaceTasks.filter((task) => task.id === activeTask),
+      ...currentWorkspaceTasks.filter((task) => task.id !== activeTask),
+    ];
+  }, [currentWorkspaceTasks, activeTask]);
 
   useEffect(() => {
     setCurrentCardType(cardType);
@@ -382,17 +384,14 @@ export default function AppLayout({ children }) {
         <MobileFooter />
         {showAddWorkspaceBubble &&
           !preferences.Do_Not_Show_Add_Scroll_Popup_Again && (
-            <AddWorkspaceBubble
-              onClose={() => setShowAddWorkspaceBubble(false)}
-              onDontShowAgain={handleDontShowAgain}
-            />
+            <AddWorkspaceBubble onDontShowAgain={handleDontShowAgain} />
           )}
       </>
     );
   } else {
     return (
       <>
-        <Navbar user={user} />
+        <Navbar />
         {isViewsMenuOpen && (
           <ViewsMenu
             options={[

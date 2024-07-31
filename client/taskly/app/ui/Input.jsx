@@ -57,11 +57,10 @@ const Input = forwardRef(
       .custom-input::placeholder {
         font-size: var(--placeholder-size);
         font-weight: 300;
- 
       }
       .custom-input {  
-      padding: 1rem ;
-      font-size: var(--placeholder-size);
+        padding: 1rem;
+        font-size: var(--placeholder-size);
         display: flex;
         align-items: center;
       }

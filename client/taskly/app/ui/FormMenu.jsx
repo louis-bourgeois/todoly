@@ -215,7 +215,7 @@ export default function FormMenu({
                   type="checkbox"
                   name="terms and conditions checkbox"
                   className="sr-only"
-                  required
+                  required={true}
                   checked={isChecked}
                   onChange={handleCheckboxChange}
                 />

@@ -35,14 +35,14 @@ export default function TaskMenu({
   };
 
   useEffect(() => {
-    if (element !== "") {
+    if (element) {
       console.log(element);
       setElementType(element);
     }
     if (workspaceId !== "") {
       setElementType("Workspace");
     }
-    if (taskId !== "") {
+    if (taskId) {
       console.log("====================================");
       console.log("there is taskId", taskId);
       console.log("====================================");

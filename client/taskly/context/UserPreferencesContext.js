@@ -71,7 +71,7 @@ export const UserPreferencesProvider = ({ children }) => {
     }
   };
 
-  const updateUserPreference = async (newData) => {
+  const updatePreference = async (newData) => {
     setLoading(true);
     try {
       const { key, value } = newData;
@@ -110,7 +110,7 @@ export const UserPreferencesProvider = ({ children }) => {
 
   const contextValue = useMemo(
     () => ({
-      updateUserPreference,
+      updatePreference,
       addUserPreference,
       getUserPreferences,
       preferences,

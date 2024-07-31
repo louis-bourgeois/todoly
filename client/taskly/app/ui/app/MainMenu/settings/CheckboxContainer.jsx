@@ -8,7 +8,7 @@ export default function CheckboxContainer({ children, isChecked, onChange }) {
         onClick={onChange}
         className={`rounded-[5px] border border-black w-[26px] h-[26px] cursor-pointer ${
           isChecked && "bg-dominant"
-        } transition transition-all`}
+        }  transition-all`}
       />
     </div>
   );

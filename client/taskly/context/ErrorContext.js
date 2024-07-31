@@ -87,9 +87,7 @@ export const ErrorProvider = ({ children }) => {
       let errorType;
 
       if (typeof data === "string") {
-        console.log(data);
         if (data.includes("still") && data.includes("in it")) {
-          console.log("still tasks in it ahhhh");
           errorType = "Still dependencies in it";
         } else {
           errorType = data;
@@ -103,12 +101,17 @@ export const ErrorProvider = ({ children }) => {
       errorInfo = errorMessages[errorType] || errorMessages[`ERROR_${status}`];
 
       if (!errorInfo) {
+        // Handling unexpected errors
+        const errorMessage =
+          typeof data === "string" ? data : "An unexpected error occurred.";
         errorInfo = {
-          title: `Error ${status}`,
+          title: `Error ${status}: ${errorMessage.slice(0, 50)}${
+            errorMessage.length > 50 ? "..." : ""
+          }`,
           subtitle:
-            typeof data === "string" ? data : "An unexpected error occurred.",
+            "An unexpected error occurred. If you believe this is abnormal, please contact our support team.",
           action: {
-            text: "Please report this unexpected error",
+            text: "Contact Support",
             href: "/support/report",
           },
         };
@@ -122,7 +125,17 @@ export const ErrorProvider = ({ children }) => {
       };
     } else {
       // Something happened in setting up the request that triggered an Error
-      errorInfo = errorMessages.DEFAULT;
+      errorInfo = {
+        title: `Oops, something went wrong: ${error.message.slice(0, 50)}${
+          error.message.length > 50 ? "..." : ""
+        }`,
+        subtitle:
+          "It looks like we hit a snag. If this problem persists or seems unusual, please reach out to Taskly support. We're here to help!",
+        action: {
+          text: "Contact Support",
+          href: "/support/report",
+        },
+      };
     }
 
     addNotification({

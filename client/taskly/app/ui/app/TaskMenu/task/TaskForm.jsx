@@ -1,4 +1,5 @@
 "use client";
+
 import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { useMenu } from "../../../../../context/MenuContext";
@@ -25,43 +26,44 @@ export default function TaskForm({
   handleElementTypeChange,
 }) {
   const { isTaskMenuOpen, toggleTaskMenu } = useMenu();
-  const { currentWorkspace } = useWorkspace();
+  const { currentWorkspace, setCurrentWorkspace } = useWorkspace();
   const { setActiveTask, addTask, modifyTask, deleteTask, tasks } = useTask();
-  const { updateUserPreference, preferences } = useUserPreferences();
+  const { updatePreference, preferences } = useUserPreferences();
   const { sections } = useSection();
-
+  const today = new Date();
+  const [dueDate, setDueDate] = useState(today);
   const [task, setTask] = useState(null);
   const [titleValue, setTitleValue] = useState("");
   const [status, setStatus] = useState("todo");
   const [priority, setPriority] = useState(5);
-  const [dueDate, setDueDate] = useState(undefined);
+
   const [taskTags, setTaskTags] = useState([]);
   const [descriptionValue, setDescriptionValue] = useState("");
   const [canSubmit, setCanSubmit] = useState(false);
-  const [linked_section, setLinked_section] = useState(
-    preferences.Last_Section
-  );
+  const [linked_section, setLinked_section] = useState("");
+
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
   const [sectionSelectMenuOpen, setSectionSelectMenuOpen] = useState(false);
   const [elementPickerMenuOpen, setElementPickerMenuOpen] = useState(false);
-  const [linked_section_name, setLinked_section_name] = useState(
-    sections.find((section) => section.id === preferences.Last_Section)?.name
-  );
+  const [linked_section_name, setLinked_section_name] = useState("");
   const [taskWorkspace, setTaskWorkspace] = useState("");
-
+  useEffect(() => {
+    setCanSubmit(
+      currentWorkspace &&
+        titleValue.length > 0 &&
+        linked_section &&
+        status &&
+        0 < priority < 11
+    );
+  }, [titleValue, linked_section, status, priority, currentWorkspace]);
   useEffect(() => {
     if (id) {
       const foundTask = tasks.find((task) => task.id === id);
       if (foundTask) {
-        console.log("found Task, :", foundTask);
         setTask(foundTask);
         setTitleValue(foundTask.title || "");
         setStatus(foundTask.status || "todo");
-        setLinked_section(foundTask.linked_section || "Other");
-        setLinked_section_name(
-          sections.find((section) => section.id === foundTask.linked_section)
-            ?.name
-        );
+        setLinked_section(foundTask.linked_section || "");
         setPriority(foundTask.priority || 5);
         setDueDate(foundTask.due_date);
         const parsedTags = foundTask.tags ? JSON.parse(foundTask.tags) : [];
@@ -72,31 +74,49 @@ export default function TaskForm({
       }
     } else {
       setCanSubmit(false);
+      // Set default linked_section from preferences only when creating a new task
+      const workspaceSection = sections.find(
+        (s) => s.id === preferences.Last_Section
+      )?.workspace_id;
+      if (!(workspaceSection && currentWorkspace !== workspaceSection)) {
+        if (!sections.find((s) => s.id === preferences.Last_Section)) {
+          const alternativeSection = sections.find(
+            (s) => s.name === "Other" && s.workspace_id === currentWorkspace
+          )?.id;
+          console.log(alternativeSection);
+          setLinked_section(alternativeSection);
+        } else {
+          setLinked_section(preferences.Last_Section || "");
+        }
+      } else {
+        setLinked_section(
+          sections.find(
+            (s) => s.name === "Other" && s.workspace_id === currentWorkspace
+          )?.id || ""
+        );
+      }
     }
-  }, [id]);
+  }, [id, tasks, preferences.Last_Section, currentWorkspace, sections]);
 
   useEffect(() => {
     if (linked_section) {
-      console.log("update:", linked_section);
-      updateUserPreference({ key: "Last_Section", value: linked_section });
+      const sectionName = sections.find((s) => s.id === linked_section)?.name;
+      setLinked_section_name(sectionName || "");
     }
-  }, [linked_section]);
+  }, [linked_section, sections]);
 
   useEffect(() => {
     if (!isTaskMenuOpen) {
       resetTaskMenu();
     }
   }, [isTaskMenuOpen]);
+
   const resetTaskMenu = () => {
     setTaskWorkspace("");
     setTitleValue("");
     setStatus("todo");
-    setLinked_section("Other");
-    setLinked_section_name(
-      sections.find((section) => section.id === preferences.Last_Section)?.name
-    );
     setPriority(5);
-    setDueDate(undefined);
+    setDueDate(today);
     setTaskTags([]);
     setDescriptionValue("");
     setActiveTask(null);
@@ -106,16 +126,23 @@ export default function TaskForm({
   };
 
   const handleDateSelect = (date) => {
-    setDueDate(date);
+    if (
+      dueDate &&
+      format(dueDate, "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
+    ) {
+      setDueDate(undefined);
+    } else {
+      setDueDate(date);
+    }
+
     if (id) {
-      const updatedTask = { ...task, due_date: date };
+      const updatedTask = { ...task, due_date: date || null }; // Enregistre `null` si la date est déselectionnée
       setTask(updatedTask);
-      modifyTask(updatedTask, "post");
+      //modifyTask(updatedTask, "post");
     }
   };
 
   const createTask = async () => {
-    console.log("that's ok");
     try {
       const taskData = {
         title: titleValue,
@@ -127,10 +154,9 @@ export default function TaskForm({
         description: descriptionValue,
         workspaceId: currentWorkspace,
       };
-      console.log("====================================");
-      console.log("dedede", taskData);
-      console.log("====================================");
       await addTask(taskData);
+      // Update preference after successful task creation
+      updatePreference({ key: "Last_Section", value: linked_section });
     } catch (error) {
       console.error(error);
     }
@@ -144,6 +170,17 @@ export default function TaskForm({
     }
   };
 
+  const handleSectionChange = (newSection, newSectionName) => {
+    setLinked_section(newSection);
+    setLinked_section_name(newSectionName);
+    updatePreference({ key: "Last_Section", value: newSection });
+    if (id) {
+      const updatedTask = { ...task, linked_section: newSection };
+      setTask(updatedTask);
+      modifyTask(updatedTask, "post");
+    }
+  };
+
   return (
     <div className={`w-full h-full flex ${transitionStyles}`}>
       <div className="flex flex-col w-[30%] rounded-l-[3.125vw] my-[1.4290277778vh] justify-left">
@@ -152,7 +189,6 @@ export default function TaskForm({
           visibility={visibility}
           titleValue={titleValue}
           setTitleValue={setTitleValue}
-          setCanSubmit={setCanSubmit}
           task={task}
           setTask={setTask}
         />
@@ -206,8 +242,7 @@ export default function TaskForm({
             />
             <SectionSelection
               linked_section_name={linked_section_name}
-              setLinked_section={setLinked_section}
-              setLinked_section_name={setLinked_section_name}
+              handleSectionChange={handleSectionChange}
               id={id}
               task={task}
               setTask={setTask}

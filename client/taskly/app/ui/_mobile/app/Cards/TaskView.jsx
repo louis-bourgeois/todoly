@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { useError } from "../../../../../context/ErrorContext";
 import { useMenu } from "../../../../../context/MenuContext";
 import { useTask } from "../../../../../context/TaskContext";
-import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import DatePicker from "../MenuLayouts/Task/DatePicker";
 import PriorityCounter from "../MenuLayouts/Task/PriorityCounter";
 import TagManager from "../MenuLayouts/Task/TagManager";
@@ -15,7 +14,6 @@ const capitalize = (str) => {
 };
 export default function TaskView({ id }) {
   const { tasks, modifyTask, deleteTask } = useTask();
-  const { workspaces } = useWorkspace();
   const { handleError } = useError();
   const [lastUrlSegment, setLastUrlSegment] = useState("");
   const [task, setTask] = useState(null);

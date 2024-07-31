@@ -29,7 +29,6 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
   );
 
   useEffect(() => {
-    console.log("Current Date has changed. The new value is: ", currentDate);
     generateDays(currentDate);
     setAdjustedDaysOfWeek(
       startOfWeekOnSunday === "Sunday"
@@ -40,7 +39,6 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
 
   useEffect(() => {
     if (selectedDate) {
-      console.log("there is selected Date", selectedDate, currentDate);
       setCurrentDate(selectedDate); // Ensure currentDate is updated when selectedDate changes
     }
   }, [selectedDate, currentDate]);

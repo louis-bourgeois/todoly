@@ -16,7 +16,6 @@ body {
   line-height: var(--overused-grotesk-line-height);
 }
 
-
 h1,
 h2,
 h3,
@@ -29,7 +28,6 @@ div {
   padding-top: var(--overused-grotesk-trim-top);
   padding-bottom: var(--overused-grotesk-trim-bottom);
 }
-
 
 .text-trim-adjust {
   display: inline-block;
@@ -442,4 +440,12 @@ input[type="date"]::-ms-reveal {
 
 .animate-settings-hover:hover {
   animation-play-state: running;
+}
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }

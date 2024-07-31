@@ -27,7 +27,6 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.post(`${baseUrl}/users/login`, data, {
         withCredentials: true,
       });
-      console.log("response status", response.status);
       if (response.status === 200) {
         setIsAuthenticated(true);
         setLoading(false);
@@ -59,8 +58,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [router]);
 
-  const checkAuth = useCallback(async () => {
-    console.trace("checkAuth Called");
+    const checkAuth = useCallback(async () => {
     try {
       const response = await axios.get(`${baseUrl}/users/me`, {
         withCredentials: true,

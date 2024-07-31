@@ -1,27 +1,30 @@
 import { useEffect, useState } from "react";
 
-const DateInput = ({ dueDate, handleDateChange }) => {
+const DatePicker = ({ dueDate, handleDateChange }) => {
   const [displayValue, setDisplayValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     if (dueDate) {
       const date = new Date(dueDate);
-      setDisplayValue(
-        date.toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      );
+      setDisplayValue(formatDate(date));
     } else {
       setDisplayValue("");
     }
   }, [dueDate]);
 
+  const formatDate = (date) => {
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const year = date.getFullYear();
+    return `${month}/${day}/${year}`;
+  };
+
   const handleInputChange = (e) => {
     handleDateChange(e);
-    setDisplayValue(e.target.value);
+    // Update display value immediately when date is changed
+    const date = new Date(e.target.value);
+    setDisplayValue(formatDate(date));
   };
 
   return (
@@ -42,22 +45,21 @@ const DateInput = ({ dueDate, handleDateChange }) => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           className="w-full px-3 py-2 pr-10 bg-gray-100 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-dominant focus:ring-opacity-50 appearance-none"
+          style={{ color: "transparent" }}
         />
-        {!isFocused && (
-          <div className="absolute inset-y-0 left-0 flex items-center px-3 pointer-events-none">
-            <span
-              className={`${
-                displayValue ? "text-gray-800" : "text-gray-500"
-              } text-xs`}
-            >
-              {displayValue || "Hmmmm, there is no Date Selected"}
-            </span>
-          </div>
-        )}
+        <div className="absolute inset-y-0 left-0 flex items-center px-3 pointer-events-none">
+          <span
+            className={`${
+              displayValue ? "text-gray-800" : "text-gray-500"
+            } text-sm`}
+          >
+            {displayValue || "MM/DD/YYYY"}
+          </span>
+        </div>
         <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className="h-5 w-5 text-gray-400 "
+            className="h-5 w-5 text-gray-400"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -75,4 +77,4 @@ const DateInput = ({ dueDate, handleDateChange }) => {
   );
 };
 
-export default DateInput;
+export default DatePicker;

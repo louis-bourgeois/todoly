@@ -30,7 +30,7 @@ export default function CollaboratorSelectContainer({
 
   return (
     <div className="addMenuElement glass-morphism h-[80%] rounded-[20px] flex flex-col justify-between items-center">
-      <h1 className="text-4xl font-extrabold">Collaborators</h1>
+      <h1 className="text-3xl font-bold">Collaborators</h1>
       <div className="w-full h-[50%]  flex flex-col items-center justify-center p-5">
         <Slider {...settings} className="w-full">
           {collaborators.map((collaborator, index) => {

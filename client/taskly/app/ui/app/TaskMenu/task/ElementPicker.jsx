@@ -9,7 +9,7 @@ export default function ElementPicker({
   setMenuOpen,
 }) {
   const [isFading, setIsFading] = useState(false);
-  const [elements] = useState(["Task", "Note", "Workspace"]);
+  const [elements] = useState(["Task", "Workspace"]);
 
   const handleElementTypeChangeWithFade = (newType) => {
     setIsFading(true);
