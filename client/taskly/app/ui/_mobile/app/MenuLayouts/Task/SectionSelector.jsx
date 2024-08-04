@@ -6,6 +6,7 @@ import Button from "../../Cards/assets/Button";
 
 function AddSectionPortal({ isOpen, onClose, onAdd }) {
   const inputRef = useRef(null);
+  const { currentWorkspace } = useWorkspace();
   const [newSectionName, setNewSectionName] = useState("");
 
   useEffect(() => {
@@ -39,11 +40,11 @@ function AddSectionPortal({ isOpen, onClose, onAdd }) {
 
   return createPortal(
     <div
-      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-secondary bg-opacity-50 flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div
-        className="bg-white rounded-lg p-4 w-full max-w-md"
+        className="bg-primary rounded-lg p-4 w-full max-w-md"
         onClick={(e) => e.stopPropagation()}
       >
         <input
@@ -65,7 +66,7 @@ function AddSectionPortal({ isOpen, onClose, onAdd }) {
           <button
             onClick={handleAdd}
             disabled={!newSectionName || !currentWorkspace}
-            className="px-4 py-2 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+            className="px-4 py-2 text-sm bg-blue-500 text-primary rounded hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Add
           </button>

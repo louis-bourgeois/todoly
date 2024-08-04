@@ -118,9 +118,9 @@ export default function SectionContainer({
                 .join("-")}`}
               className="flex flex-col h-full p-10 py-0 gap-[25px]"
             >
-              <div className="sticky top-0 z-[300] px-4 py-2 bg-ternary bg-opacity-70 backdrop-filter backdrop-blur-sm border-b border-gray-200 shadow-sm rounded-[20px]">
+              <div className="sticky top-0 z-[300] px-4 py-2   gradient-border  after:bg-ternary-section-header bg-opacity-70 backdrop-filter backdrop-blur-sm shadow-sm rounded-[20px]">
                 <div className="flex justify-between items-center">
-                  <h1 className="font-bold text-xl whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
+                  <h1 className="text-text font-bold text-xl whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
                     {section.name.length > 35 ? (
                       <span title={section.name}>{section.name}</span>
                     ) : (
@@ -176,7 +176,7 @@ export default function SectionContainer({
                   </button>
                 </div>
               </div>
-              <div className="flex flex-col gap-[2vh]">
+              <div className="flex flex-col gap-[2vh] m-2 p-2">
                 {sectionTasksList.map((task) => (
                   <Task
                     task={task}

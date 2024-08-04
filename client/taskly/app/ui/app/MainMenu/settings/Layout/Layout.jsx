@@ -13,6 +13,7 @@ export default function Layout({ transitionStyles }) {
   );
 
   const handleMainPageChange = async (value) => {
+    console.log("upadte", value);
     setDefaultMainPage(value);
     await updatePreference({ key: "Default_Main_Page", value: value });
   };
@@ -30,17 +31,17 @@ export default function Layout({ transitionStyles }) {
       <DropdownMenu
         title={defaultMainPage}
         options={["Currently", "All"]}
-        onClick={handleMainPageChange}
+        onSelect={handleMainPageChange}
       />
       <SectionTitle>Home Page Title</SectionTitle>
       <input
         type="text"
         onChange={handleHomePageTitleChange}
         value={homePageTitle}
-        className="border border-black h-[4.5vh] text-base flex justify-between rounded-[10px] placeholder:text-base text-right px-5"
+        className="border border-secondary h-[4.5vh] text-base flex justify-between rounded-[10px] placeholder:text-base text-right px-5"
       />
 
-      <button className="font-bold text-l rounded-full border border-black hover:scale-105 active:scale-100 hover:text-dominant transition-all duration-200 ease-out m-[3%] p-[3%]">
+      <button className="font-bold text-l rounded-full border border-secondary hover:scale-105 active:scale-100 hover:text-dominant transition-all duration-200 ease-out m-[3%] p-[3%]">
         Customise the Add Menu
       </button>
     </div>

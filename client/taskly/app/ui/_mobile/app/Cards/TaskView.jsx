@@ -59,7 +59,7 @@ export default function TaskView({ id }) {
         workspace_id: workspaceId,
         status: status,
         due_date: dueDate,
-        tags: JSON.stringify(tags),
+        tags: tags,
         priority: priority,
       };
       try {

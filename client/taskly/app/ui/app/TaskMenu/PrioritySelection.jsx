@@ -1,5 +1,4 @@
 import { useTask } from "../../../../context/TaskContext";
-import { useUser } from "../../../../context/UserContext";
 import { Counter } from "./note/Counter";
 import TaskMenuSectionContainer from "./TaskMenuSectionContainer";
 
@@ -26,7 +25,7 @@ export default function PrioritySelection({
       flex={true}
       othersStyles={`w-full h-[70%] items-center`}
     >
-      <h2 className="font-bold text-2xl p-[2%]">Priority</h2>
+      <h2 className="font-bold text-2xl p-[2%] text-text">Priority</h2>
 
       <div className="h-[70%] flex w-full justify-center items-center">
         {visibility && (

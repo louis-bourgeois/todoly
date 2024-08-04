@@ -51,14 +51,8 @@ class User {
           "INSERT INTO user_contact (user_id, email) VALUES ($1, $2);";
         await client.query(query, [userId, this.email]);
       }
-      const insertSection =
-        "INSERT INTO section (name, user_id) VALUES ($1,$2) RETURNING id";
-      const defaultSectionId = await client.query(insertSection, [
-        "Other",
-        userId,
-      ]);
       await client.query("COMMIT");
-      return [userId, defaultSectionId];
+      return [userId];
     } catch (e) {
       await client.query("ROLLBACK");
       throw e;
@@ -154,7 +148,7 @@ class User {
           }
         });
       } catch (error) {
-        throw error
+        throw error;
       }
     }
 

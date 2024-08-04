@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname } from "next/navigation";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useScreen } from "../context/ScreenContext.js";
 import { useUserPreferences } from "../context/UserPreferencesContext.js";
 
@@ -13,11 +13,6 @@ export default function ScreenWrapper({ children }) {
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
   const { preferences } = useUserPreferences();
-
-  const bg = useMemo(() => {
-    const colorTheme = preferences.Color_Theme?.toLowerCase();
-    return VALID_THEMES.includes(colorTheme) ? colorTheme : DEFAULT_BG;
-  }, [preferences.Color_Theme]);
 
   useEffect(() => {
     setIsMounted(true);
@@ -58,12 +53,12 @@ export default function ScreenWrapper({ children }) {
   return (
     <div
       className={`${wrapperClassName} ${
-        !isMobile && "absolute w-[100vw] h-[100vh] inset-0 z-0"
+        !isMobile &&
+        " theme-dark absolute w-[100vw] h-[100vh] inset-0 z-0 bg-bg"
       }`}
-      style={{ backgroundColor: bg }}
     >
       {isMobile ? (
-        <main className="flex flex-col items-start justify-between h-full py-[20px]">
+        <main className=" flex flex-col items-start justify-between h-full py-[20px]">
           {children}
         </main>
       ) : (

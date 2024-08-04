@@ -116,7 +116,7 @@ export default function WorkspaceForm({
           value={nameValue}
           disabled={!visibility}
           placeholder={id ? "Edit Workspace" : "New Workspace"}
-          className="w-full text-right placeholder:text-black placeholder:text-4xl text-black text-5xl bg-transparent h-full focus:outline-none"
+          className="w-full text-right placeholder:text-text placeholder:text-4xl text-text text-5xl bg-transparent h-full focus:outline-none"
         />
         <div className="flex-grow" />
       </div>

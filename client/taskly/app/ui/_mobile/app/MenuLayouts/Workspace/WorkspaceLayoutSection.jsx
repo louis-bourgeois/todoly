@@ -168,7 +168,7 @@ export default function WorkspaceLayoutSection({
 
   return (
     <div className="flex flex-col w-full gap-[10px] px-4">
-      <h2 className="text-lg font-bold text-black mb-2">{label}</h2>
+      <h2 className="text-lg font-bold text-text mb-2">{label}</h2>
       <div className="flex flex-col gap-2">
         <div className="flex justify-between items-center">
           <input

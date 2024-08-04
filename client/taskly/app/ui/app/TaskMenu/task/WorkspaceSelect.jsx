@@ -60,11 +60,11 @@ export default function WorkspaceSelect({
       othersStyles="h-[80%] flex flex-col justify-between"
       moreRoundedCorners="tr"
     >
-      <h2 className="text-2xl font-bold">Workspace</h2>
+      <h2 className="text-2xl font-bold text-text">Workspace</h2>
 
       <div className="flex items-center gap-[0.7vw] relative">
         <div
-          className="addMenuElement cursor-pointer rounded-full flex items-center justify-between p-[1vw] w-full"
+          className="addMenuElement cursor-pointer rounded-full flex items-center justify-between p-[1vw] w-full text-text"
           onClick={toggleMenu}
         >
           {workspaces.find((workspace) => workspace.id === selectedWorkspace)
@@ -91,7 +91,7 @@ export default function WorkspaceSelect({
         </div>
         <div
           ref={menuRef}
-          className={`max-h-[108px] absolute top-full mt-2 left-0 bg-white shadow-lg rounded-lg z-50 w-full transition-all duration-300 ease-in-out ${
+          className={`max-h-[108px] absolute top-full mt-2 left-0 bg-primary shadow-lg rounded-lg z-50 w-full transition-all duration-300 ease-in-out ${
             menuOpen ? " opacity-100 visible" : "max-h-0 opacity-0 invisible"
           }`}
         >
@@ -100,7 +100,7 @@ export default function WorkspaceSelect({
               <button
                 key={workspace.id}
                 onClick={() => handleWorkspaceChange(workspace.id)}
-                className="hover:text-dominant transition-colors duration-300 w-full text-left py-2 px-4"
+                className="hover:text-dominant transition-colors duration-300 w-full text-left py-2 px-4 text-text"
               >
                 {workspace.name}
               </button>
@@ -113,7 +113,9 @@ export default function WorkspaceSelect({
         othersStyles="glass-morphism flex justify-center items-center hover:scale-105 m-1"
         onClick={() => handleNewWorkspaceClick("Workspace", "Task")}
       >
-        <span className="text-l font-bold">Build a new Workspace</span>
+        <span className="text-l font-bold text-text">
+          Build a new Workspace
+        </span>
       </TaskMenuButton>
     </TaskMenuSectionContainer>
   );

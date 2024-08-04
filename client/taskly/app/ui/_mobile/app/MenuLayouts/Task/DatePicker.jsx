@@ -31,7 +31,7 @@ const DatePicker = ({ dueDate, handleDateChange }) => {
     <div className="px-4 relative">
       <label
         htmlFor="dueDate"
-        className="block text-lg font-bold text-black mb-2"
+        className="block text-lg font-bold text-text mb-2"
       >
         Due Date
       </label>

@@ -11,6 +11,7 @@ export async function getTask(req, res) {
     const tasks = await Task.find(false, false, userId);
     return res.status(200).json({ tasks: tasks });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ message: "Error getting task" });
   }
 }
@@ -19,24 +20,25 @@ export async function updateTask(req, res) {
   console.log("task data received", req.body);
   try {
     const { task } = req.body;
-
+    console.log("received: ", task);
     await Task.update(task);
     io.emit("taskUpdated", task);
     res.sendStatus(200);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Error updating task" });
   }
 }
 
 export async function addTask(req, res) {
   try {
-    const { taskData: newTaskData } = req.body;
+    const { formattedTaskData: newTaskData } = req.body;
+    console.log(req.body);
     const user = req.user;
     const found_user = await User.findId(undefined, user.email, undefined);
     const linked_section = newTaskData.linked_section || "";
     const user_id = found_user[0][0];
     const priority = newTaskData.priority || undefined;
-
     const task = new Task(
       user_id,
       newTaskData.title,
@@ -51,19 +53,22 @@ export async function addTask(req, res) {
 
     const newTaskId = await task.save();
 
-    // Récupérez la tâche complète après l'enregistrement
-    const savedTask = await Task.find(undefined, newTaskId);
+    let savedTask = await Task.find(undefined, newTaskId);
 
     const updated_user_workspaces = await User.findWorkspacesByUserId(user_id);
     const user_tasks = [];
     await Promise.all(
       updated_user_workspaces.map(async (workspace) => {
         const tasks = await Task.find(workspace.id);
-        user_tasks.push(...tasks);
+        user_tasks.push(
+          ...tasks.map((task) => ({
+            ...task,
+          }))
+        );
       })
     );
 
-    io.emit("taskAdded", savedTask);
+    io.emit("taskAdded", savedTask[0]);
     console.log("tasks : ", user_tasks);
     res.status(201).json({
       message: "Task added successfully",
@@ -71,6 +76,7 @@ export async function addTask(req, res) {
       workspaces: updated_user_workspaces,
     });
   } catch (error) {
+    console.error(error);
     if (error.message.includes("A task with the title")) {
       res.status(409).json("Title already used");
     } else if (error.message.includes("title is too long")) {
@@ -100,6 +106,7 @@ export const checkTaskInWorkspace = async (req, res) => {
     const isInWorkspace = await Task.isTaskInWorkspace(taskId, workspaceId);
     res.status(200).json({ isInWorkspace });
   } catch (error) {
+    console.error(error);
     res.status(400).send(error.message);
   }
 };
@@ -111,6 +118,7 @@ export const addTaskToWorkspace = async (req, res) => {
     io.emit("taskAddedToWorkspace", taskId);
     res.status(201).send("Task added to workspace");
   } catch (error) {
+    console.error(error);
     res.status(400).send(error.message);
   }
 };
@@ -122,6 +130,7 @@ export const removeTaskFromWorkspace = async (req, res) => {
     io.emit("taskRemovedFromWorkspace", taskId);
     res.status(200).send("Task removed from workspace");
   } catch (error) {
+    console.error(error);
     res.status(400).send(error.message);
   }
 };

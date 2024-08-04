@@ -7,9 +7,6 @@ import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
 export default function SectionSelection({
   linked_section_name,
   handleSectionChange,
-  id,
-  task,
-  setTask,
   menuOpen,
   setMenuOpen,
 }) {
@@ -88,7 +85,7 @@ export default function SectionSelection({
       othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer"
       onClick={() => setMenuOpen((prev) => !prev)}
     >
-      <h2 className="pl-[4%] font-bold text-2xl">
+      <h2 className="pl-[4%] font-bold text-2xl text-text">
         {linked_section_name || "Select a workspace"}
       </h2>
       <svg
@@ -97,7 +94,7 @@ export default function SectionSelection({
         y="0"
         className={`cursor-pointer ${
           menuOpen ? "rotate-180" : ""
-        } transition-transform duration-500`}
+        } transition-transform duration-500 text-text`}
         viewBox="0 0 29 29"
         width="62.5"
         height="62.5"
@@ -108,7 +105,7 @@ export default function SectionSelection({
       >
         <path
           fill="none"
-          stroke="#000"
+          stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeMiterlimit="10"
@@ -117,12 +114,12 @@ export default function SectionSelection({
         ></path>
       </svg>
       <div
-        className={`absolute top-full mt-2 left-0 right-0 bg-white shadow-lg rounded-lg transition-opacity duration-300 z-50 ${
+        className={`absolute top-full mt-2 left-0 right-0 bg-primary shadow-lg rounded-lg transition-opacity duration-300 z-50 ${
           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         } ${filteredSections.length > 4 ? "max-h-60 overflow-y-auto" : ""}`}
       >
         <div
-          className="opacity-100 p-2 cursor-pointer hover:text-dominant transition transition-color"
+          className="opacity-100 p-2 cursor-pointer hover:text-dominant transition transition-color text-text"
           onClick={(e) => {
             e.stopPropagation();
             handleAddSection();
@@ -142,7 +139,7 @@ export default function SectionSelection({
             {editingSectionId === section.id ? (
               <input
                 type="text"
-                className="cursor-pointer flex-grow p-1 border-b border-gray-300 focus:outline-none"
+                className="cursor-pointer flex-grow p-1 border-b border-gray-300 focus:outline-none text-text"
                 value={section.name}
                 onChange={(e) => handleSectionNameChange(e, section.id)}
                 onKeyDown={(e) => {
@@ -152,7 +149,7 @@ export default function SectionSelection({
                 onClick={(e) => e.stopPropagation()}
               />
             ) : (
-              <span className="cursor-pointer flex-grow p-1 hover:text-dominant">
+              <span className="cursor-pointer flex-grow p-1 hover:text-dominant text-text">
                 {section.name}
               </span>
             )}
@@ -160,7 +157,7 @@ export default function SectionSelection({
               <>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="cursor-pointer hover:text-dominant ml-2 transition transition-color"
+                  className="cursor-pointer hover:text-dominant ml-2 transition transition-color text-text"
                   viewBox="0 0 24 24"
                   width="24"
                   height="24"
@@ -179,7 +176,7 @@ export default function SectionSelection({
                   />
                 </svg>
                 <button
-                  className="ml-2 hover:text-dominant"
+                  className="ml-2 hover:text-dominant text-text"
                   onClick={(e) => {
                     e.stopPropagation();
                     setEditingSectionId(section.id);
@@ -196,7 +193,7 @@ export default function SectionSelection({
             <input
               ref={newSectionInputRef}
               type="text"
-              className="w-full p-2 border border-gray-300 rounded"
+              className="w-full p-2 border border-gray-300 rounded text-text"
               placeholder="New section name"
               value={newSection.name}
               onChange={(e) =>

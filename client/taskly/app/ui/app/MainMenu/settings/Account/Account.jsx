@@ -18,7 +18,7 @@ export default function Account({ transitionStyles, setLayout }) {
 
         <div className="flex justify-between items-center w-[90%] h-[12.5%]">
           <input
-            className="border border-black h-110 w-[90%] rounded-[10px] text-center"
+            className="border border-secondary h-110 w-[90%] rounded-[10px] text-center"
             value={user.username}
           />
           <svg
@@ -54,10 +54,8 @@ export default function Account({ transitionStyles, setLayout }) {
             </g>
           </svg>
         </div>
-        <div className=" ml-[5%] flex flex-col items-center  gap-[1vh] w-full">
-          <h4 className="font-bold text-xl ">Reset Password</h4>
-          <div className="w-[90%] h-[1px] bg-black"></div>
-          <h4 className="font-bold text-xl text-red-600">Sign out</h4>
+        <div className="mr-5 flex flex-col items-center  gap-[1vh] w-full">
+          <h4 className="font-bold text-xl text-important">Sign out</h4>
         </div>
       </div>
       <div className="flex flex-col gap-[2%] justify-center items-center w-1/2">

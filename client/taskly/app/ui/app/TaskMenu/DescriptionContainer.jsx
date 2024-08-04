@@ -1,5 +1,4 @@
 import { useTask } from "../../../../context/TaskContext";
-import { useUser } from "../../../../context/UserContext";
 import TaskMenuSectionContainer from "./TaskMenuSectionContainer";
 
 export default function DescriptionContainer({
@@ -23,7 +22,7 @@ export default function DescriptionContainer({
   return (
     <TaskMenuSectionContainer
       flex={false}
-      othersStyles="font-bold text-2xl w-[55%]"
+      othersStyles="font-bold text-2xl text-text w-[55%]"
     >
       <h2 className="pb-0 p-[2%]">Description</h2>
       <textarea
@@ -31,7 +30,7 @@ export default function DescriptionContainer({
         name="description"
         value={descriptionValue}
         onChange={(e) => handleDescriptionChange(e)}
-        className="h-[80%] p-[2.5%] w-full text-base pt-[4%] bg-transparent"
+        className="h-[80%] p-[2.5%] w-full text-base text-text pt-[4%] bg-transparent"
         placeholder="Enter a description"
       ></textarea>
     </TaskMenuSectionContainer>

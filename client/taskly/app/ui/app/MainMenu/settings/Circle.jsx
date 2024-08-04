@@ -4,7 +4,7 @@ const Circle = forwardRef(function Circle(
   {
     height = "30px",
     width = "30px",
-    borderColor = "black",
+    borderColor = "secondary",
     className,
     onColorChange,
     isSelected,

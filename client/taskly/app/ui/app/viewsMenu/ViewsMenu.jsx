@@ -81,7 +81,7 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-black/10 backdrop-blur-sm z-[190] transition-opacity duration-300 ${
+      className={`fixed inset-0 flex items-center justify-center bg-secondary-10 backdrop-blur-sm z-[190] transition-opacity duration-300 ${
         isOpen && !isClosing ? "opacity-100" : "opacity-0"
       }`}
     >
@@ -91,14 +91,14 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
           isOpen && !isClosing ? "scale-100 opacity-100" : "scale-5 opacity-0"
         }`}
       >
-        <h2 className="text-3xl font-bold mb-8 text-center text-black">
+        <h2 className="text-3xl font-bold mb-8 text-center text-text">
           Views Menu
         </h2>
         <div className="space-y-6">
           {renderMenuContent()}
           <button
             onClick={handleConfirm}
-            className="w-full py-2 bg-dominant text-white rounded-full hover:bg-opacity-80 transition-colors duration-200 text-lg font-semibold mt-4"
+            className="w-full py-2 bg-dominant text-primary rounded-full hover:bg-opacity-80 transition-colors duration-200 text-lg font-semibold mt-4"
           >
             Confirm
           </button>

@@ -189,7 +189,7 @@ const TagManager = ({ taskTags, setTaskTags, handleTagsChange }) => {
 
   return (
     <div className="flex flex-col items-start px-4">
-      <h2 className="text-lg font-bold text-black mb-2">Tag(s)</h2>
+      <h2 className="text-lg font-bold text-text mb-2">Tag(s)</h2>
       <div className="flex flex-wrap gap-2 mb-4 w-full justify-center">
         {Array.isArray(taskTags) && taskTags.length > 0 ? (
           taskTags.map((tag) => (

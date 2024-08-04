@@ -57,17 +57,17 @@ const DateHeader = ({ index, onDateChange }) => {
 
   return (
     <div className="relative flex w-full justify-between items-center z-[301]">
-      <h2 className="select-none text-3xl font-extralight">
+      <h2 className="select-none text-3xl font-extralight text-text">
         {(dateNumber < 10 ? "0" : "") + dateNumber}
       </h2>
-      <h2 className="select-none text-3xl font-bold">
+      <h2 className="select-none text-3xl font-bold bg-gradient-2 bg-clip-text text-transparent inline-block">
         {dayLabel || format(futureDate, "EEEE", dateOptions)}
       </h2>
       <div className="flex items-center gap-[0.7vw] relative">
         {" "}
         <button
           onClick={toggleViewsMenu} // Trigger viewsMenu toggle
-          className="mr-4 p-2 rounded-full hover:bg-dominant hover:bg-opacity-10 transition-colors duration-200 w-[50%] flex justify-between"
+          className="mr-4 p-2 rounded-full hover:scale-125 transition-transform duration-300 ease-in w-[50%] flex justify-between"
         >
           <svg
             viewBox="0 0 24 24"
@@ -86,14 +86,14 @@ const DateHeader = ({ index, onDateChange }) => {
           </svg>
         </button>
         <div
-          className="addMenuElement cursor-pointer rounded-full flex items-center justify-between p-[1vw]"
+          className="text-text addMenuElement cursor-pointer rounded-full flex items-center justify-between p-[1vw] gradient-border"
           onClick={() => setMenuOpen((prev) => !prev)}
         >
           {workspaces.find((workspace) => workspace.id === currentWorkspace)
             ?.name || ""}
           <svg
             xmlns="http://www.w3.org/2000/svg"
-            className={`ml-2 transition-transform duration-500 ${
+            className={`ml-2 transition-transform duration-500 text-text ${
               menuOpen ? "rotate-180" : ""
             }`}
             viewBox="0 0 29 29"
@@ -102,7 +102,7 @@ const DateHeader = ({ index, onDateChange }) => {
           >
             <path
               fill="none"
-              stroke="#000"
+              stroke="currentColor"
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeMiterlimit="10"
@@ -111,20 +111,20 @@ const DateHeader = ({ index, onDateChange }) => {
             />
           </svg>
         </div>
-        <span className="select-none text-xl">{formattedHour}</span>
+        <span className="select-none text-xl text-text">{formattedHour}</span>
         <div
-          className={`absolute top-full mt-2 left-0 bg-white shadow-lg rounded-lg transition-opacity duration-300 z-50 w-full ${
+          className={` absolute top-full mt-2 left-0 bg-primary shadow-lg rounded-lg transition-opacity duration-300 z-50 w-full ${
             menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
         >
-          <div className="p-2 text-center text-gray-500 flex flex-col items-start gap-3 z-50">
+          <div className="rounded-[12px] gradient-border p-2 text-center text-gray-500 flex flex-col items-start gap-3 z-50">
             {workspacesName.map((name, index) => (
               <button
                 key={index}
                 onClick={() => handleCurrentWorkspaceDropdownClick(name)}
-                className="hover:text-dominant transition-colors duration-300"
+                className="hover:text-dominant transition-colors duration-300 "
               >
-                {name}
+                <span className="text-text hover:text-dominant">{name}</span>
               </button>
             ))}
           </div>

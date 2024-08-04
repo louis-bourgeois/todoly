@@ -33,7 +33,7 @@ export default function ElementPickerLibelle({
         ></path>
       </svg>
       <div
-        className={`absolute top-full mt-2 left-0 right-0 bg-white shadow-lg rounded-lg transition-opacity duration-300 z-[255] ${
+        className={`absolute top-full mt-2 left-0 right-0 bg-primary shadow-lg rounded-lg transition-opacity duration-300 z-[255] ${
           taskArrowIsClicked ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >

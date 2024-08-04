@@ -33,7 +33,7 @@ const ELEMENTS = ["Task", "Workspace", "Note"];
 
 const AddWorkspaceBubble = ({ onClose, onDontShowAgain }) => {
   return (
-    <div className="fixed inset-0 left-2 bg-dominant text-white rounded-full shadow-lg p-3 max-w-xs z-50 animate-fade-in-out flex items-center">
+    <div className="fixed inset-0 left-2 bg-dominant text-primary rounded-full shadow-lg p-3 max-w-xs z-50 animate-fade-in-out flex items-center">
       <p className="text-xs mr-2">
         Scroll horizontally to add other element's type
       </p>
@@ -388,7 +388,7 @@ export default function AppLayout({ children }) {
           )}
       </>
     );
-  } else {
+  } else if (window.location.href !== `/app` && preferences.Default_Main_Page) {
     return (
       <>
         <Navbar />
@@ -417,6 +417,8 @@ export default function AppLayout({ children }) {
         {children}
       </>
     );
+  } else {
+    return null;
   }
 }
 
@@ -451,10 +453,10 @@ const ScrollableContent = ({ children }) => {
       {[...Array(layers)].map((_, index) => (
         <div
           key={index}
-          className="absolute top-0 left-0 w-full pointer-events-none"
+          className="absolute top-0 left-0 w-full pointer-events-none bg-primary"
           style={{
             height: `${(index + 1) * (32 / layers)}px`,
-            backgroundColor: "white",
+
             opacity: 1 - index / layers,
             zIndex: layers - index,
           }}

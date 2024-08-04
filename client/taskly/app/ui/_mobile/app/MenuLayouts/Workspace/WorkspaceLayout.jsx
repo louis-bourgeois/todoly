@@ -171,12 +171,12 @@ export default function WorkspaceLayout() {
             {workspaceSections.map((section) => (
               <span
                 key={section.id}
-                className="bg-black text-white  hover:text-dominant transition-colors  text-xs font-medium mr-2 px-2.5 py-0.5 rounded flex items-center"
+                className="bg-secondary text-primary  hover:text-dominant transition-colors  text-xs font-medium mr-2 px-2.5 py-0.5 rounded flex items-center"
               >
                 {section.name}
                 <button
                   onClick={() => handleRemoveSection(section.id)}
-                  className="ml-1 bg-black text-white  hover:text-dominant transition-colors"
+                  className="ml-1 bg-secondary text-primary  hover:text-dominant transition-colors"
                 >
                   ×
                 </button>

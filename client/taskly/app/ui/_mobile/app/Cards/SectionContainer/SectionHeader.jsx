@@ -181,13 +181,13 @@ const SectionHeader = React.memo(
               <g clipPath="url(#clip0_1050_205)">
                 <path
                   d="M10.64 3.20003L5.86995 7.97C5.39495 8.445 3.98494 8.665 3.66994 8.35C3.35494 8.035 3.56994 6.625 4.04494 6.15L8.81995 1.37501C8.9377 1.24654 9.08025 1.14327 9.23905 1.07142C9.3978 0.99957 9.5695 0.96062 9.74375 0.95695C9.91795 0.953285 10.0912 0.984955 10.2528 1.05006C10.4145 1.11517 10.5613 1.21237 10.6843 1.33577C10.8074 1.45917 10.9042 1.60622 10.9688 1.76805C11.0335 1.92988 11.0647 2.10313 11.0606 2.27736C11.0564 2.45158 11.017 2.62318 10.9447 2.78175C10.8724 2.94033 10.7688 3.08262 10.64 3.20003Z"
-                  className="stroke-black group-hover:stroke-dominant  transition-colors duration-300 ease-in-out"
+                  className="stroke-secondary group-hover:stroke-dominant  transition-colors duration-300 ease-in-out"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />
                 <path
                   d="M5.5 2H3C2.46956 2 1.96089 2.21071 1.58581 2.58578C1.21074 2.96086 1 3.46956 1 4V9C1 9.53045 1.21074 10.0391 1.58581 10.4142C1.96089 10.7893 2.46956 11 3 11H8.5C9.605 11 10 10.1 10 9V6.5"
-                  className="stroke-black group-hover:stroke-dominant "
+                  className="stroke-secondary group-hover:stroke-dominant "
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 />

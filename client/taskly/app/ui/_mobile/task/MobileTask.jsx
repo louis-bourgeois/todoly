@@ -3,7 +3,7 @@ import { useCallback, useMemo } from "react";
 import { useTask } from "../../../../context/TaskContext";
 
 const colors = {
-  todo: "bg-white",
+  todo: "bg-primary",
   done: "bg-dominant",
   in_progress: "bg-yellow-500",
 };
@@ -12,7 +12,7 @@ export default function MobileTask({ task, onClick }) {
   const { modifyTask } = useTask();
 
   const shortTitle = task.title.length <= 8;
-  const tags = useMemo(() => JSON.parse(task.tags), [task.tags]);
+  const tags = useMemo(() => task.tags, [task.tags]);
 
   const taskCircleColor = useMemo(() => colors[task.status], [task.status]);
 
@@ -34,7 +34,7 @@ export default function MobileTask({ task, onClick }) {
         <div className="flex justify-start items-center">
           <button onClick={handleTaskStatusChange}>
             <div
-              className={`z-40 transition-all ${taskCircleColor} cursor-pointer border border-black min-w-[1rem] min-h-[1rem] rounded-full mr-2`}
+              className={`z-40 transition-all ${taskCircleColor} cursor-pointer border border-secondary min-w-[1rem] min-h-[1rem] rounded-full mr-2`}
             />
           </button>
           <h5 className="text-sm font-medium text-gray-800 truncate">
@@ -51,7 +51,7 @@ export default function MobileTask({ task, onClick }) {
                   key={index}
                   className="flex items-center bg-gray-100 rounded-full px-2 py-1"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-black mr-1" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-secondary mr-1" />
                   <span className="text-2xs text-gray-700">{tag.name}</span>
                 </div>
               ))}
@@ -72,7 +72,7 @@ export default function MobileTask({ task, onClick }) {
               key={index}
               className="flex items-center bg-gray-100 rounded-full px-2 py-1"
             >
-              <div className="w-1.5 h-1.5 rounded-full bg-black mr-1" />
+              <div className="w-1.5 h-1.5 rounded-full bg-secondary mr-1" />
               <span className="text-2xs text-gray-700">{tag.name}</span>
             </div>
           ))}

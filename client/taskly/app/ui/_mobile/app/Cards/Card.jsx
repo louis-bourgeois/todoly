@@ -36,7 +36,7 @@ const Card = ({ children, cardType, el, isTransitioning }) => {
       <CardTransition
         isTransitioning={isTransitioning}
         cardType={cardType}
-        className={`relative ${cardHeight} rounded-[20px] bg-white overflow-hidden flex flex-col transition-[height] duration-300 ease-in-out`}
+        className={`relative ${cardHeight} rounded-[20px] bg-primary overflow-hidden flex flex-col transition-[height] duration-300 ease-in-out`}
       >
         {children}
       </CardTransition>

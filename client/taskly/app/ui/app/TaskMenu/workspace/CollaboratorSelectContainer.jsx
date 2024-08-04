@@ -9,7 +9,7 @@ export default function CollaboratorSelectContainer({
 }) {
   const [inputValue, setInputValue] = useState("");
 
-  const handleConfirm = async (key) => {
+  const handleConfirm = async (key = "Enter") => {
     if (key === "Enter" || !key) {
       if (inputValue.trim() !== "") {
         setCollaborators((prev) => [...prev, { name: inputValue }]);
@@ -124,11 +124,14 @@ export default function CollaboratorSelectContainer({
           type="text"
           value={inputValue}
           name="collaborators"
-          className="placeholder:text-gray w-full text-center focus:outline-none text-black bg-transparent"
+          className="placeholder:text-gray w-full text-center focus:outline-none text-text bg-transparent"
           placeholder="Type username"
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => {
             handleConfirm(e.key);
+          }}
+          onBlur={() => {
+            handleConfirm();
           }}
         />
       </div>

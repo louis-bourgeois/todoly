@@ -75,7 +75,7 @@ export default function TaskLayout({ id }) {
         linked_section: selectedSection,
         priority,
         dueDate,
-        tags: JSON.stringify(taskTags),
+        tags: taskTags,
         description: taskDescription,
         workspaceId: currentWorkspace,
       };
@@ -108,7 +108,7 @@ export default function TaskLayout({ id }) {
     async (newTags) => {
       console.log("Handling tags change, new tags:", newTags);
       if (id && newTags) {
-        const updatedTask = { ...task, tags: JSON.stringify(newTags) };
+        const updatedTask = { ...task, tags: newTags };
         console.log("Updating task with new tags:", updatedTask);
         setTask(updatedTask);
         try {

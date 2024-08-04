@@ -81,7 +81,7 @@ const DropdownContent = memo(
     return createPortal(
       <div
         ref={dropdownRef}
-        className="z-50 flex flex-col justify-center bg-white rounded-md shadow-lg overflow-auto transition-all duration-300 ease-in-out fixed"
+        className="z-50 flex flex-col justify-center bg-primary rounded-md shadow-lg overflow-auto transition-all duration-300 ease-in-out fixed"
         style={{
           maxHeight: `${maxVisibleOptions * 37}px`,
           opacity: isOpen ? 1 : 0,
@@ -183,12 +183,12 @@ const Button = forwardRef(
     }, [isOpen]);
 
     const buttonClasses = `
-      ${dominant ? "bg-dominant text-white" : "bg-black text-white"}
+      ${dominant ? "bg-dominant text-primary" : "bg-secondary text-primary"}
       ${light ? "font-light" : "font-normal"}
       px-4 py-2 rounded-full
       transition-all duration-300 ease-in-out
       hover:scale-105 active:scale-95 focus:outline-none 
-      ${dominant ? "focus:ring-dominant " : "focus:ring-black"}
+      ${dominant ? "focus:ring-dominant " : "focus:ring-secondary"}
       text-xs
       ${className}
     `.trim();

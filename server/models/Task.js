@@ -1,46 +1,28 @@
 import pool from "../config/dbConfig.js";
-
 import { compareObjects } from "../utils/compare.js";
-
 import { isUUID } from "../utils/validate.js";
-
 import Section from "./Section.js";
 
 class Task {
   constructor(
     owner_id,
-
     title,
-
     status,
-
     linked_section,
-
     priority = 5,
-
     dueDate = undefined,
-
     tags = [],
-
     description,
-
     workspaceId
   ) {
     this.owner_id = owner_id;
-
     this.title = title;
-
     this.status = status;
-
     this.priority = priority;
-
     this.dueDate = dueDate;
-    this.tags = tags;
-
+    this.tags = tags; // No need to stringify, pg will handle this
     this.linked_section = linked_section;
-
     this.description = description;
-
     this.workspaceId = workspaceId;
   }
 
@@ -55,8 +37,7 @@ class Task {
         : (await Section.find(this.workspaceId, "Other"))[0].id;
 
       const insertTask =
-        "INSERT INTO task (user_id,linked_section) VALUES ($1, $2) RETURNING id";
-
+        "INSERT INTO task (user_id, linked_section) VALUES ($1, $2) RETURNING id";
       const result = await client.query(insertTask, [
         this.owner_id,
         linked_section,
@@ -68,31 +49,23 @@ class Task {
 
       await client.query(insertTaskProp, [
         taskId,
-
         this.title,
-
         this.dueDate || null,
-
         this.status || null,
         this.priority,
-
         this.owner_id,
-
-        this.tags,
-
+        this.tags, // pg will automatically handle the conversion to JSONB
         this.description,
       ]);
 
-      const twQuery = `INSERT INTO task_workspaces (task_id, workspace_id) VALUES ($1,$2)`;
+      const twQuery = `INSERT INTO task_workspaces (task_id, workspace_id) VALUES ($1, $2)`;
       const twProps = [taskId, this.workspaceId];
       await client.query(twQuery, twProps);
       await client.query("COMMIT");
       return result.rows[0].id;
     } catch (e) {
       await client.query("ROLLBACK");
-
       console.error("Error saving task:", e);
-
       switch (e.code) {
         case "23505":
           throw new Error(
@@ -108,9 +81,10 @@ class Task {
       client.release();
     }
   }
+
   static async find(workspaceId = false, taskId = false, userId = false) {
     let query = `
-      SELECT t.*,  tp.*, tw.*
+      SELECT t.*, tp.*, tw.*
       FROM task t
       INNER JOIN task_properties tp ON t.id = tp.task_id
       INNER JOIN task_workspaces tw ON t.id = tw.task_id
@@ -138,27 +112,22 @@ class Task {
       const result = await pool.query(query, queryParams);
 
       result.rows = result.rows.map((row) => {
+        const parsedRow = { ...row };
+        parsedRow.tags = Array.isArray(row.tags) ? row.tags : [];
+        // Handle due_date
         if (row.due_date) {
           const dueDate = new Date(row.due_date);
-          dueDate.setUTCDate(dueDate.getUTCDate() + 1); // Add one day in UTC
+          dueDate.setUTCDate(dueDate.getUTCDate() + 1);
 
           const year = dueDate.getUTCFullYear();
           const month = String(dueDate.getUTCMonth() + 1).padStart(2, "0");
           const day = String(dueDate.getUTCDate()).padStart(2, "0");
-          const formattedDate = `${year}-${month}-${day}`;
-
-          return {
-            ...row,
-            tags: JSON.stringify(row.tags),
-            due_date: formattedDate,
-          };
-        } else {
-          return {
-            ...row,
-            tags: JSON.stringify(row.tags),
-          };
+          parsedRow.due_date = `${year}-${month}-${day}`;
         }
+
+        return parsedRow;
       });
+
       return result.rows;
     } catch (error) {
       console.error("Error executing find query:", error);
@@ -174,37 +143,47 @@ class Task {
       const deleteTaskWorkspacesQuery =
         "DELETE FROM task_workspaces WHERE task_id = $1";
       await client.query(deleteTaskWorkspacesQuery, [taskId]);
-      // Supprimer les propriétés de la tâche
+
       const deleteTaskPropertiesQuery =
         "DELETE FROM task_properties WHERE task_id = $1";
-
       await client.query(deleteTaskPropertiesQuery, [taskId]);
 
-      // Supprimer la tâche elle-même
       const deleteTaskQuery = "DELETE FROM task WHERE id = $1";
-
       await client.query(deleteTaskQuery, [taskId]);
 
       await client.query("COMMIT");
     } catch (error) {
       await client.query("ROLLBACK");
       console.error("Error deleting task:", error);
-
       throw error;
     } finally {
       client.release();
     }
   }
-  static async update(updatedTask) {
-    console.log("updated task id", updatedTask.id);
-    const [currentTask] = await this.find(undefined, updatedTask.id);
+
+  static async update(taskToUpdate) {
+    const [currentTask] = await this.find(undefined, taskToUpdate.id);
 
     if (!currentTask) {
       console.error("Task not found (check Task.js in update)");
       throw new Error("Task not found");
     }
 
-    const changes = compareObjects(currentTask, updatedTask);
+    const changes = compareObjects(currentTask, taskToUpdate);
+    if (changes.tags) {
+      if (Array.isArray(changes.tags)) {
+        changes.tags = JSON.stringify(changes.tags);
+      } else if (typeof changes.tags === "string") {
+        try {
+          JSON.parse(changes.tags);
+        } catch (e) {
+          changes.tags = JSON.stringify([]);
+        }
+      } else {
+        changes.tags = JSON.stringify([]);
+      }
+    }
+
     let columnsToUpdate = Object.keys(changes);
 
     // Determine if specific fields are updated
@@ -260,7 +239,7 @@ class Task {
         }
       }
       if (queryParams.length > 0) {
-        queryParams.push(updatedTask.id);
+        queryParams.push(taskToUpdate.id);
         const sqlQuery = `UPDATE ${table} SET ${setParts.join(", ")} WHERE ${
           table !== "task" ? "task_id" : "id"
         } = $${paramIndex}`;
@@ -278,6 +257,7 @@ class Task {
     const { rows } = await pool.query(query, [taskId, workspaceId]);
     return rows[0].count > 0;
   }
+
   static async addTaskToWorkspace(taskId, workspaceId) {
     const client = await pool.connect();
     try {
@@ -290,6 +270,7 @@ class Task {
       client.release();
     }
   }
+
   static async removeTaskFromWorkspace(taskId, workspaceId) {
     const client = await pool.connect();
     try {

@@ -223,7 +223,7 @@ export default function FormMenu({
               </label>
               <label
                 htmlFor="terms and conditions checkbox"
-                className="flex-grow text-sm text-black italic cursor-pointer"
+                className="flex-grow text-sm text-text italic cursor-pointer"
               >
                 I have read and accepted the{" "}
                 <Link href="/legal/conditions" passHref legacyBehavior>

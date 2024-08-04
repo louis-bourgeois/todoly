@@ -20,9 +20,14 @@ class Workspace {
         "INSERT INTO user_workspaces (user_id, workspace_id) VALUES ($1, $2)";
       await client.query(insertUserWorkspaceQuery, [userId, workspaceId]);
       const insertDefaultSection =
-        "INSERT INTO section (name, user_id, workspace_id) VALUES ($1, $2, $3)";
+        "INSERT INTO section (name, user_id, workspace_id) VALUES ($1, $2, $3) RETURNING id";
 
-      await client.query(insertDefaultSection, ["Other", userId, workspaceId]);
+      const result = await client.query(insertDefaultSection, [
+        "Other",
+        userId,
+        workspaceId,
+      ]);
+
       if (sections) {
         await Promise.all(
           sections.map(async (section) => {
@@ -50,7 +55,7 @@ class Workspace {
 
       await client.query("COMMIT");
 
-      return workspaceId;
+      return { workspaceId: workspaceId, defaultSection: result.rows[0].id };
     } catch (error) {
       await client.query("ROLLBACK");
       console.error(error);

@@ -48,14 +48,18 @@ export default function TaskForm({
   const [linked_section_name, setLinked_section_name] = useState("");
   const [taskWorkspace, setTaskWorkspace] = useState("");
   useEffect(() => {
+    console.log("currentWorkspace", currentWorkspace);
+    console.log("linked section", linked_section);
+
+    console.log("priority", priority);
     setCanSubmit(
       currentWorkspace &&
         titleValue.length > 0 &&
         linked_section &&
-        status &&
         0 < priority < 11
     );
   }, [titleValue, linked_section, status, priority, currentWorkspace]);
+
   useEffect(() => {
     if (id) {
       const foundTask = tasks.find((task) => task.id === id);
@@ -66,8 +70,8 @@ export default function TaskForm({
         setLinked_section(foundTask.linked_section || "");
         setPriority(foundTask.priority || 5);
         setDueDate(foundTask.due_date);
-        const parsedTags = foundTask.tags ? JSON.parse(foundTask.tags) : [];
-        setTaskTags(parsedTags);
+
+        setTaskTags(foundTask.tags || []);
         setDescriptionValue(foundTask.description || "");
         setCanSubmit(true);
         setTaskWorkspace(foundTask.workspace_id);
@@ -83,7 +87,6 @@ export default function TaskForm({
           const alternativeSection = sections.find(
             (s) => s.name === "Other" && s.workspace_id === currentWorkspace
           )?.id;
-          console.log(alternativeSection);
           setLinked_section(alternativeSection);
         } else {
           setLinked_section(preferences.Last_Section || "");
@@ -150,10 +153,11 @@ export default function TaskForm({
         linked_section,
         priority,
         dueDate,
-        tags: JSON.stringify(taskTags),
+        tags: taskTags,
         description: descriptionValue,
         workspaceId: currentWorkspace,
       };
+      console.log(taskData);
       await addTask(taskData);
       // Update preference after successful task creation
       updatePreference({ key: "Last_Section", value: linked_section });
@@ -278,7 +282,7 @@ export default function TaskForm({
                 toggleTaskMenu(!isTaskMenuOpen);
               }}
               moreRoundedCorners="br"
-              othersStyles={`w-full h-[25%] items-center justify-left font-bold text-4xl`}
+              othersStyles={`w-full h-[25%] items-center justify-left font-bold text-4xl text-text`}
               flex
             >
               <span className="text-2xl">{id ? "Delete" : "Create"}</span>

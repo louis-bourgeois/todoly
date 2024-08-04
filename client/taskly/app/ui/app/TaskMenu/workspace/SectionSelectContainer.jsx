@@ -143,7 +143,7 @@ export default function SectionSelectContainer({
                   onKeyDown: handleKeyDown,
                   placeholder: "What sections do you want to link ?",
                   className:
-                    "placeholder:text-gray w-full text-center focus:outline-none text-black bg-transparent",
+                    "placeholder:text-gray w-full text-center focus:outline-none text-text bg-transparent",
                 })}
               />
             </div>

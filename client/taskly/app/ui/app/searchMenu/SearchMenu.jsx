@@ -16,7 +16,7 @@ const SearchMenu = () => {
   const { tasks } = useTask();
   const { tags } = useTag();
   const { workspaces } = useWorkspace();
- const { toggleTaskMenu, isSearchMenuOpen, toggleSearchMenu } = useMenu();
+  const { toggleTaskMenu, isSearchMenuOpen, toggleSearchMenu } = useMenu();
   const [query, setQuery] = useState("");
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -222,8 +222,8 @@ const SearchMenu = () => {
 
   return (
     <div
-      className={`fixed inset-0 flex items-start justify-center pt-16 z-50 bg-black transition-opacity duration-300 ease-in-out ${
-        visibility ? "bg-opacity-50" : "bg-opacity-0 pointer-events-none"
+      className={`fixed inset-0 flex items-start justify-center pt-16 z-50 transition-all duration-300 ease-in-out bg-secondary-overlay ${
+        visibility ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
       onClick={() => {
         toggleSearchMenu();

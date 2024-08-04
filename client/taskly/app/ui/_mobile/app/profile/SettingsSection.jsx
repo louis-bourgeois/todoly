@@ -90,7 +90,7 @@ const SettingsSection = React.memo(
                   key === "Color_Theme"
                     ? `bg-${bgColor} text-${textColor}`
                     : type === "primary"
-                    ? "border-none bg-CTA_bg"
+                    ? "border-none bg-ternary"
                     : ""
                 } min-w-[150px]`}
               />

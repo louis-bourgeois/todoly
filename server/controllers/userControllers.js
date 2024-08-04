@@ -1,5 +1,4 @@
 import Preference from "../models/Preference.js";
-import Section from "../models/Section.js";
 import User from "../models/User.js";
 import Workspace from "../models/Workspace.js";
 
@@ -53,12 +52,8 @@ export async function createUser(req, res) {
       );
       console.log("Workspace object created:", workspace);
 
-      const workspaceId = await workspace.save(saveData[0]);
+      const { workspaceId, defaultSection } = await workspace.save(saveData[0]);
       console.log("Workspace saved, workspaceId:", workspaceId);
-
-      console.log("Setting workspace ID for section");
-      await Section.setWorkspaceId(workspaceId, saveData[1].rows[0].id);
-      console.log("Workspace ID set for section");
 
       const preferences_key = [
         "Default_Main_Page",
@@ -88,7 +83,7 @@ export async function createUser(req, res) {
         "24h",
         "Monday",
         workspaceId,
-        saveData[1].rows[0].id,
+        defaultSection,
         "Importance",
         "All tasks",
       ];
@@ -142,6 +137,7 @@ export const findUserbyUsername = async (req, res) => {
 };
 
 export const getWorkspacesByUserId = async (req, res) => {
+  console.log(req.user);
   const found_user = await User.findId(undefined, req.user.email, undefined);
   const userId = found_user[0][0];
   try {
@@ -149,6 +145,7 @@ export const getWorkspacesByUserId = async (req, res) => {
 
     res.status(200).json(workspaces);
   } catch (error) {
+    console.error(error);
     res.status(400).send(error.message);
   }
 };
@@ -158,6 +155,7 @@ export const addUserToWorkspace = async (req, res) => {
     await User.addUserToWorkspace(userId, workspaceId);
     res.status(201).send("User added to workspace");
   } catch (error) {
+    console.error(error);
     res.status(400).send(error.message);
   }
 };
@@ -167,6 +165,7 @@ export const removeUserFromWorkspace = async (req, res) => {
     await User.removeUserFromWorkspace(userId, workspaceId);
     res.status(200).send("User removed from workspace");
   } catch (error) {
+    console.error(error);
     res.status(400).send(error.message);
   }
 };

@@ -73,12 +73,14 @@ export default function Page() {
               <SlideNav key={index}>
                 <div className="flex justify-between items-center gap-2">
                   {" "}
-                  <h2 className="text-3xl font-extrabold">{workspace.name}</h2>
+                  <h2 className="text-3xl font-extrabold text-text">
+                    {workspace.name}
+                  </h2>
                   <button
                     onClick={() => {
                       toggleTaskMenu(null, workspace.id, "Workspace");
                     }}
-                    className="mr-4 px-2 mt-1.5 rounded-full hover:bg-blue hover:bg-opacity-10 transition-colors duration-200"
+                    className="text-text mr-4 px-2 mt-1.5 rounded-full hover:bg-blue hover:bg-opacity-10 transition-colors duration-200"
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -160,7 +162,7 @@ export default function Page() {
                       height="24"
                       fill="none"
                       xmlns="http://www.w3.org/2000/svg"
-                      className="text-blue"
+                      className="text-dominant"
                     >
                       <path
                         d="M12 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM19 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2ZM5 13a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
@@ -209,7 +211,7 @@ export default function Page() {
           relative
           px-8 py-4
           bg-dominant
-          text-white
+          text-primary
           rounded-full
           text-lg font-semibold
           shadow-shadow_01
@@ -225,7 +227,7 @@ export default function Page() {
             <span
               className={`
           absolute inset-0
-          bg-gradient-to-r from-dominant to-CTA_bg
+          bg-gradient-to-r from-dominant to-ternary
           opacity-0
           transition-opacity duration-300 ease-in-out
         `}

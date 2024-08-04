@@ -57,7 +57,7 @@ export default function MobileMainMenu() {
   ];
 
   return (
-    <div className="w-full flex items-center justify-between px-[30px] py-[8px] bg-white shadow-shadow_01 rounded-full">
+    <div className="w-full flex items-center justify-between px-[30px] py-[8px] bg-primary shadow-shadow_01 rounded-full">
       {menuItems.map((item, index) => (
         <NavigationItem
           key={index}

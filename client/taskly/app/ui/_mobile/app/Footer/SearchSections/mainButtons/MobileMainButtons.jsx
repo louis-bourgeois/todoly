@@ -37,7 +37,7 @@ export default function MobileMainButtons() {
 
   return (
     <div
-      className={`flex items-center justify-center bg-white shadow-shadow_01 pr-[2%] rounded-full h-[50px]`}
+      className={`flex items-center justify-center bg-primary shadow-shadow_01 pr-[2%] rounded-full h-[50px]`}
     >
       <style jsx>{`
         .smooth-rotate {

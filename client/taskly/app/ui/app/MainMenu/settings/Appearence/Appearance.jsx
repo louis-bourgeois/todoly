@@ -91,7 +91,7 @@ export default function Appearance({ transitionStyles }) {
                 style={{ backgroundColor: row.color }}
                 className={`rounded-[10px] w-[87.5%] h-[5vh]  ${
                   (row.color === "#ffffff" || row.color === "#f7f4ed") &&
-                  "border border-black"
+                  "border border-secondary"
                 }`}
               ></div>
               <Circle

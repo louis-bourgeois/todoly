@@ -8,6 +8,7 @@ export async function getTag(req, res) {
     const tags = await Tag.find(userId);
     return res.status(200).json({ tags: tags });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({ message: "Error updating tag" });
   }
 }
@@ -35,6 +36,7 @@ export async function addTag(req, res) {
       .status(200)
       .json({ message: "Tag added successfully", tags: user_tags });
   } catch (error) {
+    console.error(error);
     res.status(500).json("Failed to add tag. Please try again.");
   }
 }
@@ -67,6 +69,7 @@ export async function updateTag(req, res) {
       tags: user_tags,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json("An error occurred while updating the tag");
   }
 }
@@ -77,6 +80,7 @@ export async function deleteTag(req, res) {
     await Tag.delete(id);
     res.status(200).json({ message: "Tag deleted successfully" });
   } catch (error) {
+    console.error(error);
     res.status(500).json(error.message);
   }
 }

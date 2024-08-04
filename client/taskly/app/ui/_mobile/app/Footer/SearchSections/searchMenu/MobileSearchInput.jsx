@@ -195,7 +195,7 @@ export default function MobileSearchInput({ onNavigate }) {
       <input
         type="text"
         name="collaborators"
-        className="placeholder:text-gray placeholder:text-[13px] w-full text-center pr-5 focus:outline-none text-black"
+        className="placeholder:text-gray placeholder:text-[13px] w-full text-center pr-5 focus:outline-none text-text"
         placeholder="Type a command or search"
         value={searchQuery}
         onChange={handleInputChange}

@@ -19,7 +19,7 @@ export default function Navbar() {
   const { user, loading } = useUser();
   const { preferences } = useUserPreferences();
   const { toggleTaskMenu, toggleSearchMenu } = useMenu();
-
+  console.log(user);
   const [showMenu, setShowMenu] = useState(false);
   const [showContentMenu, setShowContentMenu] = useState(false);
   const [marginTop, setMarginTop] = useState(0);
@@ -84,6 +84,7 @@ export default function Navbar() {
       <MainMenu
         containerRef={containerRef}
         showMenu={showMenu}
+        setShowMenu={setShowMenu}
         showContentMenu={showContentMenu}
         marginTop={marginTop}
         height={height}
@@ -121,7 +122,10 @@ export default function Navbar() {
             {preferences.Home_Page_Title ===
             "Depending on the time of day + name" ? (
               <>
-                {title} <span className="text-dominant">{name}</span>
+                <span className="text-text">{title}</span>{" "}
+                <span className="bg-gradient-2 bg-clip-text text-transparent inline-block">
+                  {name}
+                </span>
               </>
             ) : (
               preferences.Home_Page_Title
@@ -130,7 +134,7 @@ export default function Navbar() {
         </li>
         <li className="flex max-w-[17.5%] gap-iconsContainer items-center justify-center h-full mr-[0.5vw]">
           <NavButton
-            styles="border border-dominant rounded-full shadow-2xl"
+            styles="border border-dominant rounded-full shadow-2xl bg-primary"
             onClick={toggleSearchMenu}
           >
             <svg

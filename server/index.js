@@ -25,7 +25,11 @@ const app = express();
 const server = createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:3000",
+    origin: [
+      "http://localhost:3000",
+      "http://192.168.1.100:3000",
+      "http://taskly.local:3000",
+    ],
     methods: ["GET", "POST"],
     credentials: true,
   },
@@ -34,7 +38,11 @@ const port = process.env.PORT;
 
 // CORS options
 const corsOptions = {
-  origin: "http://localhost:3000", // Allow only requests from this origin
+  origin: [
+    "http://localhost:3000",
+    "http://192.168.1.100:3000",
+    "http://taskly.local:3000",
+  ], // Ajoutez toutes les origines nécessaires
   credentials: true,
   optionsSuccessStatus: 200,
 };
@@ -59,12 +67,12 @@ app.use(
   session({
     secret: process.env.SECRET_SESSION,
     resave: false,
-    saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
-      httpOnly: true, // Mitigates the risk of client side script accessing the protected cookie
-      maxAge: 24 * 60 * 60 * 1000, // Cookie expiry (7 day in this case)
-      sameSite: "Lax",
-      secure: false,
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production", // false en développement, true en production
     },
   })
 );
@@ -150,6 +158,6 @@ passport.deserializeUser(async (id, cb) => {
 
 export { io };
 
-server.listen(port, () => {
-  console.log(`Server running on http://localhost:${port}`);
+server.listen(port, "0.0.0.0", () => {
+  console.log(`Server running on http://0.0.0.0:${port}`);
 });

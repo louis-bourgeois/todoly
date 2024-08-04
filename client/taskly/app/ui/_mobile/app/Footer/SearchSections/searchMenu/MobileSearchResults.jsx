@@ -84,7 +84,7 @@ export default function MobileSearchResults() {
   return (
     <div className="flex flex-col p-5">
       <h2 className="text-xl font-bold">Results: </h2>
-      <div className="mt-2 bg-white rounded-lg max-h-[60vh] overflow-y-auto">
+      <div className="mt-2 bg-primary rounded-lg max-h-[60vh] overflow-y-auto">
         <ul className="py-2">
           {suggestions.map((item, index) => (
             <li

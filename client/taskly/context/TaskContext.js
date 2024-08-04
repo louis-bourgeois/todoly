@@ -34,38 +34,29 @@ export const TaskProvider = ({ children }) => {
       const response = await axios.get(`${baseUrl}/tasks`, {
         withCredentials: true,
       });
-      const formattedTasks = response.data.tasks.map((task) => task);
-      setTasks(formattedTasks);
+      setTasks(response.data.tasks);
     } catch (error) {
       handleError(error);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, handleError]);
 
   const addTask = useCallback(
     async (taskData) => {
+      const formattedTaskData = {
+        ...taskData,
+        tags: taskData.tags,
+      };
       try {
         const response = await axios.post(
           `${baseUrl}/tasks/add`,
-          { taskData },
+          { formattedTaskData },
           { withCredentials: true }
         );
         if (response.status === 201 && response.data.savedTask) {
           const newTask = response.data.savedTask[0];
-
           if (newTask && newTask.id) {
-            setTasks((prev) => [...prev, newTask]);
+            // Ne mettez pas à jour l'état ici, laissez le socket event handler s'en charger
             socket.emit("taskAdded", newTask);
-            setWorkspaces((prevWorkspaces) => {
-              return prevWorkspaces.map((workspace) => {
-                if (workspace.id === newTask.workspace_id) {
-                  return {
-                    ...workspace,
-                    tasks: [...workspace.tasks, newTask],
-                  };
-                }
-                return workspace;
-              });
-            });
           }
         }
       } catch (error) {
@@ -84,11 +75,7 @@ export const TaskProvider = ({ children }) => {
           { withCredentials: true }
         );
         if (response.status === 200) {
-          setTasks((prevTasks) =>
-            prevTasks.map((task) =>
-              task && task.id === updatedTask.id ? updatedTask : task
-            )
-          );
+          // Ne mettez pas à jour l'état ici, laissez le socket event handler s'en charger
           socket.emit("taskUpdated", updatedTask);
         }
       } catch (error) {
@@ -108,9 +95,7 @@ export const TaskProvider = ({ children }) => {
           }
         );
         if (response.status === 200) {
-          setTasks((prevTasks) =>
-            prevTasks.filter((task) => task && task.id !== taskId)
-          );
+          // Ne mettez pas à jour l'état ici, laissez le socket event handler s'en charger
           socket.emit("taskDeleted", taskId);
         }
       } catch (error) {
@@ -126,6 +111,17 @@ export const TaskProvider = ({ children }) => {
     const handleTaskAdded = (newTask) => {
       if (newTask && newTask.id) {
         setTasks((prevTasks) => [...prevTasks, newTask]);
+        setWorkspaces((prevWorkspaces) => {
+          return prevWorkspaces.map((workspace) => {
+            if (workspace.id === newTask.workspace_id) {
+              return {
+                ...workspace,
+                tasks: [...workspace.tasks, newTask],
+              };
+            }
+            return workspace;
+          });
+        });
       }
     };
 
@@ -156,7 +152,7 @@ export const TaskProvider = ({ children }) => {
       socket.off("taskUpdated", handleTaskUpdated);
       socket.off("taskDeleted", handleTaskDeleted);
     };
-  }, [fetchTasks]);
+  }, [fetchTasks, setWorkspaces]);
 
   return (
     <TaskContext.Provider

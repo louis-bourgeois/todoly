@@ -38,10 +38,10 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
   }, [currentDate, startOfWeekOnSunday]);
 
   useEffect(() => {
-    if (selectedDate) {
-      setCurrentDate(selectedDate); // Ensure currentDate is updated when selectedDate changes
+    if (selectedDate && !isSameMonth(new Date(selectedDate), currentDate)) {
+      setCurrentDate(new Date(selectedDate));
     }
-  }, [selectedDate, currentDate]);
+  }, [selectedDate]);
 
   const generateDays = (date) => {
     const weekStartsOn = startOfWeekOnSunday === "Sunday" ? 0 : 1;
@@ -129,12 +129,12 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
             <div key={index} className="px-2">
               <div
                 onClick={() => handleFastDateClick(fastDate.name)}
-                className="cursor-pointer hover:scale-105 transition-transform transition transition-all flex h-[50%] items-center justify-center bg-white rounded-[20px] my-2 p-2"
+                className="cursor-pointer hover:scale-105 transition-all flex h-[50%] items-center justify-center bg-primary rounded-[20px] my-2 p-2"
                 style={{
                   boxShadow: "0px 4px 4px 0px rgba(0, 122, 255, 0.25)",
                 }}
               >
-                <p className="text-xs font-bold">{fastDate.name}</p>
+                <p className="text-xs text-text font-bold">{fastDate.name}</p>
               </div>
             </div>
           ))}
@@ -163,7 +163,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
               />
             </svg>
           </button>
-          <h2>{format(currentDate, "MMMM yyyy")}</h2>
+          <h2 className="text-text">{format(currentDate, "MMMM yyyy")}</h2>
           <button
             className="select-none text-4xl 4xl:text-6xl"
             onClick={handleNextMonth}
@@ -189,7 +189,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
           {adjustedDaysOfWeek.map((day, index) => (
             <div
               key={index}
-              className="text-center text-xs 4xl:text-base font-bold"
+              className="text-center text-text text-xs 4xl:text-base font-bold"
             >
               {day}
             </div>
@@ -203,7 +203,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
                     ? "text-gray-400 cursor-default"
                     : isSelectedDate(day)
                     ? "text-dominant"
-                    : "text-black hover:text-dominant hover:scale-110 active:scale-95"
+                    : "text-text hover:text-dominant hover:scale-110 active:scale-95"
                   : "text-gray-300 cursor-default opacity-0"
               }`}
               onClick={() =>

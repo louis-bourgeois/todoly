@@ -20,7 +20,7 @@ export default function TitleInput({
     if (id) {
       const updatedTask = { ...task, title: newValue };
       setTask(updatedTask);
-      //modifyTask(updatedTask, "post");
+      modifyTask(updatedTask, "post");
     }
   };
 

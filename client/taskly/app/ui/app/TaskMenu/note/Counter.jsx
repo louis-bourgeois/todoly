@@ -58,7 +58,7 @@ export const Counter = ({ visibility, onChange, initialCount }) => {
     <div className="flex items-center justify-center bg-transparent">
       <button
         onClick={handleDecrement}
-        className="w-12 h-12 flex items-center justify-center rounded-full"
+        className="w-12 h-12 flex items-center justify-center rounded-full text-text"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -82,7 +82,7 @@ export const Counter = ({ visibility, onChange, initialCount }) => {
         value={inputValue}
         onChange={handleChange}
         onBlur={handleBlur}
-        className="w-12 h-12 text-center bg-transparent"
+        className="w-12 h-12 text-center bg-transparent text-dominant"
         min="1"
         max="10"
       />
@@ -95,7 +95,7 @@ export const Counter = ({ visibility, onChange, initialCount }) => {
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
-          className="w-6 h-6"
+          className="w-6 h-6 text-text"
         >
           <path
             strokeLinecap="round"

@@ -14,7 +14,8 @@ export async function getSection(req, res) {
     );
     return res.status(200).json({ sections: sections });
   } catch (error) {
-    res.status(500).json(error.message)
+    console.error(error);
+    res.status(500).json(error.message);
   }
 }
 
@@ -43,6 +44,7 @@ export async function addSection(req, res) {
       .status(200)
       .json({ message: "Section added successfully", sections: user_sections });
   } catch (error) {
+    console.error(error);
     if (error.status === 400) {
       res.status(400).json(error.message);
     } else {
@@ -75,6 +77,7 @@ export async function updateSection(req, res) {
     });
   } catch (error) {
     console.error(error);
+    console.error(error);
     res.status(500).json(error);
   }
 }
@@ -96,6 +99,7 @@ export async function deleteSection(req, res) {
     await Section.delete(sectionId, userId);
     return res.sendStatus(200);
   } catch (error) {
+    console.error(error);
     return res.status(500).json(error.message);
   }
 }

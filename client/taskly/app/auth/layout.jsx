@@ -7,7 +7,7 @@ import { useUserPreferences } from "../../context/UserPreferencesContext";
 export default function AuthLayout({ children }) {
   const router = useRouter();
   const { loading, isAuthenticated, checkAuth } = useAuth();
-  const { preferences, loading: preferencesLoading } = useUserPreferences();
+  const { preferences } = useUserPreferences();
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
@@ -16,19 +16,15 @@ export default function AuthLayout({ children }) {
         await checkAuth();
       }
 
-      if (isAuthenticated && preferencesLoading) {
-        router.push(`/app/${preferences.Default_Home_Page.toLowerCase()}`);
+      if (isAuthenticated && preferences) {
+        router.push(`/app`);
       } else {
         setIsChecking(false);
       }
     };
 
     verifyAuth();
-  }, [isAuthenticated, loading, preferences, checkAuth, router]);
-
-  if (isChecking || loading) {
-    return <div>Loading...</div>; // ou un composant de chargement plus élaboré
-  }
+  }, [isAuthenticated, preferences, checkAuth, router]);
 
   return <>{children}</>;
 }

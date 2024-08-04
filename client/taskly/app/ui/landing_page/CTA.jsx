@@ -80,14 +80,14 @@ const CTA = React.memo(
       const ctaStyle = useMemo(() => {
         switch (type) {
           case "primary":
-            return "shadow-shadow_card bg-CTA_bg font-bold text-black rounded-[33.489px]";
+            return "shadow-shadow_card bg-Ternary font-bold text-text rounded-[33.489px]";
           case "secondary":
-            return `py-[8px] px-[32px] text-base font-bold border border-dominant text-dominant hover:bg-dominant hover:text-black transition-colors duration-300
+            return `py-[8px] px-[32px] text-base font-bold border border-dominant text-dominant hover:bg-dominant hover:text-text transition-colors duration-300
                 ${
-                  isHovered ? "bg-dominant text-black" : ""
+                  isHovered ? "bg-dominant text-text" : ""
                 }  rounded-[33.489px]`;
           case "ghost":
-            return `text-black hover:text-blue-500 transition-colors duration-150
+            return `text-text hover:text-blue-500 transition-colors duration-150
                 ${isHovered ? "text-blue-500" : ""}`;
           default:
             return "";

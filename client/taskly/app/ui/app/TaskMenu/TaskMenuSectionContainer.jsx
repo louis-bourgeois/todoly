@@ -10,7 +10,7 @@ export default function TaskMenuSectionContainer({
     <div
       className={`addMenuElement ${flex && "flex"} ${
         flexCol ? "flex-col" : ""
-      } rounded-[20px] ${
+      } rounded-[20px] gradient-border ${
         moreRoundedCorners ? `rounded-${moreRoundedCorners}-[3.125vw]` : ""
       } ${othersStyles}`}
       {...props}

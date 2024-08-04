@@ -8,7 +8,7 @@ export default function DropdownMenu({
   textWeight = "",
   size = "normal",
   className = "",
-  arrowColor = "black",
+  arrowColor = "secondary",
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -30,7 +30,7 @@ export default function DropdownMenu({
         width={size === "little" ? "16" : "24"}
         height={size === "little" ? "10" : "14"}
         viewBox="0 0 24 14"
-        fill="none"
+        fill="black"
         className={`cursor-pointer transition-transform duration-500 ${
           menuOpen ? "rotate-180" : ""
         }`}
@@ -42,7 +42,7 @@ export default function DropdownMenu({
         />
       </svg>
       <div
-        className={`bg-white flex flex-col gap-[0.3vw] p-[1vw] absolute top-full mt-[1%] left-0 right-0 shadow-lg rounded-lg transition-opacity duration-300 z-[255] ${
+        className={`bg-primary flex flex-col gap-[0.3vw] p-[1vw] absolute top-full mt-[1%] left-0 right-0 shadow-lg rounded-lg transition-opacity duration-300 z-[255] ${
           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
@@ -61,7 +61,7 @@ export default function DropdownMenu({
             >
               <span
                 className={`text-${
-                  optionArray ? option[1] : "black hover:text-dominant"
+                  optionArray ? option[1] : "text hover:text-dominant"
                 } transition transition-color ease capitalize`}
               >
                 {optionArray ? option[0] : option}

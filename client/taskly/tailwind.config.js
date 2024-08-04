@@ -32,6 +32,7 @@ module.exports = {
         shadow_01: "0px 6px 8px 3px rgba(0, 0, 0, 0.25)",
         shadow_02: "0px 3px 4px 3px rgba(0, 0, 0, 0.25)",
         shadow_card: "7px 10px 12px 4px rgba(0, 0, 0, 0.25)",
+        shadow_card_desktop: "0px 4px 45px 2px rgba(0, 0, 0, 0.25)",
       },
       screens: {
         "2xs": "200px",
@@ -60,18 +61,24 @@ module.exports = {
         "text-trim-bottom": "var(--overused-grotesk-trim-bottom, 0.25em)",
       },
       colors: {
-        ternary: "#E8F3FF",
-        pink: "#de9f9f",
-        black: "#0D0C0C",
-        dominant: "#007aff",
-        grey: "#959595",
-        CTA_bg: "#A2CEFE",
-        grey2: "#818181",
-        "span-home-title": "#d2a5a5",
-        purple: "#EA96FF",
-        white: "#FFF",
-        important: "#FA3766",
-        landing_page_bg: "#F7F4ED",
+        primary: "var(--color-primary)",
+        "secondary-overlay": "rgba(var(--color-secondary-rgb), 0.5)",
+        bg: "var(--color-background)",
+        "bg-overlay": "var(--color-background-overlay)",
+        dominant: "var(--color-dominant)",
+        secondary: "var(--color-secondary)",
+        ternary: "var(--color-ternary)",
+        "ternary-section-header": "var(--color-ternary-section-header)",
+        "ternary-2": "var(--color-ternary-2)",
+        text: "var(--color-text)",
+        important: "var(--color-important)",
+        grey: "var(--color-grey)",
+        white: "#fff",
+        main_menu_bg: "var(--main-menu-bg)",
+      },
+      backgroundImage: {
+        "gradient-1": "var(--gradient-1)",
+        "gradient-2": "var(--gradient-2)",
       },
     },
   },
@@ -83,6 +90,16 @@ module.exports = {
           paddingTop: theme("padding.text-trim-top"),
           paddingBottom: theme("padding.text-trim-bottom"),
           display: "inline-block",
+        },
+        ".bg-secondary-10": {
+          "background-color": "rgba(var(--color-secondary-rgb), 0.1)",
+        },
+        // Vous pouvez ajouter d'autres niveaux d'opacité si nécessaire
+        ".bg-secondary-20": {
+          "background-color": "rgba(var(--color-secondary-rgb), 0.2)",
+        },
+        ".bg-secondary-30": {
+          "background-color": "rgba(var(--color-secondary-rgb), 0.3)",
         },
       };
       addUtilities(newUtilities);

@@ -26,16 +26,17 @@ export default function TagSelect({
   const handleTagsChange = useCallback(
     async (newTags) => {
       if (id && newTags && task) {
-        const updatedTask = { ...task, tags: JSON.stringify(newTags) };
+        const updatedTask = { ...task, tags: newTags };
+
         setTask(updatedTask);
-        await modifyTask(updatedTask, "post");
+        await modifyTask(updatedTask);
       }
     },
     [id, task, setTask, modifyTask]
   );
 
   useEffect(() => {
-    if (taskTags && task && JSON.stringify(taskTags) !== task.tags) {
+    if (taskTags && task && taskTags !== task.tags) {
       handleTagsChange(taskTags);
     }
   }, [taskTags, task, handleTagsChange]);
@@ -61,7 +62,10 @@ export default function TagSelect({
         });
         return;
       }
-      setTaskTags((prev) => [...prev, { name, id }]);
+      setTaskTags((prev) => {
+        const newTags = [...prev, { name, id }];
+        return newTags;
+      });
       setIsAddingTag(true);
       setTimeout(() => {
         if (newTagInputRef.current) {
@@ -73,9 +77,12 @@ export default function TagSelect({
   );
 
   const handleNewTagChange = useCallback((index, value) => {
-    setTaskTags((prev) =>
-      prev.map((tag, i) => (i === index ? { ...tag, name: value } : tag))
-    );
+    setTaskTags((prev) => {
+      const newTags = prev.map((tag, i) =>
+        i === index ? { ...tag, name: value } : tag
+      );
+      return newTags;
+    });
   }, []);
 
   const handleNewTagBlur = useCallback(
@@ -109,9 +116,13 @@ export default function TagSelect({
         if (tag.id === undefined) {
           const response = await addTag(newName);
           const addedTag = response.find((resTag) => resTag.name === newName);
-          setTaskTags((prev) =>
-            prev.map((t, i) => (i === index ? { ...t, id: addedTag.id } : t))
-          );
+          setTaskTags((prev) => {
+            const newTags = prev.map((t, i) =>
+              i === index ? { ...t, id: addedTag.id } : t
+            );
+
+            return newTags;
+          });
         } else {
           await updateTag(newName, tag.id);
         }
@@ -146,7 +157,10 @@ export default function TagSelect({
   );
 
   const handleDeleteTag = useCallback((index) => {
-    setTaskTags((prev) => prev.filter((_, i) => i !== index));
+    setTaskTags((prev) => {
+      const newTags = prev.filter((_, i) => i !== index);
+      return newTags;
+    });
   }, []);
 
   return (
@@ -156,7 +170,7 @@ export default function TagSelect({
       othersStyles={`justify-between ${id ? "h-[98%]" : "h-[77.5%]"}`}
     >
       <div className="flex justify-between items-center m-[1%]">
-        <h2 className="p-[3%] font-bold text-2xl">Tag(s)</h2>
+        <h2 className="p-[3%] font-bold text-2xl text-text">Tag(s)</h2>
         <button
           className="justify-center items-center font-bold"
           onClick={() => handleAddTag("")}
@@ -190,11 +204,11 @@ export default function TagSelect({
                 value={tag.name}
                 onChange={(e) => handleNewTagChange(index, e.target.value)}
                 onBlur={() => handleNewTagBlur(index)}
-                className="border-none text-base bg-transparent focus:outline-none focus:ring-0"
+                className="text-text border-none text-base bg-transparent focus:outline-none focus:ring-0"
               />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="cursor-pointer hover:text-dominant transition transition-color"
+                className="cursor-pointer hover:text-dominant transition transition-color text-text"
                 viewBox="0 0 24 24"
                 width="24"
                 height="24"
@@ -225,6 +239,7 @@ export default function TagSelect({
         >
           {tags.map((tag) => {
             if (
+              taskTags &&
               taskTags.some(
                 (t) => t.name.toLowerCase() === tag.name.toLowerCase()
               )
@@ -235,9 +250,9 @@ export default function TagSelect({
               <SwiperSlide key={tag.id} style={{ width: "auto" }}>
                 <button
                   onClick={() => handleTagClick(tag)}
-                  className="cursor-pointer hover:scale-105 transition-all flex items-center justify-center bg-white rounded-[20px] h-10 px-4 shadow-md"
+                  className="cursor-pointer hover:scale-105 transition-all flex items-center justify-center bg-primary rounded-[20px] h-10 px-4 shadow-md"
                 >
-                  <span className="text-xs font-bold whitespace-nowrap">
+                  <span className="text-xs text-text font-bold whitespace-nowrap">
                     {tag.name}
                   </span>
                 </button>
