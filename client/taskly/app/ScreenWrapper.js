@@ -53,8 +53,7 @@ export default function ScreenWrapper({ children }) {
   return (
     <div
       className={`${wrapperClassName} ${
-        !isMobile &&
-        " theme-dark absolute w-[100vw] h-[100vh] inset-0 z-0 bg-bg"
+        !isMobile && " theme-dar absolute w-[100vw] h-[100vh] inset-0 z-0 bg-bg"
       }`}
     >
       {isMobile ? (

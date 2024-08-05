@@ -107,13 +107,7 @@ export default function TaskForm({
       setLinked_section_name(sectionName || "");
     }
   }, [linked_section, sections]);
-
-  useEffect(() => {
-    if (!isTaskMenuOpen) {
-      resetTaskMenu();
-    }
-  }, [isTaskMenuOpen]);
-
+  
   const resetTaskMenu = () => {
     setTaskWorkspace("");
     setTitleValue("");
@@ -127,6 +121,12 @@ export default function TaskForm({
     setElementPickerMenuOpen(false);
     setSectionSelectMenuOpen(false);
   };
+
+  useEffect(() => {
+    if (!isTaskMenuOpen) {
+      resetTaskMenu();
+    }
+  }, [isTaskMenuOpen, resetTaskMenu]);
 
   const handleDateSelect = (date) => {
     if (

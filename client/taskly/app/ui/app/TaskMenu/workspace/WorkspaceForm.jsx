@@ -66,12 +66,21 @@ export default function WorkspaceForm({
       console.error(error);
     }
   };
+  const resetWorkspaceForm = () => {
+    setActiveWorkspace("");
+    setWorkspaceSections([]);
+    setCollaborators([]);
+    setNameValue("");
+  };
 
+  const transitionStyles = `transition-all duration-300 ease-in-out ${
+    isTransitioning || !showContent ? "opacity-0" : "opacity-100"
+  }`;
   useEffect(() => {
     if (!isTaskMenuOpen) {
       resetWorkspaceForm();
     }
-  }, [isTaskMenuOpen]);
+  }, [isTaskMenuOpen, resetWorkspaceForm]);
 
   useEffect(() => {
     if (!id || !workspaces || !sections) return;
@@ -91,17 +100,6 @@ export default function WorkspaceForm({
     setNameValue(foundWorkspace.name);
     setWorkspaceSections(uniqueSectionIds);
   }, [id, workspaces, sections]);
-
-  const resetWorkspaceForm = () => {
-    setActiveWorkspace("");
-    setWorkspaceSections([]);
-    setCollaborators([]);
-    setNameValue("");
-  };
-
-  const transitionStyles = `transition-all duration-300 ease-in-out ${
-    isTransitioning || !showContent ? "opacity-0" : "opacity-100"
-  }`;
 
   return (
     <div className={`w-full h-full flex flex-col ${transitionStyles}`}>

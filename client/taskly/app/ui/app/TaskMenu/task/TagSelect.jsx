@@ -76,15 +76,26 @@ export default function TagSelect({
     [taskTags, handleError]
   );
 
-  const handleNewTagChange = useCallback((index, value) => {
-    setTaskTags((prev) => {
-      const newTags = prev.map((tag, i) =>
-        i === index ? { ...tag, name: value } : tag
-      );
-      return newTags;
-    });
-  }, []);
-
+  const handleNewTagChange = useCallback(
+    (index, value) => {
+      setTaskTags((prev) => {
+        const newTags = prev.map((tag, i) =>
+          i === index ? { ...tag, name: value } : tag
+        );
+        return newTags;
+      });
+    },
+    [setTaskTags]
+  );
+  const handleDeleteTag = useCallback(
+    (index) => {
+      setTaskTags((prev) => {
+        const newTags = prev.filter((_, i) => i !== index);
+        return newTags;
+      });
+    },
+    [setTaskTags]
+  );
   const handleNewTagBlur = useCallback(
     async (index) => {
       const tag = taskTags[index];
@@ -133,7 +144,7 @@ export default function TagSelect({
         handleDeleteTag(index);
       }
     },
-    [taskTags, handleError, addTag, updateTag]
+    [taskTags, handleError, addTag, updateTag, handleDeleteTag]
   );
 
   const handleTagClick = useCallback(
@@ -155,13 +166,6 @@ export default function TagSelect({
     },
     [taskTags, handleAddTag, handleError]
   );
-
-  const handleDeleteTag = useCallback((index) => {
-    setTaskTags((prev) => {
-      const newTags = prev.filter((_, i) => i !== index);
-      return newTags;
-    });
-  }, []);
 
   return (
     <TaskMenuSectionContainer

@@ -1,9 +1,10 @@
 import { debounce } from "lodash";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useMenu } from "../../../../context/MenuContext";
+
 const SearchInput = ({ query, onQueryChange, placeholder }) => {
   const [localQuery, setLocalQuery] = useState(query);
-  const {  isSearchMenuOpen } = useMenu();
+  const { isSearchMenuOpen } = useMenu();
   const inputRef = useRef();
 
   useEffect(() => {
@@ -15,7 +16,9 @@ const SearchInput = ({ query, onQueryChange, placeholder }) => {
   }, [query]);
 
   const debouncedOnQueryChange = useCallback(
-    debounce((value) => onQueryChange(value), 300),
+    debounce((value) => {
+      onQueryChange(value);
+    }, 300),
     [onQueryChange]
   );
 

@@ -38,5 +38,5 @@ const SettingsLine = React.memo(
     );
   }
 );
-
+SettingsLine.displayName = "SettingsLine";
 export default SettingsLine;

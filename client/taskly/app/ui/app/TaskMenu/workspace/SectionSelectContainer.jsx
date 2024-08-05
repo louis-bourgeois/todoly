@@ -40,7 +40,7 @@ export default function SectionSelectContainer({
       const results = fuse.search(inputValue);
       setSuggestions(results.map((result) => result.item));
     }
-  }, [inputValue, sections]);
+  }, [inputValue, sections, fuse]);
 
   useEffect(() => {
     if (inputRef.current) {

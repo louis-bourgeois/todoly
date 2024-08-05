@@ -30,7 +30,7 @@ export default function SectionContainer({
     (taskId) => {
       toggleTaskMenu(taskId, null);
     },
-    [activeTask, setActiveTask, toggleTaskMenu]
+    [toggleTaskMenu]
   );
 
   const filteredSections = useMemo(

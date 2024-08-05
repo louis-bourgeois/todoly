@@ -33,6 +33,7 @@ const ButtonContent = memo(({ label, isDropdown, isOpen }) => (
     )}
   </span>
 ));
+ButtonContent.displayName = "ButtonContent";
 
 const DropdownContent = memo(
   ({ options, onOptionClick, isOpen, buttonRect, maxVisibleOptions = 5 }) => {
@@ -62,7 +63,7 @@ const DropdownContent = memo(
 
           dropdownRef.current.style.top = `${top}px`;
           dropdownRef.current.style.left = `${leftPos}px`;
-          dropdownRef.current.style.width = `${width + width/8}px`; // Ajout de 20px à la largeur du bouton
+          dropdownRef.current.style.width = `${width + width / 8}px`; // Ajout de 20px à la largeur du bouton
         };
 
         updatePosition();
@@ -112,6 +113,8 @@ const DropdownContent = memo(
     );
   }
 );
+
+DropdownContent.displayName = "DropdwonContent";
 
 const Button = forwardRef(
   (

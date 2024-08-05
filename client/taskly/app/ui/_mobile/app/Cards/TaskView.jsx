@@ -73,6 +73,8 @@ export default function TaskView({ id }) {
       }
     }
   }, [
+    lastUrlSegment,
+    setCardType,
     task,
     taskTitle,
     description,

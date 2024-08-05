@@ -27,22 +27,6 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
       ? daysOfWeekSundayStart
       : daysOfWeekMondayStart
   );
-
-  useEffect(() => {
-    generateDays(currentDate);
-    setAdjustedDaysOfWeek(
-      startOfWeekOnSunday === "Sunday"
-        ? daysOfWeekSundayStart
-        : daysOfWeekMondayStart
-    );
-  }, [currentDate, startOfWeekOnSunday]);
-
-  useEffect(() => {
-    if (selectedDate && !isSameMonth(new Date(selectedDate), currentDate)) {
-      setCurrentDate(new Date(selectedDate));
-    }
-  }, [selectedDate]);
-
   const generateDays = (date) => {
     const weekStartsOn = startOfWeekOnSunday === "Sunday" ? 0 : 1;
     const start = startOfWeek(startOfMonth(date), { weekStartsOn });
@@ -55,6 +39,20 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
     }
     setDays(daysArray);
   };
+  useEffect(() => {
+    generateDays(currentDate);
+    setAdjustedDaysOfWeek(
+      startOfWeekOnSunday === "Sunday"
+        ? daysOfWeekSundayStart
+        : daysOfWeekMondayStart
+    );
+  }, [currentDate, startOfWeekOnSunday, generateDays]);
+
+  useEffect(() => {
+    if (selectedDate && !isSameMonth(new Date(selectedDate), currentDate)) {
+      setCurrentDate(new Date(selectedDate));
+    }
+  }, [selectedDate, currentDate]);
 
   const isPastDate = (date) => {
     const today = new Date();

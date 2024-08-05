@@ -24,67 +24,90 @@ export default function MobileSearchInput({ onNavigate }) {
   const { workspaces } = useWorkspace();
   const { tags } = useTag();
   const pathname = usePathname();
+
   const debouncedSetSuggestions = useCallback(
-    debounce((value) => {
-      if (value.startsWith("/")) {
-        // Command mode
-        const commands = [
-          { id: "add", title: "Open add Menu" },
-          { id: "goto", title: "Go to" },
-          { id: "logout", title: "Logout" },
-          { id: "addWorkspace", title: "Add Workspace" },
-          { id: "openMainMenu", title: "Open Main Menu" },
-          { id: "openSettings", title: "Open Settings" },
-          { id: "changeWorkspace", title: "Change Current Workspace" },
-          { id: "deleteWorkspace", title: "Delete Workspace" },
-          { id: "addTag", title: "Add Tag" },
-        ];
-        setSuggestions(
-          commands.filter((cmd) =>
-            cmd.title.toLowerCase().includes(value.slice(1).toLowerCase())
-          )
-        );
-        setCommandMode("command");
-      } else if (commandMode === "goto") {
-        setSuggestions([
-          { id: "currently", title: "Currently" },
-          { id: "all", title: "All" },
-        ]);
-      } else if (
-        commandMode === "changeWorkspace" ||
-        commandMode === "deleteWorkspace"
-      ) {
-        setSuggestions(
-          workspaces.map((workspace) => ({
-            id: workspace.id,
-            title: workspace.name,
-          }))
-        );
-      } else if (commandMode === "addTag") {
-        setSuggestions(
-          tags.map((tag) => ({
-            id: tag.id,
-            title: tag.name,
-          }))
-        );
-      } else {
-        // Task search mode
-        const filteredTasks = tasks.filter(
-          (task) =>
-            task.title && task.title.toLowerCase().includes(value.toLowerCase())
-        );
-        setSuggestions(filteredTasks);
-        setCommandMode(null);
-        setSelectedTask(null);
-      }
-    }, 300),
+    debounce(
+      (
+        value,
+        commandMode,
+        workspaces,
+        tags,
+        tasks,
+        setSuggestions,
+        setCommandMode,
+        setSelectedTask
+      ) => {
+        if (value.startsWith("/")) {
+          // Command mode
+          const commands = [
+            { id: "add", title: "Open add Menu" },
+            { id: "goto", title: "Go to" },
+            { id: "logout", title: "Logout" },
+            { id: "addWorkspace", title: "Add Workspace" },
+            { id: "openMainMenu", title: "Open Main Menu" },
+            { id: "openSettings", title: "Open Settings" },
+            { id: "changeWorkspace", title: "Change Current Workspace" },
+            { id: "deleteWorkspace", title: "Delete Workspace" },
+            { id: "addTag", title: "Add Tag" },
+          ];
+          setSuggestions(
+            commands.filter((cmd) =>
+              cmd.title.toLowerCase().includes(value.slice(1).toLowerCase())
+            )
+          );
+          setCommandMode("command");
+        } else if (commandMode === "goto") {
+          setSuggestions([
+            { id: "currently", title: "Currently" },
+            { id: "all", title: "All" },
+          ]);
+        } else if (
+          commandMode === "changeWorkspace" ||
+          commandMode === "deleteWorkspace"
+        ) {
+          setSuggestions(
+            workspaces.map((workspace) => ({
+              id: workspace.id,
+              title: workspace.name,
+            }))
+          );
+        } else if (commandMode === "addTag") {
+          setSuggestions(
+            tags.map((tag) => ({
+              id: tag.id,
+              title: tag.name,
+            }))
+          );
+        } else {
+          // Task search mode
+          const filteredTasks = tasks.filter(
+            (task) =>
+              task.title &&
+              task.title.toLowerCase().includes(value.toLowerCase())
+          );
+          setSuggestions(filteredTasks);
+          setCommandMode(null);
+          setSelectedTask(null);
+        }
+      },
+      300
+    ),
     [tasks, workspaces, tags, setSuggestions, setCommandMode, setSelectedTask]
   );
 
   const handleInputChange = (e) => {
     const value = e.target.value;
     setSearchQuery(value);
-    debouncedSetSuggestions(value);
+    debouncedSetSuggestions(
+      value,
+      commandMode,
+      workspaces,
+      tags,
+      tasks,
+      setSuggestions,
+      setCommandMode,
+      setSelectedTask
+    );
   };
 
   const handleKeyDown = (e) => {
@@ -160,7 +183,7 @@ export default function MobileSearchInput({ onNavigate }) {
     }
   };
 
-  const resetState = () => {
+  const resetState = useCallback(() => {
     const lastSegment = pathname.split("/").pop();
     setSearchQuery("");
     setSuggestions([]);
@@ -170,13 +193,21 @@ export default function MobileSearchInput({ onNavigate }) {
     setCardType(
       lastSegment.charAt(0).toUpperCase() + lastSegment.slice(1).toLowerCase()
     );
-  };
+  }, [
+    pathname,
+    setCardType,
+    setSearchQuery,
+    setSuggestions,
+    setSelectedIndex,
+    setCommandMode,
+    setSelectedTask,
+  ]);
 
   useEffect(() => {
     return () => {
       resetState();
     };
-  }, []);
+  }, [resetState]);
 
   return (
     <div className="flex rounded-full justify-start px-[15px] border py-[10px] mr-[2.5%] items-center shadow-shadow_01 w-3/4">

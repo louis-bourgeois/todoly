@@ -49,14 +49,15 @@ export default function TaskMenu({
       setElementType("Task");
     }
   }, [taskId, workspaceId, element]);
+  const resetTaskMenu = () => {
+    setElementType(element);
+  };
   useEffect(() => {
     if (!isTaskMenuOpen) {
       resetTaskMenu();
     }
-  }, [isTaskMenuOpen]);
-  const resetTaskMenu = () => {
-    setElementType(element);
-  };
+  }, [isTaskMenuOpen, resetTaskMenu]);
+
   const transitionStyles = `transition-all duration-300 ease-in-out ${
     isTransitioning || !showContent ? "opacity-0" : "opacity-100"
   }`;

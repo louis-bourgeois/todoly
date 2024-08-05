@@ -1,4 +1,14 @@
 import { useUserPreferences } from "../../../../context/UserPreferencesContext";
+import DatePicker from "../DatePicker/DatePicker";
+import DescriptionContainer from "./DescriptionContainer";
+import PrioritySelection from "./PrioritySelection";
+import ElementPicker from "./task/ElementPicker";
+import SectionSelection from "./task/SectionSelection";
+import TagSelect from "./task/TagSelect";
+import WorkspaceSelect from "./task/WorkspaceSelect";
+import TaskMenuButton from "./TaskMenuButton";
+import TaskMenuSectionContainer from "./TaskMenuSectionContainer";
+import TitleInput from "./TitleInput";
 
 export default function ElementForm({ transitionStyles, id, visibility }) {
   const { preferences } = useUserPreferences();
@@ -12,7 +22,7 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
   const [taskTags, setTaskTags] = useState([]);
   const [descriptionValue, setDescriptionValue] = useState("");
   const [canSubmit, setCanSubmit] = useState(false);
-  const [taskWorkspace, setTaskWorkspace] = useState("");
+  const [setTaskWorkspace] = useState("");
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
   const [sectionSelectMenuOpen, setSectionSelectMenuOpen] = useState(false);
   const [elementPickerMenuOpen, setElementPickerMenuOpen] = useState(false);
@@ -40,20 +50,21 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
     } else {
       setCanSubmit(false);
     }
-  }, [id]);
+  }, [id, sections, tasks]);
 
   useEffect(() => {
     if (linked_section) {
       console.log("update:", linked_section);
       updatePreference({ key: "Last_Section", value: linked_section });
     }
-  }, [linked_section]);
+  }, []);
 
   useEffect(() => {
     if (!isTaskMenuOpen) {
       resetTaskMenu();
     }
-  }, [isTaskMenuOpen]);
+  }, [isTaskMenuOpen, resetTaskMenu]);
+
   const resetTaskMenu = () => {
     setTaskWorkspace("");
     setTitleValue("");

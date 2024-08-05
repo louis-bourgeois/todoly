@@ -101,7 +101,7 @@ const CTA = React.memo(
         if (ref?.current && contentRef?.current) {
           ref.current.style.width = `${contentRef.current.offsetWidth}px`;
         }
-      }, [displayIcons, title]);
+      }, [displayIcons, title, ref]);
 
       const iconStyle = useMemo(
         () => ({

@@ -218,7 +218,7 @@ const SearchMenu = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [filteredResults, selectedIndex, commandMode, query]);
+  }, [filteredResults, selectedIndex, commandMode, query, handleKeyDown]);
 
   return (
     <div

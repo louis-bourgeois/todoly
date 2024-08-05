@@ -24,7 +24,7 @@ export default function AuthLayout({ children }) {
     };
 
     verifyAuth();
-  }, [isAuthenticated, preferences, checkAuth, router]);
+  }, [isAuthenticated, preferences, checkAuth, router, loading]);
 
   return <>{children}</>;
 }

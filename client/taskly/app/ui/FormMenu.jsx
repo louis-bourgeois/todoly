@@ -1,5 +1,4 @@
 "use client";
-import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
@@ -34,6 +33,35 @@ export default function FormMenu({
   const [isChecked, setIsChecked] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [passwordMismatchError, setPasswordMismatchError] = useState("");
+
+  const addUser = useCallback(
+    async (data) => {
+      const {
+        confirm_password,
+        "terms and conditions checkbox": termsConditions,
+        ...cleanedFormData
+      } = data;
+      try {
+        const result = await axios.post(
+          "http://localhost:3001/api/users/register",
+          { data: cleanedFormData }
+        );
+        if (result.status === 201) {
+          const res = await login(formData);
+          if (res && res.status === 200) {
+            router.push("/app");
+          } else {
+            handleError({
+              response: { data: { errorType: "UNAUTHORIZED_SIGNUP" } },
+            });
+          }
+        }
+      } catch (err) {
+        handleError(err);
+      }
+    },
+    [formData, login, router, handleError]
+  );
 
   const handleChange = useCallback(
     (e) => {
@@ -90,36 +118,15 @@ export default function FormMenu({
         }
       }
     },
-    [action, formData, login, router, handleError, passwordMismatchError]
-  );
-
-  const addUser = useCallback(
-    async (data) => {
-      const {
-        confirm_password,
-        "terms and conditions checkbox": termsConditions,
-        ...cleanedFormData
-      } = data;
-      try {
-        const result = await axios.post(
-          "http://localhost:3001/api/users/register",
-          { data: cleanedFormData }
-        );
-        if (result.status === 201) {
-          const res = await login(formData);
-          if (res && res.status === 200) {
-            router.push("/app");
-          } else {
-            handleError({
-              response: { data: { errorType: "UNAUTHORIZED_SIGNUP" } },
-            });
-          }
-        }
-      } catch (err) {
-        handleError(err);
-      }
-    },
-    [formData, login, router, handleError]
+    [
+      addUser,
+      action,
+      formData,
+      login,
+      router,
+      handleError,
+      passwordMismatchError,
+    ]
   );
 
   const handleCheckboxChange = (e) => {

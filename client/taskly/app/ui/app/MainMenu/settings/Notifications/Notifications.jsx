@@ -21,7 +21,7 @@ export default function Notifications({ transitionStyles }) {
       value: allowNotifications.toString(),
     });
     console.log(preferences);
-  }, [allowNotifications, updatePreference]);
+  }, [allowNotifications, updatePreference, preferences]);
 
   useEffect(() => {
     updatePreference({

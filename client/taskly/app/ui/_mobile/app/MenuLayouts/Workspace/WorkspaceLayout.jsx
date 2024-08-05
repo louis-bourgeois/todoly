@@ -108,6 +108,7 @@ export default function WorkspaceLayout() {
       console.error("Failed to create workspace:", error);
     }
   }, [
+    lastUrlSegment,
     workspaceTitle,
     workspaceDescription,
     workspaceSections,

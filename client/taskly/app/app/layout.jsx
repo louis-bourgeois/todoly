@@ -35,8 +35,9 @@ const AddWorkspaceBubble = ({ onClose, onDontShowAgain }) => {
   return (
     <div className="fixed inset-0 left-2 bg-dominant text-primary rounded-full shadow-lg p-3 max-w-xs z-50 animate-fade-in-out flex items-center">
       <p className="text-xs mr-2">
-        Scroll horizontally to add other element's type
+        Scroll horizontally to add other element&apos;s type
       </p>
+
       <button
         onClick={onDontShowAgain}
         className="text-xs underline hover:text-blue-200 transition-colors"

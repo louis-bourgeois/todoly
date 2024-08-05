@@ -19,7 +19,7 @@ export default function Header({
     ) {
       setProfilePictureVisibility((prev) => !prev);
     }
-  }, [layout]);
+  }, [layout, setProfilePictureVisibility, libelles]);
 
   const isSettingsLayout = libelles.some((libelle) => libelle.name === layout);
   const [isHovered, setIsHovered] = useState(false);

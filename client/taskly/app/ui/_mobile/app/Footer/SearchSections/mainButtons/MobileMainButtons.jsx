@@ -22,7 +22,7 @@ export default function MobileMainButtons() {
 
     // Cleanup
     return () => window.removeEventListener("popstate", updateLastUrlSegment);
-  }, [window.location.pathname]);
+  }, []);
 
   const capitalize = (s) =>
     s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
