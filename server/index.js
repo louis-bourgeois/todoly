@@ -22,6 +22,8 @@ import workspaceRoutes from "./routes/workspaceRoutes.js";
 // Load environment variables
 dotenv.config();
 
+console.log(process.env.SECRET_SESSION);
+
 const app = express();
 const server = createServer(app);
 const io = new Server(server, {
@@ -69,7 +71,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: "test", // faut mettre un env
+    secret: process.env.SECRET_SESSION,
     resave: false,
     saveUninitialized: false,
     cookie: {
