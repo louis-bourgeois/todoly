@@ -69,7 +69,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(
   session({
-    secret: process.env.SECRET_SESSION,
+    secret: "test", // faut mettre un env
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -153,7 +153,7 @@ passport.deserializeUser(async (id, cb) => {
     if (user) {
       cb(null, user);
     } else {
-      cb(new Error("User not found"), false); 
+      cb(new Error("User not found"), false);
     }
   } catch (e) {
     cb(e, false);
