@@ -88,8 +88,6 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
     setTaskWorkspace,
     setTitleValue,
     setStatus,
-    setLinked_section,
-    setLinked_section_name,
     setPriority,
     setDueDate,
     setTaskTags,
@@ -98,8 +96,6 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
     setTask,
     setElementPickerMenuOpen,
     setSectionSelectMenuOpen,
-    setElementType,
-    setCallback,
     sections,
     preferences.Last_Section,
   ]);

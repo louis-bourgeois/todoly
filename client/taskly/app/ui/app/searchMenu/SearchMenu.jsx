@@ -126,52 +126,68 @@ const SearchMenu = () => {
     ]
   );
 
-  const handleResultSelection = (result) => {
-    if (query.startsWith("/")) {
-      // Handle command
-      setCommandMode(result.id);
-      setQuery("");
-      if (result.id === "goto") {
-        setPlaceholder("Select destination");
-      } else if (
-        result.id === "changeWorkspace" ||
-        result.id === "deleteWorkspace"
-      ) {
-        setPlaceholder("Select workspace");
-      } else if (result.id === "addTag") {
-        setPlaceholder("New tag name");
+  const handleResultSelection = useCallback(
+    (result) => {
+      if (query.startsWith("/")) {
+        // Handle command
+        setCommandMode(result.id);
+        setQuery("");
+        if (result.id === "goto") {
+          setPlaceholder("Select destination");
+        } else if (
+          result.id === "changeWorkspace" ||
+          result.id === "deleteWorkspace"
+        ) {
+          setPlaceholder("Select workspace");
+        } else if (result.id === "addTag") {
+          setPlaceholder("New tag name");
+        } else {
+          handleCommand(result.id);
+        }
+      } else if (commandMode === "goto") {
+        router.push(`/app/${result.id}`);
+        resetState();
+      } else if (commandMode === "changeWorkspace") {
+        // TODO: Implement change workspace logic
+        console.log("Change to workspace:", result.title);
+        resetState();
+      } else if (commandMode === "deleteWorkspace") {
+        // TODO: Implement delete workspace logic
+        console.log("Delete workspace:", result.title);
+        resetState();
+      } else if (selectedTask) {
+        // Handle task action
+        switch (result.id) {
+          case "update":
+            toggleTaskMenu(selectedTask.id, "", "Task");
+            break;
+          case "delete":
+            // TODO: Implement delete task logic
+            console.log("Delete task:", selectedTask.title);
+            break;
+        }
+        resetState();
       } else {
-        handleCommand(result.id);
+        // Handle task selection
+        setSelectedTask(result);
+        setSelectedIndex(-1);
       }
-    } else if (commandMode === "goto") {
-      router.push(`/app/${result.id}`);
-      resetState();
-    } else if (commandMode === "changeWorkspace") {
-      // TODO: Implement change workspace logic
-      console.log("Change to workspace:", result.title);
-      resetState();
-    } else if (commandMode === "deleteWorkspace") {
-      // TODO: Implement delete workspace logic
-      console.log("Delete workspace:", result.title);
-      resetState();
-    } else if (selectedTask) {
-      // Handle task action
-      switch (result.id) {
-        case "update":
-          toggleTaskMenu(selectedTask.id, "", "Task");
-          break;
-        case "delete":
-          // TODO: Implement delete task logic
-          console.log("Delete task:", selectedTask.title);
-          break;
-      }
-      resetState();
-    } else {
-      // Handle task selection
-      setSelectedTask(result);
-      setSelectedIndex(-1);
-    }
-  };
+    },
+    [
+      query,
+      commandMode,
+      router,
+      setCommandMode,
+      setQuery,
+      setPlaceholder,
+      handleCommand,
+      resetState,
+      toggleTaskMenu,
+      selectedTask,
+      setSelectedTask,
+      setSelectedIndex,
+    ]
+  );
 
   const handleCommand = (commandId) => {
     switch (commandId) {
@@ -198,11 +214,13 @@ const SearchMenu = () => {
     }
     resetState();
   };
-
-  const handleAddTag = (tagName) => {
-    addTag(tagName);
-    resetState();
-  };
+  const handleAddTag = useCallback(
+    (tagName) => {
+      addTag(tagName);
+      resetState();
+    },
+    [addTag, resetState]
+  );
 
   const resetState = () => {
     setIsMenuVisible(false);

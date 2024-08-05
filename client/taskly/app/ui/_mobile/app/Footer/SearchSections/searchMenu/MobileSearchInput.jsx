@@ -94,7 +94,7 @@ export default function MobileSearchInput({ onNavigate }) {
         },
         300
       ),
-    [tasks, workspaces, tags, setSuggestions, setCommandMode, setSelectedTask]
+    []
   );
 
   const handleInputChange = (e) => {
