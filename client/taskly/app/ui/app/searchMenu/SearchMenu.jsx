@@ -12,11 +12,13 @@ import SearchResults from "./SearchResults";
 
 const SearchMenu = () => {
   const router = useRouter();
-  const { addTag } = useUser();
-  const { tasks } = useTask();
-  const { tags } = useTag();
-  const { workspaces } = useWorkspace();
-  const { toggleTaskMenu, isSearchMenuOpen, toggleSearchMenu } = useMenu();
+  const { addTag } = useUser() || {}; // Assure that addTag is defined
+  const { tasks } = useTask() || { tasks: [] }; // Assure tasks is defined
+  const { tags } = useTag() || { tags: [] }; // Assure tags is defined
+  const { workspaces } = useWorkspace() || { workspaces: [] }; // Assure workspaces is defined
+  const { toggleTaskMenu, isSearchMenuOpen, toggleSearchMenu } =
+    useMenu() || {}; // Assure functions are defined
+
   const [query, setQuery] = useState("");
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -28,14 +30,16 @@ const SearchMenu = () => {
   const [visibility, setVisibility] = useState(isSearchMenuOpen);
   const menuRef = useRef(null);
 
-  useEffect(() => {
-    setVisibility(isSearchMenuOpen);
-    resetState();
-  }, [isSearchMenuOpen]);
+  const resetState = useCallback(() => {
+    setIsMenuVisible(false);
+    setSelectedTask(null);
+    setCommandMode(null);
+    setQuery("");
+    setPlaceholder("Search or type / for commands...");
+  }, []);
 
   const filteredResults = useMemo(() => {
     if (query.startsWith("/")) {
-      // Command mode
       const commands = [
         { id: "add", title: "Open add Menu" },
         { id: "goto", title: "Go to" },
@@ -64,7 +68,6 @@ const SearchMenu = () => {
         title: workspace.name,
       }));
     } else if (selectedTask) {
-      // Task action mode
       return [
         { id: "update", title: `Update task: ${selectedTask.title}` },
         { id: "delete", title: `Delete task: ${selectedTask.title}` },
@@ -72,12 +75,10 @@ const SearchMenu = () => {
     } else if (commandMode === "addTag") {
       return tags.map((tag) => ({ id: tag.id, title: tag.name }));
     } else {
-      let filteredTasks = tasks.filter(
+      return tasks.filter(
         (task) =>
           task.title && task.title.toLowerCase().includes(query.toLowerCase())
       );
-
-      return filteredTasks;
     }
   }, [query, tasks, selectedTask, commandMode, workspaces, tags]);
 
@@ -88,6 +89,94 @@ const SearchMenu = () => {
     setSelectedTask(null);
     setCommandMode(null);
   };
+
+  const handleAddTag = useCallback(
+    (tagName) => {
+      if (addTag) {
+        addTag(tagName);
+        resetState();
+      }
+    },
+    [addTag, resetState]
+  );
+  const handleCommand = (commandId) => {
+    switch (commandId) {
+      case "add":
+        console.log("Open add menu");
+        break;
+      case "logout":
+        console.log("Logout");
+        break;
+      case "addWorkspace":
+        console.log("Add workspace");
+        break;
+      case "openMainMenu":
+        console.log("Open main menu");
+        break;
+      case "openSettings":
+        console.log("Open settings");
+        break;
+    }
+    resetState();
+  };
+  const handleResultSelection = useCallback(
+    (result) => {
+      if (query.startsWith("/")) {
+        setCommandMode(result.id);
+        setQuery("");
+        if (result.id === "goto") {
+          setPlaceholder("Select destination");
+        } else if (
+          result.id === "changeWorkspace" ||
+          result.id === "deleteWorkspace"
+        ) {
+          setPlaceholder("Select workspace");
+        } else if (result.id === "addTag") {
+          setPlaceholder("New tag name");
+        } else {
+          handleCommand(result.id);
+        }
+      } else if (commandMode === "goto") {
+        router.push(`/app/${result.id}`);
+        resetState();
+      } else if (commandMode === "changeWorkspace") {
+        console.log("Change to workspace:", result.title);
+        resetState();
+      } else if (commandMode === "deleteWorkspace") {
+        console.log("Delete workspace:", result.title);
+        resetState();
+      } else if (selectedTask) {
+        switch (result.id) {
+          case "update":
+            if (toggleTaskMenu) toggleTaskMenu(selectedTask.id, "", "Task");
+            break;
+          case "delete":
+            console.log("Delete task:", selectedTask.title);
+            break;
+        }
+        resetState();
+      } else {
+        setSelectedTask(result);
+        setSelectedIndex(-1);
+      }
+    },
+    [
+      query,
+      commandMode,
+      router,
+      handleCommand,
+      resetState,
+      toggleTaskMenu,
+      selectedTask,
+      setSelectedTask,
+      setSelectedIndex,
+    ]
+  );
+
+  useEffect(() => {
+    setVisibility(isSearchMenuOpen);
+    resetState();
+  }, [isSearchMenuOpen, resetState]);
 
   const handleKeyDown = useCallback(
     (e) => {
@@ -118,117 +207,12 @@ const SearchMenu = () => {
       visibility,
       filteredResults,
       selectedIndex,
-      setSelectedIndex,
       handleAddTag,
       handleResultSelection,
       query,
       commandMode,
     ]
   );
-
-  const handleResultSelection = useCallback(
-    (result) => {
-      if (query.startsWith("/")) {
-        // Handle command
-        setCommandMode(result.id);
-        setQuery("");
-        if (result.id === "goto") {
-          setPlaceholder("Select destination");
-        } else if (
-          result.id === "changeWorkspace" ||
-          result.id === "deleteWorkspace"
-        ) {
-          setPlaceholder("Select workspace");
-        } else if (result.id === "addTag") {
-          setPlaceholder("New tag name");
-        } else {
-          handleCommand(result.id);
-        }
-      } else if (commandMode === "goto") {
-        router.push(`/app/${result.id}`);
-        resetState();
-      } else if (commandMode === "changeWorkspace") {
-        // TODO: Implement change workspace logic
-        console.log("Change to workspace:", result.title);
-        resetState();
-      } else if (commandMode === "deleteWorkspace") {
-        // TODO: Implement delete workspace logic
-        console.log("Delete workspace:", result.title);
-        resetState();
-      } else if (selectedTask) {
-        // Handle task action
-        switch (result.id) {
-          case "update":
-            toggleTaskMenu(selectedTask.id, "", "Task");
-            break;
-          case "delete":
-            // TODO: Implement delete task logic
-            console.log("Delete task:", selectedTask.title);
-            break;
-        }
-        resetState();
-      } else {
-        // Handle task selection
-        setSelectedTask(result);
-        setSelectedIndex(-1);
-      }
-    },
-    [
-      query,
-      commandMode,
-      router,
-      setCommandMode,
-      setQuery,
-      setPlaceholder,
-      handleCommand,
-      resetState,
-      toggleTaskMenu,
-      selectedTask,
-      setSelectedTask,
-      setSelectedIndex,
-    ]
-  );
-
-  const handleCommand = (commandId) => {
-    switch (commandId) {
-      case "add":
-        // TODO: Implement open add menu logic
-        console.log("Open add menu");
-        break;
-      case "logout":
-        // TODO: Implement logout logic
-        console.log("Logout");
-        break;
-      case "addWorkspace":
-        // TODO: Implement add workspace logic
-        console.log("Add workspace");
-        break;
-      case "openMainMenu":
-        // TODO: Implement open main menu logic
-        console.log("Open main menu");
-        break;
-      case "openSettings":
-        // TODO: Implement open settings logic
-        console.log("Open settings");
-        break;
-    }
-    resetState();
-  };
-  const handleAddTag = useCallback(
-    (tagName) => {
-      addTag(tagName);
-      resetState();
-    },
-    [addTag, resetState]
-  );
-
-  const resetState = () => {
-    setIsMenuVisible(false);
-    setSelectedTask(null);
-    setCommandMode(null);
-    setQuery("");
-    setPlaceholder("Search or type / for commands...");
-  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -248,7 +232,7 @@ const SearchMenu = () => {
     return () => {
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [filteredResults, selectedIndex, commandMode, query, handleKeyDown]);
+  }, [handleKeyDown]);
 
   return (
     <div
@@ -264,22 +248,20 @@ const SearchMenu = () => {
         className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 z-[500] -translate-y-[20vh] w-[35vw] mx-auto transition-opacity duration-300 ease-in-out ${
           visibility ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
-        onClick={(e) => e.stopPropagation()} // Add this line
       >
         <SearchInput
           query={query}
-          onQueryChange={handleQueryChange}
           placeholder={placeholder}
+          onQueryChange={handleQueryChange}
         />
-        {isMenuVisible && (
-          <SearchResults
-            results={filteredResults}
-            selectedIndex={selectedIndex}
-            onItemClick={handleResultSelection}
-          />
-        )}
+        <SearchResults
+          results={filteredResults}
+          selectedIndex={selectedIndex}
+          onResultSelect={handleResultSelection}
+        />
       </div>
     </div>
   );
 };
+
 export default SearchMenu;

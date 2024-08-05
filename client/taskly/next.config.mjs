@@ -5,12 +5,6 @@ import withPWA from "next-pwa";
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-  compiler: {
-    removeConsole: process.env.NODE_ENV !== "development",
-  },
-  experimental: {
-    optimizeCss: true,
-  },
   images: {
     domains: ["localhost"], // Ajoutez ici les domaines pour vos images
   },
@@ -22,17 +16,6 @@ const nextConfig = {
         permanent: true,
       },
     ];
-  },
-  webpack: (config, { dev, isServer }) => {
-    // Optimisations webpack personnalisées
-    if (!dev && !isServer) {
-      Object.assign(config.resolve.alias, {
-        react: "preact/compat",
-        "react-dom/test-utils": "preact/test-utils",
-        "react-dom": "preact/compat",
-      });
-    }
-    return config;
   },
 };
 
