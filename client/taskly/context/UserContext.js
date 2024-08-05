@@ -11,13 +11,13 @@ import { config } from "../config";
 import { useAuth } from "./AuthContext";
 
 const UserContext = createContext();
-const baseUrl = `${config.apiUrl}/api`;
+const baseUrl = config.apiUrl;
 
 export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const { isAuthenticated, checkAuth } = useAuth();
+  const { isAuthenticated } = useAuth();
 
   const fetchUser = useCallback(async () => {
     if (!isAuthenticated) return;

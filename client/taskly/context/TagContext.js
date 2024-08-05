@@ -11,7 +11,7 @@ import { config } from "../config";
 import { useAuth } from "./AuthContext";
 
 const TagContext = createContext();
-const baseUrl = `${config.apiUrl}/api`;
+const baseUrl = config.apiUrl;
 
 export const useTag = () => useContext(TagContext);
 

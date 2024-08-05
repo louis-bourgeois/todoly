@@ -15,8 +15,11 @@ import { useError } from "./ErrorContext";
 import { useWorkspace } from "./WorkspaceContext";
 
 const TaskContext = createContext();
-const baseUrl = `${config.apiUrl}/api`;
-const socket = io(config.apiUrl);
+const baseUrl = config.apiUrl;
+const socket = io("/", {
+  path: "/socket.io",
+  withCredentials: true,
+});
 
 export const useTask = () => useContext(TaskContext);
 

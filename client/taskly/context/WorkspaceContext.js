@@ -14,7 +14,7 @@ import { useSection } from "./SectionContext";
 import { useUserPreferences } from "./UserPreferencesContext";
 
 const WorkspaceContext = createContext();
-const baseUrl = `${config.apiUrl}/api`;
+const baseUrl = config.apiUrl;
 export const useWorkspace = () => useContext(WorkspaceContext);
 
 export const WorkspaceProvider = ({ children }) => {

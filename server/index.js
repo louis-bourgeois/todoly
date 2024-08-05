@@ -29,10 +29,10 @@ const server = createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
+      "http://89.116.111.43",
+      "http://89.116.111.43:3000",
       "http://localhost:3000",
       "http://192.168.1.100:3000",
-      "http://taskly.local:3000",
-      "http://89.116.111.43:3000", // Ajoute l'IP de ton VPS ici
     ],
     methods: ["GET", "POST"],
     credentials: true,
@@ -43,12 +43,15 @@ const port = process.env.PORT || 3001;
 // CORS options
 const corsOptions = {
   origin: [
+    "http://89.116.111.43",
+    "http://89.116.111.43:3000",
     "http://localhost:3000",
     "http://192.168.1.100:3000",
-    "http://taskly.local:3000",
-    "http://89.116.111.43:3000", // Ajoute l'IP de ton VPS ici
   ],
   credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+
   optionsSuccessStatus: 200,
 };
 
@@ -63,8 +66,10 @@ const limiter = rateLimit({
 });
 
 // Middlewares
-app.use(helmet()); // Sécurise les réponses avec divers en-têtes HTTP
+
 app.use(cors(corsOptions)); // Active CORS avec les options spécifiées
+app.options("*", cors(corsOptions));
+app.use(helmet()); // Sécurise les réponses avec divers en-têtes HTTP
 app.use(limiter); // Applique la limitation de débit
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));

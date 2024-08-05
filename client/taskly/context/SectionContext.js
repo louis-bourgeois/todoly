@@ -11,7 +11,7 @@ import { config } from "../config";
 import { useAuth } from "./AuthContext";
 
 export const SectionContext = createContext();
-const baseUrl = `${config.apiUrl}/api`;
+const baseUrl = config.apiUrl;
 
 export const useSection = () => useContext(SectionContext);
 

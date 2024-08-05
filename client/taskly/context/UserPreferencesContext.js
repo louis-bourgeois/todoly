@@ -13,7 +13,7 @@ import { config } from "../config";
 import { useAuth } from "./AuthContext";
 
 const UserPreferencesContext = createContext();
-const baseUrl = `${config.apiUrl}/api`;
+const baseUrl = config.apiUrl;
 
 export const useUserPreferences = () => useContext(UserPreferencesContext);
 
