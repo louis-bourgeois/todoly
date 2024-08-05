@@ -10,7 +10,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
@@ -27,18 +27,23 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
       ? daysOfWeekSundayStart
       : daysOfWeekMondayStart
   );
-  const generateDays = (date) => {
-    const weekStartsOn = startOfWeekOnSunday === "Sunday" ? 0 : 1;
-    const start = startOfWeek(startOfMonth(date), { weekStartsOn });
-    const end = endOfWeek(endOfMonth(date), { weekStartsOn });
-    const daysArray = [];
-    let day = start;
-    while (day <= end) {
-      daysArray.push(day);
-      day = addDays(day, 1);
-    }
-    setDays(daysArray);
-  };
+
+  const generateDays = useCallback(
+    (date) => {
+      const weekStartsOn = startOfWeekOnSunday === "Sunday" ? 0 : 1;
+      const start = startOfWeek(startOfMonth(date), { weekStartsOn });
+      const end = endOfWeek(endOfMonth(date), { weekStartsOn });
+      const daysArray = [];
+      let day = start;
+      while (day <= end) {
+        daysArray.push(day);
+        day = addDays(day, 1);
+      }
+      setDays(daysArray);
+    },
+    [startOfWeekOnSunday]
+  );
+
   useEffect(() => {
     generateDays(currentDate);
     setAdjustedDaysOfWeek(
@@ -79,12 +84,14 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
   const handleNextMonth = () => {
     setCurrentDate(addDays(endOfMonth(currentDate), 1));
   };
+
   const handleDateClick = (date) => {
     if (!isPastDate(date)) {
       const formattedDate = format(date, "yyyy-MM-dd");
-      onDateSelect(formattedDate); // Pass formatted date
+      onDateSelect(formattedDate);
     }
   };
+
   const handleFastDateClick = (name) => {
     let date;
     const today = new Date();
@@ -104,12 +111,11 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
         if (dayOfWeek === 6 || dayOfWeek === 0) {
           date = addDays(today, 7 + (6 - dayOfWeek));
         } else {
-          // Sinon, calcule le prochain weekend
           date = addDays(today, 6 - dayOfWeek);
         }
         break;
       default:
-        return; // Do nothing if the name is not recognized
+        return;
     }
     onDateSelect(format(date, "yyyy-MM-dd"));
   };
@@ -195,7 +201,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
           {days.map((day, index) => (
             <div
               key={index}
-              className={`text-center text-xs  4xl:text-base transition transition-transform transition-color duration-500 cursor-pointer ${
+              className={`text-center text-xs 4xl:text-base transition-transform transition-color duration-500 cursor-pointer ${
                 isSameMonth(day, currentDate)
                   ? isPastDate(day)
                     ? "text-gray-400 cursor-default"

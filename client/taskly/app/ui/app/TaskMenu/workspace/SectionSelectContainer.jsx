@@ -1,6 +1,6 @@
 import Downshift from "downshift";
 import Fuse from "fuse.js";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
@@ -19,10 +19,12 @@ export default function SectionSelectContainer({
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const inputRef = useRef(null);
-  const fuse = new Fuse(
-    sections.filter((section) => section.name.toLowerCase() !== "other"),
-    fuseOptions
-  );
+  const fuse = useMemo(() => {
+    return new Fuse(
+      sections.filter((section) => section.name.toLowerCase() !== "other"),
+      fuseOptions
+    );
+  }, [sections]);
 
   const allowedToDelete = (() => {
     const personalWorkspace = workspaces?.find((w) => w.name === "Personal");

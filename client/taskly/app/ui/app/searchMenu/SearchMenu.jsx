@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useMenu } from "../../../../context/MenuContext";
 import { useTag } from "../../../../context/TagContext";
 import { useTask } from "../../../../context/TaskContext";
@@ -89,30 +89,42 @@ const SearchMenu = () => {
     setCommandMode(null);
   };
 
-  const handleKeyDown = (e) => {
-    if (visibility) {
-      if (e.key === "ArrowDown") {
-        e.preventDefault();
-        setSelectedIndex((prev) =>
-          prev < filteredResults.length - 1 ? prev + 1 : 0
-        );
-      } else if (e.key === "ArrowUp") {
-        e.preventDefault();
-        setSelectedIndex((prev) =>
-          prev > 0 ? prev - 1 : filteredResults.length - 1
-        );
-      } else if (e.key === "Enter") {
-        e.preventDefault();
-        if (commandMode === "addTag" && query.trim() !== "") {
-          handleAddTag(query.trim());
-        } else {
-          const selectedResult =
-            filteredResults[selectedIndex] || filteredResults[0];
-          handleResultSelection(selectedResult);
+  const handleKeyDown = useCallback(
+    (e) => {
+      if (visibility) {
+        if (e.key === "ArrowDown") {
+          e.preventDefault();
+          setSelectedIndex((prev) =>
+            prev < filteredResults.length - 1 ? prev + 1 : 0
+          );
+        } else if (e.key === "ArrowUp") {
+          e.preventDefault();
+          setSelectedIndex((prev) =>
+            prev > 0 ? prev - 1 : filteredResults.length - 1
+          );
+        } else if (e.key === "Enter") {
+          e.preventDefault();
+          if (commandMode === "addTag" && query.trim() !== "") {
+            handleAddTag(query.trim());
+          } else {
+            const selectedResult =
+              filteredResults[selectedIndex] || filteredResults[0];
+            handleResultSelection(selectedResult);
+          }
         }
       }
-    }
-  };
+    },
+    [
+      visibility,
+      filteredResults,
+      selectedIndex,
+      setSelectedIndex,
+      handleAddTag,
+      handleResultSelection,
+      query,
+      commandMode,
+    ]
+  );
 
   const handleResultSelection = (result) => {
     if (query.startsWith("/")) {

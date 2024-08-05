@@ -1,3 +1,4 @@
+import { useCallback } from "react";
 import { useUserPreferences } from "../../../../context/UserPreferencesContext";
 import DatePicker from "../DatePicker/DatePicker";
 import DescriptionContainer from "./DescriptionContainer";
@@ -50,7 +51,7 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
     } else {
       setCanSubmit(false);
     }
-  }, [id, sections, tasks]);
+  }, [id, sections, tasks, setTaskWorkspace]);
 
   useEffect(() => {
     if (linked_section) {
@@ -63,9 +64,9 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
     if (!isTaskMenuOpen) {
       resetTaskMenu();
     }
-  }, [isTaskMenuOpen, resetTaskMenu]);
+  }, [resetTaskMenu]);
 
-  const resetTaskMenu = () => {
+  const resetTaskMenu = useCallback(() => {
     setTaskWorkspace("");
     setTitleValue("");
     setStatus("todo");
@@ -83,7 +84,25 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
     setSectionSelectMenuOpen(false);
     setElementType("Task");
     setCallback("");
-  };
+  }, [
+    setTaskWorkspace,
+    setTitleValue,
+    setStatus,
+    setLinked_section,
+    setLinked_section_name,
+    setPriority,
+    setDueDate,
+    setTaskTags,
+    setDescriptionValue,
+    setActiveTask,
+    setTask,
+    setElementPickerMenuOpen,
+    setSectionSelectMenuOpen,
+    setElementType,
+    setCallback,
+    sections,
+    preferences.Last_Section,
+  ]);
 
   const handleDateSelect = (date) => {
     setDueDate(date);

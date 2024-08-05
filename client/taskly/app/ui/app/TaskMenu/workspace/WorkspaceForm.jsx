@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useMenu } from "../../../../../context/MenuContext";
 import { useSection } from "../../../../../context/SectionContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
@@ -66,12 +66,17 @@ export default function WorkspaceForm({
       console.error(error);
     }
   };
-  const resetWorkspaceForm = () => {
+  const resetWorkspaceForm = useCallback(() => {
     setActiveWorkspace("");
     setWorkspaceSections([]);
     setCollaborators([]);
     setNameValue("");
-  };
+  }, [
+    setActiveWorkspace,
+    setWorkspaceSections,
+    setCollaborators,
+    setNameValue,
+  ]);
 
   const transitionStyles = `transition-all duration-300 ease-in-out ${
     isTransitioning || !showContent ? "opacity-0" : "opacity-100"

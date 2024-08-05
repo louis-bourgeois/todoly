@@ -1,7 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useMenu } from "../../../../../context/MenuContext";
 import { useSection } from "../../../../../context/SectionContext";
 import { useTask } from "../../../../../context/TaskContext";
@@ -107,8 +107,8 @@ export default function TaskForm({
       setLinked_section_name(sectionName || "");
     }
   }, [linked_section, sections]);
-  
-  const resetTaskMenu = () => {
+
+  const resetTaskMenu = useCallback(() => {
     setTaskWorkspace("");
     setTitleValue("");
     setStatus("todo");
@@ -120,7 +120,20 @@ export default function TaskForm({
     setTask(null);
     setElementPickerMenuOpen(false);
     setSectionSelectMenuOpen(false);
-  };
+  }, [
+    setTaskWorkspace,
+    setTitleValue,
+    setStatus,
+    setPriority,
+    setDueDate,
+    setTaskTags,
+    setDescriptionValue,
+    setActiveTask,
+    setTask,
+    setElementPickerMenuOpen,
+    setSectionSelectMenuOpen,
+    today,
+  ]);
 
   useEffect(() => {
     if (!isTaskMenuOpen) {

@@ -1,5 +1,5 @@
 import { debounce } from "lodash";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMenu } from "../../../../context/MenuContext";
 
 const SearchInput = ({ query, onQueryChange, placeholder }) => {
@@ -15,10 +15,11 @@ const SearchInput = ({ query, onQueryChange, placeholder }) => {
     setLocalQuery(query);
   }, [query]);
 
-  const debouncedOnQueryChange = useCallback(
-    debounce((value) => {
-      onQueryChange(value);
-    }, 300),
+  const debouncedOnQueryChange = useMemo(
+    () =>
+      debounce((value) => {
+        onQueryChange(value);
+      }, 300),
     [onQueryChange]
   );
 
@@ -27,6 +28,13 @@ const SearchInput = ({ query, onQueryChange, placeholder }) => {
     setLocalQuery(value);
     debouncedOnQueryChange(value);
   };
+
+  // Nettoyage du debounce à la destruction du composant
+  useEffect(() => {
+    return () => {
+      debouncedOnQueryChange.cancel();
+    };
+  }, [debouncedOnQueryChange]);
 
   return (
     <div className="relative w-full">

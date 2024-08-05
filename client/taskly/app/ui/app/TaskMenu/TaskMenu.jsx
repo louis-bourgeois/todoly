@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import { useMenu } from "../../../../context/MenuContext";
@@ -49,9 +49,11 @@ export default function TaskMenu({
       setElementType("Task");
     }
   }, [taskId, workspaceId, element]);
-  const resetTaskMenu = () => {
+
+  const resetTaskMenu = useCallback(() => {
     setElementType(element);
-  };
+  }, [element, setElementType]);
+
   useEffect(() => {
     if (!isTaskMenuOpen) {
       resetTaskMenu();

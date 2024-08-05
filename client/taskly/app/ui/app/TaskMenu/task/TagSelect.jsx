@@ -73,7 +73,7 @@ export default function TagSelect({
         }
       }, 0);
     },
-    [taskTags, handleError]
+    [taskTags, handleError, setTaskTags]
   );
 
   const handleNewTagChange = useCallback(
@@ -144,7 +144,7 @@ export default function TagSelect({
         handleDeleteTag(index);
       }
     },
-    [taskTags, handleError, addTag, updateTag, handleDeleteTag]
+    [taskTags, handleError, addTag, updateTag, handleDeleteTag, setTaskTags]
   );
 
   const handleTagClick = useCallback(

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import Circle from "../Circle";
 import DropdownMenu from "../DropdownMenu";
@@ -18,7 +18,7 @@ export default function Appearance({ transitionStyles }) {
     return `#${hex}`;
   };
 
-  const rows = [
+  const rows = useMemo(() => [
     { color: "#ffffff" },
     { color: "#f7f4ed" },
     { color: "#007AFF" },
@@ -26,7 +26,7 @@ export default function Appearance({ transitionStyles }) {
     { color: "#71EAE2" },
     { color: "#FF659C" },
     { color: "#000000" },
-  ];
+  ]);
 
   const handleThemeClick = async (value) => {
     setTheme(value);

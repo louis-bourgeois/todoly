@@ -5,6 +5,7 @@ import { useWorkspace } from "../../../../../../context/WorkspaceContext";
 import WorkspaceLayoutDescription from "./WorkspaceLayoutDescription";
 import WorkspaceLayoutHeader from "./WorkspaceLayoutHeader";
 import WorkspaceLayoutSection from "./WorkspaceLayoutSection";
+
 const capitalize = (str) => {
   if (typeof str !== "string" || str.length === 0) return str;
   return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
@@ -97,7 +98,7 @@ export default function WorkspaceLayout() {
       console.log("Workspace created:", workspaceData);
       const newCardType = capitalize(lastUrlSegment);
       console.log("Setting new cardType:", newCardType);
-      setCardType(newCardType);
+      setCardType(newCardType); // <-- Assurez-vous que setCardType est stable ou mémorisé
       setCollaborators([]);
       setWorkspaceSections([]);
       setWorkspaceDescription("");
@@ -114,6 +115,7 @@ export default function WorkspaceLayout() {
     workspaceSections,
     collaborators,
     createWorkspace,
+    setCardType,
   ]);
 
   return (
