@@ -1,4 +1,3 @@
-import { io } from "../index.js";
 import Task from "../models/Task.js";
 import User from "../models/User.js";
 import { isUUID } from "../utils/validate.js";
@@ -22,7 +21,6 @@ export async function updateTask(req, res) {
     const { task } = req.body;
     console.log("received: ", task);
     await Task.update(task);
-    io.emit("taskUpdated", task);
     res.sendStatus(200);
   } catch (err) {
     console.error(err);
@@ -67,8 +65,6 @@ export async function addTask(req, res) {
         );
       })
     );
-
-    io.emit("taskAdded", savedTask[0]);
     console.log("tasks : ", user_tasks);
     res.status(201).json({
       message: "Task added successfully",
@@ -94,7 +90,6 @@ export async function deleteTask(req, res) {
 
   if (uuid_isOK) {
     await Task.delete(uuid);
-    io.emit("taskDeleted", uuid);
   }
 
   res.sendStatus(200);
@@ -115,7 +110,6 @@ export const addTaskToWorkspace = async (req, res) => {
   const { workspaceId, taskId } = req.params;
   try {
     await Task.addTaskToWorkspace(taskId, workspaceId);
-    io.emit("taskAddedToWorkspace", taskId);
     res.status(201).send("Task added to workspace");
   } catch (error) {
     console.error(error);
@@ -127,7 +121,6 @@ export const removeTaskFromWorkspace = async (req, res) => {
   const { workspaceId, taskId } = req.params;
   try {
     await Task.removeTaskFromWorkspace(taskId, workspaceId);
-    io.emit("taskRemovedFromWorkspace", taskId);
     res.status(200).send("Task removed from workspace");
   } catch (error) {
     console.error(error);

@@ -8,13 +8,12 @@ import {
   useMemo,
   useState,
 } from "react";
-import { config } from "../config";
 import { useAuth } from "./AuthContext";
 import { useSection } from "./SectionContext";
 import { useUserPreferences } from "./UserPreferencesContext";
 
 const WorkspaceContext = createContext();
-const baseUrl = config.apiUrl;
+const baseUrl = "/api";
 export const useWorkspace = () => useContext(WorkspaceContext);
 
 export const WorkspaceProvider = ({ children }) => {

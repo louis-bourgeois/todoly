@@ -9,7 +9,7 @@ import helmet from "helmet";
 import { createServer } from "http";
 import passport from "passport";
 import { Strategy } from "passport-local";
-import { Server } from "socket.io";
+
 import User from "./models/User.js";
 import appRoutes from "./routes/appRoutes.js";
 import preferenceRoutes from "./routes/preferenceRoutes.js";
@@ -26,18 +26,7 @@ console.log(process.env.SECRET_SESSION);
 
 const app = express();
 const server = createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: [
-      "http://89.116.111.43",
-      "http://89.116.111.43:3000",
-      "http://localhost:3000",
-      "http://192.168.1.100:3000",
-    ],
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
+
 const port = process.env.PORT || 3001;
 
 // CORS options
@@ -100,13 +89,6 @@ app.use("/api/tags", tagRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/preferences", preferenceRoutes);
 
-io.on("connection", (socket) => {
-  console.log("a user connected");
-  socket.on("disconnect", () => {
-    console.log("user disconnected");
-  });
-});
-
 // Root endpoint for basic server check
 app.get("/", (req, res) => {
   res.send(
@@ -166,8 +148,6 @@ passport.deserializeUser(async (id, cb) => {
     cb(e, false);
   }
 });
-
-export { io };
 
 server.listen(port, "0.0.0.0", () => {
   console.log(`Server running on http://0.0.0.0:${port}`);

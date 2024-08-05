@@ -7,11 +7,10 @@ import {
   useEffect,
   useState,
 } from "react";
-import { config } from "../config";
 import { useAuth } from "./AuthContext";
 
 const TagContext = createContext();
-const baseUrl = config.apiUrl;
+const baseUrl = "/api";
 
 export const useTag = () => useContext(TagContext);
 

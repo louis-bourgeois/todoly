@@ -9,9 +9,8 @@ import {
   useState,
 } from "react";
 
-import { config } from "../config";
 import { useError } from "./ErrorContext";
-const baseUrl = `${config.apiUrl}/api`;
+const baseUrl = `/api`;
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);
@@ -58,7 +57,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, [router]);
 
-    const checkAuth = useCallback(async () => {
+  const checkAuth = useCallback(async () => {
     try {
       const response = await axios.get(`${baseUrl}/users/me`, {
         withCredentials: true,

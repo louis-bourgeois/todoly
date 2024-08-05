@@ -5,7 +5,16 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
-    domains: ["localhost", "89.116.111.43"], // Ajouté l'IP de votre VPS
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+      },
+      {
+        protocol: "http",
+        hostname: "89.116.111.43",
+      },
+    ],
   },
   async redirects() {
     return [
@@ -20,11 +29,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "http://89.116.111.43:3001/api/:path*",
-      },
-      {
-        source: "/socket.io/:path*",
-        destination: "http://89.116.111.43:3001/socket.io/:path*",
+        destination: "http://localhost:3001/api/:path*",
       },
     ];
   },

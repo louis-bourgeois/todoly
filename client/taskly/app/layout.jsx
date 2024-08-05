@@ -38,14 +38,6 @@ export default function RootLayout({ children }) {
       lang="fr"
       className={`${overusedGrotesk.variable} font-sans m-0 p-0 overflow-hidden h-screen`}
     >
-      <head>
-        <link
-          rel="preload"
-          href="/taskly/logo.svg"
-          as="image"
-          type="image/svg+xml"
-        />
-      </head>
       <body>
         <AppProviders>
           {children}

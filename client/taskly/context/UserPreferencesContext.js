@@ -9,11 +9,10 @@ import {
   useRef,
   useState,
 } from "react";
-import { config } from "../config";
 import { useAuth } from "./AuthContext";
 
 const UserPreferencesContext = createContext();
-const baseUrl = config.apiUrl;
+const baseUrl = "/api";
 
 export const useUserPreferences = () => useContext(UserPreferencesContext);
 
