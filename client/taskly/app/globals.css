@@ -31,7 +31,7 @@
     hsla(0, 0%, 100%, 0),
     hsla(32, 53%, 58%, 0)
   );
-  --gradient-2: linear-gradient(180deg, black, black 100%);
+  --gradient-2: linear-gradient(180deg, #007aff, #007aff 100%);
 }
 
 .theme-dark {
