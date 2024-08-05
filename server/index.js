@@ -18,6 +18,7 @@ import tagRoutes from "./routes/tagRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
+
 // Load environment variables
 dotenv.config();
 
@@ -29,12 +30,13 @@ const io = new Server(server, {
       "http://localhost:3000",
       "http://192.168.1.100:3000",
       "http://taskly.local:3000",
+      "http://89.116.111.43:3000", // Ajoute l'IP de ton VPS ici
     ],
     methods: ["GET", "POST"],
     credentials: true,
   },
 });
-const port = process.env.PORT;
+const port = process.env.PORT || 3001;
 
 // CORS options
 const corsOptions = {
@@ -42,17 +44,19 @@ const corsOptions = {
     "http://localhost:3000",
     "http://192.168.1.100:3000",
     "http://taskly.local:3000",
-  ], // Ajoutez toutes les origines nécessaires
+    "http://89.116.111.43:3000", // Ajoute l'IP de ton VPS ici
+  ],
   credentials: true,
   optionsSuccessStatus: 200,
 };
+
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // 15 minutes
-  max: 60000, // limit each IP to 100 requests per windowMs
+  windowMs: 60 * 1000, // 1 minute
+  max: 60000, // limit each IP to 60000 requests per windowMs
   handler: (req, res) => {
-    res.status(429).render("rateLimit", {
-      title: "Limite de Requêtes Dépassée",
-    });
+    res
+      .status(429)
+      .json({ error: "Too many requests, please try again later." });
   },
 });
 
@@ -72,7 +76,7 @@ app.use(
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production", // false en développement, true en production
+      secure: false, // HTTP uniquement, pas HTTPS pour l'instant
     },
   })
 );
