@@ -36,6 +36,7 @@ const corsOptions = {
     "http://89.116.111.43:3000",
     "http://localhost:3000",
     "http://192.168.1.100:3000",
+    "https://todoly.app",
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
