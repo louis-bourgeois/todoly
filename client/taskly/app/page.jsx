@@ -20,8 +20,9 @@ const Hero = dynamic(() => import("./ui/landing_page/Heroe"), {
 });
 
 export const metadata = {
-  title: "Discover Taskly, The Modern Productivity App",
-  description: "Home page of Taskly",
+  title: "Discover Todoly, The Modern Productivity App",
+  description:
+    "Boost your productivity with Todoly, the modern app designed for efficient task management. Organize today, simplify tomorrow. Discover more now!",
 };
 
 const IconSvg = memo(() => (
