@@ -5,6 +5,7 @@ export default function NavButton({
   flexShrinkGrow,
   onClick,
   notHover,
+  disabled = false,
 }) {
   return (
     <button
@@ -14,6 +15,7 @@ export default function NavButton({
         flex && "flex items-center justify-center"
       }`}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>

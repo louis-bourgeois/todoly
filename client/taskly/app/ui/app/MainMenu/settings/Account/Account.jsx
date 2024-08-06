@@ -1,3 +1,4 @@
+import CTA from "@/ui/landing_page/CTA";
 import Image from "next/image";
 import { useUser } from "../../../../../../context/UserContext";
 
@@ -55,7 +56,7 @@ export default function Account({ transitionStyles, setLayout }) {
           </svg>
         </div>
         <div className="mr-5 flex flex-col items-center  gap-[1vh] w-full">
-          <h4 className="font-bold text-xl text-important">Sign out</h4>
+          <CTA type="secondary" title="Sign out"></CTA>
         </div>
       </div>
       <div className="flex flex-col gap-[2%] justify-center items-center w-1/2">

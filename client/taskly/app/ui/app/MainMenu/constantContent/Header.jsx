@@ -63,9 +63,9 @@ export default function Header({
             height={"40"}
             width={"40"}
             viewBox="0 0 24 24"
-            fill="black"
+            fill="none"
             xmlns="http://www.w3.org/2000/svg"
-            className="cursor-pointer hover:scale-105 transition transition-transform duration-300 active:scale-100"
+            className="cursor-pointer hover:scale-105 transition-transform duration-300 active:scale-100"
           >
             <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
             <g
