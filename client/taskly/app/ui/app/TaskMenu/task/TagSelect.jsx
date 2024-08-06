@@ -62,10 +62,8 @@ export default function TagSelect({
         });
         return;
       }
-      setTaskTags((prev) => {
-        const newTags = [...prev, { name, id }];
-        return newTags;
-      });
+      const newTaskTags = [...taskTags, { name, id }];
+      setTaskTags(newTaskTags);
       setIsAddingTag(true);
       setTimeout(() => {
         if (newTagInputRef.current) {
@@ -78,21 +76,18 @@ export default function TagSelect({
 
   const handleNewTagChange = useCallback(
     (index, value) => {
-      setTaskTags((prev) => {
-        const newTags = prev.map((tag, i) =>
-          i === index ? { ...tag, name: value } : tag
-        );
-        return newTags;
-      });
+      const newTaskTags = taskTags.map((t, i) =>
+        i === index ? { ...t, name: value } : tag
+      );
+      setTaskTags(newTaskTags);
     },
     [setTaskTags]
   );
+
   const handleDeleteTag = useCallback(
     (index) => {
-      setTaskTags((prev) => {
-        const newTags = prev.filter((_, i) => i !== index);
-        return newTags;
-      });
+      const newTaskTags = taskTags.filter((_, i) => i !== index);
+      setTaskTags(newTaskTags);
     },
     [setTaskTags]
   );
@@ -127,13 +122,10 @@ export default function TagSelect({
         if (tag.id === undefined) {
           const response = await addTag(newName);
           const addedTag = response.find((resTag) => resTag.name === newName);
-          setTaskTags((prev) => {
-            const newTags = prev.map((t, i) =>
-              i === index ? { ...t, id: addedTag.id } : t
-            );
-
-            return newTags;
-          });
+          const newTags = taskTags.map((t, i) =>
+            i === index ? { ...t, id: addedTag.id } : t
+          );
+          setTaskTags(newTags);
         } else {
           await updateTag(newName, tag.id);
         }
@@ -166,7 +158,9 @@ export default function TagSelect({
     },
     [taskTags, handleAddTag, handleError]
   );
-
+  useEffect(() => {
+    console.log("taskTags in TagSelect:", taskTags);
+  }, [taskTags]);
   return (
     <TaskMenuSectionContainer
       flexCol
@@ -242,6 +236,7 @@ export default function TagSelect({
           observeParents={true}
         >
           {tags.map((tag) => {
+            console.log(taskTags);
             if (
               taskTags &&
               taskTags.some(

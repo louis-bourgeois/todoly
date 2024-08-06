@@ -54,7 +54,7 @@ class Task {
         this.status || null,
         this.priority,
         this.owner_id,
-        this.tags, // pg will automatically handle the conversion to JSONB
+        JSON.stringify(this.tags), // pg will automatically handle the conversion to JSONB
         this.description,
       ]);
 

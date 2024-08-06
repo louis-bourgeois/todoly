@@ -30,6 +30,9 @@ export default function TaskForm({
   const { setActiveTask, addTask, modifyTask, deleteTask, tasks } = useTask();
   const { updatePreference, preferences } = useUserPreferences();
   const { sections } = useSection();
+  const [sectionSelectMenuOpen, setSectionSelectMenuOpen] = useState(false);
+  const [workspaceSelectMenuOpen, setWorkspaceSelectMenuOpen] = useState(false);
+  const [elementPickerMenuOpen, setElementPickerMenuOpen] = useState(false);
 
   const [formState, setFormState] = useState({
     dueDate: new Date(),
@@ -41,9 +44,6 @@ export default function TaskForm({
     descriptionValue: "",
     canSubmit: false,
     linked_section: "",
-    workspaceMenuOpen: false,
-    sectionSelectMenuOpen: false,
-    elementPickerMenuOpen: false,
     linked_section_name: "",
     taskWorkspace: "",
   });
@@ -236,7 +236,9 @@ export default function TaskForm({
     },
     [formState.task, id, modifyTask, updateFormState, updatePreference]
   );
-
+  useEffect(() => {
+    console.log("taskTags in TaskForm:", formState.taskTags);
+  }, [formState.taskTags]);
   return (
     <div className={`w-full h-full flex ${transitionStyles}`}>
       <div className="flex flex-col w-[30%] rounded-l-[3.125vw] my-[1.4290277778vh] justify-left">
@@ -259,10 +261,8 @@ export default function TaskForm({
               <ElementPicker
                 elementType={elementType}
                 handleElementTypeChange={handleElementTypeChange}
-                menuOpen={formState.elementPickerMenuOpen}
-                setMenuOpen={(open) =>
-                  updateFormState({ elementPickerMenuOpen: open })
-                }
+                menuOpen={elementPickerMenuOpen}
+                setMenuOpen={setElementPickerMenuOpen}
               />
             </div>
           )}
@@ -298,10 +298,8 @@ export default function TaskForm({
               setTask={(task) => updateFormState({ task })}
               task={formState.task}
               id={id}
-              menuOpen={formState.workspaceMenuOpen}
-              setMenuOpen={(open) =>
-                updateFormState({ workspaceMenuOpen: open })
-              }
+              menuOpen={workspaceSelectMenuOpen}
+              setMenuOpen={setWorkspaceSelectMenuOpen}
               taskWorkspace={formState.taskWorkspace}
             />
             <SectionSelection
@@ -310,10 +308,8 @@ export default function TaskForm({
               id={id}
               task={formState.task}
               setTask={(task) => updateFormState({ task })}
-              menuOpen={formState.sectionSelectMenuOpen}
-              setMenuOpen={(open) =>
-                updateFormState({ sectionSelectMenuOpen: open })
-              }
+              menuOpen={sectionSelectMenuOpen}
+              setMenuOpen={setSectionSelectMenuOpen}
             />
           </div>
         </div>

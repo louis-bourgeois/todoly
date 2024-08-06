@@ -11,16 +11,16 @@ export default function ElementPicker({
   const [elements] = useState(["Task", "Workspace"]);
 
   const handleElementTypeChangeWithFade = (newType) => {
+    setMenuOpen(false);
     setIsFading(true);
     setTimeout(() => {
       handleElementTypeChange(newType);
       setIsFading(false);
     }, 500);
-    setMenuOpen(false);
   };
 
   const toggleMenu = (e) => {
-    e.stopPropagation();
+    console.log("e", e);
     setMenuOpen((prev) => !prev);
   };
 
@@ -40,7 +40,6 @@ export default function ElementPicker({
         viewBox="0 0 29 29"
         width="62.5"
         height="62.5"
-        onClick={toggleMenu}
       >
         <path
           fill="none"
