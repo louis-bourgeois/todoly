@@ -128,7 +128,7 @@ export async function getUserData(req, res) {
   if (result) {
     res.send(result);
   } else {
-    res.status(404)..json({
+    res.status(404).json({
       message: "User not found",
       reqBody: req.body,
       reqUser: req.user,
