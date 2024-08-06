@@ -11,7 +11,11 @@ export async function checkUser(req, res, next) {
     delete req.body.email;
     next();
   } else {
-    res.status(404).send("User not found");
+    res.status(404).json({
+      message: "User not found",
+      reqBody: req.body,
+      reqUser: req.user,
+    });
   }
 }
 export async function createUser(req, res) {
@@ -124,7 +128,11 @@ export async function getUserData(req, res) {
   if (result) {
     res.send(result);
   } else {
-    res.status(404).send("User not found");
+    res.status(404)..json({
+      message: "User not found",
+      reqBody: req.body,
+      reqUser: req.user,
+    });
   }
 }
 
