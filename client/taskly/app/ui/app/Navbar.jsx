@@ -136,6 +136,7 @@ export default function Navbar() {
           <NavButton
             styles="border border-dominant rounded-full shadow-2xl bg-primary"
             onClick={toggleSearchMenu}
+            disabled={true} // i gotta turn this off when search will be ready
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
