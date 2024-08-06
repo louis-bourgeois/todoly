@@ -26,7 +26,7 @@ router.post("/login", (req, res, next) => {
       if (err === "User not found") {
         return res.status(404).send(err);
       } else {
-        return res.status(401).send(err);
+        return res.status(401).send(err, user);
       }
     }
 
