@@ -39,13 +39,13 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
         daysArray.push(day);
         day = addDays(day, 1);
       }
-      setDays(daysArray);
+      return daysArray;
     },
     [startOfWeekOnSunday]
   );
 
   useEffect(() => {
-    generateDays(currentDate);
+    setDays(generateDays(currentDate));
     setAdjustedDaysOfWeek(
       startOfWeekOnSunday === "Sunday"
         ? daysOfWeekSundayStart
@@ -54,10 +54,10 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
   }, [currentDate, startOfWeekOnSunday, generateDays]);
 
   useEffect(() => {
-    if (selectedDate && !isSameMonth(new Date(selectedDate), currentDate)) {
+    if (selectedDate) {
       setCurrentDate(new Date(selectedDate));
     }
-  }, [selectedDate, currentDate]);
+  }, []); // Dépendances vides pour ne s'exécuter qu'au montage
 
   const isPastDate = (date) => {
     const today = new Date();
@@ -78,11 +78,11 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
   };
 
   const handlePreviousMonth = () => {
-    setCurrentDate(addDays(startOfMonth(currentDate), -1));
+    setCurrentDate((prevDate) => addDays(startOfMonth(prevDate), -1));
   };
 
   const handleNextMonth = () => {
-    setCurrentDate(addDays(endOfMonth(currentDate), 1));
+    setCurrentDate((prevDate) => addDays(endOfMonth(prevDate), 1));
   };
 
   const handleDateClick = (date) => {
@@ -97,10 +97,10 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
     const today = new Date();
     switch (name) {
       case "Today":
-        date = new Date();
+        date = today;
         break;
       case "Tomorrow":
-        date = addDays(new Date(), 1);
+        date = addDays(today, 1);
         break;
       case "Next Week":
         const weekStartsOn = startOfWeekOnSunday === "Sunday" ? 0 : 1;
@@ -118,6 +118,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
         return;
     }
     onDateSelect(format(date, "yyyy-MM-dd"));
+    setCurrentDate(date); // Mise à jour de currentDate pour refléter la sélection rapide
   };
 
   return (

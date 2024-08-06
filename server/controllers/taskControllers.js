@@ -4,6 +4,7 @@ import { isUUID } from "../utils/validate.js";
 
 export async function getTask(req, res) {
   try {
+    console.log(req.user);
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
 
