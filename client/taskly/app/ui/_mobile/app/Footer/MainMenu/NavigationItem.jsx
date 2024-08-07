@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 
 export default function NavigationItem({ icon: Icon, label, path, isActive }) {
@@ -7,16 +6,17 @@ export default function NavigationItem({ icon: Icon, label, path, isActive }) {
     typeof Icon === "function" ? (
       <Icon fill={isActive ? "#007AFF" : "#6B7280"} />
     ) : Icon && Icon.src ? (
-      <Image
-        src={Icon.src}
-        width={Icon.width || 26}
-        height={Icon.height || 29}
-        alt={label}
-        quality={100}
-        priority={true}
-        className="rounded-full"
-      />
+      <></>
     ) : (
+      // <Image
+      //   src={Icon.src}
+      //   width={Icon.width || 26}
+      //   height={Icon.height || 29}
+      //   alt={label}
+      //   quality={100}
+      //   priority={true}
+      //   className="rounded-full"
+      // />
       <div
         style={{ width: Icon?.width || 26, height: Icon?.height || 29 }}
         className="bg-gray-300 rounded-full"

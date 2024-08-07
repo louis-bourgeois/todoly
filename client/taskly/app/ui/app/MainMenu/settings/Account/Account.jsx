@@ -1,21 +1,13 @@
 import CTA from "@/ui/landing_page/CTA";
-import Image from "next/image";
 import { useUser } from "../../../../../../context/UserContext";
+import ProfilePhoto from "./ProfilePhoto";
 
 export default function Account({ transitionStyles, setLayout }) {
   const { user } = useUser();
   return (
     <div className={`flex justify-between w-full ${transitionStyles}`}>
       <div className="flex flex-col justify-center items-center w-1/2 gap-[2.5vh]">
-        <Image
-          src="/user/photo_profil_google.jpeg"
-          alt="Profile Picture"
-          width={150}
-          height={150}
-          s
-          quality={100}
-          className={`rounded-full transition-all duration-300 max-w-full ease-in mb-[5%]`}
-        />
+        <ProfilePhoto />
 
         <div className="flex justify-between items-center w-[90%] h-[12.5%]">
           <input

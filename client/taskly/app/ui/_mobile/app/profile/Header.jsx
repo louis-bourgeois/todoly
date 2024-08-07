@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useMemo } from "react";
 import { useUser } from "../../../../../context/UserContext";
 
@@ -9,7 +8,7 @@ const Header = ({ pictDim, pictSrc }) => {
   }, [user]);
   return (
     <div className="flex justify-between items-center w-full h-[7.8vh] px-[15px]">
-      <Image
+      {/* <Image
         width={pictDim}
         height={pictDim}
         priority={true}
@@ -20,7 +19,7 @@ const Header = ({ pictDim, pictSrc }) => {
           e.target.onerror = null; // Empêche les boucles infinies
           e.target.src = "/default-profile-picture.jpg"; // Assurez-vous d'avoir une image par défaut
         }}
-      />
+      /> */}
 
       <div className="flex flex-col items-end justify-center">
         <h1 className="font-bold text-2xl">{name}</h1>

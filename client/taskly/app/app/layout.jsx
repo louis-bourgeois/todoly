@@ -47,6 +47,49 @@ const AddWorkspaceBubble = ({ onClose, onDontShowAgain }) => {
     </div>
   );
 };
+const CardWrapper = ({ children, cardType }) => {
+  return (
+    <div className={`flex items-center justify-center h-full`}>{children}</div>
+  );
+};
+
+const CardContent = ({ children, el, cardType }) => {
+  return (
+    <div
+      className={`relative w-full h-full flex flex-col ${
+        (el === "Task" || cardType === "Task" || cardType === "Workspace") &&
+        "justify-between pb-[8px]"
+      }`}
+    >
+      {children}
+    </div>
+  );
+};
+
+const ScrollableContent = ({ children }) => {
+  const layers = 8; // Nombre de couches pour le dégradé
+
+  return (
+    <div className="relative w-full h-full overflow-hidden">
+      {/* Contenu défilable */}
+      <div className="absolute inset-0 overflow-y-auto">{children}</div>
+
+      {/* Couches de dégradé simulé */}
+      {[...Array(layers)].map((_, index) => (
+        <div
+          key={index}
+          className="absolute top-0 left-0 w-full pointer-events-none bg-primary"
+          style={{
+            height: `${(index + 1) * (32 / layers)}px`,
+
+            opacity: 1 - index / layers,
+            zIndex: layers - index,
+          }}
+        />
+      ))}
+    </div>
+  );
+};
 
 export default function AppLayout({ children }) {
   const { addUserPreference, preferences } = useUserPreferences();
@@ -303,7 +346,10 @@ export default function AppLayout({ children }) {
       </>
     );
   }
-  if (isMobile && cardType !== "Profile") {
+  if (cardType === "App") {
+    return <>{children}</>;
+  }
+  if (isMobile && cardType !== "Profile" && cardType !== "App") {
     return (
       <>
         <MobileViewsMenu isVisible={isMobileViewsMenuOpen} />
@@ -389,6 +435,9 @@ export default function AppLayout({ children }) {
           )}
       </>
     );
+  }
+  if (window.location.href === "/app") {
+    return <>{children}</>;
   } else if (window.location.href !== `/app` && preferences.Default_Main_Page) {
     return (
       <>
@@ -423,46 +472,3 @@ export default function AppLayout({ children }) {
   }
 }
 
-const CardWrapper = ({ children, cardType }) => {
-  return (
-    <div className={`flex items-center justify-center h-full`}>{children}</div>
-  );
-};
-
-const CardContent = ({ children, el, cardType }) => {
-  return (
-    <div
-      className={`relative w-full h-full flex flex-col ${
-        (el === "Task" || cardType === "Task" || cardType === "Workspace") &&
-        "justify-between pb-[8px]"
-      }`}
-    >
-      {children}
-    </div>
-  );
-};
-
-const ScrollableContent = ({ children }) => {
-  const layers = 8; // Nombre de couches pour le dégradé
-
-  return (
-    <div className="relative w-full h-full overflow-hidden">
-      {/* Contenu défilable */}
-      <div className="absolute inset-0 overflow-y-auto">{children}</div>
-
-      {/* Couches de dégradé simulé */}
-      {[...Array(layers)].map((_, index) => (
-        <div
-          key={index}
-          className="absolute top-0 left-0 w-full pointer-events-none bg-primary"
-          style={{
-            height: `${(index + 1) * (32 / layers)}px`,
-
-            opacity: 1 - index / layers,
-            zIndex: layers - index,
-          }}
-        />
-      ))}
-    </div>
-  );
-};

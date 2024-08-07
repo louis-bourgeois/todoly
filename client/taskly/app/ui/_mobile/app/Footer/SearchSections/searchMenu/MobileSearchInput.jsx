@@ -226,6 +226,7 @@ export default function MobileSearchInput({ onNavigate }) {
         />
       </svg>
       <input
+        disabled={true}
         type="text"
         name="collaborators"
         className="placeholder:text-gray placeholder:text-[13px] w-full text-center pr-5 focus:outline-none text-text"

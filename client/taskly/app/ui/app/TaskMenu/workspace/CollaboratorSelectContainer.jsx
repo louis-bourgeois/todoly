@@ -122,6 +122,7 @@ export default function CollaboratorSelectContainer({
         </svg>
         <input
           type="text"
+          disabled={true}
           value={inputValue}
           name="collaborators"
           className="placeholder:text-gray w-full text-center focus:outline-none text-text bg-transparent"

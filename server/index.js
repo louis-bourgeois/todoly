@@ -22,8 +22,6 @@ import workspaceRoutes from "./routes/workspaceRoutes.js";
 // Load environment variables
 dotenv.config();
 
-console.log(process.env.SECRET_SESSION);
-
 const app = express();
 const server = createServer(app);
 
@@ -32,8 +30,8 @@ const port = process.env.PORT || 3001;
 // CORS options
 const corsOptions = {
   origin: [
-    "http://89.116.111.43",
-    "http://89.116.111.43:3000",
+    // "http://89.116.111.43",
+    // "http://89.116.111.43:3000",
     "http://localhost:3000",
     "http://192.168.1.100:3000",
     "https://todoly.app",
