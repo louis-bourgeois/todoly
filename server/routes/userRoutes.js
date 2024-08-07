@@ -24,6 +24,7 @@ router.post("/login", (req, res, next) => {
   passport.authenticate("local", (err, user, info) => {
     if (err) {
       if (err === "User not found") {
+        console.log("nnnnnot found", user);
         return res.status(404).json({ err: err, user: user });
       } else {
         return res.status(401).json({ err: err, user: user });
