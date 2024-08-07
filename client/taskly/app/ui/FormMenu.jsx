@@ -44,8 +44,9 @@ export default function FormMenu({
       } = data;
       try {
         const result = await axios.post(
-          "http://localhost:3001/api/users/register",
-          { data: cleanedFormData }
+          "/api/users/register",
+          { data: cleanedFormData },
+          { withCredentials: true }
         );
         if (result.status === 201) {
           const res = await login(formData);
