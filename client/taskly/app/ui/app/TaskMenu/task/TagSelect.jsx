@@ -17,17 +17,17 @@ export default function TagSelect({
   task,
 }) {
   const { modifyTask } = useTask();
-  const { addTag, updateTag, tags } = useTag();
+  const { addTag, updateTag, tags, deleteTag } = useTag();
   const { handleError } = useError();
   const newTagInputRef = useRef(null);
   const [isAddingTag, setIsAddingTag] = useState(false);
   const swiperRef = useRef(null);
+  const [hoveredTag, setHoveredTag] = useState(null);
 
   const handleTagsChange = useCallback(
     async (newTags) => {
       if (id && newTags && task) {
         const updatedTask = { ...task, tags: newTags };
-
         setTask(updatedTask);
         await modifyTask(updatedTask);
       }
@@ -77,11 +77,11 @@ export default function TagSelect({
   const handleNewTagChange = useCallback(
     (index, value) => {
       const newTaskTags = taskTags.map((t, i) =>
-        i === index ? { ...t, name: value } : tag
+        i === index ? { ...t, name: value } : t
       );
       setTaskTags(newTaskTags);
     },
-    [setTaskTags]
+    [taskTags, setTaskTags]
   );
 
   const handleDeleteTag = useCallback(
@@ -89,8 +89,19 @@ export default function TagSelect({
       const newTaskTags = taskTags.filter((_, i) => i !== index);
       setTaskTags(newTaskTags);
     },
-    [setTaskTags]
+    [taskTags, setTaskTags]
   );
+
+  const handlePermanentDeleteTag = useCallback(
+    async (id, e) => {
+      e.stopPropagation();
+      const newTaskTags = taskTags.filter((tag) => tag.id !== id);
+      setTaskTags(newTaskTags);
+      await deleteTag(id);
+    },
+    [taskTags, setTaskTags, deleteTag]
+  );
+
   const handleNewTagBlur = useCallback(
     async (index) => {
       const tag = taskTags[index];
@@ -158,9 +169,7 @@ export default function TagSelect({
     },
     [taskTags, handleAddTag, handleError]
   );
-  useEffect(() => {
-    console.log("taskTags in TagSelect:", taskTags);
-  }, [taskTags]);
+
   return (
     <TaskMenuSectionContainer
       flexCol
@@ -231,12 +240,11 @@ export default function TagSelect({
           freeMode={true}
           slidesPerView="auto"
           spaceBetween={10}
-          className="h-full"
+          className="h-full overflow-visible"
           observer={true}
           observeParents={true}
         >
           {tags.map((tag) => {
-            console.log(taskTags);
             if (
               taskTags &&
               taskTags.some(
@@ -246,15 +254,60 @@ export default function TagSelect({
               return null;
             }
             return (
-              <SwiperSlide key={tag.id} style={{ width: "auto" }}>
-                <button
+              <SwiperSlide key={tag.id} className="!w-auto">
+                <div
+                  className={`
+                    relative cursor-pointer transition-all flex items-center justify-start
+                    bg-primary rounded-[20px] h-10 px-4 shadow-md
+                    ${hoveredTag === tag.id ? "pr-10" : ""}
+                  `}
+                  style={{
+                    transition: "all 0.3s ease-in-out",
+                    width: hoveredTag === tag.id ? "auto" : "fit-content",
+                  }}
+                  onMouseEnter={() => setHoveredTag(tag.id)}
+                  onMouseLeave={() => setHoveredTag(null)}
                   onClick={() => handleTagClick(tag)}
-                  className="cursor-pointer hover:scale-105 transition-all flex items-center justify-center bg-primary rounded-[20px] h-10 px-4 shadow-md"
                 >
-                  <span className="text-xs text-text font-bold whitespace-nowrap">
+                  <span className="text-xs text-text font-bold whitespace-nowrap pt-[4.5%]">
                     {tag.name}
                   </span>
-                </button>
+                  <button
+                    onClick={(e) => handlePermanentDeleteTag(tag.id, e)}
+                    className={`
+                      absolute right-0 w-8 h-8 flex items-center justify-center
+                      transition-all duration-300 ease-in-out rounded-full
+                      hover:bg-opacity-10 hover:bg-red-500
+                      ${
+                        hoveredTag === tag.id
+                          ? "opacity-100 translate-x-0"
+                          : "opacity-0 -translate-x-2 pointer-events-none"
+                      }
+                    `}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      className="w-4 h-4 transition-all hover:text-dominant"
+                      style={{
+                        transform:
+                          hoveredTag === tag.id
+                            ? "rotate(135deg)"
+                            : "rotate(0deg)",
+                        transition: "transform 0.3s ease-in-out",
+                      }}
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M12 5v14m-7-7h14"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </SwiperSlide>
             );
           })}
