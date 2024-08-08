@@ -8,7 +8,7 @@ import Switcher from "../Switcher";
 export default function Notifications({ transitionStyles }) {
   const { updatePreference, preferences } = useUserPreferences();
   const [allowNotifications, setAllowNotifications] = useState(
-    JSON.parse(preferences.Allow_Notification.toLowerCase())
+    JSON.parse(preferences.Allow_Notifications.toLowerCase())
   );
   const [notificationsList, setNotificationsList] = useState(
     preferences?.Notifications_List || []
