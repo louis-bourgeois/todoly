@@ -201,7 +201,6 @@ a:active {
 .task-menu-dropdown-menu {
   background-color: var(--main-menu-bg);
   position: relative;
-  padding: 10px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: solid 1px rgba(0, 0, 0, 0.25);

@@ -16,6 +16,7 @@ export default function TitleInput({
 
   const handleTitleInputChange = (e) => {
     const newValue = e.target.value;
+    console.log(newValue);
     setTitleValue(newValue);
     if (id) {
       const updatedTask = { ...task, title: newValue };

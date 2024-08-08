@@ -60,11 +60,11 @@ export default function WorkspaceSelect({
       othersStyles="h-[80%] flex flex-col justify-between"
       moreRoundedCorners="tr"
     >
-      <h2 className="text-2xl font-bold text-text">Workspace</h2>
+      <h2 className="text-2xl font-bold text-text p-2">Workspace</h2>
 
       <div className="flex items-center gap-[0.7vw] relative">
         <div
-          className="addMenuElement cursor-pointer rounded-full flex items-center justify-between p-[1vw] w-full text-text"
+          className="addMenuElement p-[10px] cursor-pointer rounded-full flex items-center justify-between w-full text-text"
           onClick={toggleMenu}
         >
           <span className="text-m 3xl:text-lg">

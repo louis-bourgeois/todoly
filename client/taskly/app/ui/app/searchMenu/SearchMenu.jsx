@@ -99,26 +99,29 @@ const SearchMenu = () => {
     },
     [addTag, resetState]
   );
-  const handleCommand = (commandId) => {
-    switch (commandId) {
-      case "add":
-        console.log("Open add menu");
-        break;
-      case "logout":
-        console.log("Logout");
-        break;
-      case "addWorkspace":
-        console.log("Add workspace");
-        break;
-      case "openMainMenu":
-        console.log("Open main menu");
-        break;
-      case "openSettings":
-        console.log("Open settings");
-        break;
-    }
-    resetState();
-  };
+  const handleCommand = useCallback(
+    (commandId) => {
+      switch (commandId) {
+        case "add":
+          console.log("Open add menu");
+          break;
+        case "logout":
+          console.log("Logout");
+          break;
+        case "addWorkspace":
+          console.log("Add workspace");
+          break;
+        case "openMainMenu":
+          console.log("Open main menu");
+          break;
+        case "openSettings":
+          console.log("Open settings");
+          break;
+      }
+      resetState();
+    },
+    [resetState]
+  );
   const handleResultSelection = useCallback(
     (result) => {
       if (query.startsWith("/")) {

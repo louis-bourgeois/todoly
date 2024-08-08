@@ -11,9 +11,8 @@ import {
   startOfWeek,
 } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Slider from "react-slick";
-import "slick-carousel/slick/slick-theme.css";
-import "slick-carousel/slick/slick.css";
+import "swiper/css";
+import { Swiper, SwiperSlide } from "swiper/react";
 import TaskMenuSectionContainer from "../TaskMenu/TaskMenuSectionContainer";
 
 const daysOfWeekSundayStart = ["S", "M", "T", "W", "T", "F", "S"];
@@ -66,16 +65,6 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
     return selectedDate && isSameDay(new Date(selectedDate), date);
   };
 
-  const settings = {
-    dots: false,
-    arrows: false,
-    infinite: false,
-    speed: 500,
-    slidesToShow: 3.25,
-    slidesToScroll: 1,
-    swipeToSlide: true,
-  };
-
   const handlePreviousMonth = () => {
     setCurrentDate((prevDate) => addDays(startOfMonth(prevDate), -1));
   };
@@ -121,34 +110,36 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
   };
 
   return (
-    <div className="flex flex-col h-full w-full">
-      <div className="flex-shrink-0 w-full bg-transparent">
-        <Slider {...settings}>
+    <div className="flex flex-col h-full">
+      <div className="flex-shrink-0 w-full bg-transparent py-2 px-4 overflow-clip">
+        <Swiper
+          spaceBetween={27.5}
+          slidesPerView="3.25"
+          centeredSlides={false}
+          className="!overflow-visible"
+        >
           {[
             { name: "Today" },
             { name: "Tomorrow" },
             { name: "This Weekend" },
             { name: "Next Week" },
           ].map((fastDate, index) => (
-            <div key={index} className="px-1 ">
+            <SwiperSlide key={index} className="!w-auto">
               <div
                 onClick={() => handleFastDateClick(fastDate.name)}
-                className="! cursor-pointer hover:scale-105 transition-all flex items-center justify-center bg-dominant rounded-[20px] p-3"
-                style={{
-                  boxShadow: "0px 4px 4px 0px rgba(0, 122, 255, 0.25)",
-                }}
+                className="shadow-shadow_01 cursor-pointer hover:scale-105 transition-all flex items-center justify-center bg-dominant rounded-[20px] p-3 my-4"
               >
-                <p className="text-xs text-primary font-bold">
+                <p className="text-xs 5xl:text-base text-primary font-bold whitespace-nowrap px-2">
                   {fastDate.name}
                 </p>
               </div>
-            </div>
+            </SwiperSlide>
           ))}
-        </Slider>
+        </Swiper>
       </div>
 
-      <TaskMenuSectionContainer othersStyles="flex-grow w-full p-2 flex flex-col overflow-hidden">
-        <div className="w-full p-2 pt-1 flex items-center justify-between mb-2">
+      <TaskMenuSectionContainer othersStyles="flex-grow w-[96%] p-2 flex flex-col overflow-hidden mx-[2%]">
+        <div className="w-full p-2 pt-1 flex items-center justify-between mb-5">
           <button
             className="select-none text-2xl"
             onClick={handlePreviousMonth}

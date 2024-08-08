@@ -4,6 +4,7 @@ export default function TaskMenuSectionContainer({
   moreRoundedCorners,
   flexCol = false,
   othersStyles = "",
+  padding = "5px",
   ...props
 }) {
   return (
@@ -13,6 +14,7 @@ export default function TaskMenuSectionContainer({
       } rounded-[20px] gradient-border ${
         moreRoundedCorners ? `rounded-${moreRoundedCorners}-[3.125vw]` : ""
       } ${othersStyles}`}
+      style={{ padding: ` 10px ${padding}` }}
       {...props}
     >
       {children}

@@ -30,27 +30,22 @@ export default function TaskForm({
   const { setActiveTask, addTask, modifyTask, deleteTask, tasks } = useTask();
   const { updatePreference, preferences } = useUserPreferences();
   const { sections } = useSection();
+
   const [sectionSelectMenuOpen, setSectionSelectMenuOpen] = useState(false);
   const [workspaceSelectMenuOpen, setWorkspaceSelectMenuOpen] = useState(false);
   const [elementPickerMenuOpen, setElementPickerMenuOpen] = useState(false);
 
-  const [formState, setFormState] = useState({
-    dueDate: new Date(),
-    task: null,
-    titleValue: "",
-    status: "todo",
-    priority: 5,
-    taskTags: [],
-    descriptionValue: "",
-    canSubmit: false,
-    linked_section: "",
-    linked_section_name: "",
-    taskWorkspace: "",
-  });
-
-  const updateFormState = useCallback((updates) => {
-    setFormState((prev) => ({ ...prev, ...updates }));
-  }, []);
+  const [dueDate, setDueDate] = useState(new Date());
+  const [task, setTask] = useState(null);
+  const [titleValue, setTitleValue] = useState("");
+  const [status, setStatus] = useState("todo");
+  const [priority, setPriority] = useState(5);
+  const [taskTags, setTaskTags] = useState([]);
+  const [descriptionValue, setDescriptionValue] = useState("");
+  const [canSubmit, setCanSubmit] = useState(false);
+  const [linkedSection, setLinkedSection] = useState("");
+  const [linkedSectionName, setLinkedSectionName] = useState("");
+  const [taskWorkspace, setTaskWorkspace] = useState("");
 
   const getDefaultSection = useCallback(() => {
     const workspaceSection = sections.find(
@@ -79,90 +74,69 @@ export default function TaskForm({
     if (id) {
       const foundTask = tasks.find((task) => task.id === id);
       if (foundTask) {
-        updateFormState({
-          task: foundTask,
-          titleValue: foundTask.title || "",
-          status: foundTask.status || "todo",
-          linked_section: foundTask.linked_section || "",
-          priority: foundTask.priority || 5,
-          dueDate: foundTask.due_date
-            ? new Date(foundTask.due_date)
-            : new Date(),
-          taskTags: foundTask.tags || [],
-          descriptionValue: foundTask.description || "",
-          canSubmit: true,
-          taskWorkspace: foundTask.workspace_id || "",
-        });
+        setTask(foundTask);
+        setTitleValue(foundTask.title || "");
+        setStatus(foundTask.status || "todo");
+        setLinkedSection(foundTask.linked_section || "");
+        setPriority(foundTask.priority || 5);
+        setDueDate(
+          foundTask.due_date ? new Date(foundTask.due_date) : new Date()
+        );
+        setTaskTags(foundTask.tags || []);
+        setDescriptionValue(foundTask.description || "");
+        setCanSubmit(true);
+        setTaskWorkspace(foundTask.workspace_id || "");
       }
     } else {
-      updateFormState({
-        canSubmit: false,
-        linked_section: getDefaultSection(),
-        titleValue: "",
-        status: "todo",
-        priority: 5,
-        dueDate: new Date(),
-        taskTags: [],
-        descriptionValue: "",
-        taskWorkspace: currentWorkspace || "",
-      });
+      setCanSubmit(false);
+      setLinkedSection(getDefaultSection());
+      setTitleValue("");
+      setStatus("todo");
+      setPriority(5);
+      setDueDate(new Date());
+      setTaskTags([]);
+      setDescriptionValue("");
+      setTaskWorkspace(currentWorkspace || "");
     }
-  }, [id, tasks, getDefaultSection, updateFormState, currentWorkspace]);
+  }, [id, tasks, getDefaultSection, currentWorkspace]);
 
   useEffect(() => {
-    const { titleValue, linked_section, priority } = formState;
-    updateFormState({
-      canSubmit:
-        currentWorkspace &&
+    setCanSubmit(
+      currentWorkspace &&
         titleValue &&
         titleValue.length > 0 &&
-        linked_section &&
+        linkedSection &&
         priority &&
         priority > 0 &&
-        priority < 11,
-    });
-  }, [
-    formState.titleValue,
-    formState.linked_section,
-    formState.priority,
-    currentWorkspace,
-    updateFormState,
-  ]);
+        priority < 11
+    );
+  }, [titleValue, linkedSection, priority, currentWorkspace]);
 
   useEffect(() => {
-    if (formState.linked_section) {
-      const sectionName = sections.find(
-        (s) => s.id === formState.linked_section
-      )?.name;
-      if (sectionName && sectionName !== formState.linked_section_name) {
-        updateFormState({ linked_section_name: sectionName });
+    if (linkedSection) {
+      const sectionName = sections.find((s) => s.id === linkedSection)?.name;
+      if (sectionName && sectionName !== linkedSectionName) {
+        setLinkedSectionName(sectionName);
       }
-    } else if (formState.linked_section_name !== "") {
-      updateFormState({ linked_section_name: "" });
+    } else if (linkedSectionName !== "") {
+      setLinkedSectionName("");
     }
-  }, [
-    formState.linked_section,
-    sections,
-    formState.linked_section_name,
-    updateFormState,
-  ]);
+  }, [linkedSection, sections, linkedSectionName]);
 
   const resetTaskMenu = useCallback(() => {
-    updateFormState({
-      taskWorkspace: currentWorkspace || "",
-      titleValue: "",
-      status: "todo",
-      priority: 5,
-      dueDate: new Date(),
-      taskTags: [],
-      descriptionValue: "",
-      task: null,
-      elementPickerMenuOpen: false,
-      sectionSelectMenuOpen: false,
-      linked_section: getDefaultSection(),
-    });
+    setTaskWorkspace(currentWorkspace || "");
+    setTitleValue("");
+    setStatus("todo");
+    setPriority(5);
+    setDueDate(new Date());
+    setTaskTags([]);
+    setDescriptionValue("");
+    setTask(null);
+    setElementPickerMenuOpen(false);
+    setSectionSelectMenuOpen(false);
+    setLinkedSection(getDefaultSection());
     setActiveTask(null);
-  }, [setActiveTask, updateFormState, currentWorkspace, getDefaultSection]);
+  }, [setActiveTask, currentWorkspace, getDefaultSection]);
 
   useEffect(() => {
     if (!isTaskMenuOpen) {
@@ -173,44 +147,56 @@ export default function TaskForm({
   const handleDateSelect = useCallback(
     (date) => {
       if (
-        formState.dueDate &&
-        format(formState.dueDate, "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
+        dueDate &&
+        format(dueDate, "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
       ) {
-        updateFormState({ dueDate: undefined });
+        setDueDate(undefined);
       } else {
-        updateFormState({ dueDate: date });
+        setDueDate(date);
       }
 
       if (id) {
-        const updatedTask = { ...formState.task, due_date: date || null };
-        updateFormState({ task: updatedTask });
+        const updatedTask = { ...task, due_date: date || null };
+        setTask(updatedTask);
       }
     },
-    [formState.dueDate, formState.task, id, updateFormState]
+    [dueDate, task, id]
   );
 
   const createTask = useCallback(async () => {
     try {
       const taskData = {
-        title: formState.titleValue,
-        status: formState.status,
-        linked_section: formState.linked_section,
-        priority: formState.priority,
-        dueDate: formState.dueDate,
-        tags: formState.taskTags,
-        description: formState.descriptionValue,
+        title: titleValue,
+        status: status,
+        linked_section: linkedSection,
+        priority: priority,
+        dueDate: dueDate,
+        tags: taskTags,
+        description: descriptionValue,
         workspaceId: currentWorkspace,
       };
       await addTask(taskData);
       updatePreference({
         key: "Last_Section",
-        value: formState.linked_section,
+        value: linkedSection,
       });
       toggleTaskMenu(false);
     } catch (error) {
       console.error(error);
     }
-  }, [formState, currentWorkspace, addTask, updatePreference, toggleTaskMenu]);
+  }, [
+    titleValue,
+    status,
+    linkedSection,
+    priority,
+    dueDate,
+    taskTags,
+    descriptionValue,
+    currentWorkspace,
+    addTask,
+    updatePreference,
+    toggleTaskMenu,
+  ]);
 
   const delTask = useCallback(() => {
     try {
@@ -223,32 +209,27 @@ export default function TaskForm({
 
   const handleSectionChange = useCallback(
     (newSection, newSectionName) => {
-      updateFormState({
-        linked_section: newSection,
-        linked_section_name: newSectionName,
-      });
+      setLinkedSection(newSection);
+      setLinkedSectionName(newSectionName);
       updatePreference({ key: "Last_Section", value: newSection });
       if (id) {
-        const updatedTask = { ...formState.task, linked_section: newSection };
-        updateFormState({ task: updatedTask });
+        const updatedTask = { ...task, linked_section: newSection };
+        setTask(updatedTask);
         modifyTask(updatedTask, "post");
       }
     },
-    [formState.task, id, modifyTask, updateFormState, updatePreference]
+    [task, id, modifyTask, updatePreference]
   );
-  useEffect(() => {
-    console.log("taskTags in TaskForm:", formState.taskTags);
-  }, [formState.taskTags]);
   return (
     <div className={`w-full h-full flex ${transitionStyles}`}>
       <div className="flex flex-col w-[30%] rounded-l-[3.125vw] justify-left">
         <TitleInput
           id={id}
           visibility={visibility}
-          titleValue={formState.titleValue}
-          setTitleValue={(value) => updateFormState({ titleValue: value })}
-          task={formState.task}
-          setTask={(task) => updateFormState({ task })}
+          titleValue={titleValue}
+          setTitleValue={setTitleValue}
+          task={task}
+          setTask={setTask}
         />
 
         <div
@@ -268,10 +249,10 @@ export default function TaskForm({
           )}
           <TagSelect
             id={id}
-            setTask={(task) => updateFormState({ task })}
-            taskTags={formState.taskTags}
-            setTaskTags={(tags) => updateFormState({ taskTags: tags })}
-            task={formState.task}
+            setTask={setTask}
+            taskTags={taskTags}
+            setTaskTags={setTaskTags}
+            task={task}
           />
         </div>
       </div>
@@ -280,34 +261,31 @@ export default function TaskForm({
         <div className="flex items-center justify-between h-[57%]">
           <TaskMenuSectionContainer
             flex={false}
-            othersStyles="flex flex-col justify-between items-center w-[55%] h-full"
+            othersStyles="flex flex-col justify-between items-center  h-full"
+            padding="0"
           >
             <DatePicker
               onDateSelect={handleDateSelect}
-              selectedDate={
-                formState.dueDate
-                  ? format(formState.dueDate, "yyyy-MM-dd")
-                  : undefined
-              }
+              selectedDate={dueDate ? format(dueDate, "yyyy-MM-dd") : undefined}
               startOfWeekOnSunday={preferences.Week_Starts_On}
             />
           </TaskMenuSectionContainer>
           <div className="flex flex-col w-full h-full justify-between ml-[2%] z-[300]">
             <WorkspaceSelect
               handleNewWorkspaceClick={handleElementTypeChange}
-              setTask={(task) => updateFormState({ task })}
-              task={formState.task}
+              setTask={setTask}
+              task={task}
               id={id}
               menuOpen={workspaceSelectMenuOpen}
               setMenuOpen={setWorkspaceSelectMenuOpen}
-              taskWorkspace={formState.taskWorkspace}
+              taskWorkspace={taskWorkspace}
             />
             <SectionSelection
-              linked_section_name={formState.linked_section_name}
+              linked_section_name={linkedSectionName}
               handleSectionChange={handleSectionChange}
               id={id}
-              task={formState.task}
-              setTask={(task) => updateFormState({ task })}
+              task={task}
+              setTask={setTask}
               menuOpen={sectionSelectMenuOpen}
               setMenuOpen={setSectionSelectMenuOpen}
             />
@@ -316,30 +294,28 @@ export default function TaskForm({
         <div className="flex justify-left h-[40%]">
           <DescriptionContainer
             id={id}
-            descriptionValue={formState.descriptionValue}
-            setDescriptionValue={(value) =>
-              updateFormState({ descriptionValue: value })
-            }
-            task={formState.task}
-            setTask={(task) => updateFormState({ task })}
-            priority={formState.priority}
-            setPriority={(priority) => updateFormState({ priority })}
+            descriptionValue={descriptionValue}
+            setDescriptionValue={setDescriptionValue}
+            task={task}
+            setTask={setTask}
+            priority={priority}
+            setPriority={setPriority}
           />
 
           <div className="flex flex-col justify-between w-[45%] ml-[2%]">
             <PrioritySelection
               visibility={true}
               id={id}
-              setTask={(task) => updateFormState({ task })}
-              task={formState.task}
-              priority={formState.priority}
-              setPriority={(priority) => updateFormState({ priority })}
+              setTask={setTask}
+              task={task}
+              priority={priority}
+              setPriority={setPriority}
             />
             <TaskMenuButton
-              disabled={!formState.canSubmit}
+              disabled={!canSubmit}
               onClick={() => (id ? delTask() : createTask())}
               moreRoundedCorners="br"
-              othersStyles={`w-full h-[25%] items-center justify-left font-bold text-4xl text-text`}
+              othersStyles={`w-full h-[25%] items-center justify-left font-bold text-4xl text-text `}
               flex
             >
               <span className="text-2xl">{id ? "Delete" : "Create"}</span>

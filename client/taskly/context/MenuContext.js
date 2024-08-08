@@ -46,9 +46,6 @@ export const MenuProvider = ({ children }) => {
     setCurrentCardType(cardType);
   }, [cardType]);
 
-  useEffect(() => {
-    console.log(activeTask, activeWorkspace);
-  }, [activeTask, activeWorkspace]);
   const toggleTaskMenu = (taskId = null, workspaceId = null, el) => {
     setActiveTask(taskId);
     setActiveWorkspace(workspaceId);

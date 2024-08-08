@@ -24,7 +24,6 @@ export const TagProvider = ({ children }) => {
       const response = await axios.get(`${baseUrl}/tags`, {
         withCredentials: true,
       });
-      console.log(response);
       setTags(response.data.tags);
     } catch (error) {
       console.error("Error fetching tags:", error);

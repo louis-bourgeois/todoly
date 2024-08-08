@@ -1,4 +1,5 @@
 "use client";
+
 import { useCallback, useEffect, useRef, useState } from "react";
 import "swiper/css";
 import "swiper/css/free-mode";
@@ -20,6 +21,8 @@ export default function TagSelect({
   const { addTag, updateTag, tags, deleteTag } = useTag();
   const { handleError } = useError();
   const newTagInputRef = useRef(null);
+  const inputRefs = useRef({});
+  const measureRef = useRef(null);
   const [isAddingTag, setIsAddingTag] = useState(false);
   const swiperRef = useRef(null);
   const [hoveredTag, setHoveredTag] = useState(null);
@@ -49,21 +52,20 @@ export default function TagSelect({
 
   const handleAddTag = useCallback(
     (name = "", id = undefined) => {
-      if (
-        taskTags.some((tag) => tag.name.toLowerCase() === name.toLowerCase())
-      ) {
-        handleError({
-          response: {
-            data: {
-              title: "Duplicate tag",
-              subtitle: "This tag already exists.",
+      setTaskTags((prev) => {
+        if (prev.some((tag) => tag.name.toLowerCase() === name.toLowerCase())) {
+          handleError({
+            response: {
+              data: {
+                title: "Duplicate tag",
+                subtitle: "This tag already exists.",
+              },
             },
-          },
-        });
-        return;
-      }
-      const newTaskTags = [...taskTags, { name, id }];
-      setTaskTags(newTaskTags);
+          });
+          return prev;
+        }
+        return [...prev, { name, id }];
+      });
       setIsAddingTag(true);
       setTimeout(() => {
         if (newTagInputRef.current) {
@@ -71,35 +73,44 @@ export default function TagSelect({
         }
       }, 0);
     },
-    [taskTags, handleError, setTaskTags]
+    [handleError]
   );
+
+  const adjustInputWidth = useCallback((index) => {
+    const input = inputRefs.current[index];
+    const measure = measureRef.current;
+    if (input && measure) {
+      measure.textContent = input.value || input.placeholder || "";
+      const width = measure.offsetWidth;
+      input.style.width = `${Math.max(20, width + 4)}px`; // 4px for some padding
+    }
+  }, []);
+
+  useEffect(() => {
+    taskTags.forEach((_, index) => adjustInputWidth(index));
+  }, [taskTags, adjustInputWidth]);
 
   const handleNewTagChange = useCallback(
     (index, value) => {
-      const newTaskTags = taskTags.map((t, i) =>
-        i === index ? { ...t, name: value } : t
+      setTaskTags((prev) =>
+        prev.map((t, i) => (i === index ? { ...t, name: value } : t))
       );
-      setTaskTags(newTaskTags);
+      setTimeout(() => adjustInputWidth(index), 0);
     },
-    [taskTags, setTaskTags]
+    [adjustInputWidth, setTaskTags]
   );
 
-  const handleDeleteTag = useCallback(
-    (index) => {
-      const newTaskTags = taskTags.filter((_, i) => i !== index);
-      setTaskTags(newTaskTags);
-    },
-    [taskTags, setTaskTags]
-  );
+  const handleDeleteTag = useCallback((index) => {
+    setTaskTags((prev) => prev.filter((_, i) => i !== index));
+  }, []);
 
   const handlePermanentDeleteTag = useCallback(
     async (id, e) => {
       e.stopPropagation();
-      const newTaskTags = taskTags.filter((tag) => tag.id !== id);
-      setTaskTags(newTaskTags);
+      setTaskTags((prev) => prev.filter((tag) => tag.id !== id));
       await deleteTag(id);
     },
-    [taskTags, setTaskTags, deleteTag]
+    [deleteTag]
   );
 
   const handleNewTagBlur = useCallback(
@@ -111,32 +122,34 @@ export default function TagSelect({
         handleDeleteTag(index);
         return;
       }
-      if (
-        taskTags.some(
-          (t, i) =>
-            i !== index && t.name.toLowerCase() === newName.toLowerCase()
-        )
-      ) {
-        handleError({
-          response: {
-            data: {
-              title: "Duplicate tag",
-              subtitle: "This tag already exists.",
+
+      setTaskTags((prev) => {
+        if (
+          prev.some(
+            (t, i) =>
+              i !== index && t.name.toLowerCase() === newName.toLowerCase()
+          )
+        ) {
+          handleError({
+            response: {
+              data: {
+                title: "Duplicate tag",
+                subtitle: "This tag already exists.",
+              },
             },
-          },
-        });
-        handleDeleteTag(index);
-        return;
-      }
+          });
+          return prev.filter((_, i) => i !== index);
+        }
+        return prev;
+      });
 
       try {
         if (tag.id === undefined) {
           const response = await addTag(newName);
           const addedTag = response.find((resTag) => resTag.name === newName);
-          const newTags = taskTags.map((t, i) =>
-            i === index ? { ...t, id: addedTag.id } : t
+          setTaskTags((prev) =>
+            prev.map((t, i) => (i === index ? { ...t, id: addedTag.id } : t))
           );
-          setTaskTags(newTags);
         } else {
           await updateTag(newName, tag.id);
         }
@@ -147,27 +160,30 @@ export default function TagSelect({
         handleDeleteTag(index);
       }
     },
-    [taskTags, handleError, addTag, updateTag, handleDeleteTag, setTaskTags]
+    [taskTags, handleError, addTag, updateTag, handleDeleteTag]
   );
 
   const handleTagClick = useCallback(
     (tag) => {
-      if (
-        !taskTags.some((t) => t.name.toLowerCase() === tag.name.toLowerCase())
-      ) {
-        handleAddTag(tag.name, tag.id);
-      } else {
-        handleError({
-          response: {
-            data: {
-              title: "Duplicate tag",
-              subtitle: "This tag already exists.",
+      setTaskTags((prev) => {
+        if (
+          !prev.some((t) => t.name.toLowerCase() === tag.name.toLowerCase())
+        ) {
+          return [...prev, { name: tag.name, id: tag.id }];
+        } else {
+          handleError({
+            response: {
+              data: {
+                title: "Duplicate tag",
+                subtitle: "This tag already exists.",
+              },
             },
-          },
-        });
-      }
+          });
+          return prev;
+        }
+      });
     },
-    [taskTags, handleAddTag, handleError]
+    [handleError]
   );
 
   return (
@@ -194,28 +210,38 @@ export default function TagSelect({
           </svg>
         </button>
       </div>
-      <div className="flex flex-col items-start overflow-y-auto">
+      <div className="flex flex-col items-start overflow-y-auto relative">
+        <span
+          ref={measureRef}
+          className="absolute invisible whitespace-pre"
+          style={{
+            font: "16px / 1.5 sans-serif", // Match the input's font
+            padding: "0 4px", // Match the input's padding
+          }}
+        />
         {Array.isArray(taskTags) &&
           taskTags.map((tag, index) => (
             <div
               key={index}
-              className="flex items-center justify-between mb-2 rounded-full addMenuElement m-2"
+              className="flex items-center justify-start mb-2 rounded-full !shadow-none addMenuElement p-1 m-2"
             >
               <input
-                ref={
-                  index === taskTags.length - 1 && isAddingTag
-                    ? newTagInputRef
-                    : null
-                }
+                ref={(el) => {
+                  inputRefs.current[index] = el;
+                  if (index === taskTags.length - 1 && isAddingTag) {
+                    newTagInputRef.current = el;
+                  }
+                }}
                 type="text"
                 value={tag.name}
                 onChange={(e) => handleNewTagChange(index, e.target.value)}
                 onBlur={() => handleNewTagBlur(index)}
                 className="text-text border-none text-base bg-transparent focus:outline-none focus:ring-0"
+                style={{ minWidth: "20px", width: "20px" }}
               />
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="cursor-pointer hover:text-dominant transition transition-color text-text"
+                className="cursor-pointer hover:text-dominant transition transition-color text-text ml-1 flex-shrink-0"
                 viewBox="0 0 24 24"
                 width="24"
                 height="24"

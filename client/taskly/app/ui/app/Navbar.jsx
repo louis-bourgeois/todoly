@@ -19,7 +19,6 @@ export default function Navbar() {
   const { user, loading } = useUser();
   const { preferences } = useUserPreferences();
   const { toggleTaskMenu, toggleSearchMenu } = useMenu();
-  console.log(user);
   const [showMenu, setShowMenu] = useState(false);
   const [showContentMenu, setShowContentMenu] = useState(false);
   const [marginTop, setMarginTop] = useState(0);
