@@ -96,8 +96,7 @@ h4,
 h5,
 h6,
 p,
-span,
-div {
+span {
   padding-top: var(--overused-grotesk-trim-top);
   padding-bottom: var(--overused-grotesk-trim-bottom);
 }
@@ -187,8 +186,6 @@ a:active {
 .text-trim-adjust {
   display: inline-block;
   line-height: var(--overused-grotesk-line-height);
-  padding-top: var(--overused-grotesk-trim-top);
-  padding-bottom: var(--overused-grotesk-trim-bottom);
 }
 
 .fontMenu {

@@ -58,7 +58,7 @@ const MobileCardHeader = ({ index = 0, workspace = null }) => {
     <div className="z-50 relative flex flex-col items-start justify-center px-4 pt-[10px] rounded-xl bg-primary">
       <div className="relative z-10 w-full">
         <div className="flex justify-between items-center w-full pb-2.5">
-          <h1 className="text-2xl font-bold text-dominant w-5/12">
+          <h1 className="text-2xl font-bold text-dominant w-[65%]">
             {truncateTitle(
               !isAllView
                 ? dayLabel || formattedDate || ""

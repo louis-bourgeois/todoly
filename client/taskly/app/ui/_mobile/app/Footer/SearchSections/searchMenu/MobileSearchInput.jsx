@@ -212,7 +212,7 @@ export default function MobileSearchInput({ onNavigate }) {
   }, [resetState]);
 
   return (
-    <div className="flex rounded-full justify-start px-[15px] border py-[10px] mr-[2.5%] items-center shadow-shadow_01 w-3/4">
+    <div className="bg-primary flex rounded-full justify-start px-[15px] border py-[10px] mr-[2.5%] items-center shadow-shadow_01 w-3/4">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="19"
@@ -229,7 +229,7 @@ export default function MobileSearchInput({ onNavigate }) {
         disabled={true}
         type="text"
         name="collaborators"
-        className="placeholder:text-gray placeholder:text-[13px] w-full text-center pr-5 focus:outline-none text-text"
+        className="bg-transparent placeholder:text-gray placeholder:text-[13px] w-full text-center pr-5 focus:outline-none text-text"
         placeholder="Type a command or search"
         value={searchQuery}
         onChange={handleInputChange}

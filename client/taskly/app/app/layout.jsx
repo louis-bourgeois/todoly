@@ -49,7 +49,9 @@ const AddWorkspaceBubble = ({ onClose, onDontShowAgain }) => {
 };
 const CardWrapper = ({ children, cardType }) => {
   return (
-    <div className={`flex items-center justify-center h-full`}>{children}</div>
+    <div className={`flex items-center justify-center h-full pb-[2vh]`}>
+      {children}
+    </div>
   );
 };
 
@@ -356,7 +358,7 @@ export default function AppLayout({ children }) {
         <MobileHeader />
 
         <div
-          className={`w-full overflow-visible ${
+          className={`w-full overflow-x-visible flex ${
             cardType === "Search" && "mt-auto"
           }`}
         >
@@ -366,7 +368,7 @@ export default function AppLayout({ children }) {
             centeredSlides={true}
             spaceBetween={0}
             mousewheel={false}
-            className="mySwiper h-full"
+            className="mySwiper"
           >
             {currentCardType === "Task" && sortedTasks.length > 0 ? (
               sortedTasks.map((task, index) => (
@@ -471,4 +473,3 @@ export default function AppLayout({ children }) {
     return null;
   }
 }
-

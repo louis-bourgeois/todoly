@@ -32,8 +32,9 @@ module.exports = {
       boxShadow: {
         shadow_01: "0px 6px 8px 3px rgba(0, 0, 0, 0.25)",
         shadow_02: "0px 3px 4px 3px rgba(0, 0, 0, 0.25)",
-        shadow_card: "7px 10px 12px 4px rgba(0, 0, 0, 0.25)",
-        shadow_card_desktop: "0px 4px 35px 2px rgba(0, 0, 0, 0.25)",
+        shadow_card:
+          "rgba(0, 0, 0, 0.2) 0px -6px 12px, rgba(0, 0, 0, 0.25) 0px 19px 15px, rgba(0, 0, 0, 0.22) 0px 15px 12px",
+        shadow_card_desktop: "0px 19px 19px rgba(0, 0, 0, 0.25)",
       },
       screens: {
         "2xs": "200px",
@@ -57,10 +58,6 @@ module.exports = {
       },
       lineHeight: {
         "overused-grotesk": "var(--overused-grotesk-line-height, 0.75)",
-      },
-      padding: {
-        "text-trim-top": "var(--overused-grotesk-trim-top, 0.05em)",
-        "text-trim-bottom": "var(--overused-grotesk-trim-bottom, 0.25em)",
       },
       colors: {
         primary: "var(--color-primary)",
@@ -89,8 +86,6 @@ module.exports = {
       const newUtilities = {
         ".text-trim": {
           lineHeight: theme("lineHeight.overused-grotesk"),
-          paddingTop: theme("padding.text-trim-top"),
-          paddingBottom: theme("padding.text-trim-bottom"),
           display: "inline-block",
         },
         ".bg-secondary-10": {

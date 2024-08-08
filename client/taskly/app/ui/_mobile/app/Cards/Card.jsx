@@ -2,7 +2,7 @@ import React, { useMemo } from "react";
 import CardTransition from "./CardTransition";
 
 const CARD_HEIGHTS = {
-  default: "2xs:h-[65vh]",
+  default: "2xs:h-[72.5vh]",
   Add: {
     Task: "2xs:h-[65vh]",
     Workspace: "2xs:h-[40vh]",
@@ -11,7 +11,7 @@ const CARD_HEIGHTS = {
   Task: "2xs:h-[62.5vh]",
   Workspace: "2xs:h-[50vh]",
   Search: "2xs:h-[62.5vh]",
-  other: "2xs:h-[70vh]",
+  other: "2xs:h-[72.5vh]",
 };
 
 const Card = ({ children, cardType, el, isTransitioning }) => {
@@ -24,19 +24,14 @@ const Card = ({ children, cardType, el, isTransitioning }) => {
 
   return (
     <div
-      className={`transition-all duration-500 ease-[cubic-bezier(1,0,0,1)] relative w-[calc(100vw-35px)] my-5`}
+      className={`transition-all  bg-primary  duration-500 ease-[cubic-bezier(1,0,0,1)] relative w-[calc(100vw-35px)] my-5 border rounded-[20px] shadow-shadow_card`}
       role="region"
       aria-label={`${cardType} card`}
     >
-      <div
-        className={`absolute inset-0 rounded-[20px] shadow-shadow_card`}
-        style={{ transform: "translate(0, 0)" }}
-        aria-hidden="true"
-      ></div>
       <CardTransition
         isTransitioning={isTransitioning}
         cardType={cardType}
-        className={`relative ${cardHeight} rounded-[20px] bg-primary overflow-hidden flex flex-col transition-[height] duration-300 ease-in-out`}
+        className={`relative ${cardHeight} rounded-[20px] overflow-hidden flex flex-col transition-[height] duration-300 ease-in-out`}
       >
         {children}
       </CardTransition>

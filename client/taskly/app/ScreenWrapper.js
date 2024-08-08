@@ -53,11 +53,11 @@ export default function ScreenWrapper({ children }) {
   return (
     <div
       className={`${wrapperClassName} ${
-        !isMobile && " theme-dar absolute w-[100vw] h-[100vh] inset-0 z-0 bg-bg"
-      }`}
+        !isMobile && " absolute w-[100vw] h-[100vh] inset-0 z-0"
+      } `}
     >
       {isMobile ? (
-        <main className=" flex flex-col items-start justify-between h-full py-[20px]">
+        <main className="flex flex-col items-start justify-between pt-[20px]">
           {children}
         </main>
       ) : (
