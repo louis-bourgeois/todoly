@@ -241,7 +241,7 @@ export default function TaskForm({
   }, [formState.taskTags]);
   return (
     <div className={`w-full h-full flex ${transitionStyles}`}>
-      <div className="flex flex-col w-[30%] rounded-l-[3.125vw] my-[1.4290277778vh] justify-left">
+      <div className="flex flex-col w-[30%] rounded-l-[3.125vw] justify-left">
         <TitleInput
           id={id}
           visibility={visibility}
@@ -254,7 +254,7 @@ export default function TaskForm({
         <div
           className={`${
             id ? "" : "flex flex-col"
-          } h-[75%] rounded-bl-[3.125vw] pr-[5%] rounded-[20px] justify-end gap-[8.6%] z-[250]`}
+          } h-[75%] rounded-bl-[3.125vw] pr-[5%] rounded-[20px] justify-end gap-[5%] z-[250]`}
         >
           {!id && (
             <div className="z-[250]">
@@ -276,7 +276,7 @@ export default function TaskForm({
         </div>
       </div>
 
-      <div className="flex flex-col w-[70%] justify-between my-[1.4290277778vh] rounded-tr-[3.125vw]">
+      <div className="flex flex-col w-[70%] justify-between rounded-tr-[3.125vw]">
         <div className="flex items-center justify-between h-[57%]">
           <TaskMenuSectionContainer
             flex={false}
@@ -313,7 +313,7 @@ export default function TaskForm({
             />
           </div>
         </div>
-        <div className="flex justify-left h-[40%] pt-[2%]">
+        <div className="flex justify-left h-[40%]">
           <DescriptionContainer
             id={id}
             descriptionValue={formState.descriptionValue}

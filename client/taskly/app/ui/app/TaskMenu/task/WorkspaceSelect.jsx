@@ -67,8 +67,10 @@ export default function WorkspaceSelect({
           className="addMenuElement cursor-pointer rounded-full flex items-center justify-between p-[1vw] w-full text-text"
           onClick={toggleMenu}
         >
-          {workspaces.find((workspace) => workspace.id === selectedWorkspace)
-            ?.name || "Select Workspace"}
+          <span className="text-m 3xl:text-lg">
+            {workspaces.find((workspace) => workspace.id === selectedWorkspace)
+              ?.name || "Select Workspace"}
+          </span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className={`ml-2 transition-transform duration-300 ${

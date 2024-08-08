@@ -69,7 +69,7 @@ export default function SectionSelectContainer({
   };
 
   return (
-    <div className="h-[95%] rounded-[20px] w-[55%] addMenuElement glass-morphism flex flex-col justify-start gap-[7.5%] items-center">
+    <div className="h-[95%] rounded-[20px] w-[55%] addMenuElement bg-main_menu_bg  flex flex-col justify-start gap-[7.5%] items-center">
       <h1 className="text-3xl font-bold">Sections</h1>
       <Downshift
         inputValue={inputValue}

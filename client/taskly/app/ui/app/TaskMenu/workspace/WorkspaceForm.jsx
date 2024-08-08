@@ -119,7 +119,7 @@ export default function WorkspaceForm({
           value={nameValue}
           disabled={!visibility}
           placeholder={id ? "Edit Workspace" : "New Workspace"}
-          className="w-full text-right placeholder:text-text placeholder:text-4xl text-text text-5xl bg-transparent h-full focus:outline-none"
+          className="w-full text-right placeholder:text-gray placeholder:font-light placeholder:text-4xl text-text text-5xl bg-transparent h-full focus:outline-none"
         />
         <div className="flex-grow" />
       </div>
@@ -136,7 +136,7 @@ export default function WorkspaceForm({
           />
           <button
             onClick={handleWorkspaceAction}
-            className="addMenuElement glass-morphism h-[15%] rounded-[20px] text-2xl hover:scale-105 active:scale-100 transition-transform duration-100 ease-in"
+            className="addMenuElement bg-main_menu_bg  h-[15%] rounded-[20px] text-2xl hover:scale-105 active:scale-100 transition-transform duration-100 ease-in"
           >
             {id ? "Update" : "Create"}
           </button>

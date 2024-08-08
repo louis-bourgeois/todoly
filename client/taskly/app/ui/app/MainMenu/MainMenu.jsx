@@ -111,7 +111,7 @@ export default function MainMenu({
 
   return (
     <Div
-      styles={`glass-morphism absolute bg-main_menu_bg ${
+      styles={`absolute bg-main_menu_bg ${
         profilePictureVisibility ? "z-20" : "z-[225]"
       } fontMenu top-0 left-0 flex flex-col justify-between rounded-[3.125vw] rounded-tl-[0] transition-all ease-in-out duration-300 ${
         showMenu ? "opacity-100" : "w-0 opacity-0"

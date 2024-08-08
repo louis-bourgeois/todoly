@@ -78,13 +78,13 @@ export default function TaskMenu({
       <Div
         _id="TaskMenuMain"
         ref={taskMenuRef}
-        styles={`glass-morphism ${
+        styles={`${
           elementType === "Workspace" ? "flex flex-col" : "flex"
         } border gap-[0.5%] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[80] fontMenu transition-all duration-300 rounded-[3.125vw] py-[1.5vh] px-[1.3227%] ${
           visibility
-            ? "4xl:w-[1482px] h-[750px] 2xl:w-[1280px] lg:w-[1024px] md:w-[600px] sm:w-[400px] opacity-100"
+            ? "5xl:w-[1700px] 4xl:w-[1482px] lg:h-[600px] 4xl:h-[750px] 5xl:h-[850px] 2xl:w-[1280px] lg:w-[1024px] md:w-[600px] sm:w-[400px] opacity-100"
             : "w-0 h-0 opacity-0 pointer-events-none"
-        }`}
+        } bg-main_menu_bg`}
         notBorder
       >
         {elementType === "Task" && (

@@ -5,26 +5,28 @@ export default function ElementPickerLibelle({
   elementType,
 }) {
   const [taskArrowIsClicked, setTaskArrowIsClicked] = useState(false);
-  const [elements] = useState(["Task", "Note", "Workspace"]);
+  const [elements] = useState(["Task", "Workspace"]);
 
   return (
-    <div className="relative bg-[#F0F0F0] rounded-full p-[1%] flex justify-between items-center">
-      <span className="pl-[5%] pb-[2%]">{elementType}</span>
+    <div
+      onClick={() => setTaskArrowIsClicked((prev) => !prev)}
+      className="relative bg-dominant cursor-pointer rounded-full p-[1%] py-[0.5%] flex justify-between items-center"
+    >
+      <span className="pl-[5%] pb-[2%] text-primary">{elementType}</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         x="0"
         y="0"
-        className={`cursor-pointer transition-transform duration-500 ${
+        className={`cursor-pointer transition-transform duration-500 text-primary ${
           taskArrowIsClicked ? "rotate-180" : ""
         }`}
         viewBox="0 0 29 29"
         width="50"
         height="50"
-        onClick={() => setTaskArrowIsClicked((prev) => !prev)}
       >
         <path
           fill="none"
-          stroke="#000"
+          stroke="currentColor"
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeMiterlimit="10"

@@ -23,7 +23,7 @@
   --color-important: #fa3766;
   --color-grey-1: #959595;
   --color-secondary-rgb: 13, 12, 12;
-  --mainMenu-bg: rgba(255, 255, 255, 0.1);
+  --main-menu-bg: rgba(255, 255, 255, 0.25);
 
   /* Gradients */
   --gradient-1: linear-gradient(
@@ -174,7 +174,7 @@ a:active {
   left: 0;
   right: 0;
   bottom: 0;
-  background: var(--color-primary);
+  background: var(--main-menu-bg);
   border-radius: inherit;
   z-index: -1;
 }
@@ -202,12 +202,15 @@ a:active {
 
 .addMenuElement,
 .task-menu-dropdown-menu {
+  background-color: var(--main-menu-bg);
   position: relative;
   padding: 10px;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
-  box-shadow: -2px 6px 6px rgba(0, 0, 0, 0.25);
+  border: solid 1px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.12), 0 2px 2px rgba(0, 0, 0, 0.12),
+    0 4px 4px rgba(0, 0, 0, 0.12), 0 8px 8px rgba(0, 0, 0, 0.12),
+    0 16px 16px rgba(0, 0, 0, 0.12);
 }
 
 /* Styles spécifiques aux éléments */
@@ -263,6 +266,14 @@ a:active {
   border-radius: 9999px; /* Border-radius du thumb */
   border: 3px solid transparent; /* Enlève le rail en simulant un border transparent */
   background-clip: content-box; /* Empêche le fond de déborder dans le border */
+}
+
+.scroll-hide {
+  scrollbar-width: none; /* Pour Firefox */
+}
+
+.scroll-hide::-webkit-scrollbar {
+  display: none; /* Pour WebKit (Chrome, Safari, etc.) */
 }
 
 /* Classes de transition et d'animation */

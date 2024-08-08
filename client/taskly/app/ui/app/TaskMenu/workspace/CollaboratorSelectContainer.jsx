@@ -29,7 +29,7 @@ export default function CollaboratorSelectContainer({
   };
 
   return (
-    <div className="addMenuElement glass-morphism h-[80%] rounded-[20px] flex flex-col justify-between items-center">
+    <div className="addMenuElement bg-main_menu_bg h-[80%] rounded-[20px] flex flex-col justify-between items-center">
       <h1 className="text-3xl font-bold">Collaborators</h1>
       <div className="w-full h-[50%]  flex flex-col items-center justify-center p-5">
         <Slider {...settings} className="w-full">
@@ -37,7 +37,7 @@ export default function CollaboratorSelectContainer({
             console.log(collaborator);
             return (
               <div key={index} className="px-2 py-10">
-                <div className="p-2 addMenuElement glass-morphism rounded-full flex justify-between items-center">
+                <div className="p-2 addMenuElement bg-main_menu_bg rounded-full flex justify-between items-center">
                   <span className="text-center block">
                     {collaborator.username || collaborator.name}
                   </span>
@@ -67,7 +67,7 @@ export default function CollaboratorSelectContainer({
           })}
         </Slider>
       </div>
-      <div className="glass-morphism addMenuElement rounded-full w-[80%] flex justify-around items-center">
+      <div className="g addMenuElement bg-main_menu_bg  rounded-full w-[80%] flex justify-around items-center">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="39"

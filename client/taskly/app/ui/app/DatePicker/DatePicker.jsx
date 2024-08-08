@@ -10,7 +10,7 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
@@ -22,10 +22,13 @@ const daysOfWeekMondayStart = ["M", "T", "W", "T", "F", "S", "S"];
 const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [days, setDays] = useState([]);
-  const [adjustedDaysOfWeek, setAdjustedDaysOfWeek] = useState(
-    startOfWeekOnSunday === "Sunday"
-      ? daysOfWeekSundayStart
-      : daysOfWeekMondayStart
+
+  const adjustedDaysOfWeek = useMemo(
+    () =>
+      startOfWeekOnSunday === "Sunday"
+        ? daysOfWeekSundayStart
+        : daysOfWeekMondayStart,
+    [startOfWeekOnSunday]
   );
 
   const generateDays = useCallback(
@@ -46,18 +49,13 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
 
   useEffect(() => {
     setDays(generateDays(currentDate));
-    setAdjustedDaysOfWeek(
-      startOfWeekOnSunday === "Sunday"
-        ? daysOfWeekSundayStart
-        : daysOfWeekMondayStart
-    );
-  }, [currentDate, startOfWeekOnSunday, generateDays]);
+  }, [currentDate, generateDays]);
 
   useEffect(() => {
     if (selectedDate) {
       setCurrentDate(new Date(selectedDate));
     }
-  }, []); // Dépendances vides pour ne s'exécuter qu'au montage
+  }, [selectedDate]);
 
   const isPastDate = (date) => {
     const today = new Date();
@@ -70,6 +68,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
 
   const settings = {
     dots: false,
+    arrows: false,
     infinite: false,
     speed: 500,
     slidesToShow: 3.25,
@@ -118,12 +117,12 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
         return;
     }
     onDateSelect(format(date, "yyyy-MM-dd"));
-    setCurrentDate(date); // Mise à jour de currentDate pour refléter la sélection rapide
+    setCurrentDate(date);
   };
 
   return (
-    <>
-      <div className="w-full p-4">
+    <div className="flex flex-col h-full w-full">
+      <div className="flex-shrink-0 w-full bg-transparent">
         <Slider {...settings}>
           {[
             { name: "Today" },
@@ -131,31 +130,33 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
             { name: "This Weekend" },
             { name: "Next Week" },
           ].map((fastDate, index) => (
-            <div key={index} className="px-2">
+            <div key={index} className="px-1 ">
               <div
                 onClick={() => handleFastDateClick(fastDate.name)}
-                className="cursor-pointer hover:scale-105 transition-all flex h-[50%] items-center justify-center bg-primary rounded-[20px] my-2 p-2"
+                className="! cursor-pointer hover:scale-105 transition-all flex items-center justify-center bg-dominant rounded-[20px] p-3"
                 style={{
                   boxShadow: "0px 4px 4px 0px rgba(0, 122, 255, 0.25)",
                 }}
               >
-                <p className="text-xs text-text font-bold">{fastDate.name}</p>
+                <p className="text-xs text-primary font-bold">
+                  {fastDate.name}
+                </p>
               </div>
             </div>
           ))}
         </Slider>
       </div>
 
-      <TaskMenuSectionContainer othersStyles="w-full h-[75%] p-4 flex flex-col">
-        <div className="w-full p-4 pt-0 flex items-center justify-between ">
+      <TaskMenuSectionContainer othersStyles="flex-grow w-full p-2 flex flex-col overflow-hidden">
+        <div className="w-full p-2 pt-1 flex items-center justify-between mb-2">
           <button
-            className="select-none text-4xl"
+            className="select-none text-2xl"
             onClick={handlePreviousMonth}
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="30"
-              height="30"
+              width="24"
+              height="24"
               fill="none"
               viewBox="0 0 24 24"
               stroke="#007AFF"
@@ -163,20 +164,19 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={3}
                 d="M15 19l-7-7 7-7"
               />
             </svg>
           </button>
-          <h2 className="text-text">{format(currentDate, "MMMM yyyy")}</h2>
-          <button
-            className="select-none text-4xl 4xl:text-6xl"
-            onClick={handleNextMonth}
-          >
+          <h2 className="text-text text-lg font-extrabold 5xl:text-xl">
+            {format(currentDate, "MMMM yyyy")}
+          </h2>
+          <button className="select-none" onClick={handleNextMonth}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="30"
-              height="30"
+              width="24"
+              height="24"
               fill="none"
               viewBox="0 0 24 24"
               stroke="#007AFF"
@@ -184,43 +184,49 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={3}
                 d="M9 5l7 7-7 7"
               />
             </svg>
           </button>
         </div>
-        <div className="grid grid-cols-7 gap-2">
-          {adjustedDaysOfWeek.map((day, index) => (
-            <div
-              key={index}
-              className="text-center text-text text-xs 4xl:text-base font-bold"
-            >
-              {day}
-            </div>
-          ))}
-          {days.map((day, index) => (
-            <div
-              key={index}
-              className={`text-center text-xs 4xl:text-base transition-transform transition-color duration-500 cursor-pointer ${
-                isSameMonth(day, currentDate)
-                  ? isPastDate(day)
-                    ? "text-gray-400 cursor-default"
-                    : isSelectedDate(day)
-                    ? "text-dominant"
-                    : "text-text hover:text-dominant hover:scale-110 active:scale-95"
-                  : "text-gray-300 cursor-default opacity-0"
-              }`}
-              onClick={() =>
-                isSameMonth(day, currentDate) && handleDateClick(day)
-              }
-            >
-              {format(day, "d")}
-            </div>
-          ))}
+        <div className="flex-grow flex flex-col min-h-0">
+          <div className="grid grid-cols-7 gap-1">
+            {adjustedDaysOfWeek.map((day, index) => (
+              <div
+                key={index}
+                className="text-center text-text text-xs font-bold"
+              >
+                <span className="5xl:text-base">{day}</span>
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-7 gap-1 flex-grow overflow-y-auto scroll-hide">
+            {days.map((day, index) => (
+              <div
+                key={index}
+                className={`text-center text-sm flex items-center justify-center transition-transform transition-color duration-200 cursor-pointer ${
+                  isSameMonth(day, currentDate)
+                    ? isPastDate(day)
+                      ? "text-gray-400 cursor-default"
+                      : isSelectedDate(day)
+                      ? "text-dominant"
+                      : "text-text hover:text-dominant hover:scale-105"
+                    : "text-gray-300 cursor-default opacity-0"
+                }`}
+                onClick={() =>
+                  isSameMonth(day, currentDate) && handleDateClick(day)
+                }
+              >
+                <span className="font-medium text-sm 4xl:text-base">
+                  {format(day, "d")}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </TaskMenuSectionContainer>
-    </>
+    </div>
   );
 };
 

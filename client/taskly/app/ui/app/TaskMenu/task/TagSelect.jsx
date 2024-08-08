@@ -174,7 +174,7 @@ export default function TagSelect({
     <TaskMenuSectionContainer
       flexCol
       moreRoundedCorners="bl"
-      othersStyles={`justify-between ${id ? "h-[98%]" : "h-[77.5%]"}`}
+      othersStyles={`justify-between ${id ? "h-full" : "h-[90%]"}`}
     >
       <div className="flex justify-between items-center m-[1%]">
         <h2 className="p-[3%] font-bold text-2xl text-text">Tag(s)</h2>
