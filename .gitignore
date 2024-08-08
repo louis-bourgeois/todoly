@@ -146,7 +146,11 @@ client/taskly/.next/
 client/taskly/.swc/
 client/taskly/.*.env
 client/taskly/.env
-
+client/taskly/public/sw.js
+client/taskly/public/sw.js.map
+client/taskly/public/workbox-e43f5367.js
+client/taskly/public/workbox-e43f5367.js.map
+client/taskly/yarn.lock
 .vscode/*
 .vscode
 

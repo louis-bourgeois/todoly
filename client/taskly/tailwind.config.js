@@ -21,6 +21,7 @@ module.exports = {
       "2xl": "2rem",
       "2.5xl": "2.5rem",
       "3xl": "3rem",
+      "3.5xl": "3.5rem",
       "4xl": "4rem",
       "5xl": "5rem",
     },
@@ -32,7 +33,7 @@ module.exports = {
         shadow_01: "0px 6px 8px 3px rgba(0, 0, 0, 0.25)",
         shadow_02: "0px 3px 4px 3px rgba(0, 0, 0, 0.25)",
         shadow_card: "7px 10px 12px 4px rgba(0, 0, 0, 0.25)",
-        shadow_card_desktop: "0px 4px 45px 2px rgba(0, 0, 0, 0.25)",
+        shadow_card_desktop: "0px 4px 35px 2px rgba(0, 0, 0, 0.25)",
       },
       screens: {
         "2xs": "200px",
@@ -40,7 +41,8 @@ module.exports = {
         ...defaultTheme.screens,
         "3xl": "1720px",
         "4xl": "1920px",
-        "5xl": "2510px",
+        "4.5xl": "2290px",
+        "5xl": "2490px",
       },
       fontFamily: {
         poppins: ["var(--font-poppins)", ...defaultTheme.fontFamily.sans],

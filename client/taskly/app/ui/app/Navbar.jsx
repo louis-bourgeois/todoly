@@ -106,11 +106,11 @@ export default function Navbar() {
               ref={elementRef}
               src={`${"/user/photo_profil_google.jpepg"}`}
               alt="Profile Picture"
-              width={150}
-              height={150}
+              width={125}
+              height={125}
               priority
               quality={100}
-              className={`rounded-full transition-all duration-300 max-w-full ease ${
+              className={`border border-black rounded-full transition-all duration-300 max-w-full ease ${
                 showMenu ? "scale-[0.8]" : ""
               } ${profilePictureVisibility ? "opacity-100" : "opacity-0"}`}
               onLoad={updateDimensions}
@@ -118,7 +118,7 @@ export default function Navbar() {
           </div>
         </li>
         <li>
-          <h1 className="text-5xl font-black">
+          <h1 className="5xl:text-5xl 2xl:text-4xl xl-text-3.5xl lg:text-2.5xl font-black">
             {preferences.Home_Page_Title ===
             "Depending on the time of day + name" ? (
               <>
@@ -132,7 +132,7 @@ export default function Navbar() {
             )}
           </h1>
         </li>
-        <li className="flex max-w-[17.5%] gap-iconsContainer items-center justify-center h-full mr-[0.5vw]">
+        <li className="flex max-w-[12.5%] gap-iconsContainer items-center justify-center h-full mr-[0.5vw]">
           <NavButton
             styles="border border-dominant rounded-full shadow-2xl bg-primary"
             onClick={toggleSearchMenu}
