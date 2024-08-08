@@ -104,7 +104,7 @@ export default function Navbar() {
           >
             <Image
               ref={elementRef}
-              src={`${"/user/photo_profil_google.jpepg"}`}
+              src={`${"/api/placeholder/150/150"}`}
               alt="Profile Picture"
               width={125}
               height={125}

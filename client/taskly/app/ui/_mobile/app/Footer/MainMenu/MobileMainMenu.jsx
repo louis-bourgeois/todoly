@@ -47,7 +47,7 @@ export default function MobileMainMenu() {
     { icon: AllIcon, label: "All", path: "/app/all" },
     {
       icon: {
-        src: "/user/photo_profil_google.jpeg",
+        src: "/api/placeholder/150/150",
         width: 30,
         height: 30,
       },

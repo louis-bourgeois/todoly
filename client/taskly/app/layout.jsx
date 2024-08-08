@@ -1,15 +1,8 @@
 import { overusedGrotesk } from "@/font";
 import dynamic from "next/dynamic";
-import { usePathname } from 'next/navigation';
+import CanonicalTag from "./CanonicalTag";
 import AppProviders from "./contextProvider";
 import "./globals.css";
-
-export default function CanonicalTag() {
-  const pathname = usePathname()
-  const canonicalUrl = `https://todoly.app${pathname}`
-
-  return <link rel="canonical" href={canonicalUrl} />
-}
 
 const NotificationWrapper = dynamic(
   () => import("./ui/app/NotificationWrapper/NotificationWrapper"),

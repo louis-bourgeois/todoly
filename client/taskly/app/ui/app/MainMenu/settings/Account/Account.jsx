@@ -57,7 +57,7 @@ export default function Account({ transitionStyles, setLayout }) {
           <svg
             width="20"
             height="20"
-            className="mt-[1%] cursor-pointer hover:scale-110 active:scale-100 transition transition-transform ease-out"
+            className="mt-[1%] cursor-pointer hover:scale-110 active:scale-100 transition-transform ease-out"
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
