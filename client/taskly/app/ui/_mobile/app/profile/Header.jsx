@@ -12,7 +12,7 @@ const Header = ({ pictDim, pictSrc }) => {
         width={pictDim}
         height={pictDim}
         priority={true}
-        className="rounded-full object-cover"
+        className="rounded-full object-cover border border-black"
         src={pictSrc}
         alt="Profile picture"
         onError={(e) => {

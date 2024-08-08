@@ -138,7 +138,7 @@ const MobileViewsMenu = ({ isVisible }) => {
       role="dialog"
       aria-modal="true"
       aria-labelledby="mobile-views-menu-title"
-      className={`fixed inset-0 bg-secondary transition-opacity duration-300 ease-in-out z-50 mobile-views-menu-overlay ${
+      className={`fixed inset-0 bg-black transition-opacity duration-300 ease-in-out z-50 mobile-views-menu-overlay ${
         isVisible ? "bg-opacity-50" : "bg-opacity-0 pointer-events-none"
       } ${isVisible ? "visible" : "invisible"}`}
     >
@@ -146,7 +146,7 @@ const MobileViewsMenu = ({ isVisible }) => {
         ref={menuRef}
         className={`p-8 py-2.5 fixed bottom-0 left-0 right-0 bg-primary rounded-t-3xl shadow-shadow_01 transform transition-all duration-300 ease-in-out ${
           isVisible ? "translate-y-0" : "translate-y-full"
-        } overflow-auto`}
+        } overflow-none`}
         onClick={(e) => e.stopPropagation()}
       >
         <div ref={contentRef} className="menu-content flex flex-col">

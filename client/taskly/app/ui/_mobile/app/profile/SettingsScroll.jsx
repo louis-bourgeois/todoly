@@ -47,6 +47,11 @@ const sections = [
     ],
     type: "primary",
   },
+  {
+    title: "Integrations",
+
+    type: "primary",
+  },
 ];
 
 const SettingsScroll = () => {
@@ -131,7 +136,7 @@ const SettingsScroll = () => {
   const memoizedSections = useMemo(() => sections, []);
 
   return (
-    <main className="flex flex-col overflow-y-auto overflow-x-clip w-full px-[15px] justify-start gap-[20px]">
+    <main className="flex flex-col overflow-y-auto overflow-x-clip w-full px-[15px] justify-start gap-[20px] h-full">
       {memoizedSections.map((s, index) => (
         <SettingsSection
           key={index}

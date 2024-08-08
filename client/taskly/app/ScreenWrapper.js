@@ -57,7 +57,7 @@ export default function ScreenWrapper({ children }) {
       } `}
     >
       {isMobile ? (
-        <main className="flex flex-col items-start justify-between pt-[20px]">
+        <main className="flex flex-col items-start justify-between py-[20px]">
           {children}
         </main>
       ) : (

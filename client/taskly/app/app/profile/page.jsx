@@ -11,7 +11,7 @@ export default function Page() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center gap-[30px] xs:max-h-[100vh] 2xs:max-h-[82.5vh] w-full">
+    <div className="flex flex-col items-center justify-start gap-[3vh] h-[90vh] w-full">
       <Header pictDim={84} pictSrc={"/api/placeholder/150/150"} />
       <SettingsScroll />
     </div>
