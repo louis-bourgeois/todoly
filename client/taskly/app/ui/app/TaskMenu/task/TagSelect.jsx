@@ -73,7 +73,7 @@ export default function TagSelect({
         }
       }, 0);
     },
-    [handleError]
+    [handleError, setTaskTags]
   );
 
   const adjustInputWidth = useCallback((index) => {
@@ -100,9 +100,12 @@ export default function TagSelect({
     [adjustInputWidth, setTaskTags]
   );
 
-  const handleDeleteTag = useCallback((index) => {
-    setTaskTags((prev) => prev.filter((_, i) => i !== index));
-  }, []);
+  const handleDeleteTag = useCallback(
+    (index) => {
+      setTaskTags((prev) => prev.filter((_, i) => i !== index));
+    },
+    [setTaskTags]
+  );
 
   const handlePermanentDeleteTag = useCallback(
     async (id, e) => {
@@ -110,7 +113,7 @@ export default function TagSelect({
       setTaskTags((prev) => prev.filter((tag) => tag.id !== id));
       await deleteTag(id);
     },
-    [deleteTag]
+    [deleteTag, setTaskTags]
   );
 
   const handleNewTagBlur = useCallback(
@@ -160,7 +163,7 @@ export default function TagSelect({
         handleDeleteTag(index);
       }
     },
-    [taskTags, handleError, addTag, updateTag, handleDeleteTag]
+    [taskTags, handleError, addTag, setTaskTags, updateTag, handleDeleteTag]
   );
 
   const handleTagClick = useCallback(
@@ -183,7 +186,7 @@ export default function TagSelect({
         }
       });
     },
-    [handleError]
+    [handleError, setTaskTags]
   );
 
   return (

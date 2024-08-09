@@ -36,7 +36,6 @@ export const createWorkspace = async (req, res) => {
 };
 
 export const updateWorkspace = async (req, res) => {
-  console.log(req.body);
   const { data } = req.body;
   const { id } = req.params;
   if (!data) {

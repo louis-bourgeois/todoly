@@ -2,7 +2,6 @@ import Preference from "../models/Preference.js";
 import User from "../models/User.js";
 
 export async function updatePreference(req, res) {
-  console.log("update");
   if (req.user) {
     try {
       const found_user = await User.findId(

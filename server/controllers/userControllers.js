@@ -20,22 +20,14 @@ export async function checkUser(req, res, next) {
 }
 export async function createUser(req, res) {
   try {
-    console.log("Starting createUser function");
-    console.log("Request body:", req.body);
-
     const result = await User.find(req.body.data, true);
-    console.log("User.find result:", result);
 
     if (result === true) {
-      console.log("User already exists");
       return res.status(409).send("already exist");
     } else if (result === "username already taken") {
-      console.log("Username already taken");
       return res.status(409).send(result);
     } else {
-      console.log("Creating new user");
       const data = req.body.data;
-      console.log("User data:", data);
 
       const user = new User(
         data.username,
@@ -44,20 +36,13 @@ export async function createUser(req, res) {
         data.email,
         data.hashPassword
       );
-      console.log("User object created:", user);
-
       const saveData = await user.save();
-      console.log("User saved, saveData:", saveData);
-
-      console.log("Creating workspace");
       const workspace = new Workspace(
         "Personal",
         "Your default workspace for personal tasks"
       );
-      console.log("Workspace object created:", workspace);
-
       const { workspaceId, defaultSection } = await workspace.save(saveData[0]);
-      console.log("Workspace saved, workspaceId:", workspaceId);
+
 
       const preferences_key = [
         "Default_Main_Page",
@@ -91,28 +76,14 @@ export async function createUser(req, res) {
         "Importance",
         "All tasks",
       ];
-
-      console.log("Preferences keys:", preferences_key);
-      console.log("Preferences values:", preferences_values);
-
-      console.log("Starting to save preferences");
       for (let i = 0; i < preferences_key.length; i++) {
-        console.log(
-          `Saving preference ${i + 1}/${preferences_key.length}: ${
-            preferences_key[i]
-          }`
-        );
         const preference = new Preference(
           preferences_key[i],
           preferences_values[i],
           saveData[0]
         );
         await preference.save();
-        console.log(`Preference ${i + 1} saved`);
       }
-      console.log("All preferences saved");
-
-      console.log("User creation process completed successfully");
       return res.status(201).send("User created successfully");
     }
   } catch (e) {
@@ -145,7 +116,6 @@ export const findUserbyUsername = async (req, res) => {
 };
 
 export const getWorkspacesByUserId = async (req, res) => {
-  console.log(req.user);
   const found_user = await User.findId(undefined, req.user.email, undefined);
   const userId = found_user[0][0];
   try {

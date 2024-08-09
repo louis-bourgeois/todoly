@@ -46,9 +46,6 @@ export async function updateTag(req, res) {
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
     const { newName, id } = req.body;
-    console.log("====================================");
-    console.log("new name", newName, req.body);
-    console.log("====================================");
     if (!newName || newName.trim() === "") {
       return res.status(400).json("Tag name cannot be empty.");
     }

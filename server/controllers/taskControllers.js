@@ -7,7 +7,6 @@ export async function getTask(req, res) {
     if (!req.user) {
       res.status(404).json({ message: "User not authenticated or not found" });
     }
-    console.log(req.user);
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
 
@@ -20,10 +19,8 @@ export async function getTask(req, res) {
 }
 
 export async function updateTask(req, res) {
-  console.log("task data received", req.body);
   try {
     const { task } = req.body;
-    console.log("received: ", task);
     await Task.update(task);
     res.sendStatus(200);
   } catch (err) {
@@ -35,7 +32,6 @@ export async function updateTask(req, res) {
 export async function addTask(req, res) {
   try {
     const { formattedTaskData: newTaskData } = req.body;
-    console.log(req.body);
     const user = req.user;
     const found_user = await User.findId(undefined, user.email, undefined);
     const linked_section = newTaskData.linked_section || "";
@@ -69,7 +65,6 @@ export async function addTask(req, res) {
         );
       })
     );
-    console.log("tasks : ", user_tasks);
     res.status(201).json({
       message: "Task added successfully",
       savedTask: savedTask,
