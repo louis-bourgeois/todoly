@@ -9,7 +9,7 @@ export default function MobileFooter({ onNavigate }) {
     redirect(path);
   };
   return (
-    <footer className="fixed bottom-[20px] px-[17.5px] h-[15dvh] w-full flex flex-col items-center justify-between gap-[2vh]">
+    <footer className="fixed bottom-[20px] px-[17.5px] h-[15dvh] w-full flex flex-col items-center justify-between gap-[2vh] z-20">
       <MobileSearchSection>
         <MobileSearchInput onNavigate={handleNavigation} />
         <MobileMainButtons />

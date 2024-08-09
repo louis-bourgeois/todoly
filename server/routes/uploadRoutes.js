@@ -4,14 +4,19 @@ import express from "express";
 import FormData from "form-data";
 import fs from "fs";
 import multer from "multer";
-const accountId = process.env.CLOUDFLARE_ACCOUNT_ID; // J'étais étape 6/7 env configuré
+const accountId = process.env.CLOUDFLARE_ACCOUNT_ID; // J'étais étape 6/7 env configuré j'ai pas pull sur le serv
 const apiToken = process.env.CLOUDFLARE_API_TOKEN;
 const router = express.Router();
 const upload = multer({ dest: "uploads/" });
 
-router.post("/upload", upload.single("image"), async (req, res) => {
+router.post("/profile_picture", upload.single("image"), async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ error: "Aucun fichier n'a été uploadé." });
+  }
+  if (!req.user) {
+    return res
+      .status(404)
+      .json({ message: "Upload Failed", reason: "User not found" });
   }
 
   const formData = new FormData();
@@ -19,12 +24,12 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 
   try {
     const response = await axios.post(
-      `https://api.cloudflare.com/client/v4/accounts/${process.env.CLOUDFLARE_ACCOUNT_ID}/images/v1`,
+      `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1`,
       formData,
       {
         headers: {
           ...formData.getHeaders(),
-          Authorization: `Bearer ${process.env.CLOUDFLARE_API_TOKEN}`,
+          Authorization: `Bearer ${apiToken}`,
         },
       }
     );

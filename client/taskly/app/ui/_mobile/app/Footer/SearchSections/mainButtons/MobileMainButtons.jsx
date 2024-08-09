@@ -37,7 +37,7 @@ export default function MobileMainButtons() {
 
   return (
     <div
-      className={`flex items-center justify-center bg-primary shadow-shadow_01 pr-[2%] rounded-full h-[50px]`}
+      className={`z-[190] flex items-center justify-center shadow-shadow_01 pr-[2%] rounded-full h-[50px] bg-primary`}
     >
       <style jsx>{`
         .smooth-rotate {
@@ -45,7 +45,7 @@ export default function MobileMainButtons() {
         }
       `}</style>
       <div
-        className="relative w-[50px] h-[47px] cursor-pointer"
+        className="relative w-[50px] h-[47px] cursor-pointer z-[194]"
         onClick={handleClick}
       >
         <svg
