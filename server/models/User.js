@@ -161,7 +161,7 @@ class User {
 
   static async getData(data, id) {
     const validColumns = {
-      all: "user_profile.username, user_profile.first_name, user_profile.last_name, user_contact.email, user_contact.phone_number",
+      all: "user_profile.username, user_profile.first_name, user_profile.last_name, user_contact.email, user_contact.phone_number, user_profile_image.image_url",
       username: "user_profile.username",
       first_name: "user_profile.first_name",
       last_name: "user_profile.last_name",
@@ -177,9 +177,13 @@ class User {
 
     const query = `SELECT ${validColumns[data]} FROM user_profile
                    LEFT JOIN user_contact ON user_profile.id = user_contact.user_id
-                   WHERE user_profile.id = $1`;
+                   LEFT JOIN user_profile_image ON user_profile.id = user_profile_image.user_id
+                   WHERE user_profile.id = $1
+                   `;
     const { rows } = await pool.query(query, [id]);
-
+    if (!rows[0]) {
+      throw new Error("No data found for the given ID");
+    }
     return rows[0];
   }
 

@@ -30,8 +30,6 @@ const port = process.env.PORT || 3001;
 // CORS options
 const corsOptions = {
   origin: [
-    // "http://89.116.111.43",
-    // "http://89.116.111.43:3000",
     "http://localhost:3000",
     "http://192.168.1.100:3000",
     "https://todoly.app",
@@ -39,10 +37,10 @@ const corsOptions = {
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
-
   optionsSuccessStatus: 200,
 };
 
+// Rate limiter configuration
 const limiter = rateLimit({
   windowMs: 60 * 1000, // 1 minute
   max: 60000, // limit each IP to 60000 requests per windowMs
@@ -51,13 +49,14 @@ const limiter = rateLimit({
       .status(429)
       .json({ error: "Too many requests, please try again later." });
   },
-
-  trustProxy: true,
   standardHeaders: true,
   legacyHeaders: false,
 });
-// Middlewares
 
+// Configure Express to trust the proxy
+app.set("trust proxy", 1);
+
+// Middlewares
 app.use(cors(corsOptions)); // Active CORS avec les options spécifiées
 app.options("*", cors(corsOptions));
 app.use(helmet()); // Sécurise les réponses avec divers en-têtes HTTP
