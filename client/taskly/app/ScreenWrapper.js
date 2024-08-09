@@ -3,16 +3,14 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useScreen } from "../context/ScreenContext.js";
-import { useUserPreferences } from "../context/UserPreferencesContext.js";
 
 const VALID_THEMES = ["#ffffff,#de9f9f", "#000000", "#f7f4ed"];
 const DEFAULT_BG = "#FFF";
 
 export default function ScreenWrapper({ children }) {
-  const { isMobile } = useScreen();
+  const { isMobile, isDelayActive } = useScreen();
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
-  const { preferences } = useUserPreferences();
 
   useEffect(() => {
     setIsMounted(true);
@@ -52,7 +50,9 @@ export default function ScreenWrapper({ children }) {
 
   return (
     <div
-      className={`${wrapperClassName} ${
+      className={`transition-opacity duration-300 ${
+        isDelayActive ? "opacity-0" : "opacity-100"
+      } ${wrapperClassName} ${
         !isMobile && " absolute w-[100vw] h-[100vh] inset-0 z-0"
       } `}
     >
