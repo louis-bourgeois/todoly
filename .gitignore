@@ -17,7 +17,7 @@ demo/*
 
 # yarn
 server/./yarn.lock
-server/todoly-430912-firebase-adminsdk-np6ok-1ba5e7e2e6.json
+server/todoly-430912-firebase-adminsdk-np6ok-88e1a12385.json
 # Runtime data
 server/pids
 server/*.pid
