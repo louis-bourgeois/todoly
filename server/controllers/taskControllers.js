@@ -5,7 +5,13 @@ import { isUUID } from "../utils/validate.js";
 export async function getTask(req, res) {
   try {
     if (!req.user) {
-      res.status(404).json({ message: "User not authenticated or not found" });
+      res
+        .status(401)
+        .json({
+          message:
+            "User not authenticated, try to refresh the page or report the error",
+        });
+      return;
     }
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
@@ -30,6 +36,15 @@ export async function updateTask(req, res) {
 }
 
 export async function addTask(req, res) {
+  if (!req.user) {
+    res
+      .status(401)
+      .json({
+        message:
+          "User not authenticated, try to refresh the page or report the error",
+      });
+    return;
+  }
   try {
     const { formattedTaskData: newTaskData } = req.body;
     const user = req.user;
