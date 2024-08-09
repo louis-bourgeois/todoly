@@ -4,6 +4,9 @@ import { isUUID } from "../utils/validate.js";
 
 export async function getTask(req, res) {
   try {
+    if (!req.user) {
+      res.status(404).json({ message: "User not authenticated or not found" });
+    }
     console.log(req.user);
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
