@@ -1,7 +1,7 @@
 import React from "react";
 
 const SettingsLine = React.memo(
-  ({ children = true, index, setLayout, libelles }) => {
+  ({ children = true, index, setLayout, libelles, icons }) => {
     return (
       <>
         <div className="button-wrapper m-[5%] my-0 flex items-center justify-between px-4 py-2">
@@ -17,7 +17,7 @@ const SettingsLine = React.memo(
               {children}
               <h2 className="ml-[0.4vw] w-full">{libelles[index].name}</h2>
             </div>
-            {index !== libelles.length - 1 && (
+            {index !== icons.length - 1 && (
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="14"

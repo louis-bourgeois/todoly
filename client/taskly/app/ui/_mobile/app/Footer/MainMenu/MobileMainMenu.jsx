@@ -1,7 +1,6 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useUser } from "../../../../../../context/UserContext";
 import NavigationItem from "./NavigationItem";
 
 const AllIcon = ({ fill }) => (
@@ -34,11 +33,25 @@ const CalendarIcon = ({ fill }) => (
   </svg>
 );
 
+const DefaultAccountIcon = ({ fill }) => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className="w-3/4 h-3/4"
+  >
+    <circle cx="12" cy="8" r="4" stroke={fill} />
+    <path d="M5 19c0-4 7-4 7-4s7 0 7 4" stroke={fill} />
+  </svg>
+);
+
 export default function MobileMainMenu() {
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState("");
-  const { user } = useUser();
-
   useEffect(() => {
     const lastSegment = pathname.split("/").pop() || "currently";
     setActiveItem(lastSegment.toLowerCase());
@@ -48,11 +61,7 @@ export default function MobileMainMenu() {
     { icon: CalendarIcon, label: "Currently", path: "/app/currently" },
     { icon: AllIcon, label: "All", path: "/app/all" },
     {
-      icon: {
-        src: user.image_url,
-        width: 30,
-        height: 30,
-      },
+      icon: DefaultAccountIcon,
       label: "Profile",
       path: "/app/profile",
     },

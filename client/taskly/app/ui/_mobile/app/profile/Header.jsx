@@ -1,3 +1,4 @@
+import ProfilePhoto from "@/ui/app/MainMenu/settings/Account/ProfilePhoto";
 import { useMemo } from "react";
 import { useUser } from "../../../../../context/UserContext";
 
@@ -8,18 +9,7 @@ const Header = ({ pictDim, pictSrc }) => {
   }, [user]);
   return (
     <div className="flex justify-between items-center w-full h-[7.8vh] px-[15px]">
-      {/* <Image
-        width={pictDim}
-        height={pictDim}
-        priority={true}
-        className="rounded-full object-cover border border-black"
-        src={pictSrc}
-        alt="Profile picture"
-        onError={(e) => {
-          e.target.onerror = null; // Empêche les boucles infinies
-          e.target.src = "/default-profile-picture.jpg"; // Assurez-vous d'avoir une image par défaut
-        }}
-      /> */}
+      <ProfilePhoto size={100} />
 
       <div className="flex flex-col items-end justify-center">
         <h1 className="font-bold text-2xl">{name}</h1>

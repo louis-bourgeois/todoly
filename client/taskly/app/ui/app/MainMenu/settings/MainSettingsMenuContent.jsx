@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import SVGIcon from "../SVGIcon";
 import SettingsLine from "./SettingsLine";
 
@@ -69,16 +68,13 @@ export default function MainSettingsMenuContent({
   setLayout,
   libelles,
 }) {
-  useEffect(() => {
-    console.log("MainSettingsMenuContent rendered");
-  }, []);
-
   return (
     <div
       className={`flex flex-col justify-between w-full h-full ${transitionStyles}`}
     >
       {icons.map((icon, index) => (
         <SettingsLine
+          icons={icons}
           setLayout={setLayout}
           index={index}
           key={index}

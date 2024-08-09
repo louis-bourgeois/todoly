@@ -33,7 +33,7 @@ const ELEMENTS = ["Task", "Workspace", "Note"];
 
 const AddWorkspaceBubble = ({ onClose, onDontShowAgain }) => {
   return (
-    <div className="fixed inset-0 left-2 bg-dominant text-primary rounded-full shadow-lg p-3 max-w-xs z-50 animate-fade-in-out flex items-center">
+    <div className="fixed inset-0 left-2 bg-dominant text-primary rounded-full shadow-lg p-3 w-xs z-50 animate-fade-in-out flex items-center">
       <p className="text-xs mr-2">
         Scroll horizontally to add other element&apos;s type
       </p>
@@ -365,7 +365,7 @@ export default function AppLayout({ children }) {
           <Swiper
             ref={swiperRef}
             slidesPerView={1}
-            centeredSlides={true}
+            centeredSlides={false}
             spaceBetween={0}
             mousewheel={false}
             className="mySwiper"
