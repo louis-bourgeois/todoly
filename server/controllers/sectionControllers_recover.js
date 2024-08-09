@@ -4,6 +4,10 @@ import { isUUID } from "../utils/validate.js";
 
 export async function getSection(req, res) {
   try {
+    if (!req.user) {
+      res.status(401).json({ message: "User not authenticated, try to refresh the page or report the error"});
+      return;
+    }
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
     const sections = await Section.find(
@@ -21,9 +25,11 @@ export async function getSection(req, res) {
 
 export async function addSection(req, res) {
   try {
-    const user = req.user;
-
-    const found_user = await User.findId(undefined, user.email, undefined);
+    if (!req.user) {
+      res.status(401).json({ message: "User not authenticated, try to refresh the page or report the error"});
+      return;
+    }
+    const found_user = await User.findId(undefined, req.user.email, undefined);
 
     const userId = found_user[0][0];
     const section = req.body.section;
@@ -54,8 +60,11 @@ export async function addSection(req, res) {
 }
 
 export async function updateSection(req, res) {
-  const user = req.user;
-  const found_user = await User.findId(undefined, user.email, undefined);
+  if (!req.user) {
+    res.status(401).json({ message: "User not authenticated, try to refresh the page or report the error"});
+    return;
+  }
+  const found_user = await User.findId(undefined, req.user.email, undefined);
   const userId = found_user[0][0];
 
   try {
@@ -83,12 +92,11 @@ export async function updateSection(req, res) {
 }
 
 export async function deleteSection(req, res) {
-  if (!req.isAuthenticated()) {
-    return res.status(401).json({ message: "Unauthorized" });
+  if (!req.user) {
+    res.status(401).json({ message: "User not authenticated, try to refresh the page or report the error"});
+    return;
   }
-
-  const user = req.user;
-  const found_user = await User.findId(undefined, user.email, undefined);
+  const found_user = await User.findId(undefined, req.user.email, undefined);
   const userId = found_user[0][0];
   const sectionId = req.params.id;
 

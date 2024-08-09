@@ -12,7 +12,8 @@ export async function checkUser(req, res, next) {
     next();
   } else {
     res.status(404).json({
-      message: "User not found",
+      message:
+        "User not authenticated, try to refresh the page or report the error",
       reqBody: req.body,
       reqUser: req.user,
     });
@@ -20,6 +21,9 @@ export async function checkUser(req, res, next) {
 }
 export async function createUser(req, res) {
   try {
+    if (!req.body.data) {
+      res.status(404).json({ message: "Data submitted not found" });
+    }
     const result = await User.find(req.body.data, true);
 
     if (result === true) {
@@ -42,7 +46,6 @@ export async function createUser(req, res) {
         "Your default workspace for personal tasks"
       );
       const { workspaceId, defaultSection } = await workspace.save(saveData[0]);
-
 
       const preferences_key = [
         "Default_Main_Page",
@@ -116,6 +119,15 @@ export const findUserbyUsername = async (req, res) => {
 };
 
 export const getWorkspacesByUserId = async (req, res) => {
+  if (!req.user) {
+    res
+      .status(401)
+      .json({
+        message:
+          "User not authenticated, try to refresh the page or report the error",
+      });
+    return;
+  }
   const found_user = await User.findId(undefined, req.user.email, undefined);
   const userId = found_user[0][0];
   try {

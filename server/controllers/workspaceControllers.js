@@ -3,16 +3,24 @@ import User from "../models/User.js";
 import Workspace from "../models/Workspace.js";
 
 export const createWorkspace = async (req, res) => {
+  if (!req.user) {
+    res.status(401).json({
+      message:
+        "User not authenticated, try to refresh the page or report the error",
+    });
+    return;
+  }
   const user = req.user;
   const found_user = await User.findId(undefined, user.email, undefined);
   const userId = found_user[0][0];
 
   const { name, linked_sections } = req.body;
-
-  if (!userId) {
-    return res.status(400).send("User ID is required to create a workspace");
+  if (!name || !linked_sections) {
+    res.status(404).json({
+      message:
+        "Some required data (name of the workspace/linked sections) hasn't been provided to the server",
+    });
   }
-
   try {
     const workspace = new Workspace(name);
     const workspaceId = await workspace.save(userId, linked_sections);
@@ -91,6 +99,13 @@ export const getWorkspace = async (req, res) => {
 };
 
 export const deleteWorkspace = async (req, res) => {
+  if (!req.user) {
+    res.status(401).json({
+      message:
+        "User not authenticated, try to refresh the page or report the error",
+    });
+    return;
+  }
   const user = req.user;
   const found_user = await User.findId(undefined, user.email, undefined);
   const userId = found_user[0][0];
