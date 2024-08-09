@@ -1,4 +1,4 @@
-// uploadRoutes.js
+import crypto from "crypto";
 import express from "express";
 import fs from "fs";
 import multer from "multer";
@@ -18,20 +18,28 @@ router.post("/profile_picture", upload.single("image"), async (req, res) => {
       .status(404)
       .json({ message: "Upload Failed", reason: "User not found" });
   }
-
+  const found_user = await User.findId(undefined, req.user.email, undefined);
+  const userId = found_user[0][0];
   const file = req.file;
-  const imageHash = req.body.hash;
 
   try {
     const client = await pool.connect();
 
     try {
+      // Générer le hash de l'image côté serveur
+      const fileBuffer = fs.readFileSync(file.path);
+      const imageHash = crypto
+        .createHash("sha256")
+        .update(fileBuffer)
+        .digest("hex");
+
       // Vérifier si l'image existe déjà
       const checkQuery =
-        "SELECT image_url FROM user_profile_image WHERE image_hash = $1";
-      const checkResult = await client.query(checkQuery, [imageHash]);
+        "SELECT image_url FROM user_profile_image WHERE image_hash = $1 AND user_id = $2";
+      const checkResult = await client.query(checkQuery, [imageHash, userId]);
 
       if (checkResult.rows.length > 0) {
+        console.log("already");
         // L'image existe déjà, retourner l'URL existante
         const existingUrl = checkResult.rows[0].image_url;
         res.json({ url: existingUrl, message: "Image déjà existante" });
@@ -52,13 +60,6 @@ router.post("/profile_picture", upload.single("image"), async (req, res) => {
       await bucket.file(fileName).makePublic();
 
       const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
-
-      const found_user = await User.findId(
-        undefined,
-        req.user.email,
-        undefined
-      );
-      const userId = found_user[0][0];
 
       const query = `
         INSERT INTO user_profile_image (user_id, image_url, image_hash)
