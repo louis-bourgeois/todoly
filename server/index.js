@@ -27,6 +27,9 @@ const server = createServer(app);
 
 const port = process.env.PORT || 3001;
 
+// Trust the first proxy
+app.set("trust proxy", 1);
+
 // CORS options
 const corsOptions = {
   origin: [
