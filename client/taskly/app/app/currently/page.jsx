@@ -37,7 +37,6 @@ export default function Page() {
     slidesToScroll: 0.5,
     arrows: false,
     draggable: true,
-    height: "100vh",
   };
 
   return (
