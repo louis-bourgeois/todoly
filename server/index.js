@@ -51,8 +51,11 @@ const limiter = rateLimit({
       .status(429)
       .json({ error: "Too many requests, please try again later." });
   },
-});
 
+  trustProxy: true,
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 // Middlewares
 
 app.use(cors(corsOptions)); // Active CORS avec les options spécifiées
