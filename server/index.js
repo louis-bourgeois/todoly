@@ -49,12 +49,7 @@ const limiter = rateLimit({
       .status(429)
       .json({ error: "Too many requests, please try again later." });
   },
-  standardHeaders: true,
-  legacyHeaders: false,
 });
-
-// Configure Express to trust the proxy
-app.set("trust proxy", 1);
 
 // Middlewares
 app.use(cors(corsOptions)); // Active CORS avec les options spécifiées
@@ -73,7 +68,7 @@ app.use(
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "lax",
-      secure: false, // HTTP uniquement, pas HTTPS pour l'instant
+      secure: process.env.NODE_ENV === "production", // HTTP uniquement, pas HTTPS pour l'instant
     },
   })
 );
