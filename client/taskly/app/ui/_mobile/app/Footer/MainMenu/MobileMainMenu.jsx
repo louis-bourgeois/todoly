@@ -1,6 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useUser } from "../../../../../../context/UserContext";
 import NavigationItem from "./NavigationItem";
 
 const AllIcon = ({ fill }) => (
@@ -36,6 +37,7 @@ const CalendarIcon = ({ fill }) => (
 export default function MobileMainMenu() {
   const pathname = usePathname();
   const [activeItem, setActiveItem] = useState("");
+  const { user } = useUser();
 
   useEffect(() => {
     const lastSegment = pathname.split("/").pop() || "currently";
@@ -47,7 +49,7 @@ export default function MobileMainMenu() {
     { icon: AllIcon, label: "All", path: "/app/all" },
     {
       icon: {
-        src: "/api/placeholder/150/150",
+        src: user.image_url,
         width: 30,
         height: 30,
       },

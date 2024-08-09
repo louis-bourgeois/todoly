@@ -101,19 +101,45 @@ export default function Navbar() {
             }`}
             onClick={profilePictureVisibility ? handlePPclick : undefined}
           >
-            <Image
-              ref={elementRef}
-              src={`${"/api/placeholder/150/150"}`}
-              alt="Profile Picture"
-              width={125}
-              height={125}
-              priority
-              quality={100}
-              className={`border border-black rounded-full transition-all duration-300 max-w-full ease ${
-                showMenu ? "scale-[0.8]" : ""
-              } ${profilePictureVisibility ? "opacity-100" : "opacity-0"}`}
-              onLoad={updateDimensions}
-            />
+            {user?.image_url ? (
+              <Image
+                ref={elementRef}
+                src={user.image_url}
+                alt="Profile Picture"
+                width={125}
+                height={125}
+                priority
+                quality={100}
+                className={`rounded-full transition-all duration-300 max-w-full ease ${
+                  showMenu ? "scale-[0.8]" : ""
+                } ${profilePictureVisibility ? "opacity-100" : "opacity-0"}`}
+                onLoad={updateDimensions}
+              />
+            ) : (
+              <div
+                ref={elementRef}
+                className={`flex items-center justify-center rounded-full transition-all duration-300 max-w-full ease ${
+                  showMenu ? "scale-[0.8]" : ""
+                } ${
+                  profilePictureVisibility ? "opacity-100" : "opacity-0"
+                } border border-text overflow-hidden bg-transparent`}
+                style={{ width: "105px", height: "105px" }}
+              >
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-3/4 h-3/4"
+                >
+                  <circle cx="12" cy="8" r="4" />
+                  <path d="M5 19c0-4 7-4 7-4s7 0 7 4" />
+                </svg>
+              </div>
+            )}
           </div>
         </li>
         <li>

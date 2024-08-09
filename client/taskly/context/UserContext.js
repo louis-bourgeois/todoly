@@ -28,6 +28,7 @@ export const UserProvider = ({ children }) => {
       if (response.status === 200 && response.data.user) {
         setUser(response.data.user);
       }
+      console.log(response.data.user);
     } catch (error) {
       console.error("Error fetching user:", error);
     }

@@ -14,6 +14,10 @@ const nextConfig = {
         protocol: "http",
         hostname: "89.116.111.43",
       },
+      {
+        protocol: "https",
+        hostname: "storage.googleapis.com",
+      },
     ],
   },
   async redirects() {
