@@ -20,7 +20,7 @@ export default function Page() {
     infinite: false,
     speed: 300,
     centerMode: true,
-    centerPadding: expandedWorkspace ? "0px" : "150px",
+    centerPadding: "40px",
     slidesToScroll: 0.5,
     arrows: false,
     draggable: !expandedWorkspace,
