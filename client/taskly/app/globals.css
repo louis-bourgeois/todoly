@@ -55,9 +55,6 @@
   --gradient-2: linear-gradient(180deg, white -20%, #137ce5 100%);
 }
 
-* {
-  transition: color 0.3s ease-in;
-}
 
 .slick-slide,
 .sclik-track,
