@@ -31,23 +31,51 @@ import { useWorkspace } from "../../context/WorkspaceContext.js";
 const SLIDE_NUMBER = 14;
 const ELEMENTS = ["Task", "Workspace", "Note"];
 
-const AddWorkspaceBubble = ({ onClose, onDontShowAgain }) => {
-  return (
-    <div className="fixed inset-0 left-2 bg-dominant text-primary rounded-full shadow-lg p-3 w-xs z-50 animate-fade-in-out flex items-center">
-      <p className="text-xs mr-2">
-        Scroll horizontally to add other element&apos;s type
-      </p>
+const AddWorkspaceBubble = ({ onDontShowAgain }) => {
+  const [isVisible, setIsVisible] = useState(true);
+  const [opacity, setOpacity] = useState(1);
 
-      <button
-        onClick={onDontShowAgain}
-        className="text-xs underline hover:text-blue-200 transition-colors"
-      >
-        Do not show again
-      </button>
+  useEffect(() => {
+    const visibilityTimer = setTimeout(() => {
+      setOpacity(0);
+    }, 4500);
+
+    const removeTimer = setTimeout(() => {
+      setIsVisible(false);
+    }, 5000);
+
+    return () => {
+      clearTimeout(visibilityTimer);
+      clearTimeout(removeTimer);
+    };
+  }, []);
+
+  if (!isVisible) return null;
+
+  return (
+    <div
+      className={`fixed top-4 left-4 right-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-lg p-4 z-50 transition-opacity duration-500 ease-in-out`}
+      style={{ opacity }}
+    >
+      <div className="mb-2">
+        <h3 className="font-semibold text-lg">Astuce</h3>
+      </div>
+      <p className="text-sm mb-3">
+        Faites défiler horizontalement pour ajouter d'autres types d'éléments
+      </p>
+      <div className="flex justify-end">
+        <button
+          onClick={onDontShowAgain}
+          className="text-xs bg-white text-blue-500 px-3 py-1 rounded hover:bg-blue-100 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+        >
+          Do not show again
+        </button>
+      </div>
     </div>
   );
 };
-const CardWrapper = ({ children, cardType }) => {
+
+const CardWrapper = ({ children }) => {
   return (
     <div className={`flex items-center justify-center h-full pb-[2vh]`}>
       {children}
@@ -67,7 +95,27 @@ const CardContent = ({ children, el, cardType }) => {
     </div>
   );
 };
-
+const AddWorkspaceCard = () => {
+  const { setCardType } = useMenu();
+  return (
+    <Card cardType="All" isVisible={true} isTransitioning={false}>
+      <CardContent cardType="All">
+        <div className="flex flex-col items-center justify-center h-full">
+          <h2 className="text-xl font-bold mb-4">Add a new workspace</h2>
+          <p className="text-center mb-4">
+            Create a new workspace to organize your tasks and projects
+          </p>
+          <button
+            onClick={() => setCardType("Add")}
+            className="bg-dominant text-text font-bold p-4 rounded-full"
+          >
+            Create Workspace
+          </button>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 const ScrollableContent = ({ children }) => {
   const layers = 8; // Nombre de couches pour le dégradé
 
@@ -162,8 +210,17 @@ export default function AppLayout({ children }) {
       setIsTransitioning(true);
       setNextCardType(cardType);
       setContextNextCardType(cardType);
-      if (swiperRef.current && swiperRef.current.swiper) {
+      if (swiperRef.current && swiperRef.current.swiper && cardType !== "Add") {
         swiperRef.current.swiper.slideTo(0);
+      } else if (cardType === "Add") {
+        if (currentCardType === "Workspace" || currentCardType === "All") {
+          swiperRef.current.swiper.slideTo(ELEMENTS.indexOf("Workspace"));
+        } else if (
+          currentCardType === "Task" ||
+          currentCardType === "Currently"
+        ) {
+          swiperRef.current.swiper.slideTo(ELEMENTS.indexOf("Task"));
+        }
       }
       // Début de la transition
       if (transitionTimeoutRef.current) {
@@ -233,6 +290,9 @@ export default function AppLayout({ children }) {
         </Card>
       ),
       All: () => {
+        if (index === workspaces.length) {
+          return <AddWorkspaceCard />;
+        }
         return (
           <Card
             cardType={currentCardType}
@@ -365,7 +425,7 @@ export default function AppLayout({ children }) {
           <Swiper
             ref={swiperRef}
             slidesPerView={1}
-            centeredSlides={false}
+            centeredSlides={true}
             spaceBetween={0}
             mousewheel={false}
             className="mySwiper"
@@ -398,8 +458,12 @@ export default function AppLayout({ children }) {
                 </SwiperSlide>
               ))
             ) : currentCardType === "All" || nextCardType === "All" ? (
-              workspaces
-                .sort((a, b) => b.tasks.length - a.tasks.length)
+              [...workspaces, { id: "add-workspace" }]
+                .sort((a, b) => {
+                  if (a.id === "add-workspace") return 1;
+                  if (b.id === "add-workspace") return -1;
+                  return b.tasks.length - a.tasks.length;
+                })
                 .map((workspace, index) => (
                   <SwiperSlide key={index}>
                     <CardWrapper cardType={currentCardType}>

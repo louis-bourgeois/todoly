@@ -261,7 +261,7 @@ export default function TaskForm({
         <div className="flex items-center justify-between h-[57%]">
           <TaskMenuSectionContainer
             flex={false}
-            othersStyles="flex flex-col justify-between items-center  h-full"
+            othersStyles="flex flex-col justify-between items-center w-[55%] h-full"
             padding="0"
           >
             <DatePicker
@@ -270,7 +270,7 @@ export default function TaskForm({
               startOfWeekOnSunday={preferences.Week_Starts_On}
             />
           </TaskMenuSectionContainer>
-          <div className="flex flex-col w-full h-full justify-between ml-[2%] z-[300]">
+          <div className="flex flex-col h-full justify-between ml-[2%] z-[300] w-[45%]">
             <WorkspaceSelect
               handleNewWorkspaceClick={handleElementTypeChange}
               setTask={setTask}

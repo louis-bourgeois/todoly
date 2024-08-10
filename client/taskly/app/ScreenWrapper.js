@@ -50,7 +50,7 @@ export default function ScreenWrapper({ children }) {
 
   return (
     <div
-      className={`transition-opacity duration-300 ${
+      className={`overflow-hidden transition-opacity duration-300 ${
         isDelayActive ? "opacity-0" : "opacity-100"
       } ${wrapperClassName} ${
         !isMobile && " absolute w-[100vw] h-[100vh] inset-0 z-0"

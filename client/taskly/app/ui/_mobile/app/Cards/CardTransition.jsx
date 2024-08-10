@@ -5,11 +5,7 @@ const CardTransition = ({ cardType, children, className, isTransitioning }) => {
   const [content, setContent] = useState(children);
   const prevCardTypeRef = useRef(cardType);
   const transitionTimerRef = useRef(null);
-
-  useEffect(() => {
-    console.log(`CardTransition: cardType=${cardType}, isVisible=${isVisible}`);
-  }, [cardType, isVisible]);
-
+  
   useEffect(() => {
     if (prevCardTypeRef.current !== cardType) {
       setIsVisible(false);

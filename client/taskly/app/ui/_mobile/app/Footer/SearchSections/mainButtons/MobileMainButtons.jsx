@@ -6,10 +6,14 @@ export default function MobileMainButtons() {
   const [lastUrlSegment, setLastUrlSegment] = useState("");
 
   useEffect(() => {
+    function getLastUrlSegment(path) {
+      const segments = path.split("/");
+      return segments[segments.length - 1] || "home";
+    }
+
     function updateLastUrlSegment() {
       if (typeof window !== "undefined") {
-        const segments = window.location.pathname.split("/");
-        const newLastSegment = segments[segments.length - 1] || "home";
+        const newLastSegment = getLastUrlSegment(window.location.pathname);
         setLastUrlSegment(newLastSegment);
       }
     }
@@ -17,11 +21,27 @@ export default function MobileMainButtons() {
     // Initial update
     updateLastUrlSegment();
 
-    // Listen for changes in the URL
+    // Listen for popstate events (back/forward navigation)
     window.addEventListener("popstate", updateLastUrlSegment);
 
+    // Create a MutationObserver to watch for changes in the DOM
+    // This can help catch programmatic navigation that doesn't trigger popstate
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === "childList") {
+          updateLastUrlSegment();
+        }
+      });
+    });
+
+    // Start observing the document with the configured parameters
+    observer.observe(document.body, { childList: true, subtree: true });
+
     // Cleanup
-    return () => window.removeEventListener("popstate", updateLastUrlSegment);
+    return () => {
+      window.removeEventListener("popstate", updateLastUrlSegment);
+      observer.disconnect();
+    };
   }, []);
 
   const capitalize = (s) =>
@@ -34,7 +54,6 @@ export default function MobileMainButtons() {
         : "Add";
     setCardType(newCardType);
   };
-
   return (
     <div
       className={`z-[190] flex items-center justify-center shadow-shadow_01 pr-[2%] rounded-full h-[50px] bg-primary`}

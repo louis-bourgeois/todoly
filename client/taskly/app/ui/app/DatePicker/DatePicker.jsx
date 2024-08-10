@@ -110,12 +110,11 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
   };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full w-full">
       <div className="flex-shrink-0 w-full bg-transparent py-2 px-4 overflow-clip">
         <Swiper
-          spaceBetween={27.5}
-          slidesPerView="3.25"
-          centeredSlides={false}
+          slidesPerView="3.5"
+          centeredSlides={true}
           className="!overflow-visible"
         >
           {[
