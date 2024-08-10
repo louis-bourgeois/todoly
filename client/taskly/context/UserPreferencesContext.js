@@ -74,6 +74,7 @@ export const UserPreferencesProvider = ({ children }) => {
     setLoading(true);
     try {
       const { key, value } = newData;
+      console.log(key, value);
       await axios.post(
         `${baseUrl}/preferences/update`,
         { key, value },

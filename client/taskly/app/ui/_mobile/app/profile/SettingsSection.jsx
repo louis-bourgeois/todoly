@@ -32,7 +32,7 @@ const SettingsSection = React.memo(
     return (
       <section className="flex flex-col items-start gap-4 w-full">
         <div className="flex justify-between items-center w-full">
-          <h2 className="text-xl font-bold">{formatTitle(title)}</h2>
+          <h2 className="text-xl font-bold text-text">{formatTitle(title)}</h2>
           {toggle && (
             <Switcher
               isChecked={allowNotifications}
@@ -65,15 +65,14 @@ const SettingsSection = React.memo(
           const displayValue = isComplexValue
             ? selectedOption[0]
             : preferences[key];
-          const bgColor = isComplexValue ? selectedOption[1] : "";
-          const textColor = isComplexValue ? selectedOption[2] : "";
+
 
           return (
             <div
               key={index}
               className="flex justify-between w-full items-center"
             >
-              <h4 className="text-base mr-4">{formatTitle(key)}</h4>
+              <h4 className="text-base mr-4 text-text">{formatTitle(key)}</h4>
               <DropdownMenu
                 textWeight="bold"
                 title={displayValue}
@@ -86,13 +85,7 @@ const SettingsSection = React.memo(
                 }}
                 options={isComplexValue ? value.map((item) => item[0]) : value}
                 size="little"
-                className={`rounded-full capitalize ${
-                  key === "Color_Theme"
-                    ? `bg-${bgColor} text-${textColor}`
-                    : type === "primary"
-                    ? "border-none bg-ternary"
-                    : ""
-                } min-w-[150px]`}
+                className={`rounded-full capitalize min-w-[150px]`}
               />
             </div>
           );

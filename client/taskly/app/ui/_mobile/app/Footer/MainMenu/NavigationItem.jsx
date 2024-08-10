@@ -30,7 +30,9 @@ export default function NavigationItem({ icon: Icon, label, path, isActive }) {
       }`}
     >
       {iconElement}
-      <span className={`text-xs transition-colors duration-200`}>{label}</span>
+      <span className={`text-xs transition-colors duration-200 text-text `}>
+        {label}
+      </span>
     </Link>
   );
 }

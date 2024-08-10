@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import Circle from "../Circle";
-import DropdownMenu from "../DropdownMenu";
 import SectionTitle from "../SectionTitle";
 
 export default function Appearance({ transitionStyles }) {
   const { updatePreference, preferences } = useUserPreferences();
-  const [theme, setTheme] = useState(preferences?.Theme);
   const [selectedCircle, setSelectedCircle] = useState(null);
   const siblingRefs = useRef([]);
 
@@ -17,36 +15,26 @@ export default function Appearance({ transitionStyles }) {
       .join("");
     return `#${hex}`;
   };
-
   const rows = [
     { color: "#ffffff" },
-    { color: "#f7f4ed" },
-    { color: "#007AFF" },
-    { color: "#DE9F9F" },
-    { color: "#71EAE2" },
-    { color: "#FF659C" },
     { color: "#000000" },
+    { color: "#007AFF" },
   ];
-
-  const handleThemeClick = async (value) => {
-    setTheme(value);
-    await updatePreference({ key: "Theme", value });
-  };
-
   const handleCircleClick = async (index) => {
     const siblingDiv = siblingRefs.current[index];
     if (siblingDiv) {
       setSelectedCircle(index);
       const bgColor = window.getComputedStyle(siblingDiv).backgroundColor;
-      console.log(rgbToHex(bgColor));
+      const hexColor = rgbToHex(bgColor);
+      console.log(hexColor);
       await updatePreference({
         key: "Color_Theme",
-        value: rgbToHex(bgColor),
+        value: hexColor,
       });
     }
   };
+
   useEffect(() => {
-    console.log(preferences?.Theme);
     if (preferences?.Color_Theme) {
       const initialThemeIndex = rows.findIndex(
         (row) =>
@@ -56,17 +44,12 @@ export default function Appearance({ transitionStyles }) {
     } else {
       setSelectedCircle(null);
     }
-  }, [preferences, rows]);
+  }, [preferences?.Color_Theme]);
+
   return (
     <div
-      className={`flex flex-col w-full px-[4%] mt-[4%] gap-[1.75vh] justify-start ${transitionStyles}`}
+      className={`flex flex-col w-full px-[4%] gap-[1.75vh] justify-start ${transitionStyles}`}
     >
-      <SectionTitle>Theme</SectionTitle>
-      <DropdownMenu
-        options={["Light", "Dark"]}
-        title={theme}
-        onClick={handleThemeClick}
-      />
       <SectionTitle>Color Theme</SectionTitle>
       <div className="w-full flex flex-col justify-around gap-[1.25vw]">
         {rows.map((row, index) => (
@@ -83,7 +66,6 @@ export default function Appearance({ transitionStyles }) {
               }`}
             ></div>
             <Circle
-              borderColor="dominant"
               onColorChange={() => handleCircleClick(index)}
               isSelected={selectedCircle === index}
             />

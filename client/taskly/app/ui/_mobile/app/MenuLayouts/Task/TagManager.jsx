@@ -212,14 +212,14 @@ const TagManager = ({ taskTags, setTaskTags, handleTagsChange }) => {
             onBlur={handleNewTagSubmit}
             onKeyDown={handleNewTagKeyDown}
             placeholder="New tag"
-            className="bg-ternary text-dominant text-xs font-semibold py-1 px-2 rounded-full focus:outline-none"
+            className="text-dominant bg-primary text-xs font-semibold py-1 px-2 rounded-full focus:outline-none"
           />
         )}
       </div>
       <Button label="Add Tag" onClick={handleAddTag} />
 
       <div className="w-full max-w-3xl my-4">
-        <h3 className="text-sm font-semibold  mb-2 text-left">
+        <h3 className="text-sm font-semibold  mb-2 text-left text-text">
           Available Tags
         </h3>
         {tags.length > 0 ? (
@@ -234,7 +234,7 @@ const TagManager = ({ taskTags, setTaskTags, handleTagsChange }) => {
                   prevEl: ".custom-arrow-prev",
                   nextEl: ".custom-arrow-next",
                 }}
-                onSwiper={(swiper) => {
+                onSwiper={() => {
                   updateArrowsVisibility();
                 }}
                 onSlideChange={updateArrowsVisibility}
@@ -242,7 +242,7 @@ const TagManager = ({ taskTags, setTaskTags, handleTagsChange }) => {
               >
                 {tags.map((tag) => (
                   <SwiperSlide key={tag.id} className="!w-auto">
-                    <span className="inline-flex items-center bg-ternary text-dominant text-xs font-semibold py-1 px-2 rounded-full cursor-pointer whitespace-nowrap">
+                    <span className="inline-flex items-center bg-primary gradient-border m-1 text-dominant text-xs font-semibold py-1 px-2 rounded-full cursor-pointer whitespace-nowrap">
                       <span
                         onClick={() => handleAddExistingTag(tag)}
                         className="mr-1"
@@ -251,7 +251,7 @@ const TagManager = ({ taskTags, setTaskTags, handleTagsChange }) => {
                       </span>
                       <button
                         onClick={() => handleDeleteTag(tag.id)}
-                        className="text-grey hover:text-important"
+                        className="text-white hover:text-important"
                       >
                         ×
                       </button>

@@ -12,6 +12,14 @@ export default function DropdownMenu({
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
 
+  const handleOptionClick = (option, event) => {
+    event.stopPropagation(); // Arrête la propagation de l'événement
+    setMenuOpen(false);
+    if (typeof onSelect === "function") {
+      onSelect(option);
+    }
+  };
+
   return (
     <SelectionDiv
       className={`relative cursor-pointer ${
@@ -20,7 +28,7 @@ export default function DropdownMenu({
       onClick={() => setMenuOpen((prev) => !prev)}
     >
       <h4
-        className={`font-${textWeight} ${
+        className={`font-${textWeight} text-text ${
           size === "little" && "text-xs"
         } capitalize`}
       >
@@ -31,8 +39,8 @@ export default function DropdownMenu({
         width={size === "little" ? "16" : "24"}
         height={size === "little" ? "10" : "14"}
         viewBox="0 0 24 14"
-        fill="black"
-        className={`cursor-pointer transition-transform duration-500 ${
+        fill="currentColor"
+        className={`cursor-pointer text-text transition-transform duration-500 ${
           menuOpen ? "rotate-180" : ""
         }`}
       >
@@ -50,14 +58,9 @@ export default function DropdownMenu({
           const optionArray = Array.isArray(option);
           return (
             <div
-              key={option}
+              key={optionArray ? option[0] : option}
               className="cursor-pointer hover:text-dominant transition-all duration-300"
-              onClick={() => {
-                setMenuOpen(false);
-                if (typeof onSelect === "function") {
-                  onSelect(option);
-                }
-              }}
+              onClick={(event) => handleOptionClick(option, event)}
             >
               <span
                 className={`text-${

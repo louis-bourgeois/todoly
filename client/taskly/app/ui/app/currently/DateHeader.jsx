@@ -72,7 +72,6 @@ const DateHeader = ({ index, onDateChange }) => {
         {dayLabel || format(futureDate, "EEEE", dateOptions)}
       </h2>
       <div className="flex items-center gap-[0.7vw] relative">
-        {" "}
         <button
           onClick={toggleViewsMenu} // Trigger viewsMenu toggle
           className="mr-4 p-2 rounded-full hover:scale-125 transition-transform duration-300 ease-in w-[50%] flex justify-between"

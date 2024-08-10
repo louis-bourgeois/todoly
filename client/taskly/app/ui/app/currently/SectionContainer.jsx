@@ -105,7 +105,7 @@ export default function SectionContainer({
 
   return (
     <div className="w-full h-full overflow-x-auto">
-      <div className="flex h-full">
+      <div className="flex mt-[0.1%]">
         {filteredSections.map((section) => {
           const sectionTasksList = sectionTasks.get(section.id) || [];
 

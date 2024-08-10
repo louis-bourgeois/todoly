@@ -11,7 +11,6 @@ export default function Page() {
   const { workspaces } = useWorkspace();
   const { toggleTaskMenu } = useMenu();
   const { deleteWorkspace } = useWorkspace();
-  const [expandedWorkspace, setExpandedWorkspace] = useState(null);
   const [filteredTasks, setFilteredTasks] = useState({});
   const { toggleViewsMenu } = useMenu();
 
@@ -23,7 +22,6 @@ export default function Page() {
     centerPadding: "40px",
     slidesToScroll: 0.5,
     arrows: false,
-    draggable: !expandedWorkspace,
   };
 
   useEffect(() => {
@@ -49,31 +47,22 @@ export default function Page() {
   const handleDeleteWorkspace = async (workspaceId) => {
     await deleteWorkspace(workspaceId);
   };
-  const toggleWorkspaceExpansion = (workspaceId) => {
-    setExpandedWorkspace(
-      expandedWorkspace === workspaceId ? null : workspaceId
-    );
-  };
-
   return (
     <SlickCarousel settings={settings}>
       {workspaces
         .sort((a, b) => b.tasks.length - a.tasks.length)
         .map((workspace, index) => {
           const workspaceTasks = filteredTasks[workspace.id] || [];
-
           return (
             <Slide
               index={index}
               key={workspace.id}
-              className={`transition-all duration-300 ${
-                expandedWorkspace === workspace.id ? "w-full" : ""
-              }`}
+              className={`transition-all duration-300`}
             >
               <SlideNav key={index}>
                 <div className="flex justify-between items-center gap-2">
                   {" "}
-                  <h2 className="text-3xl font-extrabold text-text">
+                  <h2 className="text-3xl font-extrabold  bg-gradient-2 bg-clip-text text-transparent inline-block">
                     {workspace.name}
                   </h2>
                   <button
@@ -98,8 +87,7 @@ export default function Page() {
                     </svg>
                   </button>
                 </div>
-
-                <div className="flex justify-between w-120%] ">
+                <div className="flex justify-between ">
                   {workspace.name !== "Personal" && (
                     <button
                       onClick={() => handleDeleteWorkspace(workspace.id)}
@@ -154,7 +142,7 @@ export default function Page() {
                   )}
                   <button
                     onClick={toggleViewsMenu}
-                    className="mr-4 p-2 rounded-full hover:bg-blue hover:bg-opacity-10 transition-colors duration-200 w-[50%] flex justify-between"
+                    className="mr-4 p-2 rounded-full hover:bg-blue hover:bg-opacity-10 transition-colors duration-200 flex justify-between"
                   >
                     <svg
                       viewBox="0 0 24 24"
@@ -172,32 +160,10 @@ export default function Page() {
                       />
                     </svg>
                   </button>
-                  <button
-                    onClick={() => toggleWorkspaceExpansion(workspace.id)}
-                    className="p-2 rounded-full hover:bg-blue hover:bg-opacity-10 transition-colors duration-200"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                      className={`w-6 h-6 transition-transform duration-300 ${
-                        expandedWorkspace === workspace.id ? "rotate-180" : ""
-                      }`}
-                    >
-                      <path
-                        d="M14 10L21 3M21 3H16.5M21 3V7.5M10 14L3 21M3 21H7.5M3 21L3 16.5"
-                        stroke="#007AFF"
-                        strokeWidth="2"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </button>
                 </div>
               </SlideNav>
               <SectionContainer
                 selectedWorkspace={workspace}
-                expanded={expandedWorkspace === workspace.id}
                 tasks={workspaceTasks}
               />
             </Slide>
@@ -208,29 +174,29 @@ export default function Page() {
           <button
             onClick={handleAddWorkspace}
             className="
-          relative
-          px-8 py-4
-          bg-dominant
-          text-primary
-          rounded-full
-          text-lg font-semibold
-          shadow-shadow_01
-          transition-all duration-300 ease-in-out
-          transform hover:scale-105
-          overflow-hidden
-          group
-        "
+            relative
+            px-8 py-4
+            bg-dominant
+            text-primary
+            rounded-full
+            text-lg font-semibold
+            shadow-shadow_01
+            transition-all duration-300 ease-in-out
+            transform hover:scale-105
+            overflow-hidden
+            group
+          "
           >
             <span className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
               Add Workspace
             </span>
             <span
               className={`
-          absolute inset-0
-          bg-gradient-to-r from-dominant to-ternary
-          opacity-0
-          transition-opacity duration-300 ease-in-out
-        `}
+            absolute inset-0
+            bg-gradient-to-r from-dominant to-ternary
+            opacity-0
+            transition-opacity duration-300 ease-in-out
+          `}
             ></span>
           </button>
         </div>

@@ -17,10 +17,8 @@ const sections = [
     lines: [
       {
         Color_Theme: [
-          ["blue", "dominant", "white"],
-          ["pink", "pink", "black"],
-          ["light blue", "light_blue", "black"],
-          ["black", "black", "white"],
+          ["light", "#f7f4ed", "black"],
+          ["black", "#000000", "white"],
         ],
       },
     ],
@@ -79,7 +77,18 @@ const SettingsScroll = () => {
   const handlePreferenceChange = useCallback(
     (key, value) => {
       console.log("Preference change:", key, value);
-      updatePreference({ key, value: String(value) });
+      switch (value) {
+        case "black":
+          updatePreference({ key, value: "#000000" });
+          break;
+        case "light":
+          updatePreference({ key, value: "#f7f4ed" });
+        case "blue":
+          updatePreference({ key, value: "#f7f4ed" });
+        default:
+          updatePreference({ key, value: String(value) });
+          break;
+      }
     },
     [updatePreference]
   );

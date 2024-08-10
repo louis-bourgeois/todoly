@@ -144,7 +144,7 @@ const SectionHeader = React.memo(
             />
           ) : (
             <span
-              className="font-bold text-m"
+              className="font-bold text-m text-text"
               style={{ display: "inline-block", width }}
             >
               {section.name}
@@ -152,7 +152,7 @@ const SectionHeader = React.memo(
           )}
           <span
             ref={measureRef}
-            className="font-bold text-m"
+            className="font-bold text-m text-text"
             style={{
               visibility: "hidden",
               position: "absolute",

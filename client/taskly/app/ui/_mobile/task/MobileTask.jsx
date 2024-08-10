@@ -28,7 +28,7 @@ export default function MobileTask({ task, onClick }) {
   return (
     <div
       onClick={() => onClick(task.id)}
-      className="overflow-x-clip cursor-pointer flex flex-col justify-center items-start bg-ternary rounded-lg p-3 shadow-md hover:shadow-shadow_card transition-shadow duration-300"
+      className="gradient-border cursor-pointer flex flex-col justify-center items-start bg-ternary rounded-lg p-3 shadow-md hover:shadow-shadow_card transition-shadow duration-300"
     >
       <div className="flex justify-between items-center w-full">
         <div className="flex justify-start items-center">
@@ -37,7 +37,7 @@ export default function MobileTask({ task, onClick }) {
               className={`z-40 transition-all ${taskCircleColor} cursor-pointer border border-secondary min-w-[1rem] min-h-[1rem] rounded-full mr-2`}
             />
           </button>
-          <h5 className="text-sm font-medium text-gray-800 truncate">
+          <h5 className="text-sm font-medium text-text truncate">
             {task.title}
           </h5>
         </div>

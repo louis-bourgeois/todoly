@@ -3,7 +3,7 @@ import Switcher from "@/ui/app/MainMenu/settings/Switcher";
 const TagToggle = ({ libelle, onChange, isChecked }) => {
   return (
     <div className="inline-flex items-center gap-2 bg-ternary rounded-full px-3 py-1">
-      <span className="capitalize font-medium text-sm whitespace-nowrap">
+      <span className="capitalize font-medium text-sm whitespace-nowrap text-text">
         {libelle}
       </span>
       <Switcher

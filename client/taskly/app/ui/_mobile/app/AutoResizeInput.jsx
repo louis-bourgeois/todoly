@@ -6,7 +6,7 @@ const AutoResizeInput = forwardRef(
       <input
         ref={ref}
         style={style}
-        className={`${className} transition-all duration-200 ease-in-out`}
+        className={`${className} transition-all duration-200 ease-in-out text-text`}
         disabled={disabled}
         value={value}
         onChange={onChange}

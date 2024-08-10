@@ -27,7 +27,7 @@ export default function Layout({ transitionStyles }) {
     <div
       className={`flex flex-col w-full px-[4%] mt-[4%] gap-[1.75vh] justify-start ${transitionStyles}`}
     >
-      <SectionTitle>Default Home Page</SectionTitle>
+      <SectionTitle className="text-text">Default Home Page</SectionTitle>
       <DropdownMenu
         title={defaultMainPage}
         options={["Currently", "All"]}
@@ -38,10 +38,10 @@ export default function Layout({ transitionStyles }) {
         type="text"
         onChange={handleHomePageTitleChange}
         value={homePageTitle}
-        className="border border-secondary h-[4.5vh] text-base flex justify-between rounded-[10px] placeholder:text-base text-right px-5"
+        className="border bg-primary text-text border-secondary h-[4.5vh] text-base flex justify-between rounded-[10px] placeholder:text-base text-right px-5"
       />
 
-      <button className="font-bold text-l rounded-full border border-secondary hover:scale-105 active:scale-100 hover:text-dominant transition-all duration-200 ease-out m-[3%] p-[3%]">
+      <button className="font-bold text-l text-text rounded-full border border-secondary hover:scale-105 active:scale-100 hover:text-dominant transition-all duration-200 ease-out m-[3%] p-[3%]">
         Customise the Add Menu
       </button>
     </div>

@@ -33,9 +33,9 @@ export default function Header({
           height={"48"}
           width={"48"}
           viewBox="0 0 24 24"
-          fill="black"
+          fill="currentColor"
           xmlns="http://www.w3.org/2000/svg"
-          className="cursor-pointer"
+          className="cursor-pointer text-text"
           onClick={() => setLayout("settings")}
         >
           <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
@@ -48,7 +48,7 @@ export default function Header({
             {" "}
             <path
               d="M6 12H18M6 12L11 7M6 12L11 17"
-              stroke="#000000"
+              stroke="currentColor"
               stroke-width="2"
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -161,8 +161,8 @@ export default function Header({
               width="48"
               height="49"
               viewBox="0 0 48 49"
-              fill="black"
-              className="w-[10%] cursor-pointer mr-[1vw] transition duration-700 ease-in-out"
+              fill="currentColor"
+              className="w-[10%] text-text cursor-pointer mr-[1vw] transition duration-700 ease-in-out"
               onClick={() => setLayout("Account")}
             >
               <g filter="url(#filter0_d_76_3126)">

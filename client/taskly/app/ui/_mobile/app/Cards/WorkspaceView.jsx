@@ -136,7 +136,7 @@ const WorkspaceView = ({ id }) => {
       <WorkspaceLayoutSection
         label={"Collaborators"}
         searchLabel={"Add collaborator by username"}
-        link={"google.com"}
+        link={"Functionnality not yet implemented, stay tuned ;)"}
         onItemSelect={handleCollaboratorAdd}
         isCollaborator={true}
       />

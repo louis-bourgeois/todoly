@@ -29,7 +29,7 @@ export default function MobileHeader() {
 
   return (
     <header className="w-full px-[17.5px]">
-      <h1 className="text-2xl font-black">
+      <h1 className="text-2xl font-black text-text">
         {preferences?.Home_Page_Title ===
         "Depending on the time of day + name" ? (
           <>

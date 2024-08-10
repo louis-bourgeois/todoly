@@ -17,7 +17,7 @@ const TaskLayoutHeader = ({
         value={taskTitle}
         onChange={(e) => setTaskTitle(e.target.value)}
         placeholder="A simple to do."
-        className="w-full text-2xl font-bold placeholder:text-2xl placeholder:text-grey focus:outline-none"
+        className="w-full text-text bg-primary text-2xl font-bold placeholder:text-2xl placeholder:text-grey focus:outline-none"
       />
       <Button
         label={isEditMode ? "Update" : "Create"}
