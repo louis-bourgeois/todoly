@@ -26,7 +26,7 @@ const TaskLayoutDescription = ({ taskDescription, setTaskDescription }) => {
       ref={textareaRef}
       value={taskDescription}
       onChange={(e) => setTaskDescription(e.target.value)}
-      className="w-full px-4 font-light text-xs min-h-[2.5vh] max-h-[7.5vh] transition-height duration-200 ease-in-out placeholder:text-grey focus:outline-none resize-none"
+      className="w-full text-text bg-primary  px-4 font-light text-xs min-h-[2.5vh] max-h-[7.5vh] transition-height duration-200 ease-in-out placeholder:text-grey focus:outline-none resize-none"
       placeholder="Your wonderful description"
     />
   );

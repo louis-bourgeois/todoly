@@ -44,14 +44,14 @@ const DatePicker = ({ dueDate, handleDateChange }) => {
           onChange={handleInputChange}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
-          className="w-full px-3 py-2 pr-10 bg-gray-100 rounded-lg text-gray-800 focus:outline-none focus:ring-2 focus:ring-dominant focus:ring-opacity-50 appearance-none"
+          className="w-full text-white px-3 py-2 pr-10 text-text bg-primary border border-dominant m-2 rounded-lg  focus:outline-none focus:ring-2 focus:ring-dominant focus:ring-opacity-50 appearance-none"
           style={{ color: "transparent" }}
         />
         <div className="absolute inset-y-0 left-0 flex items-center px-3 pointer-events-none">
           <span
             className={`${
               displayValue ? "text-gray-800" : "text-gray-500"
-            } text-sm`}
+            } text-sm  text-text  p-2`}
           >
             {displayValue || "MM/DD/YYYY"}
           </span>

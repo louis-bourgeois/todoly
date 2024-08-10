@@ -90,7 +90,7 @@ const MobileViewsMenu = ({ isVisible }) => {
     setIsOpen
   ) => (
     <div className="flex justify-between items-center mb-4">
-      <h4 id={`${preferenceName}-label`} className="text-m font-bold">
+      <h4 id={`${preferenceName}-label`} className="text-m font-bold text-text">
         {title}
       </h4>
       <Button
@@ -152,7 +152,7 @@ const MobileViewsMenu = ({ isVisible }) => {
         <div ref={contentRef} className="menu-content flex flex-col">
           <h3
             id="mobile-views-menu-title"
-            className="text-2xl font-bold w-full text-center mb-4"
+            className="text-2xl font-bold w-full text-center mb-4  text-text"
           >
             Filter
           </h3>

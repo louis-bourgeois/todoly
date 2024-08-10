@@ -13,7 +13,7 @@ export default function TaskMenuButton({
     <button
       disabled={disabled}
       onClick={onClick}
-      className={`transition transition-scale ${
+      className={`transition gradient-border transition-scale ${
         !disabled && "active:scale-95"
       } addMenuElement p-[10px] ${flex && "flex"} ${
         flexCol ? "flex-col" : ""

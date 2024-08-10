@@ -64,13 +64,14 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
     () =>
       options.map((option, index) => (
         <div key={index} className="mb-6 last:mb-0">
-          <h3 className="text-lg font-semibold mb-2 text-gray-800 tracking-wide">
+          <h3 className="text-lg font-semibold mb-2  text-secondary tracking-wide">
             {option.title}
           </h3>
           <DropdownMenu
             title={selectedOptions[option.title] || "Select an option"}
             options={option.items}
             onSelect={(item) => handleOptionSelect(option.title, item)}
+            className="text-secondary"
           />
         </div>
       )),
@@ -87,7 +88,7 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
     >
       <div
         ref={menuRef}
-        className={`w-[90vw] max-w-md bg-gradient-to-br from-white/60 via-white/50 to-white/60 backdrop-blur-md rounded-3xl shadow-2xl p-8 transition-all duration-300 border border-white/50 ${
+        className={`w-[90vw] max-w-md bg-primary backdrop-blur-md rounded-3xl shadow-2xl p-8 transition-all duration-300 border border-white/50 ${
           isOpen && !isClosing ? "scale-100 opacity-100" : "scale-5 opacity-0"
         }`}
       >

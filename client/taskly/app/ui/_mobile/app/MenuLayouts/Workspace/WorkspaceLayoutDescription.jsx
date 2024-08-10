@@ -30,7 +30,7 @@ const WorkspaceLayoutDescription = ({
       ref={textareaRef}
       value={workspaceDescription}
       onChange={(e) => setWorkspaceDescription(e.target.value)}
-      className="w-full px-4 font-light text-xs min-h-[2.5vh] max-h-[7.5vh] transition-height duration-200 ease-in-out placeholder:text-grey focus:outline-none resize-none"
+      className="w-full px-4 bg-primary font-light text-xs min-h-[2.5vh] max-h-[7.5vh] transition-height duration-200 ease-in-out placeholder:text-grey focus:outline-none resize-none"
       placeholder="Your wonderful description"
     />
   );

@@ -40,7 +40,7 @@
   --color-background-overlay: rgba(13, 12, 12, 0.05);
   --color-dominant: #007aff;
   --color-secondary: #f7f4ed;
-  --color-ternary: hsla(274, 100%, 50%, 1);
+  --color-ternary: var(--color-primary);
   --color-ternary-section-header: var(--color-primary);
   --color-ternary-2: #0d0c0c;
   --color-text: #f7f4ed;

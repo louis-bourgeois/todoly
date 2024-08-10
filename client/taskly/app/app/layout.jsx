@@ -29,7 +29,7 @@ import { useUserPreferences } from "../../context/UserPreferencesContext.js";
 import { useWorkspace } from "../../context/WorkspaceContext.js";
 
 const SLIDE_NUMBER = 14;
-const ELEMENTS = ["Task", "Workspace", "Note"];
+const ELEMENTS = ["Task", "Workspace"];
 
 const AddWorkspaceBubble = ({ onDontShowAgain }) => {
   const [isVisible, setIsVisible] = useState(true);

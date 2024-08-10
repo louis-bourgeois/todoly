@@ -3,14 +3,13 @@
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useScreen } from "../context/ScreenContext.js";
-
-const VALID_THEMES = ["#ffffff,#de9f9f", "#000000", "#f7f4ed"];
-const DEFAULT_BG = "#FFF";
+import { useUserPreferences } from "../context/UserPreferencesContext.js";
 
 export default function ScreenWrapper({ children }) {
   const { isMobile, isDelayActive } = useScreen();
   const pathname = usePathname();
   const [isMounted, setIsMounted] = useState(false);
+  const { preferences } = useUserPreferences();
 
   useEffect(() => {
     setIsMounted(true);
@@ -23,6 +22,36 @@ export default function ScreenWrapper({ children }) {
       document.body.classList.remove("overflow-hidden");
     };
   }, [isMobile]);
+  useEffect(() => {
+    if (preferences?.Color_Theme) {
+      console.log(preferences.Color_Theme);
+      // Supprimer toutes les classes de thème existantes
+      document.documentElement.classList.remove(
+        "theme-light",
+        "theme-blue",
+        "theme-dark"
+      );
+
+      // Ajouter la nouvelle classe de thème
+      switch (preferences.Color_Theme.toLowerCase()) {
+        case "#ffffff":
+          break;
+        case "#f7f4ed":
+          break;
+        case "#007aff":
+          document.documentElement.classList.add("theme-blue");
+          break;
+        case "#000000":
+          document.documentElement.classList.add("theme-dark");
+          break;
+        default:
+          console.log("Thème non reconnu:", preferences.Color_Theme);
+      }
+    }
+    return () => {
+      document.documentElement.classList.remove("light", "blue", "dark");
+    };
+  }, [preferences]);
 
   if (!isMounted) {
     return null; // ou un spinner de chargement

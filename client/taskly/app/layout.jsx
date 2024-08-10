@@ -37,7 +37,7 @@ export default function RootLayout({ children }) {
   return (
     <html
       lang="fr"
-      className={`${overusedGrotesk.variable} font-sans m-0 p-0 overflow-hidden h-screen bg-bg theme-dar`}
+      className={`${overusedGrotesk.variable} font-sans m-0 p-0 overflow-hidden h-screen bg-bg `}
     >
       <head>
         <CanonicalTag />

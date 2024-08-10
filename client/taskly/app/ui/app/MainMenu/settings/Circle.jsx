@@ -7,21 +7,25 @@ const Circle = forwardRef(function Circle(
     borderColor = "secondary",
     className,
     onColorChange,
-    isSelected,
+    isSelected = false,
     ...props
   },
   ref
 ) {
-  const borderClass = `border-${borderColor}`;
+  const borderClass =
+    borderColor === "dominant" ? `gradient-border` : borderColor;
+
+  const handleClick = () => {
+    onColorChange && onColorChange();
+  };
+
   return (
     <button
       ref={ref}
-      onClick={() => {
-        onColorChange && onColorChange();
-      }}
+      onClick={handleClick}
       style={{ width: width, height: height }}
       className={`${className} transition-all rounded-full border ${borderClass} cursor-pointer ${
-        isSelected ? `bg-${borderColor}` : "bg-transparent"
+        isSelected ? `bg-dominant` : "bg-transparent"
       }`}
       {...props}
     />

@@ -58,7 +58,7 @@ const MobileCardHeader = ({ index = 0, workspace = null }) => {
     <div className="z-50 relative flex flex-col items-start justify-center px-4 pt-[10px] rounded-xl bg-primary">
       <div className="relative z-10 w-full">
         <div className="flex justify-between items-center w-full pb-2.5">
-          <h1 className="text-2xl font-bold text-dominant w-[65%]">
+          <h1 className="text-2xl font-bold w-[65%]  bg-gradient-2 bg-clip-text text-transparent inline-block">
             {truncateTitle(
               !isAllView
                 ? dayLabel || formattedDate || ""
@@ -135,14 +135,18 @@ const MobileCardHeader = ({ index = 0, workspace = null }) => {
                   </button>
                 )}
 
-                <button onClick={() => setCardType("Workspace")}>
+                <button
+                  className="flex items-center justify-center mb-[3%] "
+                  onClick={() => setCardType("Workspace")}
+                >
                   {" "}
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    width="22"
-                    height="22"
+                    width="24"
+                    height="24"
                     viewBox="0 0 24 24"
                     fill="none"
+                    className="text-text"
                     stroke="currentColor"
                     strokeWidth="2"
                     strokeLinecap="round"

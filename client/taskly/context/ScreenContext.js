@@ -11,19 +11,24 @@ export const ScreenProvider = ({ children }) => {
   useEffect(() => {
     const handleResize = () => {
       const newWidth = window.innerWidth;
-      setIsDelayActive(true);
+      const newIsMobile = newWidth < 1024;
 
-      // Clear any existing timeout
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      // Check if isMobile needs to change
+      if (newIsMobile !== isMobile) {
+        setIsDelayActive(true);
+
+        // Clear any existing timeout
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+        }
+
+        // Set new timeout
+        timeoutRef.current = setTimeout(() => {
+          setIsMobile(newIsMobile);
+          setIsDelayActive(false);
+          timeoutRef.current = null;
+        }, 200); // Délai de 250 millisecondes
       }
-
-      // Set new timeout
-      timeoutRef.current = setTimeout(() => {
-        setIsMobile(newWidth < 1024);
-        setIsDelayActive(false);
-        timeoutRef.current = null;
-      }, 250); // Délai de 1 seconde
     };
 
     // Initial check
@@ -39,7 +44,7 @@ export const ScreenProvider = ({ children }) => {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, []);
+  }, [isMobile]);
 
   return (
     <ScreenContext.Provider value={{ isMobile, isDelayActive }}>

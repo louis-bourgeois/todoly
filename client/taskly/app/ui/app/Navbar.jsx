@@ -159,7 +159,7 @@ export default function Navbar() {
         </li>
         <li className="flex max-w-[12.5%] gap-iconsContainer items-center justify-center h-full mr-[0.5vw]">
           <NavButton
-            styles="border border-dominant rounded-full shadow-2xl bg-primary"
+            styles="border border-dominant rounded-full shadow-2xl bg-primary text-text"
             onClick={toggleSearchMenu}
             disabled={true} // i gotta turn this off when search will be ready
           >
@@ -169,7 +169,10 @@ export default function Navbar() {
               className="grow-0 shrink-0 w-full p-[20%]"
               aria-label="Search"
             >
-              <path d="M3.624,15a8.03,8.03,0,0,0,10.619.659l5.318,5.318a1,1,0,0,0,1.414-1.414l-5.318-5.318A8.04,8.04,0,0,0,3.624,3.624,8.042,8.042,0,0,0,3.624,15Zm1.414-9.96a6.043,6.043,0,1,1-1.77,4.274A6,6,0,0,1,5.038,5.038Z" />
+              <path
+                fill="currentColor"
+                d="M3.624,15a8.03,8.03,0,0,0,10.619.659l5.318,5.318a1,1,0,0,0,1.414-1.414l-5.318-5.318A8.04,8.04,0,0,0,3.624,3.624,8.042,8.042,0,0,0,3.624,15Zm1.414-9.96a6.043,6.043,0,1,1-1.77,4.274A6,6,0,0,1,5.038,5.038Z"
+              />
             </svg>
           </NavButton>
           <NavButton

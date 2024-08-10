@@ -168,7 +168,7 @@ export default function WorkspaceLayoutSection({
 
   return (
     <div className="flex flex-col w-full gap-[10px] px-4">
-      <h2 className="text-lg font-bold text-text mb-2">{label}</h2>
+      <h2 className="text-lg font-bold text-text mb-2 ">{label}</h2>
       <div className="flex flex-col gap-2">
         <div className="flex justify-between items-center">
           <input
@@ -176,9 +176,9 @@ export default function WorkspaceLayoutSection({
             type="text"
             value={inputValue}
             onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             placeholder={searchLabel}
-            className="p-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 w-9/12"
+            className="p-2 border bg-primary text-text rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 w-9/12"
           />
           {link && (
             <div className="relative ml-2">

@@ -11,7 +11,7 @@ export default function Account({ transitionStyles, setLayout }) {
 
         <div className="flex justify-between items-center w-[90%] h-[12.5%]">
           <input
-            className="border border-secondary h-110 w-[90%] rounded-[10px] text-center"
+            className="text-text bg-primary border border-secondary h-110 w-[90%] rounded-[10px] text-center"
             value={user.username}
           />
           <svg
@@ -51,9 +51,9 @@ export default function Account({ transitionStyles, setLayout }) {
           <CTA type="secondary" title="Sign out"></CTA>
         </div>
       </div>
-      <div className="flex flex-col gap-[2%] justify-center items-center w-1/2">
+      <div className=" text-text flex flex-col gap-[2%] justify-center items-center w-1/2">
         <div className="flex justify-around items-center gap-[1vw]">
-          <h2 className="font-extrabold text-2xl">Louis Bourgeois</h2>
+          <h2 className="font-extrabold  text-2xl">Louis Bourgeois</h2>
           <svg
             width="20"
             height="20"
