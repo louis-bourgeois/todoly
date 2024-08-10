@@ -25,12 +25,18 @@ export default function NavigationItem({ icon: Icon, label, path, isActive }) {
       href={path}
       className={`flex flex-col items-center justify-between gap-[5px] h-[45px] cursor-pointer  ${
         isActive
-          ? "text-dominant-500 font-semibold"
-          : "text-gray-500 hover:text-dominant-500"
+          ? "text-dominant font-semibold"
+          : "text-gray-500 hover:text-dominant"
       }`}
     >
       {iconElement}
-      <span className={`text-xs transition-colors duration-200 text-text `}>
+      <span
+        className={`text-xs transition-colors duration-200  ${
+          isActive
+            ? "text-dominant font-semibold"
+            : "text-gray-500 hover:text-dominant"
+        } `}
+      >
         {label}
       </span>
     </Link>

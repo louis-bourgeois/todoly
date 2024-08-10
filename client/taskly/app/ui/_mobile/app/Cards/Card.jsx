@@ -25,7 +25,7 @@ const Card = ({ children, cardType, el, isTransitioning }) => {
 
   return (
     <div
-      className={`transition-all  bg-primary  duration-500 ease-[cubic-bezier(1,0,0,1)] relative w-[calc(100vw-35px)] my-5 border rounded-[20px] shadow-shadow_card`}
+      className={`transition-all  bg-primary  duration-500 ease-[cubic-bezier(1,0,0,1)] relative w-[calc(100vw-35px)] my-5 gradient-border rounded-[20px] shadow-shadow_card`}
       role="region"
       aria-label={`${cardType} card`}
     >

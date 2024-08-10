@@ -1,13 +1,7 @@
 "use client";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useMemo, useRef, useState } from "react";
 
-const TRANSITION_DURATION = 150;
+const TRANSITION_DURATION = 100; // ms
 const ICON_WIDTH = 25;
 
 const useHover = () => {
@@ -45,7 +39,7 @@ const IconSvg = React.memo(({ className = "", fill }) => (
     height={ICON_WIDTH * 0.794}
     viewBox="0 0 34 27"
     fill="none"
-    className={`transition-all duration-150 ease-in-out ${className}`}
+    className={className}
   >
     <path
       d="M9.04526 19.0036C9.64703 18.2363 10.2278 17.4863 10.8186 16.7442C14.8099 11.7317 19.2529 7.19591 24.6715 3.70099C27.1281 2.11656 29.7333 0.842855 32.5727 0.0914798C33.3715 -0.119914 33.9377 0.258188 33.9079 0.954946C33.8933 1.29734 33.6741 1.50643 33.4256 1.68852C29.464 4.59179 25.8339 7.86958 22.4099 11.385C19.7341 14.1321 17.2709 17.0604 14.9025 20.0714C13.3348 22.0644 11.7804 24.068 10.2133 26.0616C9.89937 26.461 9.4561 26.6624 9.03491 26.6303"
@@ -74,69 +68,105 @@ const CTA = React.memo(
       ref
     ) => {
       const [isHovered, hoverProps] = useHover();
-      const [displayIcons, setDisplayIcons] = useState(false);
       const contentRef = useRef(null);
 
-      const ctaStyle = useMemo(() => {
+      const baseStyle = useMemo(
+        () => ({
+          transition: `all ${TRANSITION_DURATION}ms ease-in-out`,
+          borderRadius: "33.489px",
+          fontWeight: "bold",
+          cursor: "pointer",
+          overflow: "hidden",
+        }),
+        []
+      );
+
+      const buttonStyle = useMemo(() => {
         switch (type) {
           case "primary":
-            return "shadow-shadow_card bg-Ternary font-bold text-text rounded-[33.489px]";
+            return {
+              ...baseStyle,
+              backgroundColor: "var(--color-ternary)",
+              border: "2px solid var(--color-dominant)",
+              color: "var(--color-text)",
+              boxShadow: "var(--shadow-card)",
+            };
           case "secondary":
-            return `py-[8px] px-[32px] text-base font-bold border border-dominant text-dominant hover:bg-dominant hover:text-text transition-colors duration-300
-                ${
-                  isHovered ? "bg-dominant text-text" : ""
-                }  rounded-[33.489px]`;
+            return {
+              ...baseStyle,
+              backgroundColor: isHovered
+                ? "var(--color-dominant)"
+                : "transparent",
+              border: "2px solid var(--color-dominant)",
+              color: isHovered ? "white" : "var(--color-dominant)",
+              padding: "8px 32px",
+            };
           case "ghost":
-            return `text-text hover:text-blue-500 transition-colors duration-150
-                ${isHovered ? "text-blue-500" : ""}`;
+            return {
+              ...baseStyle,
+              backgroundColor: isHovered
+                ? "var(--color-blue-100)"
+                : "transparent",
+              color: isHovered ? "var(--color-dominant)" : "var(--color-text)",
+            };
           default:
-            return "";
+            return baseStyle;
         }
-      }, [type, isHovered]);
-
-      useEffect(() => {
-        setDisplayIcons(isHovered && showIcons && type === "primary");
-      }, [isHovered, showIcons, type]);
-      useEffect(() => {
-        if (ref?.current && contentRef?.current) {
-          ref.current.style.width = `${contentRef.current.offsetWidth}px`;
-        }
-      }, [displayIcons, title, ref]);
+      }, [type, isHovered, baseStyle]);
 
       const iconStyle = useMemo(
         () => ({
-          width: displayIcons ? `${ICON_WIDTH}px` : "0px",
+          width:
+            isHovered && showIcons && type === "primary"
+              ? `${ICON_WIDTH}px`
+              : "0px",
           overflow: "hidden",
           transition: `all ${TRANSITION_DURATION}ms ease-in-out`,
-          opacity: displayIcons ? 1 : 0,
-          marginLeft: displayIcons ? "0.5rem" : "0",
-          marginRight: displayIcons ? "0.5rem" : "0",
+          opacity: isHovered && showIcons && type === "primary" ? 1 : 0,
+          marginLeft:
+            isHovered && showIcons && type === "primary" ? "0.5rem" : "0",
+          marginRight:
+            isHovered && showIcons && type === "primary" ? "0.5rem" : "0",
         }),
-        [displayIcons]
+        [isHovered, showIcons, type]
       );
+
+      const getIconFill = () => {
+        if (type === "primary") {
+          return isHovered ? "var(--color-secondary)" : "var(--color-dominant)";
+        }
+        return isHovered ? "#var(--color-dominant)" : "var(--color-primary)";
+      };
 
       return (
         <Wrapper
           ref={ref}
           disabled={disabled}
           onClick={onClick}
-          className={`${ctaStyle} ${className} cursor-pointer overflow-hidden transition-all duration-150 ease-in-out`}
+          className={className}
+          style={buttonStyle}
           {...hoverProps}
           aria-label={ariaLabel || title}
         >
           <div
             ref={contentRef}
-            className="flex items-center justify-center whitespace-nowrap"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              whiteSpace: "nowrap",
+              transition: `all ${TRANSITION_DURATION}ms ease-in-out`,
+            }}
           >
             {type === "primary" && showIcons && (
               <div style={iconStyle}>
-                <IconSvg fill={"black"} />
+                <IconSvg fill={getIconFill()} />
               </div>
             )}
             <span>{title}</span>
             {type === "primary" && showIcons && (
               <div style={iconStyle}>
-                <IconSvg fill={"black"} />
+                <IconSvg fill={getIconFill()} />
               </div>
             )}
           </div>

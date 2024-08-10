@@ -86,7 +86,11 @@ export default function ScreenWrapper({ children }) {
       } `}
     >
       {isMobile ? (
-        <main className="flex flex-col items-start justify-between py-[20px]">
+        <main
+          className={`flex flex-col items-start justify-between py-[20px] ${
+            ["profile"].includes(pathname) && "h-[100vh]"
+          }`}
+        >
           {children}
         </main>
       ) : (

@@ -8,7 +8,7 @@ const Navbar = ({ logo: Logo }) => {
         <div className="w-10 h-10 flex items-center justify-center">
           <Logo className="w-full h-full" />
         </div>
-        <span className="font-bold font-smooth antialiased text-xl">
+        <span className="font-bold font-smooth antialiased text-xl text-text">
           Todo<span className="text-dominant">ly</span>
         </span>
       </div>

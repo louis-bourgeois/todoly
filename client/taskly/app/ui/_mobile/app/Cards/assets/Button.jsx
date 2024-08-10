@@ -82,7 +82,7 @@ const DropdownContent = memo(
     return createPortal(
       <div
         ref={dropdownRef}
-        className="z-50 flex flex-col justify-center rounded-md shadow-lg overflow-auto transition-all duration-300 ease-in-out border border-white fixed"
+        className="z-50 flex flex-col bg-primary justify-center rounded-md shadow-lg overflow-auto transition-all duration-300 ease-in-out border border-white fixed"
         style={{
           maxHeight: `${maxVisibleOptions * 37}px`,
           opacity: isOpen ? 1 : 0,
@@ -189,7 +189,7 @@ const Button = forwardRef(
       ${
         dominant
           ? "bg-dominant text-primary"
-          : "bg-secondary text-text gradient-border"
+          : "bg-ternary-2 text-text gradient-border"
       }
       ${light ? "font-light" : "font-normal"}
       px-4 py-2 rounded-full
