@@ -61,7 +61,8 @@ const AddWorkspaceBubble = ({ onDontShowAgain }) => {
         <h3 className="font-semibold text-lg">Astuce</h3>
       </div>
       <p className="text-sm mb-3">
-        Faites défiler horizontalement pour ajouter d'autres types d'éléments
+        Faites défiler horizontalement pour ajouter d&apos;autres types
+        d&apos;éléments
       </p>
       <div className="flex justify-end">
         <button
