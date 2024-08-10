@@ -16,7 +16,7 @@ const LIBELLES = [
   { name: "Notifications", width: "25vw" },
   { name: "Languages", width: "25vw" },
   { name: "Integrations", width: "25vw" },
-  { name: "Main Menu", width: "17vw" },
+  { name: "Main Menu", width: "20vw" },
   { name: "Account", width: "40vw" },
 ];
 
@@ -44,7 +44,7 @@ export default function MainMenu({
   const [layout, setLayout] = useState("default");
   const [previousLayout, setPreviousLayout] = useState(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [width, setWidth] = useState("17vw");
+  const [width, setWidth] = useState("20vw");
   const contentRef = useRef(null);
   const wrapperRef = useRef(null);
 
@@ -73,7 +73,7 @@ export default function MainMenu({
     setIsTransitioning(true);
 
     const libelle = LIBELLES.find((l) => l.name === layout);
-    const newWidth = libelle ? libelle.width : "17vw";
+    const newWidth = libelle ? libelle.width : "20vw";
 
     // Set the wrapper to a fixed height before the transition
     if (wrapperRef.current && contentRef.current) {
@@ -82,7 +82,7 @@ export default function MainMenu({
 
     // Start the transition
     setTimeout(() => {
-      setWidth(isDefaultOrSettings ? "17vw" : newWidth);
+      setWidth(isDefaultOrSettings ? "18vw" : newWidth);
 
       // After a short delay, update the height
       setTimeout(() => {
