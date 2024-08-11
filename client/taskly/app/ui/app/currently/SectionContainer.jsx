@@ -154,7 +154,7 @@ const SectionContainer = ({
                 ref={(el) => (headerRefs.current[section.id] = el)}
                 className="mt-10 hover:scale-105 transition-transform sticky top-0 z-[300] px-4 py-2 gradient-border after:bg-ternary-section-header bg-opacity-70 backdrop-filter backdrop-blur-sm shadow-sm rounded-[20px]"
               >
-                <div className="flex justify-left items-center">
+                <div className="flex justify-between items-center">
                   {editingSectionId === section.id ? (
                     <AutoResizeInput
                       className="font-bold text-2xl text-text bg-transparent focus:outline-none"
