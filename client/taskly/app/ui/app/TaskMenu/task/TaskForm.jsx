@@ -159,6 +159,7 @@ export default function TaskForm({
       ) {
         setDueDate(undefined);
       } else {
+        console.log(dueDate, date);
         setDueDate(date);
       }
 

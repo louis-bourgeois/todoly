@@ -126,7 +126,7 @@ export default function WorkspaceForm({
           />
         </div>
       </div>
-      <div className="flex flex-grow justify-between items-center gap-[2.5%]">
+      <div className="flex flex-grow justify-between items-center gap-[2.5%] h-[80%]">
         <SectionSelectContainer
           setWorkspaceSections={setWorkspaceSections}
           workspaceSections={workspaceSections}

@@ -37,9 +37,6 @@ export default function Task({ task, onTaskClick, minWidth }) {
       setTaskTags([]);
     }
   }, [task]);
-  console.log("====================================");
-  console.log(minWidth);
-  console.log("====================================");
   return (
     <div
       onClick={() => onTaskClick(task.id)}
@@ -64,7 +61,10 @@ export default function Task({ task, onTaskClick, minWidth }) {
         {taskTags.length > 0 && (
           <div className="flex flex-wrap justify-end">
             {taskTags.map((taskTag, index) => (
-              <div key={index} className="flex items-center justify-between mb-1">
+              <div
+                key={index}
+                className="flex items-center justify-between mb-1"
+              >
                 <div className="border border-secondary w-2 h-2 rounded-full mr-1" />
                 <p className="text-text text-xs text-light">{taskTag.name}</p>
               </div>
