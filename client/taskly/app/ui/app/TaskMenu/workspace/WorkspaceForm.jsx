@@ -107,7 +107,9 @@ export default function WorkspaceForm({
   }, [id, workspaces, sections]);
 
   return (
-    <div className={`w-full h-full flex flex-col ${transitionStyles}`}>
+    <div
+      className={`w-full h-full flex flex-col overflow-clip ${transitionStyles}`}
+    >
       <div className="flex justify-between items-center h-[15%] mb-4">
         <ElementPickerLibelle
           handleElementTypeChange={handleElementTypeChange}
