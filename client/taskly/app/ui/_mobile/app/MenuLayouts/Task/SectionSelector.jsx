@@ -40,11 +40,11 @@ function AddSectionPortal({ isOpen, onClose, onAdd }) {
 
   return createPortal(
     <div
-      className="fixed inset-0 bg-primary opacity-75 flex items-center justify-center z-50"
+      className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
       onClick={onClose}
     >
       <div
-        className="bg-primary rounded-lg p-4 w-full max-w-md"
+        className="rounded-lg p-4 w-full max-w-md bg-primary m-4 "
         onClick={(e) => e.stopPropagation()}
       >
         <input
@@ -52,8 +52,8 @@ function AddSectionPortal({ isOpen, onClose, onAdd }) {
           type="text"
           value={newSectionName}
           onChange={(e) => setNewSectionName(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleAdd()}
-          className="w-full p-3 text-sm border rounded focus:outline-none focus:ring-2 bg-primary focus:ring-blue-500 mb-4"
+          onKeyDown={(e) => e.key === "Enter" && handleAdd()}
+          className="w-full p-3 text-sm border focus:outline-none rounded-full focus:ring-2 bg-bg placeholder:text-text text-text focus:ring-blue-500 mb-4"
           placeholder="New section name"
         />
         <div className="flex justify-end space-x-2">

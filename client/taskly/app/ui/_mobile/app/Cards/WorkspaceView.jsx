@@ -142,14 +142,14 @@ const WorkspaceView = ({ id }) => {
       />
       {collaborators.length > 0 && (
         <div className="px-4 mt-2">
-          <h3 className="text-sm font-semibold mb-1">
+          <h3 className="text-sm font-semibold mb-3 text-text">
             Selected Collaborators:
           </h3>
           <div className="flex flex-wrap gap-2">
             {collaborators.map((collab, index) => (
               <span
                 key={index}
-                className="bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-1 rounded flex items-center"
+                className="bg-primary gradient-border text-dominant text-xs font-medium mr-2 px-3 py-2 rounded-full flex items-center"
               >
                 {collab.username}
                 {collab.username !== user.username && (
@@ -174,12 +174,14 @@ const WorkspaceView = ({ id }) => {
       />
       {workspaceSections.length > 0 && (
         <div className="px-4 mt-2">
-          <h3 className="text-sm font-semibold mb-1">Selected Sections:</h3>
+          <h3 className="text-sm font-semibold mb-3 text-text">
+            Selected Sections:
+          </h3>
           <div className="flex flex-wrap gap-2">
             {workspaceSections.map((section) => (
               <span
                 key={section.id}
-                className="bg-secondary text-primary hover:text-dominant transition-colors text-xs font-medium mr-2 px-2.5 py-0.5 rounded flex items-center"
+                className="bg-secondary text-text hover:text-dominant transition-colors text-xs font-medium mr-2 px-4 py-2 rounded-full gradient-border flex items-center"
               >
                 {section.name}
                 {workspace.name !== "Personal" && section.name !== "Other" && (

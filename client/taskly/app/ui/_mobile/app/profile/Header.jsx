@@ -13,7 +13,9 @@ const Header = () => {
 
       <div className="flex flex-col items-end justify-center">
         <h1 className="font-bold text-2xl text-text">{name}</h1>
-        <span className="font-light cursor-pointer text-text">Free Plan</span>
+        <span className="font-light cursor-pointer text-text">
+          Free Plan
+        </span>
       </div>
     </div>
   );

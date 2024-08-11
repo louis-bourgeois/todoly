@@ -81,7 +81,7 @@ class Task {
       client.release();
     }
   }
-
+s
   static async find(workspaceId = false, taskId = false, userId = false) {
     let query = `
       SELECT t.*, tp.*, tw.*

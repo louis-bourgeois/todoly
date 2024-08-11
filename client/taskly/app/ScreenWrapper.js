@@ -68,7 +68,7 @@ export default function ScreenWrapper({ children }) {
       "/pricing",
     ].includes(pathname)
   ) {
-    wrapperClassName += `h-[100vh] overflow-y-auto overflow-x-none flex flex-col items-center gap-[30vh] ${
+    wrapperClassName += `h-[100vh] overflow-y-auto overflow-x-none flex flex-col items-center gap-[20vh] ${
       !isMobile && "px-[9vw]"
     } `;
   } else if (isMobile) {

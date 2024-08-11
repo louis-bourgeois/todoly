@@ -8,7 +8,7 @@ const statusColors = {
   in_progress: "bg-ternary",
 };
 
-export default function Task({ task, onTaskClick }) {
+export default function Task({ task, onTaskClick, minWidth }) {
   const { modifyTask } = useTask();
   const [taskStatus, setTaskStatus] = useState(task.status);
   const [taskTags, setTaskTags] = useState([]);
@@ -37,18 +37,21 @@ export default function Task({ task, onTaskClick }) {
       setTaskTags([]);
     }
   }, [task]);
-
+  console.log("====================================");
+  console.log(minWidth);
+  console.log("====================================");
   return (
     <div
       onClick={() => onTaskClick(task.id)}
-      className={`gradient-border bg-primary transition hover:scale-105 cursor-pointer shadow-shadow_card rounded-2xl flex flex-col  `}
+      style={{ minWidth: minWidth }}
+      className={`gradient-border bg-primary transition hover:scale-105 cursor-pointer shadow-shadow_card rounded-2xl flex flex-col`}
     >
-      <div className="flex justify-left items-center py-5">
+      <div className="flex justify-left items-center pt-5 pb-2">
         <div
           onClick={handleTaskDoneClick}
-          className={`z-40 transition-all ${taskCircleColor} cursor-pointer border border-secondary min-w-[1.5rem] min-h-[1.5rem] rounded-full mx-5`}
+          className={`z-40 transition-all ${taskCircleColor} cursor-pointer gradient-border border border-secondary min-w-[1.5rem] min-h-[1.5rem] rounded-full mx-5`}
         />
-        <h3 className="text-text font-bold text-xl px-5 font-inter">
+        <h3 className="text-text font-bold text-xl px-5 font-inter text-right">
           {task.title}
         </h3>
       </div>
@@ -61,7 +64,7 @@ export default function Task({ task, onTaskClick }) {
         {taskTags.length > 0 && (
           <div className="flex flex-wrap justify-end">
             {taskTags.map((taskTag, index) => (
-              <div key={index} className="flex items-center mr-2 mb-1">
+              <div key={index} className="flex items-center justify-between mb-1">
                 <div className="border border-secondary w-2 h-2 rounded-full mr-1" />
                 <p className="text-text text-xs text-light">{taskTag.name}</p>
               </div>

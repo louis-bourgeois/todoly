@@ -30,14 +30,14 @@ export default function MobileTask({ task, onClick }) {
       onClick={() => onClick(task.id)}
       className="gradient-border cursor-pointer flex flex-col justify-center items-start bg-ternary rounded-lg p-3 shadow-md hover:shadow-shadow_card transition-shadow duration-300"
     >
-      <div className="flex justify-between items-center w-full">
-        <div className="flex justify-start items-center">
-          <button onClick={handleTaskStatusChange}>
+      <div className="flex justify-between items-center w-full overflow-hidden">
+        <div className="flex justify-start items-center flex-grow">
+          <button onClick={handleTaskStatusChange} className="">
             <div
               className={`z-40 transition-all ${taskCircleColor} cursor-pointer border border-secondary min-w-[1rem] min-h-[1rem] rounded-full mr-2`}
             />
           </button>
-          <h5 className="text-sm font-medium text-text truncate">
+          <h5 className="text-sm font-medium text-text line-clamp-2 flex-grow leading-[1rem]">
             {task.title}
           </h5>
         </div>
@@ -49,9 +49,9 @@ export default function MobileTask({ task, onClick }) {
               tags.map((tag, index) => (
                 <div
                   key={index}
-                  className="flex items-center bg-gray-100 rounded-full px-2 py-1"
+                  className="flex items-center rounded-full bg-primary gradient-border px-2 py-1"
                 >
-                  <div className="w-1.5 h-1.5 rounded-full bg-secondary mr-1" />
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary gradient-border mr-1" />
                   <span className="text-2xs text-gray-700">{tag.name}</span>
                 </div>
               ))}
@@ -61,7 +61,9 @@ export default function MobileTask({ task, onClick }) {
 
       {task.description && (
         <div className="w-full mt-2">
-          <p className="text-2xs text-gray-600">{task.description}</p>
+          <p className="text-2xs text-secondary line-clamp-2">
+            {task.description}
+          </p>
         </div>
       )}
 
@@ -70,10 +72,10 @@ export default function MobileTask({ task, onClick }) {
           {tags.map((tag, index) => (
             <div
               key={index}
-              className="flex items-center bg-gray-100 rounded-full px-2 py-1"
+              className="flex items-center bg-primary gradient-border rounded-full px-2 py-1"
             >
-              <div className="w-1.5 h-1.5 rounded-full bg-secondary mr-1" />
-              <span className="text-2xs text-gray-700">{tag.name}</span>
+              <div className="w-1.5 h-1.5 rounded-full bg-primary gradient-border mr-1" />
+              <span className="text-2xs text-text mt-[0.25px]">{tag.name}</span>
             </div>
           ))}
         </div>

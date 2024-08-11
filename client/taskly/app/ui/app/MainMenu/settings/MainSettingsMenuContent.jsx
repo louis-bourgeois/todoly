@@ -70,7 +70,7 @@ export default function MainSettingsMenuContent({
 }) {
   return (
     <div
-      className={`flex flex-col justify-between w-full h-full text-text ${transitionStyles}`}
+      className={`flex flex-col justify-between w-full h-full text-text  ${transitionStyles}`}
     >
       {icons.map((icon, index) => (
         <SettingsLine

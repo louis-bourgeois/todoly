@@ -52,8 +52,8 @@ export default function ElementPicker({
         ></path>
       </svg>
       <div
-        className={`absolute top-full mt-2 left-0 right-0 bg-primary
-           shadow-lg rounded-lg transition-all duration-300 z-[255] ${
+        className={`  absolute top-full mt-2 left-0 right-0 bg-primary
+           shadow-lg rounPded-lg transition-all duration-300 z-[255] ${
              menuOpen
                ? "opacity-100 max-h-[200px]"
                : "opacity-0 max-h-0 overflow-hidden pointer-events-none"
@@ -62,10 +62,10 @@ export default function ElementPicker({
         {elements.map((el) => (
           <div
             key={el}
-            className="p-2 cursor-pointer hover:text-dominant transition-colors duration-300 text-text"
+            className=" p-4 cursor-pointer hover:text-dominant transition-colors duration-300 text-text"
             onClick={() => handleElementTypeChangeWithFade(el)}
           >
-            {el.charAt(0).toUpperCase() + el.slice(1)}
+           {el.charAt(0).toUpperCase() + el.slice(1)}
           </div>
         ))}
       </div>

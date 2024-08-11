@@ -75,6 +75,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
 
   const handleDateClick = (date) => {
     if (!isPastDate(date)) {
+      console.log(date);
       const formattedDate = format(date, "yyyy-MM-dd");
       onDateSelect(formattedDate);
     }
@@ -106,6 +107,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
         return;
     }
     onDateSelect(format(date, "yyyy-MM-dd"));
+    console.log(date);
     setCurrentDate(date);
   };
 

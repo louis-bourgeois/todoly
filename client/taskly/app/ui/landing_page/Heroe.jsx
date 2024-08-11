@@ -27,7 +27,7 @@ const HeroTitle = memo(() => (
 HeroTitle.displayName = "HeroTitle";
 
 const HeroDescription = memo(() => (
-  <p className="text-sm sm:text-base text-grey max-w-2xl">
+  <p className="text-sm sm:text-base text-grey max-w-3xl">
     Manage your tasks, workspaces, and goals in one intuitive platform, designed
     to boost your productivity.
   </p>
