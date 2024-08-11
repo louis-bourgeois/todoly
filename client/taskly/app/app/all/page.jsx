@@ -17,7 +17,7 @@ export default function Page() {
   const settings = {
     dots: false,
     infinite: false,
-    speed: 300,
+    speed: 600,
     centerMode: true,
     centerPadding: "40px",
     slidesToScroll: 0.5,

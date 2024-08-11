@@ -54,20 +54,20 @@ const AddWorkspaceBubble = ({ onDontShowAgain }) => {
 
   return (
     <div
-      className={`fixed top-4 left-4 right-4 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg shadow-lg p-4 z-50 transition-opacity duration-500 ease-in-out`}
+      className={`fixed top-4 left-4 right-4 bg-dominant text-white rounded-lg shadow-lg p-4 z-50 transition-opacity duration-500 ease-in-out`}
       style={{ opacity }}
     >
       <div className="mb-2">
-        <h3 className="font-semibold text-lg">Astuce</h3>
+        <h3 className="font-semibold text-lg text-text">Astuce</h3>
       </div>
-      <p className="text-sm mb-3">
+      <p className="text-sm mb-3 text-text">
         Faites défiler horizontalement pour ajouter d&apos;autres types
         d&apos;éléments
       </p>
       <div className="flex justify-end">
         <button
           onClick={onDontShowAgain}
-          className="text-xs bg-white text-blue-500 px-3 py-1 rounded hover:bg-blue-100 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+          className="text-xs bg-white  text-dominant px-3 py-1 rounded hover:scale-105 transition-scale transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
         >
           Do not show again
         </button>
@@ -96,21 +96,19 @@ const CardContent = ({ children, el, cardType }) => {
     </div>
   );
 };
-const AddWorkspaceCard = () => {
+const AddCard = (type = "Workspace") => {
   const { setCardType } = useMenu();
+  console.log(type);
+
   return (
-    <Card cardType="All" isVisible={true} isTransitioning={false}>
+    <Card cardType="_add" isVisible={true} isTransitioning={false}>
       <CardContent cardType="All">
-        <div className="flex flex-col items-center justify-center h-full">
-          <h2 className="text-xl font-bold mb-4">Add a new workspace</h2>
-          <p className="text-center mb-4">
-            Create a new workspace to organize your tasks and projects
-          </p>
+        <div className="flex flex-col items-center justify-center h-full text-text">
           <button
             onClick={() => setCardType("Add")}
             className="bg-dominant text-text font-bold p-4 rounded-full"
           >
-            Create Workspace
+            {"Create " + type.type}
           </button>
         </div>
       </CardContent>
@@ -292,7 +290,7 @@ export default function AppLayout({ children }) {
       ),
       All: () => {
         if (index === workspaces.length) {
-          return <AddWorkspaceCard />;
+          return <AddCard />;
         }
         return (
           <Card
@@ -324,32 +322,42 @@ export default function AppLayout({ children }) {
           </Card>
         );
       },
-      Task: () => (
-        <Card
-          cardType={currentCardType}
-          isVisible={true}
-          isTransitioning={isTransitioning}
-        >
-          <CardContent cardType={currentCardType}>
-            {task ? <TaskView id={task.id} /> : <div>No task selected</div>}
-          </CardContent>
-        </Card>
-      ),
-      Workspace: () => (
-        <Card
-          cardType={currentCardType}
-          isVisible={true}
-          isTransitioning={isTransitioning}
-        >
-          <CardContent cardType={currentCardType}>
-            {workspace ? (
-              <WorkspaceView id={workspace.id}></WorkspaceView>
-            ) : (
-              <div>No workspace selected</div>
-            )}
-          </CardContent>
-        </Card>
-      ),
+      Task: () => {
+        if (index === sortedTasks.length) {
+          return <AddCard type="Task" />;
+        }
+        return (
+          <Card
+            cardType={currentCardType}
+            isVisible={true}
+            isTransitioning={isTransitioning}
+          >
+            <CardContent cardType={currentCardType}>
+              {task ? <TaskView id={task.id} /> : <div>No task selected</div>}
+            </CardContent>
+          </Card>
+        );
+      },
+      Workspace: () => {
+        if (index === workspaces.length) {
+          return <AddCard />;
+        }
+        return (
+          <Card
+            cardType={currentCardType}
+            isVisible={true}
+            isTransitioning={isTransitioning}
+          >
+            <CardContent cardType={currentCardType}>
+              {workspace ? (
+                <WorkspaceView id={workspace.id}></WorkspaceView>
+              ) : (
+                <div>No workspace selected</div>
+              )}
+            </CardContent>
+          </Card>
+        );
+      },
       Search: () => (
         <Card
           cardType={currentCardType}
@@ -432,15 +440,20 @@ export default function AppLayout({ children }) {
             className="mySwiper"
           >
             {currentCardType === "Task" && sortedTasks.length > 0 ? (
-              sortedTasks.map((task, index) => (
-                <SwiperSlide key={task.id}>
-                  <CardWrapper cardType={currentCardType}>
-                    {renderCardContent(task, index)}
-                  </CardWrapper>
-                </SwiperSlide>
-              ))
+              [...sortedTasks, { id: "add-task" }]
+                .sort((a, b) => {
+                  if (a.id === "add-task") return 1;
+                  if (b.id === "add-task") return -1;
+                })
+                .map((task, index) => (
+                  <SwiperSlide key={task.id}>
+                    <CardWrapper cardType={currentCardType}>
+                      {renderCardContent(task, index)}
+                    </CardWrapper>
+                  </SwiperSlide>
+                ))
             ) : currentCardType === "Workspace" ? (
-              workspaces
+              [...workspaces, { tasks: [], id: "add-workspace" }]
                 .sort((a, b) => b.tasks.length - a.tasks.length)
                 .map((workspace, index) => (
                   <SwiperSlide key={index}>

@@ -85,8 +85,8 @@ export default function SectionSelection({
       othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer"
       onClick={() => setMenuOpen((prev) => !prev)}
     >
-      <h2 className="pl-[4%] font-bold text-2xl text-text">
-        {linked_section_name || "Select a workspace"}
+      <h2 className="pl-[4%] font-bold text-xl text-text">
+        {linked_section_name || "Select a section"}
       </h2>
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -116,10 +116,10 @@ export default function SectionSelection({
       <div
         className={`absolute top-full mt-2 left-0 right-0 bg-primary shadow-lg rounded-lg transition-opacity duration-300 z-50 ${
           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
-        } ${filteredSections.length > 4 ? "max-h-60 overflow-y-auto" : ""}`}
+        } `}
       >
         <div
-          className="opacity-100 p-2 cursor-pointer hover:text-dominant transition transition-color text-text"
+          className="opacity-100 rounded-xl m-1 p-4 cursor-pointer font-bold hover:text-dominant transition-color transition-transform hover:scale-95 text-text gradient-border"
           onClick={(e) => {
             e.stopPropagation();
             handleAddSection();
@@ -127,73 +127,79 @@ export default function SectionSelection({
         >
           Add Section
         </div>
-        {filteredSections.map((section) => (
-          <div
-            key={section.id}
-            className="flex items-center p-2"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleSelectSection(section);
-            }}
-          >
-            {editingSectionId === section.id ? (
-              <input
-                type="text"
-                className="cursor-pointer flex-grow p-1 border-b border-gray-300 focus:outline-none text-text"
-                value={section.name}
-                onChange={(e) => handleSectionNameChange(e, section.id)}
-                onKeyDown={(e) => {
-                  if (e.code === "Enter") setEditingSectionId(null);
-                }}
-                onBlur={() => setEditingSectionId(null)}
-                onClick={(e) => e.stopPropagation()}
-              />
-            ) : (
-              <span className="cursor-pointer flex-grow p-1 hover:text-dominant text-text">
-                {section.name}
-              </span>
-            )}
-            {section.name !== "Other" && (
-              <>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="cursor-pointer hover:text-dominant ml-2 transition transition-color text-text"
-                  viewBox="0 0 24 24"
-                  width="24"
-                  height="24"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteSection(section.id);
+        <div
+          className={`${
+            filteredSections.length > 4 ? "max-h-60 overflow-y-auto" : ""
+          }`}
+        >
+          {filteredSections.map((section) => (
+            <div
+              key={section.id}
+              className="flex items-center p-4"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSelectSection(section);
+              }}
+            >
+              {editingSectionId === section.id ? (
+                <input
+                  type="text"
+                  className="text-text cursor-pointer rounded-full px-4 flex-grow py-1 border border-secondary bg-primary focus:outline-none"
+                  value={section.name}
+                  onChange={(e) => handleSectionNameChange(e, section.id)}
+                  onKeyDown={(e) => {
+                    if (e.code === "Enter") setEditingSectionId(null);
                   }}
-                >
-                  <path
-                    fill="none"
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-                <button
-                  className="ml-2 hover:text-dominant text-text"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditingSectionId(section.id);
-                  }}
-                >
-                  Edit
-                </button>
-              </>
-            )}
-          </div>
-        ))}
+                  onBlur={() => setEditingSectionId(null)}
+                  onClick={(e) => e.stopPropagation()}
+                />
+              ) : (
+                <span className="cursor-pointer flex-grow py-1 hover:text-dominant text-text">
+                  {section.name}
+                </span>
+              )}
+              {section.name !== "Other" && (
+                <>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="cursor-pointer hover:text-dominant ml-2 transition transition-color text-text"
+                    viewBox="0 0 24 24"
+                    width="24"
+                    height="24"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteSection(section.id);
+                    }}
+                  >
+                    <path
+                      fill="none"
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                  <button
+                    className="ml-2 hover:text-dominant text-text"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingSectionId(section.id);
+                    }}
+                  >
+                    Edit
+                  </button>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
         {isEditingNewSection && (
           <div className="p-2">
             <input
               ref={newSectionInputRef}
               type="text"
-              className="w-full p-2 border border-gray-300 rounded text-text"
+              className="text-text cursor-pointer rounded-full px-4 flex-grow py-2 border border-secondary bg-primary focus:outline-none"
               placeholder="New section name"
               value={newSection.name}
               onChange={(e) =>

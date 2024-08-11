@@ -21,14 +21,24 @@ export async function updatePreference(req, res) {
         .json({ message: "Error updating user preference", error: error });
     }
   } else {
-    res.status(401).json({ message: "User not authenticated, try to refresh the page or report the error"});
+    res
+      .status(401)
+      .json({
+        message:
+          "User not authenticated, try to refresh the page or report the error",
+      });
   }
 }
 
 export async function addPreference(req, res) {
   try {
     if (!req.user) {
-      res.status(401).json({ message: "User not authenticated, try to refresh the page or report the error"});
+      res
+        .status(401)
+        .json({
+          message:
+            "User not authenticated, try to refresh the page or report the error",
+        });
       return;
     }
     const found_user = await User.findId(undefined, req.user.email, undefined);
@@ -39,7 +49,7 @@ export async function addPreference(req, res) {
       userId
     );
     await newPreference.save();
-    res.send(201);
+    res.sendStatus(201);
   } catch (error) {
     console.error(error);
     res
@@ -51,7 +61,12 @@ export async function addPreference(req, res) {
 export async function getUserPreferences(req, res) {
   try {
     if (!req.user) {
-      res.status(401).json({ message: "User not authenticated, try to refresh the page or report the error"});
+      res
+        .status(401)
+        .json({
+          message:
+            "User not authenticated, try to refresh the page or report the error",
+        });
       return;
     }
     const found_user = await User.findId(undefined, req.user.email, undefined);

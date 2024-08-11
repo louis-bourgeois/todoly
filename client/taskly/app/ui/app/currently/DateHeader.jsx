@@ -1,12 +1,12 @@
 import { addDays, format, getDate } from "date-fns";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { useMenu } from "../../../../context/MenuContext"; // Import useMenu
+import { useMenu } from "../../../../context/MenuContext";
 import { useWorkspace } from "../../../../context/WorkspaceContext";
 import { convertDateObjIntoDueDateType } from "../../../utils/utils";
 
 const DateHeader = ({ index, onDateChange }) => {
   const { setCurrentWorkspace, currentWorkspace, workspaces } = useWorkspace();
-  const { toggleViewsMenu } = useMenu(); // Use toggleViewsMenu from useMenu
+  const { toggleViewsMenu } = useMenu();
   const [menuWidth, setMenuWidth] = useState(0);
   const triggerRef = useRef(null);
   const menuRef = useRef(null);
@@ -63,17 +63,18 @@ const DateHeader = ({ index, onDateChange }) => {
       setMenuWidth(Math.max(triggerWidth, menuContentWidth));
     }
   }, [menuOpen, workspacesName]);
+
   return (
     <div className="relative flex w-full justify-between items-center z-[301]">
       <h2 className="select-none text-3xl font-extralight text-text">
         {(dateNumber < 10 ? "0" : "") + dateNumber}
       </h2>
-      <h2 className="select-none text-3xl font-bold bg-gradient-2 bg-clip-text text-transparent inline-block">
+      <h2 className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 select-none xl:text-3xl text-2.5xl font-bold bg-gradient-2 bg-clip-text text-transparent whitespace-nowrap">
         {dayLabel || format(futureDate, "EEEE", dateOptions)}
       </h2>
       <div className="flex items-center gap-[0.7vw] relative">
         <button
-          onClick={toggleViewsMenu} // Trigger viewsMenu toggle
+          onClick={toggleViewsMenu}
           className="mr-4 p-2 rounded-full hover:scale-125 transition-transform duration-300 ease-in w-[50%] flex justify-between"
         >
           <svg
@@ -94,11 +95,15 @@ const DateHeader = ({ index, onDateChange }) => {
         </button>
         <div
           ref={triggerRef}
-          className="text-text addMenuElement cursor-pointer rounded-full flex items-center justify-between p-3 gradient-border relative"
+          className="text-text addMenuElement cursor-pointer rounded-full flex items-center justify-between p-1 font-xs xl:font-base gradient-border relative"
           onClick={() => setMenuOpen((prev) => !prev)}
         >
-          {workspaces.find((workspace) => workspace.id === currentWorkspace)
-            ?.name || ""}
+          <div className="flex-grow flex justify-center items-center min-w-0">
+            <span className="truncate px-2">
+              {workspaces.find((workspace) => workspace.id === currentWorkspace)
+                ?.name || ""}
+            </span>
+          </div>
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className={`ml-2 transition-transform duration-500 text-text ${

@@ -198,7 +198,7 @@ export default function TagSelect({
       <div className="flex justify-between items-center m-[1%]">
         <h2 className="p-[3%] font-bold text-2xl text-text">Tag(s)</h2>
         <button
-          className="justify-center items-center font-bold"
+          className="justify-center items-center font-bold hover:scale-105 transition-transform active:scale-100"
           onClick={() => handleAddTag("")}
         >
           <svg
@@ -226,7 +226,7 @@ export default function TagSelect({
           taskTags.map((tag, index) => (
             <div
               key={index}
-              className="flex items-center justify-start mb-2 rounded-full !shadow-none addMenuElement p-1 m-2"
+              className="gradient-border p-2 flex items-center justify-start mb-2 rounded-full !shadow-none addMenuElement  m-2"
             >
               <input
                 ref={(el) => {
@@ -286,7 +286,7 @@ export default function TagSelect({
               <SwiperSlide key={tag.id} className="!w-auto">
                 <div
                   className={`
-                    relative cursor-pointer transition-all flex items-center justify-start
+                    relative cursor-pointer transition-all flex items-center gradient-border m-1 justify-start
                     bg-primary rounded-[20px] h-10 px-4 shadow-md
                     ${hoveredTag === tag.id ? "pr-10" : ""}
                   `}
@@ -319,7 +319,7 @@ export default function TagSelect({
                       viewBox="0 0 24 24"
                       fill="none"
                       stroke="currentColor"
-                      className="w-4 h-4 transition-all hover:text-dominant"
+                      className="w-4 h-4 transition-all text-text hover:text-dominant"
                       style={{
                         transform:
                           hoveredTag === tag.id

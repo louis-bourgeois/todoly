@@ -108,22 +108,23 @@ export default function WorkspaceForm({
 
   return (
     <div className={`w-full h-full flex flex-col ${transitionStyles}`}>
-      <div className="flex justify-center h-[15%] items-center">
+      <div className="flex justify-between items-center h-[15%] mb-4">
         <ElementPickerLibelle
           handleElementTypeChange={handleElementTypeChange}
           elementType={elementType}
         />
-        <input
-          type="text"
-          onChange={(e) => setNameValue(e.target.value)}
-          value={nameValue}
-          disabled={!visibility}
-          placeholder={id ? "Edit Workspace" : "New Workspace"}
-          className="w-full text-right placeholder:text-gray placeholder:font-light placeholder:text-4xl text-text text-5xl bg-transparent h-full focus:outline-none"
-        />
-        <div className="flex-grow" />
+        <div className="flex-grow flex justify-center items-center">
+          <input
+            type="text"
+            onChange={(e) => setNameValue(e.target.value)}
+            value={nameValue}
+            disabled={!visibility}
+            placeholder={id ? "Edit Workspace" : "New Workspace"}
+            className="mb-4 w-full text-center placeholder:text-gray placeholder:font-light placeholder:text-5xl text-text text-5xl bg-transparent focus:outline-none"
+          />
+        </div>
       </div>
-      <div className="flex h-[90%] justify-between items-center gap-[2.5%] mb-[%]">
+      <div className="flex flex-grow justify-between items-center gap-[2.5%]">
         <SectionSelectContainer
           setWorkspaceSections={setWorkspaceSections}
           workspaceSections={workspaceSections}
@@ -136,7 +137,7 @@ export default function WorkspaceForm({
           />
           <button
             onClick={handleWorkspaceAction}
-            className="addMenuElement bg-main_menu_bg  h-[15%] rounded-[20px] text-2xl hover:scale-105 active:scale-100 transition-transform duration-100 ease-in"
+            className="addMenuElement text-text bg-main_menu_bg gradient-border h-[15%] rounded-[20px] text-2.5xl hover:scale-95 active:scale-100 transition-transform duration-100 ease-in"
           >
             {id ? "Update" : "Create"}
           </button>

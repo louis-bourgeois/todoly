@@ -12,6 +12,7 @@ const CARD_HEIGHTS = {
   Workspace: "2xs:h-[50vh]",
   Search: "2xs:h-[62.5vh]",
   All: "2xs:h-[72.5vh]",
+  _add: "h-[15vh]",
   other: "2xs:h-[72.5vh]",
 };
 

@@ -178,10 +178,10 @@ export default function WorkspaceLayoutSection({
             onChange={handleInputChange}
             onKeyDown={handleKeyPress}
             placeholder={searchLabel}
-            className="p-2 border bg-primary text-text rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 w-9/12"
+            className="py-2 px-4 border bg-primary text-text rounded-full focus:outline-none focus:ring-2 focus:ring-blue-300 w-[70%]"
           />
           {link && (
-            <div className="relative ml-2">
+            <div className="relative ">
               <Button
                 label={copyStatus || "Copy Link"}
                 light={true}

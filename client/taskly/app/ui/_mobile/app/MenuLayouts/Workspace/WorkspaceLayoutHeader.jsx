@@ -12,8 +12,8 @@ const WorkspaceLayoutHeader = ({
       type="text"
       value={workspaceTitle}
       onChange={(e) => setWorkspaceTitle(e.target.value)}
-      placeholder="An amazing workspace."
-      className="w-full text-2xl font-bold placeholder:text-2xl placeholder:text-grey focus:outline-none bg-primary"
+      placeholder="A workspace."
+      className="text-text w-full text-2xl font-bold placeholder:text-2xl placeholder:text-grey focus:outline-none bg-primary"
     />
     <Button
       label={update ? "Update" : "Create"}

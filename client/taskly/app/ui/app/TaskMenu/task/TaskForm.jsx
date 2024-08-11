@@ -72,6 +72,7 @@ export default function TaskForm({
 
   useEffect(() => {
     if (id) {
+      console.log("idddd", id);
       const foundTask = tasks.find((task) => task.id === id);
       if (foundTask) {
         setTask(foundTask);
@@ -88,14 +89,14 @@ export default function TaskForm({
         setTaskWorkspace(foundTask.workspace_id || "");
       }
     } else {
-      setCanSubmit(false);
+      setCanSubmit(!!canSubmit);
       setLinkedSection(getDefaultSection());
-      setTitleValue("");
-      setStatus("todo");
-      setPriority(5);
-      setDueDate(new Date());
-      setTaskTags([]);
-      setDescriptionValue("");
+      setTitleValue(titleValue || "");
+      setStatus(status || "todo");
+      setPriority(priority || 5);
+      setDueDate(dueDate || new Date());
+      setTaskTags(taskTags || []);
+      setDescriptionValue(descriptionValue || "");
       setTaskWorkspace(currentWorkspace || "");
     }
   }, [id, tasks, getDefaultSection, currentWorkspace]);
@@ -124,6 +125,8 @@ export default function TaskForm({
   }, [linkedSection, sections, linkedSectionName]);
 
   const resetTaskMenu = useCallback(() => {
+    console.log("called");
+
     setTaskWorkspace(currentWorkspace || "");
     setTitleValue("");
     setStatus("todo");
@@ -144,6 +147,10 @@ export default function TaskForm({
     }
   }, [isTaskMenuOpen, resetTaskMenu]);
 
+  useEffect(() => {
+    console.log(dueDate);
+  }, [dueDate]);
+
   const handleDateSelect = useCallback(
     (date) => {
       if (
@@ -157,10 +164,12 @@ export default function TaskForm({
 
       if (id) {
         const updatedTask = { ...task, due_date: date || null };
+        console.log(updatedTask);
         setTask(updatedTask);
+        modifyTask(updatedTask, "post");
       }
     },
-    [dueDate, task, id]
+    [dueDate, task, id, modifyTask]
   );
 
   const createTask = useCallback(async () => {
@@ -209,9 +218,9 @@ export default function TaskForm({
 
   const handleSectionChange = useCallback(
     (newSection, newSectionName) => {
-      setLinkedSection(newSection);
-      setLinkedSectionName(newSectionName);
-      updatePreference({ key: "Last_Section", value: newSection });
+      setLinkedSection(newSection); // pas cela
+      setLinkedSectionName(newSectionName); // pas cela
+      updatePreference({ key: "Last_Section", value: newSection }); // cela fait bug
       if (id) {
         const updatedTask = { ...task, linked_section: newSection };
         setTask(updatedTask);

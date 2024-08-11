@@ -1,6 +1,5 @@
-"use client";
 import Task from "@/ui/app/Task/Task";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useError } from "../../../../context/ErrorContext";
 import { useMenu } from "../../../../context/MenuContext";
 import { useSection } from "../../../../context/SectionContext";
@@ -8,19 +7,19 @@ import { useTask } from "../../../../context/TaskContext";
 import { useUserPreferences } from "../../../../context/UserPreferencesContext";
 import { useWorkspace } from "../../../../context/WorkspaceContext";
 
-export default function SectionContainer({
+const SectionContainer = ({
   date = undefined,
   selectedWorkspace = undefined,
-}) {
-  const { tasks, activeTask, setActiveTask } = useTask();
-  const { sections } = useSection();
+}) => {
+  const { tasks } = useTask();
+  const { sections, deleteSection } = useSection();
   const { handleError } = useError();
   const { preferences } = useUserPreferences();
   const { currentWorkspace } = useWorkspace();
   const { toggleTaskMenu } = useMenu();
-  const { deleteSection } = useSection();
-  const [sectionTasks, setSectionsTask] = useState(new Map());
+  const [sectionTasks, setSectionsTasks] = useState(new Map());
   const [workspace, setWorkspace] = useState(currentWorkspace);
+  const headerRefs = useRef({});
 
   useEffect(() => {
     setWorkspace(selectedWorkspace?.id || currentWorkspace);
@@ -37,11 +36,9 @@ export default function SectionContainer({
     () =>
       sections
         .filter((section) => section.workspace_id === workspace)
-        .sort((a, b) => {
-          if (a.name.toLowerCase() < b.name.toLowerCase()) return -1;
-          if (a.name.toLowerCase() > b.name.toLowerCase()) return 1;
-          return 0;
-        }),
+        .sort((a, b) =>
+          a.name.toLowerCase().localeCompare(b.name.toLowerCase())
+        ),
     [sections, workspace]
   );
 
@@ -56,38 +53,25 @@ export default function SectionContainer({
 
   useEffect(() => {
     const taskMap = new Map();
-    let allTasks = tasks;
+    let allTasks = [...tasks];
 
-    // Sort tasks
-    switch (preferences.Sort_By) {
-      case "Creation date":
-        allTasks.sort(
-          (a, b) => new Date(b.creation_date) - new Date(a.creation_date)
-        );
-        break;
-      case "Tags":
-        // TODO / Implement here
-        break;
-      case "Importance":
-        allTasks.sort((a, b) => b.priority - a.priority);
-        break;
-      case "Last updated":
-        allTasks.sort(
-          (a, b) => new Date(b.updated_at) - new Date(a.updated_at)
-        );
-        break;
-    }
+    const sortFunctions = {
+      "Creation date": (a, b) =>
+        new Date(b.creation_date) - new Date(a.creation_date),
+      Tags: () => 0, // TODO: Implement sorting by tags
+      Importance: (a, b) => b.priority - a.priority,
+      "Last updated": (a, b) => new Date(b.updated_at) - new Date(a.updated_at),
+    };
+    allTasks.sort(sortFunctions[preferences.Sort_By] || (() => 0));
 
-    // Filter tasks
-    switch (preferences.Show) {
-      case "Completed only":
-        allTasks = allTasks.filter((task) => task.status === "done");
-        break;
-      case "Todo only":
-        allTasks = allTasks.filter((task) => task.status !== "done");
-        break;
-      // 'All tasks' doesn't need filtering
-    }
+    const filterFunctions = {
+      "Completed only": (task) => task.status === "done",
+      "Todo only": (task) => task.status !== "done",
+      "All tasks": () => true,
+    };
+    allTasks = allTasks.filter(
+      filterFunctions[preferences.Show] || (() => true)
+    );
 
     filteredSections.forEach((section) => {
       const sectionTasksFiltered = allTasks.filter(
@@ -100,8 +84,18 @@ export default function SectionContainer({
         taskMap.set(section.id, sectionTasksFiltered);
       }
     });
-    setSectionsTask(new Map(taskMap));
+    setSectionsTasks(taskMap);
   }, [tasks, filteredSections, date, preferences]);
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Force a re-render to update the minWidth of tasks
+      setSectionsTasks(new Map(sectionTasks));
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [sectionTasks]);
 
   return (
     <div className="w-full h-full overflow-x-auto">
@@ -116,20 +110,24 @@ export default function SectionContainer({
               key={`${section.id}-${tasks.length}-${tasks
                 .map((task) => task.id)
                 .join("-")}`}
-              className="flex flex-col h-full p-10 py-0 gap-[25px]"
+              className="flex flex-col h-full p-10 py-0 gap-[7.5px]"
             >
-              <div className="sticky top-0 z-[300] px-4 py-2   gradient-border  after:bg-ternary-section-header bg-opacity-70 backdrop-filter backdrop-blur-sm shadow-sm rounded-[20px]">
-                <div className="flex justify-between items-center">
-                  <h1 className="text-text font-bold text-xl whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
+              <div
+                ref={(el) => (headerRefs.current[section.id] = el)}
+                className="mt-10 hover:scale-105 transition-transform sticky top-0 z-[300] px-4 py-2 gradient-border after:bg-ternary-section-header bg-opacity-70 backdrop-filter backdrop-blur-sm shadow-sm rounded-[20px]"
+              >
+                <div className="flex justify-left items-center">
+                  <h1 className="text-text font-bold text-2xl whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
                     {section.name.length > 35 ? (
                       <span title={section.name}>{section.name}</span>
                     ) : (
                       section.name
                     )}
-                  </h1>{" "}
-                  <button onClick={() => handleDeleteSection(section.id)}>
+                  </h1>
+                  {section.name !== "Other" && (
                     <svg
                       viewBox="0 0 24 24"
+                      className="ml-5"
                       width="24"
                       height="24"
                       fill="none"
@@ -173,15 +171,16 @@ export default function SectionContainer({
                         ></path>{" "}
                       </g>
                     </svg>
-                  </button>
+                  )}
                 </div>
               </div>
-              <div className="flex flex-col gap-[2vh] m-2 p-2">
+              <div className="flex flex-col gap-[2vh] py-2 my-2">
                 {sectionTasksList.map((task) => (
                   <Task
                     task={task}
                     key={task.id}
                     onTaskClick={() => expandTask(task.id)}
+                    minWidth={headerRefs.current[section.id]?.offsetWidth - 150}
                   />
                 ))}
               </div>
@@ -191,4 +190,6 @@ export default function SectionContainer({
       </div>
     </div>
   );
-}
+};
+
+export default SectionContainer;
