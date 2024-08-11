@@ -73,17 +73,31 @@ export default function Page() {
                   >
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
-                      width="24"
-                      height="24"
-                      viewBox="0 0 24 24"
+                      width={24}
+                      height={24}
+                      viewBox="0 0 12 12"
                       fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
+                      className="cursor-pointer flex-shrink-0 group transition-colors duration-300 ease-in-out"
                     >
-                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      <g clipPath="url(#clip0_1050_205)">
+                        <path
+                          d="M10.64 3.20003L5.86995 7.97C5.39495 8.445 3.98494 8.665 3.66994 8.35C3.35494 8.035 3.56994 6.625 4.04494 6.15L8.81995 1.37501C8.9377 1.24654 9.08025 1.14327 9.23905 1.07142C9.3978 0.99957 9.5695 0.96062 9.74375 0.95695C9.91795 0.953285 10.0912 0.984955 10.2528 1.05006C10.4145 1.11517 10.5613 1.21237 10.6843 1.33577C10.8074 1.45917 10.9042 1.60622 10.9688 1.76805C11.0335 1.92988 11.0647 2.10313 11.0606 2.27736C11.0564 2.45158 11.017 2.62318 10.9447 2.78175C10.8724 2.94033 10.7688 3.08262 10.64 3.20003Z"
+                          className="stroke-secondary group-hover:stroke-dominant  transition-colors duration-300 ease-in-out"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                        <path
+                          d="M5.5 2H3C2.46956 2 1.96089 2.21071 1.58581 2.58578C1.21074 2.96086 1 3.46956 1 4V9C1 9.53045 1.21074 10.0391 1.58581 10.4142C1.96089 10.7893 2.46956 11 3 11H8.5C9.605 11 10 10.1 10 9V6.5"
+                          className="stroke-secondary group-hover:stroke-dominant "
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </g>
+                      <defs>
+                        <clipPath id="clip0_1050_205">
+                          <rect width="12" height="12" fill="white" />
+                        </clipPath>
+                      </defs>
                     </svg>
                   </button>
                 </div>
