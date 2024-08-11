@@ -12,12 +12,12 @@ export default function ElementPickerLibelle({
       onClick={() => setTaskArrowIsClicked((prev) => !prev)}
       className="relative bg-dominant cursor-pointer rounded-full p-[1%] py-[0.5%] flex justify-between items-center"
     >
-      <span className="pl-[5%] pb-[2%] text-primary">{elementType}</span>
+      <span className="pl-[5%] pb-[2%]  text-text">{elementType}</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         x="0"
         y="0"
-        className={`cursor-pointer transition-transform duration-500 text-primary ${
+        className={`cursor-pointer text-text transition-transform duration-500  ${
           taskArrowIsClicked ? "rotate-180" : ""
         }`}
         viewBox="0 0 29 29"
@@ -35,17 +35,19 @@ export default function ElementPickerLibelle({
         ></path>
       </svg>
       <div
-        className={`absolute top-full mt-2 left-0 right-0 bg-primary shadow-lg rounded-lg transition-opacity duration-300 z-[255] ${
+        className={`absolute  border-white top-full mt-2 left-0 right-0 bg-primary shadow-lg rounded-lg transition-opacity duration-300 z-[255] ${
           taskArrowIsClicked ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
         {elements.map((el) => (
           <div
             key={el}
-            className="opacity-100 p-2 cursor-pointer hover:text-dominant transition transition-color"
+            className=" p-2 cursor-pointer "
             onClick={() => handleElementTypeChange(el)}
           >
-            {el.charAt(0).toUpperCase() + el.slice(1)}
+            <span className="text-text hover:text-dominant transition transition-color">
+              {el.charAt(0).toUpperCase() + el.slice(1)}
+            </span>
           </div>
         ))}
       </div>
