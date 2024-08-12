@@ -66,8 +66,8 @@ export async function createUser(req, res) {
       const preferences_values = [
         "Currently",
         "Depending on the time of day + name",
-        "Light",
-        "#007aff",
+        "Dark",
+        "#000000",
         "true",
         "",
         "French",
@@ -120,12 +120,10 @@ export const findUserbyUsername = async (req, res) => {
 
 export const getWorkspacesByUserId = async (req, res) => {
   if (!req.user) {
-    res
-      .status(401)
-      .json({
-        message:
-          "User not authenticated, try to refresh the page or report the error",
-      });
+    res.status(401).json({
+      message:
+        "User not authenticated, try to refresh the page or report the error",
+    });
     return;
   }
   const found_user = await User.findId(undefined, req.user.email, undefined);

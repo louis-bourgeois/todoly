@@ -1,37 +1,33 @@
+import useSmoothScroll from "@/useSmoothScroll";
 import Link from "next/link";
 import CTA from "./CTA";
 
 const Navbar = ({ logo: Logo }) => {
+  const scrollToSection = useSmoothScroll();
+
   return (
-    <nav className="fixed flex flex-col sm:flex-row justify-between py-4 w-[calc(100%-18vw)]">
-      <div className="flex items-center gap-3 justify-center mb-4 sm:mb-0">
-        <div className="w-10 h-10 flex items-center justify-center">
+    <nav className="flex justify-between items-center py-4 px-4 sm:px-[9vw] w-full">
+      <div className="flex items-center gap-2">
+        <div className="lg:w-10 lg:h-10 w-7 h-7 flex items-center justify-center">
           <Logo className="w-full h-full" />
         </div>
-        <span className="font-bold font-smooth antialiased text-xl text-text">
+        <span className="font-bold font-smooth antialiased text-m lg:text-xl text-text">
           Todo<span className="text-dominant">ly</span>
         </span>
       </div>
-      <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
-        <Link href="/features" className="w-full sm:w-auto">
-          <CTA
-            title="Features"
-            type="ghost"
-            className="w-full py-3 px-6 text-lg"
-          />
-        </Link>
-        <Link href="/pricing" className="w-full sm:w-auto">
+      <div className="flex items-center sm:gap-6">
+        <button onClick={() => scrollToSection("pricing")}>
           <CTA
             title="Pricing"
             type="ghost"
-            className="w-full py-3 px-6 text-lg"
+            className="py-3 px-6 text-base lg:text-lg"
           />
-        </Link>
-        <Link href="/auth/login" className="w-full sm:w-auto">
+        </button>
+        <Link href="/auth/login">
           <CTA
             title="Login"
             type="secondary"
-            className="w-full py-3 px-6 text-lg"
+            className="lg:py-3 lg:px-6 px-2 py-1 text-base lg:text-lg"
           />
         </Link>
       </div>

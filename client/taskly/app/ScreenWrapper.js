@@ -70,7 +70,7 @@ export default function ScreenWrapper({ children }) {
   if (pathname === "/") {
     return (
       <div
-        className={`overflow-x-none flex flex-col items-center lg:gap-[20vh] gap-[5vh]`}
+        className={`overflow-x-none flex flex-col items-center  lg:gap-[20vh]`}
       >
         {children}
       </div>

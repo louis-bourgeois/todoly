@@ -112,6 +112,95 @@ class User {
 
     return users;
   }
+
+  static async delete(userId) {
+    if (!userId) {
+      return;
+    }
+    const deleteQueryA = `
+    DELETE FROM user_security WHERE id = $1;
+    DELETE FROM user_profile_image WHERE user_id = $1;
+    DELETE FROM user_role_assignment WHERE user_id = $1;
+    DELETE FROM user_preferences WHERE user_id = $1;
+    `;
+    const deleteQueryB = `
+    SELECT workspace_id
+    FROM user_workspace uw
+    WHERE uw.user_id = $1
+    AND NOT EXISTS (
+    SELECT 1
+    FROM user_workspace uw2
+    WHERE uw2.workspace_id = uw.workspace_id
+      AND uw2.user_id != $1
+    )
+     `;
+
+    const client = await pool.connect();
+
+    try {
+      await client.query("BEGIN");
+
+      // Execute deleteQueryA
+      await client.query(deleteQueryA, [userId]);
+
+      // Execute deleteQueryB and get workspaceIds
+      const { rows: workspaces } = await client.query(deleteQueryB, [userId]);
+
+      for (const workspace of workspaces) {
+        const workspaceId = workspace.workspace_id;
+
+        // Delete from user_workspace
+        await client.query(
+          "DELETE FROM user_workspace WHERE workspace_id = $1",
+          [workspaceId]
+        );
+
+        // Get task_ids and delete from task_workspaces
+        const { rows: tasks } = await client.query(
+          "SELECT task_id FROM task_workspaces WHERE workspace_id = $1",
+          [workspaceId]
+        );
+        await client.query(
+          "DELETE FROM task_workspaces WHERE workspace_id = $1",
+          [workspaceId]
+        );
+
+        // Delete related task properties and tasks
+        for (const task of tasks) {
+          const taskId = task.task_id;
+          await client.query("DELETE FROM task_properties WHERE task_id = $1", [
+            taskId,
+          ]);
+          await client.query("DELETE FROM task WHERE id = $1", [taskId]);
+        }
+
+        // Delete workspace
+        await client.query("DELETE FROM workspace WHERE id = $1", [
+          workspaceId,
+        ]);
+      }
+
+      // Delete tags
+      await client.query(
+        `
+        DELETE FROM tag 
+        WHERE user_id = $1 
+        AND task_id IN (SELECT id FROM task WHERE user_id = $1)
+      `,
+        [userId]
+      );
+
+      // Delete user profile
+      await client.query("DELETE FROM user_profile WHERE id = $1", [userId]);
+
+      await client.query("COMMIT");
+    } catch (e) {
+      await client.query("ROLLBACK");
+      throw e;
+    } finally {
+      client.release();
+    }
+  }
   static async findId(
     username = undefined,
     email = undefined,
