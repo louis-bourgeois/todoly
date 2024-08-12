@@ -1,4 +1,5 @@
 import dynamic from "next/dynamic";
+import Head from "next/head";
 import { memo } from "react";
 
 const ScrollAnimation = dynamic(
@@ -38,7 +39,20 @@ const IconSvg = memo(() => (
 IconSvg.displayName = "IconSvg";
 
 const Page = () => {
-  return <ScrollAnimation />;
+  return (
+    <>
+      <Head>
+        <link
+          rel="preload"
+          href="/animation-frames/0001.webp"
+          as="image"
+          type="image/webp"
+          fetchPriority="high"
+        />
+      </Head>
+      <ScrollAnimation />
+    </>
+  );
 };
 
 export default memo(Page);

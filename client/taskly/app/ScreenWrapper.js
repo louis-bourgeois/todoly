@@ -13,15 +13,9 @@ export default function ScreenWrapper({ children }) {
 
   useEffect(() => {
     setIsMounted(true);
-    if (isMobile) {
-      document.body.classList.add("overflow-hidden");
-    } else {
-      document.body.classList.remove("overflow-hidden");
-    }
-    return () => {
-      document.body.classList.remove("overflow-hidden");
-    };
-  }, [isMobile]);
+
+    document.body.classList.remove("overflow-hidden");
+  }, []);
 
   useEffect(() => {
     if (preferences?.Color_Theme) {
@@ -76,12 +70,12 @@ export default function ScreenWrapper({ children }) {
   if (pathname === "/") {
     return (
       <div
-        className={`overflow-x-none flex flex-col items-center gap-[20vh]`}
+        className={`overflow-x-none flex flex-col items-center lg:gap-[20vh] gap-[5vh]`}
       >
         {children}
       </div>
     );
   } else {
-    return { children };
+    return children;
   }
 }

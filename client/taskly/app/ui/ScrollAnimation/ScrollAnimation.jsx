@@ -1,7 +1,10 @@
 "use client";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useScreen } from "../../../context/ScreenContext";
 import Heroe from "../landing_page/Heroe";
+import MobileTextContent from "./MobileTextContent";
+import PricingSection from "./PricingSection";
 
 const Navbar = dynamic(() => import("../landing_page/Navbar"), {
   loading: () => (
@@ -11,6 +14,99 @@ const Navbar = dynamic(() => import("../landing_page/Navbar"), {
     ></div>
   ),
 });
+
+// Constants
+const TOTAL_FRAMES = 180;
+const THROTTLE_DELAY = 16;
+const FRAME_SKIP_THRESHOLD = 5;
+const TEXT_APPEAR_FRAME = 100;
+const TEXT_END_FRAME = 178;
+
+// Utility component for fade-in animations
+const FadeInSection = ({ children, className }) => {
+  const [isVisible, setIsVisible] = useState(false);
+  const domRef = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setIsVisible(true);
+        if (domRef.current) observer.unobserve(domRef.current);
+      }
+    });
+
+    const currentRef = domRef.current;
+    if (currentRef) observer.observe(currentRef);
+
+    return () => {
+      if (currentRef) observer.unobserve(currentRef);
+    };
+  }, []);
+
+  return (
+    <div
+      className={`transition-all duration-1000 ${
+        isVisible
+          ? "opacity-100 transform translate-y-0"
+          : "opacity-0 transform translate-y-10"
+      } ${className}`}
+      ref={domRef}
+    >
+      {children}
+    </div>
+  );
+};
+
+// Component for animated text opacity
+const AnimatedTextOpacity = ({ text, progress, className }) => {
+  const words = text.split(" ");
+
+  return (
+    <div
+      className={`flex flex-wrap ${className}`}
+      style={{ wordSpacing: "0.5rem" }}
+    >
+      {words.map((word, wordIndex) => {
+        const dominantWords = [
+          "intuitive",
+          "workspace",
+          "easy",
+          "way",
+          "approach",
+          "interact",
+          "quickly",
+        ];
+
+        const delay = wordIndex * 5;
+        const letterProgress = Math.max(
+          0,
+          Math.min(1, (progress * 100 - delay) / 10)
+        );
+
+        return (
+          <span
+            key={wordIndex}
+            className={`mr-1 mb-1 ${
+              dominantWords.includes(word.toLowerCase()) ? "text-dominant" : ""
+            }`}
+          >
+            {word.split("").map((letter, letterIndex) => (
+              <span
+                key={letterIndex}
+                className="inline-block transition-opacity duration-300 ease-out"
+                style={{
+                  opacity: letterProgress,
+                }}
+              >
+                {letter}
+              </span>
+            ))}
+          </span>
+        );
+      })}
+    </div>
+  );
+};
 
 const IconSvg = () => (
   <svg
@@ -32,16 +128,11 @@ const IconSvg = () => (
     />
   </svg>
 );
-
-const TOTAL_FRAMES = 180;
-const BUFFER_SIZE = 45;
-const THROTTLE_DELAY = 16; // ~60fps
-const FRAME_SKIP_THRESHOLD = 5; // Skip frames if the difference is more than 5
-const TEXT_APPEAR_FRAME = 150;
-
 const ScrollAnimation = ({ children }) => {
+  const { isMobile } = useScreen();
   const [currentFrame, setCurrentFrame] = useState(1);
   const [loadedFrames, setLoadedFrames] = useState({});
+  const [containerHeight, setContainerHeight] = useState("250vh");
   const containerRef = useRef(null);
   const animationRef = useRef(null);
   const lastExecutionRef = useRef(0);
@@ -69,65 +160,75 @@ const ScrollAnimation = ({ children }) => {
     [loadedFrames]
   );
 
-  const preloadFrames = useCallback(
-    (start, end) => {
-      for (
-        let i = Math.max(1, Math.floor(start));
-        i <= Math.min(Math.ceil(end), TOTAL_FRAMES);
-        i++
-      ) {
-        preloadImage(i);
+  useEffect(() => {
+    const updateHeight = () => {
+      if (containerRef.current && animationRef.current) {
+        const viewportHeight = window.innerHeight;
+        const animationHeight = animationRef.current.offsetHeight;
+        const newContainerHeight =
+          viewportHeight + animationHeight + (isMobile ? 200 : 0);
+        setContainerHeight(`${newContainerHeight}px`);
       }
-    },
-    [preloadImage]
-  );
+    };
 
-  const handleScroll = useCallback(() => {
-    const now = performance.now();
-    if (now - lastExecutionRef.current < THROTTLE_DELAY) return;
-    lastExecutionRef.current = now;
-
-    if (containerRef.current && animationRef.current) {
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const animationRect = animationRef.current.getBoundingClientRect();
-
-      const startPoint = containerRect.top + window.scrollY;
-      const endPoint = startPoint + containerRect.height - animationRect.height;
-
-      if (window.scrollY >= startPoint && window.scrollY < endPoint) {
-        const progress =
-          (window.scrollY - startPoint) / (endPoint - startPoint);
-        const frameIndex = Math.floor(progress * (TOTAL_FRAMES - 1)) + 1;
-
-        const frameDiff = Math.abs(frameIndex - lastFrameRef.current);
-        if (frameDiff > FRAME_SKIP_THRESHOLD) {
-          lastFrameRef.current = frameIndex;
-        } else {
-          lastFrameRef.current += Math.sign(frameIndex - lastFrameRef.current);
-        }
-
-        setCurrentFrame(lastFrameRef.current);
-        preloadFrames(
-          lastFrameRef.current - BUFFER_SIZE / 2,
-          lastFrameRef.current + BUFFER_SIZE / 2
-        );
-      } else if (window.scrollY < startPoint) {
-        setCurrentFrame(1);
-      } else {
-        setCurrentFrame(TOTAL_FRAMES);
-      }
-    }
-  }, [preloadFrames]);
+    updateHeight();
+    window.addEventListener("resize", updateHeight);
+    return () => window.removeEventListener("resize", updateHeight);
+  }, [isMobile]);
 
   useEffect(() => {
-    window.addEventListener(
-      "scroll",
-      () => requestAnimationFrame(handleScroll),
-      { passive: true }
+    if (!isMobile) {
+      const handleScroll = () => {
+        const now = performance.now();
+        if (now - lastExecutionRef.current < THROTTLE_DELAY) return;
+        lastExecutionRef.current = now;
+
+        if (containerRef.current && animationRef.current) {
+          const containerRect = containerRef.current.getBoundingClientRect();
+          const animationRect = animationRef.current.getBoundingClientRect();
+
+          const startPoint = containerRect.top + window.scrollY;
+          const endPoint =
+            startPoint + containerRect.height - animationRect.height;
+          const scrollProgress =
+            (window.scrollY - startPoint) / (endPoint - startPoint);
+
+          if (scrollProgress >= 0 && scrollProgress <= 1) {
+            const frameIndex =
+              Math.floor(scrollProgress * (TOTAL_FRAMES - 1)) + 1;
+            const frameDiff = Math.abs(frameIndex - lastFrameRef.current);
+
+            if (frameDiff > FRAME_SKIP_THRESHOLD) {
+              lastFrameRef.current = frameIndex;
+            } else {
+              lastFrameRef.current += Math.sign(
+                frameIndex - lastFrameRef.current
+              );
+            }
+
+            setCurrentFrame(Math.min(lastFrameRef.current, TOTAL_FRAMES));
+            preloadImage(lastFrameRef.current);
+          } else if (scrollProgress < 0) {
+            setCurrentFrame(1);
+          } else {
+            setCurrentFrame(TOTAL_FRAMES);
+          }
+        }
+      };
+
+      window.addEventListener("scroll", handleScroll, { passive: true });
+      preloadImage(1);
+      return () => window.removeEventListener("scroll", handleScroll);
+    }
+  }, [isMobile, preloadImage]);
+
+  const textProgress = useMemo(() => {
+    if (currentFrame <= TEXT_APPEAR_FRAME) return 0;
+    if (currentFrame >= TEXT_END_FRAME) return 1;
+    return (
+      (currentFrame - TEXT_APPEAR_FRAME) / (TEXT_END_FRAME - TEXT_APPEAR_FRAME)
     );
-    preloadFrames(1, BUFFER_SIZE);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [handleScroll, preloadFrames]);
+  }, [currentFrame]);
 
   const currentImageSrc = useMemo(
     () =>
@@ -135,11 +236,6 @@ const ScrollAnimation = ({ children }) => {
       `/animation-frames/${String(currentFrame).padStart(4, "0")}.webp`,
     [currentFrame, loadedFrames]
   );
-
-  const textOpacity = useMemo(() => {
-    if (currentFrame < TEXT_APPEAR_FRAME) return 0;
-    return Math.min((currentFrame - TEXT_APPEAR_FRAME) / 15, 1);
-  }, [currentFrame]);
 
   return (
     <>
@@ -149,31 +245,40 @@ const ScrollAnimation = ({ children }) => {
       <div className="relative z-10 pt-[30vh]">
         <Heroe />
       </div>
-      <div ref={containerRef} className="relative h-[250vh]">
+      <div
+        ref={containerRef}
+        className="relative"
+        style={{ height: containerHeight }}
+      >
         <div
           ref={animationRef}
-          className="sticky top-[12.5vh] 5xl:top-[17.5vh] w-full"
+          className="sticky top-0 w-full h-screen flex items-center justify-center"
         >
           <img
-            src={currentImageSrc}
+            src={isMobile ? "/animation-frames/0001.webp" : currentImageSrc}
             alt={`Animation frame ${currentFrame}`}
-            className="w-full h-full object-contain"
+            className={`w-full h-full object-contain ${
+              isMobile ? "scale-125" : ""
+            }`}
           />
-          <div
-            className="absolute right-8 top-1/2 transform -translate-y-1/2 transition-opacity duration-500 max-w-[40%]"
-            style={{ opacity: textOpacity }}
-          >
-            <h2 className="text-2.5xl font-bold text-text mb-4 leading-tight">
-              An intuitive and easy way to interact with your goals and
-              projects.
-            </h2>
-            <p className="text-lg text-text">
-              Streamline your workflow and boost productivity with our
-              innovative solution.
-            </p>
-          </div>
+          {!isMobile && (
+            <div className="absolute top-1/2 right-0 transform -translate-y-1/2 w-full max-w-[50%] px-4">
+              <AnimatedTextOpacity
+                text="An intuitive and easy way to interact with your projects."
+                progress={textProgress}
+                className="text-xl 3xl:text-2xl 5xl:text-3xl font-bold text-text mb-4"
+              />
+              <AnimatedTextOpacity
+                text="A workspace based approach that allows you to switch quickly between different projects."
+                progress={textProgress}
+                className="text-base sm:text-lg md:text-xl text-text"
+              />
+            </div>
+          )}
         </div>
       </div>
+      {isMobile && <MobileTextContent />}
+      <PricingSection />
       {children}
     </>
   );
