@@ -137,7 +137,7 @@ export default function FormMenu({
 
   return (
     <div
-      className={`rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.5)] bg-landing_page_bg transition-opacity ease-in-out duration-1000 ${
+      className={`rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.5)] bg-primary border-white transition-opacity ease-in-out duration-1000 ${
         display ? "opacity-100" : "opacity-0"
       } absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 ${
         display ? "z-30" : "z-0"
@@ -187,7 +187,7 @@ export default function FormMenu({
             <Input
               key={index}
               {...input}
-              additionalStyles="bg-landing_page_bg text-xl font-light"
+              additionalStyles="text-xl font-light"
             />
           ))}
           {password && (

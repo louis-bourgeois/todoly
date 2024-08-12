@@ -86,7 +86,9 @@ const CTA = React.memo(
           case "primary":
             return {
               ...baseStyle,
-              backgroundColor: "var(--color-ternary)",
+              backgroundColor: isHovered
+                ? "var(--color-bg)"
+                : "var(--color-ternary)",
               border: "2px solid var(--color-dominant)",
               color: "var(--color-text)",
               boxShadow: "var(--shadow-card)",
@@ -98,7 +100,7 @@ const CTA = React.memo(
                 ? "var(--color-dominant)"
                 : "transparent",
               border: "2px solid var(--color-dominant)",
-              color: isHovered ? "white" : "var(--color-dominant)",
+              color: "white",
               padding: "8px 32px",
             };
           case "ghost":

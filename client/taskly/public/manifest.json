@@ -2,7 +2,7 @@
     "name": "Todoly",
     "short_name": "Todoly",
     "description": "Manage your tasks, workspaces, and goals in one intuitive platform, designed to boost your productivity.",
-    "start_url": "/",
+    "start_url": "/app",
     "display": "standalone",
     "background_color": "#f7f4ed",
     "theme_color": "#f7f4ed",

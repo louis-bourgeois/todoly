@@ -1,4 +1,4 @@
-import { forwardRef } from "react";
+import { forwardRef, useMemo } from "react";
 
 const Input = forwardRef(
   (
@@ -16,74 +16,68 @@ const Input = forwardRef(
       visible,
       required = false,
       disabled = false,
+      "aria-describedby": ariaDescribedBy,
     },
     ref
   ) => {
     const isPassword = name === "password" || name === "confirm_password";
+    const inputType = useMemo(() => {
+      if (isPassword) return visible ? "text" : "password";
+      return type;
+    }, [isPassword, visible, type]);
 
     const handleChange = (e) => {
-      if (onChange) {
-        onChange(e);
-      }
+      onChange?.(e);
     };
 
-    const inputType = isPassword ? (visible ? "text" : "password") : type;
+    const className = useMemo(() => {
+      const baseClasses = `
+        bg-transparent
+        font-light
+        appearance-none
+        text-secondary
+        transition-all duration-200 ease-in-out
+        w-full
+        leading-tight 
+        px-5
+        h-14
+        text-base
+        focus:outline-none
+      `;
 
-    const baseClasses = `
-      focus:outline-none
-      h-full
-      font-light
-      appearance-none
-      bg-landing_page_bg
-      text-gray-700
-      transition-all duration-200 ease-in-out
-      w-full
-      flex items-center
-      leading-tight 
-    `;
+      const conditionalClasses = `
+        ${flexShrinkGrow ? "flex-grow flex-shrink" : ""}
+        ${disabled ? "cursor-not-allowed opacity-50" : ""}
+        ${!isPassword ? "border border-secondary rounded-2xl" : ""}
+        ${autoDimensions ? "min-w-[300px]" : ""}
+      `;
 
-    const conditionalClasses = `
-      ${flexShrinkGrow ? "flex-grow flex-shrink" : ""}
-      ${disabled ? "cursor-not-allowed opacity-50" : ""}
-      ${isPassword ? "w-full" : "border border-grey rounded-2xl"}
-      ${autoDimensions ? "min-w-[300px]" : ""}
-    `;
-
-    const className =
-      `${baseClasses} ${conditionalClasses} ${additionalStyles}`.trim();
-
-    // CSS for placeholder and input text alignment
-    const inputCSS = `
-      .custom-input::placeholder {
-        font-size: var(--placeholder-size);
-        font-weight: 300;
-      }
-      .custom-input {  
-        padding: 1rem;
-        font-size: var(--placeholder-size);
-        display: flex;
-        align-items: center;
-      }
-    `;
+      return `${baseClasses} ${conditionalClasses} ${additionalStyles}`.trim();
+    }, [
+      flexShrinkGrow,
+      disabled,
+      isPassword,
+      autoDimensions,
+      additionalStyles,
+    ]);
 
     return (
-      <>
-        <style>{inputCSS}</style>
-        <input
-          ref={ref}
-          id={id}
-          value={value}
-          name={name}
-          type={inputType}
-          autoComplete={autoComplete}
-          placeholder={placeholder}
-          className={`${className} pb-1 custom-input`}
-          required={required}
-          onChange={handleChange}
-          disabled={disabled}
-          style={{ "--placeholder-size": "1rem" }}
-        />
-      </>
+      <input
+        ref={ref}
+        id={id}
+        value={value}
+        name={name}
+        type={inputType}
+        autoComplete={autoComplete}
+        placeholder={placeholder}
+        className={`${className} custom-input text-[0.8rem]`}
+        required={required}
+        onChange={handleChange}
+        disabled={disabled}
+        aria-invalid={false}
+        aria-describedby={ariaDescribedBy}
+        style={{ "--placeholder-size": "0.8rem" }}
+      />
     );
   }
 );
