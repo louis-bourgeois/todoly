@@ -1,23 +1,12 @@
 import dynamic from "next/dynamic";
 import { memo } from "react";
 
-const Navbar = dynamic(() => import("./ui/landing_page/Navbar"), {
-  loading: () => (
-    <div
-      className="h-16 bg-gray-100 animate-pulse"
-      aria-label="Loading navigation"
-    ></div>
-  ),
-});
-
-const Hero = dynamic(() => import("./ui/landing_page/Heroe"), {
-  loading: () => (
-    <div
-      className="h-96 bg-gray-100 animate-pulse"
-      aria-label="Loading hero section"
-    ></div>
-  ),
-});
+const ScrollAnimation = dynamic(
+  () => import("./ui/ScrollAnimation/ScrollAnimation"),
+  {
+    loading: () => <div className="h-screen bg-gray-100 animate-pulse"></div>,
+  }
+);
 
 export const metadata = {
   title: "Discover Todoly, The Modern Productivity App",
@@ -49,16 +38,7 @@ const IconSvg = memo(() => (
 IconSvg.displayName = "IconSvg";
 
 const Page = () => {
-  return (
-    <>
-      <header className="w-full">
-        <Navbar logo={IconSvg} />
-      </header>
-      <main className="w-full">
-        <Hero />
-      </main>
-    </>
-  );
+  return <ScrollAnimation />;
 };
 
 export default memo(Page);
