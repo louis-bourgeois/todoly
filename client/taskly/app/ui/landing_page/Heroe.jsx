@@ -18,7 +18,7 @@ const CTA = dynamic(() => import("./CTA"), {
 const HeroTitle = memo(() => (
   <h1
     id="hero-heading"
-    className="font-bold text-3xl sm:text-4xl text-text leading-tight"
+    className="font-bold text-2xl sm:text-4xl text-text leading-tight"
   >
     Clarify <span className="text-dominant">Today</span>, Simplify{" "}
     <span className="text-dominant">Tomorrow</span>.

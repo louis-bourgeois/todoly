@@ -19,45 +19,9 @@ const Navbar = dynamic(() => import("../landing_page/Navbar"), {
 const TOTAL_FRAMES = 180;
 const THROTTLE_DELAY = 16;
 const FRAME_SKIP_THRESHOLD = 5;
-const TEXT_APPEAR_FRAME = 100;
+const TEXT_APPEAR_FRAME = 85;
 const TEXT_END_FRAME = 178;
 
-// Utility component for fade-in animations
-const FadeInSection = ({ children, className }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const domRef = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) {
-        setIsVisible(true);
-        if (domRef.current) observer.unobserve(domRef.current);
-      }
-    });
-
-    const currentRef = domRef.current;
-    if (currentRef) observer.observe(currentRef);
-
-    return () => {
-      if (currentRef) observer.unobserve(currentRef);
-    };
-  }, []);
-
-  return (
-    <div
-      className={`transition-all duration-1000 ${
-        isVisible
-          ? "opacity-100 transform translate-y-0"
-          : "opacity-0 transform translate-y-10"
-      } ${className}`}
-      ref={domRef}
-    >
-      {children}
-    </div>
-  );
-};
-
-// Component for animated text opacity
 const AnimatedTextOpacity = ({ text, progress, className }) => {
   const words = text.split(" ");
 
@@ -128,6 +92,7 @@ const IconSvg = () => (
     />
   </svg>
 );
+
 const ScrollAnimation = ({ children }) => {
   const { isMobile } = useScreen();
   const [currentFrame, setCurrentFrame] = useState(1);
@@ -239,32 +204,38 @@ const ScrollAnimation = ({ children }) => {
 
   return (
     <>
-      <div className="fixed left-[9vw] right-[9vw] flex flex-col items-center z-20">
+      <div
+        className={`${
+          isMobile ? "left-0 right-0" : "left-[9vw] right-[9vw]"
+        } flex flex-col items-center z-20 w-full sticky top-0 left-0 right-0 `}
+      >
         <Navbar logo={IconSvg} />
       </div>
-      <div className="relative z-10 pt-[30vh]">
+      <div className="relative z-10 pt-[8vh] lg:pt-[5vh] ">
         <Heroe />
       </div>
       <div
         ref={containerRef}
         className="relative"
-        style={{ height: containerHeight }}
+        style={{ height: !isMobile ? containerHeight : "auto" }}
       >
         <div
           ref={animationRef}
-          className="sticky top-0 w-full h-screen flex items-center justify-center"
+          className={`${
+            isMobile ? "" : "sticky top-0"
+          } w-full h-screen flex items-center justify-center`}
         >
           <img
-            src={isMobile ? "/animation-frames/0001.webp" : currentImageSrc}
+            src={isMobile ? "/0001_mobile.png" : currentImageSrc}
             alt={`Animation frame ${currentFrame}`}
             className={`w-full h-full object-contain ${
-              isMobile ? "scale-125" : ""
+              isMobile ? "" : ""
             }`}
           />
           {!isMobile && (
             <div className="absolute top-1/2 right-0 transform -translate-y-1/2 w-full max-w-[50%] px-4">
               <AnimatedTextOpacity
-                text="An intuitive and easy way to interact with your projects."
+                text="An intuitive and easy way to get closer to your goals."
                 progress={textProgress}
                 className="text-xl 3xl:text-2xl 5xl:text-3xl font-bold text-text mb-4"
               />

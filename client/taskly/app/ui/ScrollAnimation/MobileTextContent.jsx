@@ -1,16 +1,17 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
-const MobileTextContent = () => {
-  const [isVisible, setIsVisible] = useState(false);
+const MobileTextContent = ({ children }) => {
   const contentRef = useRef(null);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("animate-fadeIn");
+            observer.unobserve(entry.target);
+          }
+        });
       },
       { threshold: 0.1 }
     );
@@ -29,17 +30,9 @@ const MobileTextContent = () => {
   return (
     <div
       ref={contentRef}
-      className={`px-6 py-12 transition-opacity duration-1000 ${
-        isVisible ? "opacity-100" : "opacity-0"
-      }`}
+      className="opacity-0 transition-opacity duration-1000"
     >
-      <h2 className="text-2xl font-bold text-text mb-4">
-        An intuitive and easy way to interact with your projects.
-      </h2>
-      <p className="text-lg text-text">
-        A workspace based approach that allows you to switch quickly between
-        different projects.
-      </p>
+      {children}
     </div>
   );
 };
