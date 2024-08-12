@@ -3,7 +3,7 @@ import CTA from "./CTA";
 
 const Navbar = ({ logo: Logo }) => {
   return (
-    <nav className="flex flex-col sm:flex-row justify-between py-4 w-full px-4">
+    <nav className="fixed flex flex-col sm:flex-row justify-between py-4 w-[calc(100%-18vw)]">
       <div className="flex items-center gap-3 justify-center mb-4 sm:mb-0">
         <div className="w-10 h-10 flex items-center justify-center">
           <Logo className="w-full h-full" />
