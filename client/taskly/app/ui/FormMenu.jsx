@@ -151,7 +151,7 @@ export default function FormMenu({
         display ? "opacity-100" : "opacity-0"
       } absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 ${
         display ? "z-30" : "z-0"
-      }`}
+      } w-11/12 max-w-md md:w-auto md:max-w-none`}
     >
       <style jsx>{`
         .custom-checkbox {
@@ -179,27 +179,30 @@ export default function FormMenu({
           transform: translate(-50%, -50%) scale(1);
         }
       `}</style>
-      <div className="m-6 flex flex-col justify-center items-center gap-6">
+      <div className="m-4 md:m-6 flex flex-col justify-center items-center gap-3 md:gap-6">
         {libelle && (
-          <p className="self-start font-extralight text-1.5xl text-text">
+          <p className="self-start font-extralight text-sm md:text-1.5xl text-text">
             {libelle}
           </p>
         )}
         {mainTitle && (
-          <h3 className="text-3xl font-bold self-start text-dominant mb-2">
+          <h3 className="text-xl md:text-3xl font-bold self-start text-dominant mb-2">
             {mainTitle}
           </h3>
         )}
         <Form
           onSubmit={handleFormSubmit}
           onChange={handleChange}
-          className="space-y-4 w-full"
+          className="space-y-3 md:space-y-4 w-full overflow-y-auto max-h-[60vh] md:max-h-none pr-2 md:pr-0"
         >
           {inputs.map((input, index) => (
             <div key={index} className="w-full">
-              <Input {...input} additionalStyles="font-light w-full" />
+              <Input
+                {...input}
+                additionalStyles="font-light w-full text-sm md:text-base"
+              />
               {errors[input.name] && (
-                <p className="text-red-500 text-sm mt-1">
+                <p className="text-red-500 text-xs md:text-sm mt-1 ml-1">
                   {errors[input.name]}
                 </p>
               )}
@@ -220,7 +223,9 @@ export default function FormMenu({
                 onChange={handleChange}
               />
               {errors.password && (
-                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                <p className="text-red-500 text-xs md:text-sm mt-1 ml-1">
+                  {errors.password}
+                </p>
               )}
             </div>
           )}
@@ -235,14 +240,14 @@ export default function FormMenu({
                 onChange={handleChange}
               />
               {errors.confirm_password && (
-                <p className="text-important text-sm mt-1">
+                <p className="text-important text-xs md:text-sm mt-1 ml-1">
                   {errors.confirm_password}
                 </p>
               )}
             </div>
           )}
           {termsConditions && (
-            <div className="flex items-center gap-4 w-full mt-4">
+            <div className="flex items-center gap-2 w-full mt-3 md:mt-4">
               <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -256,7 +261,7 @@ export default function FormMenu({
               </label>
               <label
                 htmlFor="terms and conditions checkbox"
-                className="flex-grow text-sm text-text italic cursor-pointer"
+                className="flex-grow text-xs md:text-sm text-text italic cursor-pointer"
               >
                 I have read and accepted the{" "}
                 <Link href="/legal/conditions" passHref legacyBehavior>
@@ -270,15 +275,15 @@ export default function FormMenu({
               </label>
             </div>
           )}
-          <CTA
-            type="secondary"
-            title={submitValue}
-            disabled={disabled || Object.keys(errors).length > 0}
-            className="w-4/5 h-12 mt-4 text-xl"
-          />
         </Form>
+        <CTA
+          type="secondary"
+          title={submitValue}
+          disabled={disabled || Object.keys(errors).length > 0}
+          className="w-4/5 h-10 md:h-12 mt-3 md:mt-4 text-sm md:text-base lg:text-xl"
+        />
         <Link href={bottomMessageHREF} passHref legacyBehavior>
-          <span className="text-dominant text-sm mt-2 cursor-pointer">
+          <span className="text-dominant text-xs md:text-sm mt-2 cursor-pointer">
             {bottomMessage}
           </span>
         </Link>
