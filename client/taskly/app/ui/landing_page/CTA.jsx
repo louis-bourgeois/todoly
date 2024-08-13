@@ -144,7 +144,9 @@ const CTA = React.memo(
         <Wrapper
           ref={ref}
           disabled={disabled}
-          onClick={onClick}
+          onClick={(e) => {
+            onClick && onClick(e);
+          }}
           className={className}
           style={buttonStyle}
           {...hoverProps}

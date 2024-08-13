@@ -279,6 +279,7 @@ export default function FormMenu({
         <CTA
           type="secondary"
           title={submitValue}
+          onClick={handleFormSubmit}
           disabled={disabled || Object.keys(errors).length > 0}
           className="w-4/5 h-10 md:h-12 mt-3 md:mt-4 text-sm md:text-base lg:text-xl"
         />
