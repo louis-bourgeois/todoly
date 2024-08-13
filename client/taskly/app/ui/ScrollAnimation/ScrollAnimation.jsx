@@ -98,6 +98,7 @@ const ScrollAnimation = ({ children }) => {
   const [currentFrame, setCurrentFrame] = useState(1);
   const [loadedFrames, setLoadedFrames] = useState({});
   const [containerHeight, setContainerHeight] = useState("250vh");
+  const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef(null);
   const animationRef = useRef(null);
   const lastExecutionRef = useRef(0);
@@ -124,6 +125,21 @@ const ScrollAnimation = ({ children }) => {
     },
     [loadedFrames]
   );
+
+  useEffect(() => {
+    if (!isMobile) {
+      setIsLoading(true);
+      const preloadAllImages = async () => {
+        const promises = [];
+        for (let i = 1; i <= TOTAL_FRAMES; i++) {
+          promises.push(preloadImage(i));
+        }
+        await Promise.all(promises);
+        setIsLoading(false);
+      };
+      preloadAllImages();
+    }
+  }, [isMobile, preloadImage]);
 
   useEffect(() => {
     const updateHeight = () => {
@@ -172,7 +188,6 @@ const ScrollAnimation = ({ children }) => {
             }
 
             setCurrentFrame(Math.min(lastFrameRef.current, TOTAL_FRAMES));
-            preloadImage(lastFrameRef.current);
           } else if (scrollProgress < 0) {
             setCurrentFrame(1);
           } else {
@@ -182,10 +197,9 @@ const ScrollAnimation = ({ children }) => {
       };
 
       window.addEventListener("scroll", handleScroll, { passive: true });
-      preloadImage(1);
       return () => window.removeEventListener("scroll", handleScroll);
     }
-  }, [isMobile, preloadImage]);
+  }, [isMobile]);
 
   const textProgress = useMemo(() => {
     if (currentFrame <= TEXT_APPEAR_FRAME) return 0;
@@ -207,11 +221,11 @@ const ScrollAnimation = ({ children }) => {
       <div
         className={`${
           isMobile ? "left-0 right-0" : "left-[9vw] right-[9vw]"
-        } flex flex-col items-center z-20 w-full sticky top-0 left-0 right-0 `}
+        } flex flex-col items-center z-20 w-full sticky top-0 left-0 right-0`}
       >
         <Navbar logo={IconSvg} />
       </div>
-      <div className="relative z-10 pt-[8vh] lg:pt-[5vh] ">
+      <div className="relative z-10 pt-[8vh] lg:pt-[5vh]">
         <Heroe />
       </div>
       <div
@@ -219,34 +233,38 @@ const ScrollAnimation = ({ children }) => {
         className="relative"
         style={{ height: !isMobile ? containerHeight : "auto" }}
       >
-        <div
-          ref={animationRef}
-          className={`${
-            isMobile ? "" : "sticky top-0"
-          } w-full h-screen flex items-center justify-center`}
-        >
-          <img
-            src={isMobile ? "/0001_mobile.png" : currentImageSrc}
-            alt={`Animation frame ${currentFrame}`}
-            className={`w-full h-full object-contain ${
-              isMobile ? "" : ""
-            }`}
-          />
-          {!isMobile && (
-            <div className="absolute top-1/2 right-0 transform -translate-y-1/2 w-full max-w-[50%] px-4">
-              <AnimatedTextOpacity
-                text="An intuitive and easy way to get closer to your goals."
-                progress={textProgress}
-                className="text-xl 3xl:text-2xl 5xl:text-3xl font-bold text-text mb-4"
-              />
-              <AnimatedTextOpacity
-                text="A workspace based approach that allows you to switch quickly between different projects."
-                progress={textProgress}
-                className="text-base sm:text-lg md:text-xl text-text"
-              />
-            </div>
-          )}
-        </div>
+        {isLoading && !isMobile ? (
+          <div className="w-full h-screen flex items-center justify-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"></div>
+          </div>
+        ) : (
+          <div
+            ref={animationRef}
+            className={`${
+              isMobile ? "" : "sticky top-0"
+            } w-full h-screen flex items-center justify-center`}
+          >
+            <img
+              src={isMobile ? "/0001_mobile.png" : currentImageSrc}
+              alt={`Animation frame ${currentFrame}`}
+              className={`w-full h-full object-contain ${isMobile ? "" : ""}`}
+            />
+            {!isMobile && (
+              <div className="absolute top-1/2 right-0 transform -translate-y-1/2 w-full max-w-[50%] px-4">
+                <AnimatedTextOpacity
+                  text="An intuitive and easy way to get closer to your goals."
+                  progress={textProgress}
+                  className="text-xl 3xl:text-2xl 5xl:text-3xl font-bold text-text mb-4"
+                />
+                <AnimatedTextOpacity
+                  text="A workspace based approach that allows you to switch quickly between different projects."
+                  progress={textProgress}
+                  className="text-base sm:text-lg md:text-xl text-text"
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
       {isMobile && <MobileTextContent />}
       <PricingSection />
