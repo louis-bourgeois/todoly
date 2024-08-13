@@ -115,92 +115,110 @@ class User {
 
   static async delete(userId) {
     if (!userId) {
-      return;
+      throw new Error("L'ID de l'utilisateur est requis pour la suppression");
     }
-    const deleteQueryA = `
-    DELETE FROM user_security WHERE id = $1;
-    DELETE FROM user_profile_image WHERE user_id = $1;
-    DELETE FROM user_role_assignment WHERE user_id = $1;
-    DELETE FROM user_preferences WHERE user_id = $1;
-    `;
-    const deleteQueryB = `
-    SELECT workspace_id
-    FROM user_workspace uw
-    WHERE uw.user_id = $1
-    AND NOT EXISTS (
-    SELECT 1
-    FROM user_workspace uw2
-    WHERE uw2.workspace_id = uw.workspace_id
-      AND uw2.user_id != $1
-    )
-     `;
 
     const client = await pool.connect();
 
     try {
       await client.query("BEGIN");
 
-      // Execute deleteQueryA
-      await client.query(deleteQueryA, [userId]);
+      // Suppression des données liées à l'utilisateur
+      const deleteQueries = [
+        "DELETE FROM user_security WHERE id = $1",
+        "DELETE FROM user_profile_image WHERE user_id = $1",
+        "DELETE FROM user_role_assignment WHERE user_id = $1",
+        "DELETE FROM user_preferences WHERE user_id = $1",
+        "DELETE FROM tag WHERE user_id = $1",
+        "DELETE FROM user_contact WHERE user_id = $1",
+      ];
 
-      // Execute deleteQueryB and get workspaceIds
-      const { rows: workspaces } = await client.query(deleteQueryB, [userId]);
+      for (const query of deleteQueries) {
+        await client.query(query, [userId]);
+      }
 
+      // Identification des espaces de travail à supprimer
+      const workspacesQuery = `
+        SELECT workspace_id
+        FROM user_workspaces uw
+        WHERE uw.user_id = $1
+        AND NOT EXISTS (
+          SELECT 1
+          FROM user_workspaces uw2
+          WHERE uw2.workspace_id = uw.workspace_id
+          AND uw2.user_id != $1
+        )
+      `;
+      const { rows: workspaces } = await client.query(workspacesQuery, [
+        userId,
+      ]);
+
+      // Suppression des espaces de travail et des tâches associées
       for (const workspace of workspaces) {
         const workspaceId = workspace.workspace_id;
 
-        // Delete from user_workspace
-        await client.query(
-          "DELETE FROM user_workspace WHERE workspace_id = $1",
-          [workspaceId]
-        );
+        // Suppression des propriétés des tâches liées à l'espace de travail
+        const deleteTaskPropertiesQuery = `
+          DELETE FROM task_properties
+          WHERE task_id IN (
+            SELECT task_id 
+            FROM task_workspaces 
+            WHERE workspace_id = $1
+          )
+        `;
+        await client.query(deleteTaskPropertiesQuery, [workspaceId]);
 
-        // Get task_ids and delete from task_workspaces
-        const { rows: tasks } = await client.query(
-          "SELECT task_id FROM task_workspaces WHERE workspace_id = $1",
-          [workspaceId]
-        );
+        // Suppression des tâches liées à l'espace de travail
+        const deleteTasksQuery = `
+          DELETE FROM task
+          WHERE id IN (
+            SELECT task_id 
+            FROM task_workspaces 
+            WHERE workspace_id = $1
+          )
+        `;
+        await client.query(deleteTasksQuery, [workspaceId]);
+
+        // Suppression des associations tâches-espaces de travail
         await client.query(
           "DELETE FROM task_workspaces WHERE workspace_id = $1",
           [workspaceId]
         );
 
-        // Delete related task properties and tasks
-        for (const task of tasks) {
-          const taskId = task.task_id;
-          await client.query("DELETE FROM task_properties WHERE task_id = $1", [
-            taskId,
-          ]);
-          await client.query("DELETE FROM task WHERE id = $1", [taskId]);
-        }
-
-        // Delete workspace
+        // Suppression de l'espace de travail
         await client.query("DELETE FROM workspace WHERE id = $1", [
           workspaceId,
         ]);
       }
 
-      // Delete tags
+      // Suppression des associations utilisateur-espace de travail
+      await client.query("DELETE FROM user_workspaces WHERE user_id = $1", [
+        userId,
+      ]);
+
+      // Suppression des propriétés des tâches de l'utilisateur
       await client.query(
-        `
-        DELETE FROM tag 
-        WHERE user_id = $1 
-        AND task_id IN (SELECT id FROM task WHERE user_id = $1)
-      `,
+        "DELETE FROM task_properties WHERE task_id IN (SELECT id FROM task WHERE user_id = $1)",
         [userId]
       );
 
-      // Delete user profile
+      // Suppression des tâches de l'utilisateur
+      await client.query("DELETE FROM task WHERE user_id = $1", [userId]);
+
+      // Suppression du profil utilisateur
       await client.query("DELETE FROM user_profile WHERE id = $1", [userId]);
 
       await client.query("COMMIT");
-    } catch (e) {
+      console.log(`Utilisateur avec l'ID ${userId} supprimé avec succès`);
+    } catch (error) {
       await client.query("ROLLBACK");
-      throw e;
+      console.error("Erreur lors de la suppression de l'utilisateur:", error);
+      throw error;
     } finally {
       client.release();
     }
   }
+
   static async findId(
     username = undefined,
     email = undefined,
@@ -271,7 +289,7 @@ class User {
                    `;
     const { rows } = await pool.query(query, [id]);
     if (!rows[0]) {
-      throw new Error("No data found for the given ID");
+      return;
     }
     return rows[0];
   }

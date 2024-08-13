@@ -8,7 +8,7 @@ import session from "express-session";
 import helmet from "helmet";
 import { createServer } from "http";
 import passport from "passport";
-import { Strategy } from "passport-local";
+import { Strategy } from "passport-local";import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 import User from "./models/User.js";
 import appRoutes from "./routes/appRoutes.js";
 import preferenceRoutes from "./routes/preferenceRoutes.js";

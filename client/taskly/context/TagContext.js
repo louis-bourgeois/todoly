@@ -10,7 +10,7 @@ import {
 import { useAuth } from "./AuthContext";
 
 const TagContext = createContext();
-const baseUrl = "/api";
+const baseUrl = "/api/tags";
 
 export const useTag = () => useContext(TagContext);
 
@@ -21,7 +21,7 @@ export const TagProvider = ({ children }) => {
   const fetchTags = useCallback(async () => {
     if (!isAuthenticated) return;
     try {
-      const response = await axios.get(`${baseUrl}/tags`, {
+      const response = await axios.get(`${baseUrl}`, {
         withCredentials: true,
       });
       setTags(response.data.tags);
@@ -37,7 +37,7 @@ export const TagProvider = ({ children }) => {
   const addTag = useCallback(async (name) => {
     try {
       const response = await axios.post(
-        `${baseUrl}/tags/add`,
+        `${baseUrl}/add`,
         { name },
         { withCredentials: true }
       );
@@ -55,7 +55,7 @@ export const TagProvider = ({ children }) => {
   const updateTag = useCallback(async (name, id) => {
     try {
       const response = await axios.post(
-        `${baseUrl}/tags/update`,
+        `${baseUrl}/update`,
         { newName: name, id },
         { withCredentials: true }
       );
@@ -70,7 +70,7 @@ export const TagProvider = ({ children }) => {
 
   const deleteTag = useCallback(async (id) => {
     try {
-      const response = await axios.delete(`${baseUrl}/tags/delete/${id}`, {
+      const response = await axios.delete(`${baseUrl}/delete/${id}`, {
         withCredentials: true,
       });
       if (response.status === 200) {

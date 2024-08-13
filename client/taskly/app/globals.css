@@ -232,6 +232,7 @@ a:active {
   scrollbar-width: thin; /* Pour Firefox */
   scrollbar-color: #4b5563 #f3f4f6; /* Pour Firefox, couleur du thumb et du track */
 }
+
 ::-webkit-scrollbar {
   width: 1vw;
 }

@@ -112,7 +112,7 @@ const PricingCard = ({
     >
       {isPopular && (
         <span className="bg-dominant text-white px-2 py-2 rounded-full text-base text-center font-semibold mb-4 inline-block">
-          Most Popular
+          Most Recommanded
         </span>
       )}
       <h3 className="text-2xl font-bold mb-8 text-text">{title}</h3>

@@ -41,6 +41,12 @@ const Input = forwardRef(
         leading-tight 
         px-5
         h-14
+        text-text
+        text-m
+        placeholder:text-m
+        lg:text-lg
+        lg:placeholder:text-lg
+        placeholer:text-text
         text-base
         focus:outline-none
       `;
@@ -70,13 +76,12 @@ const Input = forwardRef(
         type={inputType}
         autoComplete={autoComplete}
         placeholder={placeholder}
-        className={`${className} custom-input text-[0.8rem]`}
+        className={`${className}`}
         required={required}
         onChange={handleChange}
         disabled={disabled}
         aria-invalid={false}
         aria-describedby={ariaDescribedBy}
-        style={{ "--placeholder-size": "0.8rem" }}
       />
     );
   }

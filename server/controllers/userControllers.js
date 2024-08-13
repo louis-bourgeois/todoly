@@ -19,6 +19,29 @@ export async function checkUser(req, res, next) {
     });
   }
 }
+export async function deleteUser(req, res) {
+  try {
+    if (!req.user) {
+      res.status(401).json({
+        message:
+          "User not authenticated, try to refresh the page or report the error",
+      });
+      return;
+    }
+    const found_user = await User.findId(undefined, req.user.email, undefined);
+    const userId = found_user[0][0];
+    await User.delete(userId);
+    return res
+      .status(204)
+      .json({
+        message:
+          "User has successfully been deleted from the Todoly's databases and servers",
+      });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Error removing user" });
+  }
+}
 export async function createUser(req, res) {
   try {
     if (!req.body.data) {

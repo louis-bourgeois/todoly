@@ -12,7 +12,7 @@ import {
 import { useAuth } from "./AuthContext";
 
 const UserPreferencesContext = createContext();
-const baseUrl = "/api";
+const baseUrl = "/api/preferences";
 
 export const useUserPreferences = () => useContext(UserPreferencesContext);
 
@@ -37,7 +37,7 @@ export const UserPreferencesProvider = ({ children }) => {
 
     setLoading(true);
     try {
-      const response = await axios.get(`${baseUrl}/preferences`, {
+      const response = await axios.get(`${baseUrl}`, {
         withCredentials: true,
       });
       setPreferences(transformPreferences(response.data.preferences));
@@ -57,11 +57,7 @@ export const UserPreferencesProvider = ({ children }) => {
     setLoading(true);
     try {
       const { key, value } = data;
-      await axios.post(
-        `${baseUrl}/preferences/`,
-        { key, value },
-        { withCredentials: true }
-      );
+      await axios.post(`${baseUrl}`, { key, value }, { withCredentials: true });
       setPreferences((prev) => ({ ...prev, [key]: value }));
     } catch (error) {
       console.error("Failed to add user preference:", error);
@@ -76,7 +72,7 @@ export const UserPreferencesProvider = ({ children }) => {
       const { key, value } = newData;
       console.log(key, value);
       await axios.post(
-        `${baseUrl}/preferences/update`,
+        `${baseUrl}/update`,
         { key, value },
         { withCredentials: true }
       );
@@ -95,7 +91,7 @@ export const UserPreferencesProvider = ({ children }) => {
     setLoading(true);
     try {
       const response = await axios.get(
-        `${baseUrl}/preferences/`,
+        `${baseUrl}`,
         { params: { keys } },
         { withCredentials: true }
       );

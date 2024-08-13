@@ -13,7 +13,8 @@ import { useSection } from "./SectionContext";
 import { useUserPreferences } from "./UserPreferencesContext";
 
 const WorkspaceContext = createContext();
-const baseUrl = "/api";
+const baseUrl = "/api/users";
+const baseUrlWorkspaces = "/api/workspaces";
 export const useWorkspace = () => useContext(WorkspaceContext);
 
 export const WorkspaceProvider = ({ children }) => {
@@ -24,12 +25,14 @@ export const WorkspaceProvider = ({ children }) => {
   const [workspaces, setWorkspaces] = useState([]);
   const { isAuthenticated } = useAuth();
   const { setSections } = useSection();
-
+  useEffect(() => {
+    console.log(workspaces);
+  }, []);
   const fetchWorkspaces = useCallback(async () => {
     if (!isAuthenticated) return;
 
     try {
-      const response = await axios.get(`${baseUrl}/users/workspaces`, {
+      const response = await axios.get(`${baseUrl}/workspaces`, {
         withCredentials: true,
       });
       setWorkspaces(response.data);
@@ -69,7 +72,7 @@ export const WorkspaceProvider = ({ children }) => {
       try {
         const { name, linked_sections, collaborators } = workspace;
         const response = await axios.post(
-          `${baseUrl}/workspaces`,
+          `${baseUrlWorkspaces}`,
           { name, linked_sections },
           { withCredentials: true }
         );
@@ -79,12 +82,12 @@ export const WorkspaceProvider = ({ children }) => {
         await Promise.all(
           collaborators.map(async (collaborator) => {
             try {
-              const userResponse = await axios.post(`${baseUrl}/users/find/`, {
+              const userResponse = await axios.post(`${baseUrl}/find/`, {
                 username: collaborator.name,
               });
               if (userResponse.data.id) {
                 await axios.post(
-                  `${baseUrl}/users/${workspaceId}/users/${userResponse.data.id}`
+                  `${baseUrl}/${workspaceId}/users/${userResponse.data.id}`
                 );
               }
             } catch (err) {
@@ -109,7 +112,7 @@ export const WorkspaceProvider = ({ children }) => {
     async (workspaceId, newWorkspaceData) => {
       try {
         const response = await axios.post(
-          `${baseUrl}/workspaces/update/${workspaceId}`,
+          `${baseUrlWorkspaces}/update/${workspaceId}`,
           { data: newWorkspaceData },
           { withCredentials: true }
         );
@@ -127,7 +130,7 @@ export const WorkspaceProvider = ({ children }) => {
   const deleteWorkspace = useCallback(
     async (workspaceId) => {
       try {
-        const res = await axios.delete(`${baseUrl}/workspaces/${workspaceId}`, {
+        const res = await axios.delete(`${baseUrlWorkspaces}/${workspaceId}`, {
           withCredentials: true,
         });
         await fetchWorkspaces();
@@ -144,7 +147,7 @@ export const WorkspaceProvider = ({ children }) => {
 
   const getWorkspace = useCallback(async (workspaceId) => {
     try {
-      const response = await axios.get(`${baseUrl}/workspaces/${workspaceId}`);
+      const response = await axios.get(`${baseUrlWorkspaces}/${workspaceId}`);
       return response.data;
     } catch (error) {
       console.error("Error getting workspace:", error);
@@ -153,7 +156,7 @@ export const WorkspaceProvider = ({ children }) => {
 
   const addTaskToWorkspace = useCallback(async (taskId, workspaceId) => {
     try {
-      await axios.post(`${baseUrl}/workspaces/${workspaceId}/tasks`, {
+      await axios.post(`${baseUrl}/${workspaceId}/tasks`, {
         taskId,
       });
     } catch (error) {
@@ -163,9 +166,7 @@ export const WorkspaceProvider = ({ children }) => {
 
   const removeTaskFromWorkspace = useCallback(async (taskId, workspaceId) => {
     try {
-      await axios.delete(
-        `${baseUrl}/workspaces/${workspaceId}/tasks/${taskId}`
-      );
+      await axios.delete(`${baseUrlWorkspaces}/${workspaceId}/tasks/${taskId}`);
     } catch (error) {
       console.error("Error removing task from workspace:", error);
     }
@@ -174,7 +175,7 @@ export const WorkspaceProvider = ({ children }) => {
   const getUsersFromWorkspace = useCallback(async (workspaceId) => {
     try {
       const response = await axios.get(
-        `${baseUrl}/workspaces/${workspaceId}/users`
+        `${baseUrlWorkspaces}/${workspaceId}/users`
       );
       return response.data;
     } catch (error) {
@@ -185,7 +186,7 @@ export const WorkspaceProvider = ({ children }) => {
   const getTasksFromWorkspace = useCallback(async (workspaceId) => {
     try {
       const response = await axios.get(
-        `${baseUrl}/workspaces/${workspaceId}/tasks`
+        `${baseUrlWorkspaces}/${workspaceId}/tasks`
       );
       return response.data;
     } catch (error) {
@@ -195,7 +196,7 @@ export const WorkspaceProvider = ({ children }) => {
 
   const addUserToWorkspace = useCallback(async (userId, workspaceId) => {
     try {
-      await axios.post(`${baseUrl}/workspaces/${workspaceId}/users`, {
+      await axios.post(`${baseUrlWorkspaces}/${workspaceId}/users`, {
         userId,
       });
     } catch (error) {
@@ -205,9 +206,7 @@ export const WorkspaceProvider = ({ children }) => {
 
   const removeUserFromWorkspace = useCallback(async (userId, workspaceId) => {
     try {
-      await axios.delete(
-        `${baseUrl}/workspaces/${workspaceId}/users/${userId}`
-      );
+      await axios.delete(`${baseUrlWorkspaces}/${workspaceId}/users/${userId}`);
     } catch (error) {
       console.error("Error removing user from workspace:", error);
     }

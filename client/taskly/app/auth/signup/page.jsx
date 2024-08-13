@@ -29,7 +29,6 @@ export default function Page() {
     {
       type: "text",
       name: "username",
-      autoComplete: "username",
       placeholder: "Username",
     },
     {

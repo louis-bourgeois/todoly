@@ -3,6 +3,7 @@ import passport from "passport";
 import {
   addUserToWorkspace,
   createUser,
+  deleteUser,
   findUserbyUsername,
   getUserData,
   getWorkspacesByUserId,
@@ -42,8 +43,18 @@ router.post("/login", (req, res, next) => {
   })(req, res, next);
 });
 
+router.post("/logout", (req, res) => {
+  req.logout((err) => {
+    if (err) {
+      return res.status(500).json({ message: "Error logging out", error: err });
+    }
+    res.status(200).json({ message: "Logout successful" });
+  });
+});
+
 router.get("/workspaces", getWorkspacesByUserId);
 router.post("/:workspaceId/users/:userId", addUserToWorkspace);
+router.delete("/", deleteUser);
 router.delete("/:workspaceId/users/:userId", removeUserFromWorkspace);
 
 export default router;
