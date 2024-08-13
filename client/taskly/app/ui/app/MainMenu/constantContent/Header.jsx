@@ -140,8 +140,8 @@ export default function Header({
               <p className="mb-4 text-text">
                 This action is{" "}
                 <span className="text-red-500">irreversible</span>. To confirm,
-                please type "delete-
-                {user.username}" below.
+                please type &quot;delete-
+                {user.username}&quot; below.
               </p>
               <input
                 type="text"
