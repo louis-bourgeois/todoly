@@ -49,7 +49,7 @@ export default function PasswordInputContainer({
         tabIndex="-1"
         aria-label={visibilityState ? "Hide password" : "Show password"}
         aria-pressed={visibilityState}
-        className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-primary rounded-lg focus:outline-none"
+        className="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 bg-primary rounded-lg focus:outline-none scale-75 lg:scale-100"
       >
         <FontAwesomeIcon
           className="text-secondary text-lg"
