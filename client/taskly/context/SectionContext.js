@@ -10,7 +10,7 @@ import {
 import { useAuth } from "./AuthContext";
 
 export const SectionContext = createContext();
-const baseUrl = "/api";
+const baseUrl = "/api/sections";
 
 export const useSection = () => useContext(SectionContext);
 
@@ -22,7 +22,7 @@ export const SectionProvider = ({ children }) => {
     if (!isAuthenticated) return;
 
     try {
-      const response = await axios.get(`${baseUrl}/sections`, {
+      const response = await axios.get(`${baseUrl}`, {
         withCredentials: true,
       });
 
@@ -39,7 +39,7 @@ export const SectionProvider = ({ children }) => {
   const addSection = useCallback(async (section) => {
     try {
       const response = await axios.post(
-        `${baseUrl}/sections/add`,
+        `${baseUrl}/add`,
         { section },
         { withCredentials: true }
       );
@@ -56,7 +56,7 @@ export const SectionProvider = ({ children }) => {
   const modifySection = useCallback(async (newName, sectionId) => {
     try {
       const response = await axios.post(
-        `${baseUrl}/sections/update`,
+        `${baseUrl}/update`,
         { newName, sectionId },
         { withCredentials: true }
       );
@@ -71,7 +71,7 @@ export const SectionProvider = ({ children }) => {
 
   const deleteSection = useCallback(async (id) => {
     try {
-      const response = await axios.delete(`${baseUrl}/sections/delete/${id}`, {
+      const response = await axios.delete(`${baseUrl}/delete/${id}`, {
         withCredentials: true,
       });
       if (response.status === 200) {

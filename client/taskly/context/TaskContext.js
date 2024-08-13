@@ -13,7 +13,7 @@ import { useError } from "./ErrorContext";
 import { useWorkspace } from "./WorkspaceContext";
 
 const TaskContext = createContext();
-const baseUrl = "/api";
+const baseUrl = "/api/tasks";
 
 export const useTask = () => useContext(TaskContext);
 
@@ -28,7 +28,7 @@ export const TaskProvider = ({ children }) => {
     if (!isAuthenticated) return;
 
     try {
-      const response = await axios.get(`${baseUrl}/tasks`, {
+      const response = await axios.get(`${baseUrl}`, {
         withCredentials: true,
       });
       setTasks(response.data.tasks);
@@ -45,7 +45,7 @@ export const TaskProvider = ({ children }) => {
       };
       try {
         const response = await axios.post(
-          `${baseUrl}/tasks/add`,
+          `${baseUrl}/add`,
           { formattedTaskData },
           { withCredentials: true }
         );
@@ -77,7 +77,7 @@ export const TaskProvider = ({ children }) => {
     async (updatedTask) => {
       try {
         const response = await axios.post(
-          `${baseUrl}/tasks/update`,
+          `${baseUrl}/update`,
           { task: updatedTask },
           { withCredentials: true }
         );
@@ -112,7 +112,7 @@ export const TaskProvider = ({ children }) => {
     async (taskId) => {
       try {
         const response = await axios.delete(
-          `${baseUrl}/tasks/delete/${taskId}`,
+          `${baseUrl}/delete/${taskId}`,
           {
             withCredentials: true,
           }

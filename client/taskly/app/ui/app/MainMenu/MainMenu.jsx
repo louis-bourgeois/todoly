@@ -17,7 +17,7 @@ const LIBELLES = [
   { name: "Languages", width: "25vw" },
   { name: "Integrations", width: "25vw" },
   { name: "Main Menu", width: "17vw" },
-  { name: "Account", width: "40vw" },
+  { name: "Account", width: "45vw" },
 ];
 
 const LAYOUTS = {

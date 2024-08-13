@@ -133,7 +133,7 @@ export default function Navbar() {
                   strokeWidth="1.5"
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  className="w-3/4 h-3/4"
+                  className="w-3/4 h-3/4 text-text"
                 >
                   <circle cx="12" cy="8" r="4" />
                   <path d="M5 19c0-4 7-4 7-4s7 0 7 4" />

@@ -145,7 +145,6 @@ export default function AppLayout({ children }) {
   const { isMobile } = useScreen();
   const { loading, isAuthenticated, checkAuth } = useAuth();
   const { activeTask } = useTask();
-  const { user } = useUser();
   const { currentWorkspace, workspaces, activeWorkspace } = useWorkspace();
   const {
     isTaskMenuOpen,

@@ -44,16 +44,12 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useCallback(async () => {
     try {
-      await axios.post(
-        `${baseUrl}/users/logout`,
-        {},
-        { withCredentials: true }
-      );
+      await axios.post(`${baseUrl}/users/logout`, { withCredentials: true });
     } catch (error) {
       console.error("Logout error:", error);
     } finally {
       setIsAuthenticated(false);
-      router.push("/auth/login");
+      router.push("/");
     }
   }, [router]);
 

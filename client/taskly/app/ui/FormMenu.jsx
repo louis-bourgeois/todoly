@@ -2,7 +2,7 @@
 import axios from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Form from "ui/Form";
 import Input from "ui/Input";
 import PasswordInputContainer from "ui/auth/PasswordInputContainer";
@@ -27,13 +27,59 @@ export default function FormMenu({
 }) {
   const router = useRouter();
   const [formData, setFormData] = useState(formDataArray);
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [confirmPasswordVisible, setConfirmPasswordVisible] = useState(false);
   const { login } = useAuth();
   const { handleError } = useError();
   const [isChecked, setIsChecked] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const [passwordMismatchError, setPasswordMismatchError] = useState("");
+  const [errors, setErrors] = useState({});
+
+  const validateEmail = (email) => {
+    const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return re.test(String(email).toLowerCase());
+  };
+
+  const validatePassword = (password) => {
+    const re =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{13,}$/;
+    return re.test(password);
+  };
+
+  const validateAge = (age) => {
+    return parseInt(age) >= 12;
+  };
+
+  const validateForm = useCallback(() => {
+    const newErrors = {};
+
+    if (formData.email && !validateEmail(formData.email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    if (action === "Sign up") {
+      if (formData.password && !validatePassword(formData.password)) {
+        newErrors.password =
+          "Password must be at least 13 characters long and include special characters and numbers.";
+      }
+
+      if (
+        formData.confirm_password &&
+        formData.password !== formData.confirm_password
+      ) {
+        newErrors.confirm_password = "The passwords do not match.";
+      }
+
+      if (formData.age && !validateAge(formData.age)) {
+        newErrors.age = "You must be at least 12 years old to register.";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }, [formData, action]);
+
+  useEffect(() => {
+    validateForm();
+  }, [formData, validateForm]);
 
   const addUser = useCallback(
     async (data) => {
@@ -65,70 +111,34 @@ export default function FormMenu({
     [formData, login, router, handleError]
   );
 
-  const handleChange = useCallback(
-    (e) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-      if (
-        (name === "password" || name === "confirm_password") &&
-        confirmPassword
-      ) {
-        setFormData((prev) => {
-          const newPassword = name === "password" ? value : prev.password;
-          const newConfirmPassword =
-            name === "confirm_password" ? value : prev.confirm_password;
-
-          // Check if both fields are empty
-          if (!newPassword && !newConfirmPassword) {
-            setPasswordMismatchError("");
-          } else if (newPassword !== newConfirmPassword) {
-            setPasswordMismatchError("The passwords are not the same!");
-          } else {
-            setPasswordMismatchError("");
-          }
-
-          return {
-            ...prev,
-            [name]: value,
-          };
-        });
-      }
-    },
-    [confirmPassword]
-  );
+  const handleChange = useCallback((e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }, []);
 
   const handleFormSubmit = useCallback(
     async (e) => {
       e.preventDefault();
-      if (passwordMismatchError) {
-        return; // Don't submit if passwords don't match
-      }
-      if (action === "Sign up") {
-        addUser(formData);
-        setDisabled(true);
-      } else if (action === "Log in") {
-        try {
-          const res = await login(formData);
-          if (res && res.status === 200) {
-            router.push("/app/currently");
+      if (validateForm()) {
+        if (action === "Sign up") {
+          addUser(formData);
+          setDisabled(true);
+        } else if (action === "Log in") {
+          try {
+            const res = await login(formData);
+            if (res && res.status === 200) {
+              router.push("/app/currently");
+            }
+          } catch (error) {
+            handleError(error);
           }
-        } catch (error) {
-          handleError(error);
         }
       }
     },
-    [
-      addUser,
-      action,
-      formData,
-      login,
-      router,
-      handleError,
-      passwordMismatchError,
-    ]
+    [addUser, action, formData, login, router, handleError, validateForm]
   );
 
   const handleCheckboxChange = (e) => {
@@ -158,7 +168,7 @@ export default function FormMenu({
           position: absolute;
           width: 12px;
           height: 12px;
-          background-color: #007aff; /* Replace with your dominant color */
+          background-color: #007aff;
           border-radius: 50%;
           top: 50%;
           left: 50%;
@@ -171,7 +181,9 @@ export default function FormMenu({
       `}</style>
       <div className="m-6 flex flex-col justify-center items-center gap-6">
         {libelle && (
-          <p className="self-start font-extralight text-1.5xl">{libelle}</p>
+          <p className="self-start font-extralight text-1.5xl text-text">
+            {libelle}
+          </p>
         )}
         {mainTitle && (
           <h3 className="text-3xl font-bold self-start text-dominant mb-2">
@@ -181,41 +193,53 @@ export default function FormMenu({
         <Form
           onSubmit={handleFormSubmit}
           onChange={handleChange}
-          className="space-y-4"
+          className="space-y-4 w-full"
         >
           {inputs.map((input, index) => (
-            <Input
-              key={index}
-              {...input}
-              additionalStyles="text-xl font-light"
-            />
+            <div key={index} className="w-full">
+              <Input {...input} additionalStyles="font-light w-full" />
+              {errors[input.name] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[input.name]}
+                </p>
+              )}
+            </div>
           ))}
           {password && (
-            <PasswordInputContainer
-              name="password"
-              placeholder={`${
-                action === "Log in"
-                  ? "Enter your password"
-                  : "Enter a strong password"
-              }`}
-              setVisibilityState={setPasswordVisible}
-              visibilityState={passwordVisible}
-              autoDimensions
-              newUser={newUser}
-            />
+            <div className="w-full">
+              <PasswordInputContainer
+                name="password"
+                placeholder={`${
+                  action === "Log in"
+                    ? "Enter your password"
+                    : "Enter a strong password"
+                }`}
+                autoDimensions
+                newUser={newUser}
+                value={formData.password}
+                onChange={handleChange}
+              />
+              {errors.password && (
+                <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+              )}
+            </div>
           )}
           {confirmPassword && (
-            <PasswordInputContainer
-              name="confirm_password"
-              placeholder="Confirm Password"
-              setVisibilityState={setConfirmPasswordVisible}
-              visibilityState={confirmPasswordVisible}
-              autoDimensions
-              newUser={true}
-            />
-          )}
-          {passwordMismatchError && (
-            <p className="text-red-500 text-sm">{passwordMismatchError}</p>
+            <div className="w-full">
+              <PasswordInputContainer
+                name="confirm_password"
+                placeholder="Confirm Password"
+                autoDimensions
+                newUser={true}
+                value={formData.confirm_password}
+                onChange={handleChange}
+              />
+              {errors.confirm_password && (
+                <p className="text-important text-sm mt-1">
+                  {errors.confirm_password}
+                </p>
+              )}
+            </div>
           )}
           {termsConditions && (
             <div className="flex items-center gap-4 w-full mt-4">
@@ -249,12 +273,14 @@ export default function FormMenu({
           <CTA
             type="secondary"
             title={submitValue}
-            disabled={disabled || !!passwordMismatchError}
+            disabled={disabled || Object.keys(errors).length > 0}
             className="w-4/5 h-12 mt-4 text-xl"
           />
         </Form>
         <Link href={bottomMessageHREF} passHref legacyBehavior>
-          <a className="text-dominant text-sm mt-2">{bottomMessage}</a>
+          <span className="text-dominant text-sm mt-2 cursor-pointer">
+            {bottomMessage}
+          </span>
         </Link>
       </div>
     </div>
