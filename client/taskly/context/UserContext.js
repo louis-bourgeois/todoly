@@ -42,8 +42,6 @@ export const UserProvider = ({ children }) => {
     try {
       const response = await axios.delete(`${baseUrl}`);
       console.log(response.data.message);
-
-      return response.data.message;
     } catch (error) {
       handleError(error);
     }

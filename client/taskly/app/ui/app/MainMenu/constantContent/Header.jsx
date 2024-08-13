@@ -1,6 +1,7 @@
+import CTA from "@/ui/landing_page/CTA";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useUser } from "../../../../../context/UserContext";
-
 export default function Header({
   name,
   handleSettingsChange,
@@ -13,7 +14,11 @@ export default function Header({
   setProfilePictureVisibility,
   libelles,
 }) {
+  const router = useRouter();
   const { deleteUser, user } = useUser();
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+
   useEffect(() => {
     if (
       libelles.some((libelle) => libelle.name === layout) &&
@@ -25,93 +30,148 @@ export default function Header({
 
   const isSettingsLayout = libelles.some((libelle) => libelle.name === layout);
   const [isHovered, setIsHovered] = useState(false);
+
+  const handleDeleteClick = () => {
+    setIsDeleteModalOpen(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (deleteConfirmation === `delete-${user.username}`) {
+      setIsDeleteModalOpen(false);
+      router.push("/auth");
+      await deleteUser();
+    }
+  };
   if (isSettingsLayout && layout !== "Main Menu") {
     return (
-      <div
-        className={`mx-[4%] mt-[3vh] flex items-center justify-between gap-[4.5vw] transition-opacity duration-500 ease-in 
-      ${!showContentMenu && "opacity-100 "}`}
-      >
-        <svg
-          height={"48"}
-          width={"48"}
-          viewBox="0 0 24 24"
-          fill="currentColor"
-          xmlns="http://www.w3.org/2000/svg"
-          className="cursor-pointer text-text"
-          onClick={() => setLayout("settings")}
+      <>
+        <div
+          className={`mx-[4%] mt-[3vh] flex items-center justify-between gap-[4.5vw] transition-opacity duration-500 ease-in 
+          ${!showContentMenu && "opacity-100 "}`}
         >
-          <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-          <g
-            id="SVGRepo_tracerCarrier"
-            stroke-linecap="round"
-            stroke-linejoin="round"
-          ></g>
-          <g id="SVGRepo_iconCarrier">
-            {" "}
-            <path
-              d="M6 12H18M6 12L11 7M6 12L11 17"
-              stroke="currentColor"
-              stroke-width="2"
+          <svg
+            height={"48"}
+            width={"48"}
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+            className="cursor-pointer text-text"
+            onClick={() => setLayout("settings")}
+          >
+            <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+            <g
+              id="SVGRepo_tracerCarrier"
               stroke-linecap="round"
               stroke-linejoin="round"
-            ></path>{" "}
-          </g>
-        </svg>
-        <h1 className="text-text font-extrabold text-2xl absolute left-1/2 transform -translate-x-1/2">
-          {layout}
-        </h1>
-        {layout === "Account" ? (
-          <button onClick={() => deleteUser()}>
-            <svg
-              height={"40"}
-              width={"40"}
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className="cursor-pointer hover:scale-105 transition-transform duration-300 active:scale-100"
-            >
-              <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-              <g
-                id="SVGRepo_tracerCarrier"
+            ></g>
+            <g id="SVGRepo_iconCarrier">
+              {" "}
+              <path
+                d="M6 12H18M6 12L11 7M6 12L11 17"
+                stroke="currentColor"
+                stroke-width="2"
                 stroke-linecap="round"
                 stroke-linejoin="round"
-              ></g>
-              <g id="SVGRepo_iconCarrier">
-                <path
-                  d="M3 6.98996C8.81444 4.87965 15.1856 4.87965 21 6.98996"
-                  stroke="red"
-                  stroke-width="1.5"
+              ></path>{" "}
+            </g>
+          </svg>
+          <h1 className="text-text font-extrabold text-2xl absolute left-1/2 transform -translate-x-1/2">
+            {layout}
+          </h1>
+          {layout === "Account" ? (
+            <button onClick={handleDeleteClick}>
+              <svg
+                height={"40"}
+                width={"40"}
+                viewBox="0 0 24 24"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="cursor-pointer hover:scale-105 transition-transform duration-300 active:scale-100"
+              >
+                <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                <g
+                  id="SVGRepo_tracerCarrier"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                ></path>
-                <path
-                  d="M8.00977 5.71997C8.00977 4.6591 8.43119 3.64175 9.18134 2.8916C9.93148 2.14146 10.9489 1.71997 12.0098 1.71997C13.0706 1.71997 14.0881 2.14146 14.8382 2.8916C15.5883 3.64175 16.0098 4.6591 16.0098 5.71997"
-                  stroke="red"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                ></path>
-                <path
-                  d="M12 13V18"
-                  stroke="red"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                ></path>
-                <path
-                  d="M19 9.98999L18.33 17.99C18.2225 19.071 17.7225 20.0751 16.9246 20.8123C16.1266 21.5494 15.0861 21.9684 14 21.99H10C8.91389 21.9684 7.87336 21.5494 7.07541 20.8123C6.27745 20.0751 5.77745 19.071 5.67001 17.99L5 9.98999"
-                  stroke="red"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                ></path>
-              </g>
-            </svg>
-          </button>
-        ) : (
-          <div className="w-48"></div>
+                ></g>
+                <g id="SVGRepo_iconCarrier">
+                  <path
+                    d="M3 6.98996C8.81444 4.87965 15.1856 4.87965 21 6.98996"
+                    stroke="red"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                  <path
+                    d="M8.00977 5.71997C8.00977 4.6591 8.43119 3.64175 9.18134 2.8916C9.93148 2.14146 10.9489 1.71997 12.0098 1.71997C13.0706 1.71997 14.0881 2.14146 14.8382 2.8916C15.5883 3.64175 16.0098 4.6591 16.0098 5.71997"
+                    stroke="red"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                  <path
+                    d="M12 13V18"
+                    stroke="red"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                  <path
+                    d="M19 9.98999L18.33 17.99C18.2225 19.071 17.7225 20.0751 16.9246 20.8123C16.1266 21.5494 15.0861 21.9684 14 21.99H10C8.91389 21.9684 7.87336 21.5494 7.07541 20.8123C6.27745 20.0751 5.77745 19.071 5.67001 17.99L5 9.98999"
+                    stroke="red"
+                    stroke-width="1.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  ></path>
+                </g>
+              </svg>
+            </button>
+          ) : (
+            <div className="w-48"></div>
+          )}
+        </div>
+
+        {isDeleteModalOpen && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-primary gradient-border p-8 rounded-[33px] shadow-shadow_01 max-w-md w-full">
+              <h2 className="text-2xl font-bold mb-4 text-text">
+                Confirm Account Deletion
+              </h2>
+              <p className="mb-4 text-text">
+                This action is{" "}
+                <span className="text-red-500">irreversible</span>. To confirm,
+                please type "delete-
+                {user.username}" below.
+              </p>
+              <input
+                type="text"
+                value={deleteConfirmation}
+                onChange={(e) => setDeleteConfirmation(e.target.value)}
+                placeholder={`delete-${user.username}`}
+                className="w-full p-2 border gradient-border rounded-full mb-4"
+              />
+              <div className="flex justify-end space-x-4">
+                <CTA
+                  onClick={() => setIsDeleteModalOpen(false)}
+                  title="Cancel"
+                  type="secondary"
+                />
+                <CTA
+                  onClick={handleConfirmDelete}
+                  title="Delete Account"
+                  type="ghost"
+                  disabled={deleteConfirmation !== `delete-${user.username}`}
+                  className={` ${
+                    deleteConfirmation !== `delete-${user.username}`
+                      ? "opacity-50 cursor-not-allowed"
+                      : ""
+                  }`}
+                />
+              </div>
+            </div>
+          </div>
         )}
-      </div>
+      </>
     );
   }
 
