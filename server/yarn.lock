@@ -441,12 +441,12 @@ augment@3.2.1:
   resolved "https://registry.npmjs.org/augment/-/augment-3.2.1.tgz"
   integrity sha512-g5E3vuN1RvCvCqNLKeNOyvTO4RbpOyasUjc/e8dnK9ecg9J9nrSv8N2PxDdnaBXYgmiTAErnen2harV2euPpEA==
 
-axios@^1.7.3:
-  version "1.7.3"
-  resolved "https://registry.npmjs.org/axios/-/axios-1.7.3.tgz"
-  integrity sha512-Ar7ND9pU99eJ9GpoGQKhKf58GpUOgnzuaB7ueNQ5BMi0p+LZ5oaEnfF999fAArcTIBwXTCHAmGcHOZJaWPq9Nw==
+axios@^1.3.1:
+  version "1.3.1"
+  resolved "https://registry.npmjs.org/axios/-/axios-1.3.1.tgz"
+  integrity sha512-78pWJsQTceInlyaeBQeYZ/QgZeWS8hGeKiIJiDKQe3hEyBb7sEMq0K4gjx+Va6WHTYO4zI/RRl8qGRzn0YMadA==
   dependencies:
-    follow-redirects "^1.15.6"
+    follow-redirects "^1.15.0"
     form-data "^4.0.0"
     proxy-from-env "^1.1.0"
 
@@ -994,7 +994,7 @@ firebase-admin@^12.3.1:
     "@google-cloud/firestore" "^7.7.0"
     "@google-cloud/storage" "^7.7.0"
 
-follow-redirects@^1.15.6:
+follow-redirects@^1.15.0:
   version "1.15.6"
   resolved "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.6.tgz"
   integrity sha512-wWN62YITEaOpSK584EZXJafH1AGpO8RVgElfkuXbTOrPX4fIfOyEpW/CsiNd8JdYrAoOvafRTOEnvsO++qCqFA==
