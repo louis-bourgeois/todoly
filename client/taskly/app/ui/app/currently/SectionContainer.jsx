@@ -157,7 +157,7 @@ const SectionContainer = ({
                 <div className="flex justify-between items-center">
                   {editingSectionId === section.id ? (
                     <AutoResizeInput
-                      className="font-bold text-2xl text-text bg-transparent focus:outline-none"
+                      className="font-bold text-xl 4xl:text-2xl text-text bg-transparent focus:outline-none"
                       value={localSectionName}
                       onChange={handleSectionNameInputChange}
                       onBlur={handleSectionNameInputBlur}
@@ -165,7 +165,7 @@ const SectionContainer = ({
                       placeholder="Enter section name"
                     />
                   ) : (
-                    <h1 className="text-text font-bold text-2xl whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
+                    <h1 className="text-text font-bold text-xl 4xl:text-2xl whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
                       {section.name.length > 35 ? (
                         <span title={section.name}>{section.name}</span>
                       ) : (

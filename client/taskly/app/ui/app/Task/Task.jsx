@@ -48,7 +48,7 @@ export default function Task({ task, onTaskClick, minWidth }) {
           onClick={handleTaskDoneClick}
           className={`z-40 transition-all ${taskCircleColor} cursor-pointer gradient-border border border-secondary min-w-[1.5rem] min-h-[1.5rem] rounded-full mx-5`}
         />
-        <h3 className="text-text font-bold text-xl px-5 font-inter text-right">
+        <h3 className="text-text font-bold text-lg 4xl:text-xl px-5 font-inter text-right">
           {task.title}
         </h3>
       </div>
