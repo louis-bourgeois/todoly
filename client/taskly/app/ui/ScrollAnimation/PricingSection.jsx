@@ -158,16 +158,18 @@ const PricingCard = ({
           ))}
         </ul>
       )}
-      <Link href="/auth/login">
-        <div
-          disabled={title !== "Free"}
-          className={`w-full py-3 px-6 rounded-lg text-base w-fullt text-center  ${
-            isPopular ? "bg-dominant text-text" : "bg-gray-200 text-gray-800"
-          } font-semibold hover:bg-opacity-90 transition duration-300 mt-auto`}
-        >
-          {title !== "Free" ? "Coming Soon" : "Join the beta!"}
-        </div>
-      </Link>
+      <div className="mt-auto">
+        <Link href="/auth/login">
+          <div
+            disabled={title !== "Free"}
+            className={` w-full py-3 px-6 rounded-lg text-base w-fullt text-center  ${
+              isPopular ? "bg-dominant text-text" : "bg-gray-200 text-gray-800"
+            } font-semibold hover:bg-opacity-90 transition duration-300 mt-auto`}
+          >
+            {title !== "Free" ? "Coming Soon" : "Join the beta!"}
+          </div>
+        </Link>
+      </div>
     </motion.div>
   );
 };
@@ -212,7 +214,7 @@ const PricingSection = () => {
     },
     {
       title: "Pro",
-      price: 7.99,
+      price: 8.99,
       annualPrice: 89.99,
       features: [
         "Everything in Basic",
@@ -229,7 +231,7 @@ const PricingSection = () => {
     },
     {
       title: "Enterprise",
-      price: 13.99,
+      price: 19.99,
       annualPrice: 159.99,
       features: [
         "Everything in Pro",
