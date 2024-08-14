@@ -25,7 +25,7 @@ const Navbar = ({ logo: Logo }) => {
         </button>
         <Link href="/auth/login">
           <CTA
-            title="Login"
+            title="Join the open beta"
             type="secondary"
             className="lg:py-3 lg:px-6 px-2 py-1 text-base lg:text-lg"
           />
