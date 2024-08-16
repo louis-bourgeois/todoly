@@ -11,7 +11,7 @@ export default function LoginHeroe({ handle, darkMode, h1, button }) {
         title={button}
         className={`${
           darkMode ? " border border-dominant" : ""
-        } shadow-[0_2px_40px_rgba(0,0,0.1)] hover:scale-110 transition text-lg font-black rounded-full mt-[3vh]  px-[1.5vw] py-[1vh]`}
+        } shadow-[0_2px_40px_rgba(0,0,0.1)] hover:scale-110 transition text-lg lg:text-m font-black rounded-full mt-[3vh]  px-[1.5vw] py-[1vh]`}
       />
     </div>
   );

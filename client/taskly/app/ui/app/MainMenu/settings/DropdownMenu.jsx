@@ -50,7 +50,7 @@ export default function DropdownMenu({
         />
       </svg>
       <div
-        className={`bg-primary flex flex-col gap-[0.3vw] p-[1vw] absolute top-full mt-[1%] left-0 right-0 shadow-lg rounded-lg transition-opacity duration-300 z-[255] ${
+        className={`border bg-primary flex flex-col gap-[0.8vw] p-[1vw] absolute top-full mt-[1%] left-0 right-0 shadow-lg rounded-lg transition-opacity duration-300 z-[255] ${
           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
@@ -59,7 +59,7 @@ export default function DropdownMenu({
           return (
             <div
               key={optionArray ? option[0] : option}
-              className="cursor-pointer hover:text-dominant transition-all duration-300"
+              className="cursor-pointerhover:text-dominant transition-all duration-300"
               onClick={(event) => handleOptionClick(option, event)}
             >
               <span

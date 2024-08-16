@@ -13,7 +13,7 @@ export default function Layout({ transitionStyles }) {
   );
 
   const handleMainPageChange = async (value) => {
-    console.log("upadte", value);
+    console.log("upadate", value);
     setDefaultMainPage(value);
     await updatePreference({ key: "Default_Main_Page", value: value });
   };
