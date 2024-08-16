@@ -144,8 +144,8 @@ export default function Navbar() {
         </li>
         <li>
           <h1 className="5xl:text-5xl 2xl:text-4xl xl-text-3.5xl lg:text-2.5xl font-black">
-            {preferences.Home_Page_Title ===
-            "Depending on the time of day + name" ? (
+            {preferences.Home_Page_Title?.toLowerCase() === "Default" ||
+            preferences.Home_Page_Title === "" ? (
               <>
                 <span className="text-text">{title}</span>{" "}
                 <span className="bg-gradient-2 bg-clip-text text-transparent inline-block">
@@ -153,7 +153,7 @@ export default function Navbar() {
                 </span>
               </>
             ) : (
-              preferences.Home_Page_Title
+              <span className="text-text">preferences.Home_Page_Title</span>
             )}
           </h1>
         </li>

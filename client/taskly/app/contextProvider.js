@@ -11,7 +11,6 @@ import { UserProvider } from "../context/UserContext";
 import { UserPreferencesProvider } from "../context/UserPreferencesContext";
 import { WorkspaceProvider } from "../context/WorkspaceContext";
 import ScreenWrapper from "./ScreenWrapper";
-
 const AppProviders = ({ children }) => (
   <ScreenProvider>
     <NotificationsProvider>

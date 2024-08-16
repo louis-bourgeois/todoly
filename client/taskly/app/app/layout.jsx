@@ -24,7 +24,6 @@ import { useAuth } from "../../context/AuthContext.js";
 import { useMenu } from "../../context/MenuContext.js";
 import { useScreen } from "../../context/ScreenContext.js";
 import { useTask } from "../../context/TaskContext.js";
-import { useUser } from "../../context/UserContext.js";
 import { useUserPreferences } from "../../context/UserPreferencesContext.js";
 import { useWorkspace } from "../../context/WorkspaceContext.js";
 

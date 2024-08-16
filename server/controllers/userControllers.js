@@ -31,12 +31,10 @@ export async function deleteUser(req, res) {
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
     await User.delete(userId);
-    return res
-      .status(204)
-      .json({
-        message:
-          "User has successfully been deleted from the Todoly's databases and servers",
-      });
+    return res.status(204).json({
+      message:
+        "User has successfully been deleted from the Todoly's databases and servers",
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Error removing user" });
@@ -88,7 +86,7 @@ export async function createUser(req, res) {
       ];
       const preferences_values = [
         "Currently",
-        "Depending on the time of day + name",
+        "Default",
         "Dark",
         "#000000",
         "true",

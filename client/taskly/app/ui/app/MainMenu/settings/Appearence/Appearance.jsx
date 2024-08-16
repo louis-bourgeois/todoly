@@ -15,11 +15,7 @@ export default function Appearance({ transitionStyles }) {
       .join("");
     return `#${hex}`;
   };
-  const rows = [
-    { color: "#ffffff" },
-    { color: "#000000" },
-    { color: "#007AFF" },
-  ];
+  const rows = [{ color: "#ffffff" }, { color: "#000000" }];
   const handleCircleClick = async (index) => {
     const siblingDiv = siblingRefs.current[index];
     if (siblingDiv) {

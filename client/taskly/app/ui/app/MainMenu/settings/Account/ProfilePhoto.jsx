@@ -1,55 +1,26 @@
-import axios from "axios";
+import { getAuth } from "firebase/auth";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../../../../../../context/UserContext";
 
 const ProfilePhoto = ({ size = 150 }) => {
   const { user, setUser } = useUser();
   const [isUploading, setIsUploading] = useState(false);
+  const [authToken, setAuthToken] = useState(null);
 
-  const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      if (file.size > 10 * 1024 * 1024) {
-        alert(
-          "Le fichier est trop volumineux. La taille maximale est de 10 MB."
-        );
-        return;
+  useEffect(() => {
+    const auth = getAuth();
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        const token = await user.getIdToken();
+        setAuthToken(token);
+      } else {
+        setAuthToken(null);
       }
+    });
+  }, []);
 
-      setIsUploading(true);
-
-      const formData = new FormData();
-      formData.append("image", file);
-
-      try {
-        const response = await axios.post(
-          "/api/upload/profile_picture",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-            withCredentials: true,
-          }
-        );
-
-        if (response.data.url) {
-          await setUser((prevUser) => ({
-            ...prevUser,
-            image_url: response.data.url,
-          }));
-        } else {
-          throw new Error("Aucune URL d'image retournée");
-        }
-      } catch (error) {
-        console.error("Erreur lors de l'upload de l'image:", error);
-        alert("Une erreur est survenue lors de l'upload de l'image.");
-      } finally {
-        setIsUploading(false);
-      }
-    }
-  };
+  const handleFileChange = async (event) => {};
 
   return (
     <div
@@ -101,7 +72,6 @@ const ProfilePhoto = ({ size = 150 }) => {
         type="file"
         accept="image/*"
         className="hidden"
-        onChange={handleFileChange}
       />
     </div>
   );

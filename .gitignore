@@ -15,6 +15,10 @@ server/report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 demo
 demo/*
 
+#temporary uploading files 
+uploads/*
+uploads
+
 # yarn
 server/./yarn.lock
 server/todoly-430912-firebase-adminsdk-np6ok-88e1a12385.json
