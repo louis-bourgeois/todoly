@@ -1,26 +1,11 @@
-import { getAuth } from "firebase/auth";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useUser } from "../../../../../../context/UserContext";
 
 const ProfilePhoto = ({ size = 150 }) => {
   const { user, setUser } = useUser();
   const [isUploading, setIsUploading] = useState(false);
   const [authToken, setAuthToken] = useState(null);
-
-  useEffect(() => {
-    const auth = getAuth();
-    auth.onAuthStateChanged(async (user) => {
-      if (user) {
-        const token = await user.getIdToken();
-        setAuthToken(token);
-      } else {
-        setAuthToken(null);
-      }
-    });
-  }, []);
-
-  const handleFileChange = async (event) => {};
 
   return (
     <div
