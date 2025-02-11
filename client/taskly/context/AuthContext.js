@@ -10,7 +10,8 @@ import {
 } from "react";
 
 import { useError } from "./ErrorContext";
-const baseUrl = `/api`;
+// const baseUrl = `/api`;
+const baseUrl= "/api"
 const AuthContext = createContext();
 
 export const useAuth = () => useContext(AuthContext);

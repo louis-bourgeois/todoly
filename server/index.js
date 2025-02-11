@@ -15,7 +15,6 @@ import preferenceRoutes from "./routes/preferenceRoutes.js";
 import sectionRoutes from "./routes/sectionRoutes.js";
 import tagRoutes from "./routes/tagRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
-import uploadRoutes from "./routes/uploadRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
 
@@ -87,7 +86,6 @@ app.use("/api/sections", sectionRoutes);
 app.use("/api/tags", tagRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/preferences", preferenceRoutes);
-app.use("/api/upload", uploadRoutes);
 
 // Root endpoint for basic server check
 app.get("/", (req, res) => {
@@ -152,6 +150,6 @@ passport.deserializeUser(async (id, cb) => {
   }
 });
 
-server.listen(port, "0.0.0.0", () => {
-  console.log(`Server running on http://0.0.0.0:${port}`);
+server.listen(port, "localhost", () => {
+  console.log(`Server running on http://localhost:${port}`);
 });
