@@ -37,7 +37,7 @@ export default function ScreenWrapper({ children }) {
             document.documentElement.classList.add("theme-dark");
             break;
           default:
-            console.log("Thème non reconnu:", preferences.Color_Theme);
+            break
         }
       } else {
         document.documentElement.classList.add("theme-dark");

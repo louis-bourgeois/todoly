@@ -17,6 +17,7 @@ import tagRoutes from "./routes/tagRoutes.js";
 import taskRoutes from "./routes/taskRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
+import profileImageRoutes from "./routes/profilImageRoutes.js"
 
 // Load environment variables
 dotenv.config();
@@ -24,7 +25,7 @@ dotenv.config();
 const app = express();
 const server = createServer(app);
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT
 
 // Trust the first proxy
 app.set("trust proxy", 1);
@@ -86,6 +87,7 @@ app.use("/api/sections", sectionRoutes);
 app.use("/api/tags", tagRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/preferences", preferenceRoutes);
+app.use("/api/profile", profileImageRoutes);
 
 // Root endpoint for basic server check
 app.get("/", (req, res) => {

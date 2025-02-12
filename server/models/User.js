@@ -275,24 +275,27 @@ class User {
       email: "user_contact.email",
       phone_number: "user_contact.phone_number",
     };
-
+  
     if (!(data in validColumns)) {
       throw new Error("Invalid data request");
     } else if (!isUUID(id)) {
       throw new Error("invalid ID");
     }
-
-    const query = `SELECT ${validColumns[data]} FROM user_profile
-                   LEFT JOIN user_contact ON user_profile.id = user_contact.user_id
-                   LEFT JOIN user_profile_image ON user_profile.id = user_profile_image.user_id
-                   WHERE user_profile.id = $1
-                   `;
+  
+    const query = `
+      SELECT ${validColumns[data]} 
+      FROM user_profile
+      LEFT JOIN user_contact ON user_profile.id = user_contact.user_id
+      LEFT JOIN user_profile_image ON user_contact.email = user_profile_image.user_email
+      WHERE user_profile.id = $1
+    `;
     const { rows } = await pool.query(query, [id]);
     if (!rows[0]) {
       return;
     }
     return rows[0];
   }
+  
 
   static async getHashPassword(id) {
     if (!isUUID(id)) {

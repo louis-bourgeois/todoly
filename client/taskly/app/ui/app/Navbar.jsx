@@ -23,6 +23,7 @@ export default function Navbar() {
   const [showContentMenu, setShowContentMenu] = useState(false);
   const [marginTop, setMarginTop] = useState(0);
   const [height, setHeight] = useState(0);
+  const [width, setWidth] = useState(0)
   const [profilePictureVisibility, setProfilePictureVisibility] =
     useState(true);
 
@@ -45,12 +46,17 @@ export default function Navbar() {
     if (showMenu && elementRef.current) {
       const scale = 0.8;
       const rect = elementRef.current.getBoundingClientRect();
-      const adjustedHeight = rect.height * scale;
-      const adjustedTop = rect.top + (rect.height - adjustedHeight) / 2;
-      setHeight(adjustedHeight);
+      // On prend la plus petite dimension pour garantir un carré
+      const minSize = Math.min(rect.width, rect.height);
+      const adjustedSize = minSize * scale;
+      // Calculer marginTop en se basant sur la hauteur d'origine
+      const adjustedTop = rect.top + (rect.height - adjustedSize) / 2;
+      setWidth(adjustedSize);
+      setHeight(adjustedSize);
       setMarginTop(adjustedTop);
     }
   }, [showMenu]);
+  
   useEffect(() => {
     updateDimensions();
     window.addEventListener("resize", updateDimensions);
@@ -87,6 +93,7 @@ export default function Navbar() {
         showContentMenu={showContentMenu}
         marginTop={marginTop}
         height={height}
+        width={width}
         name={name}
         setProfilePictureVisibility={setProfilePictureVisibility}
         profilePictureVisibility={profilePictureVisibility}
@@ -103,6 +110,7 @@ export default function Navbar() {
           >
             {user?.image_url ? (
               <Image
+                draggable="false"
                 ref={elementRef}
                 src={user.image_url}
                 alt="Profile Picture"
@@ -143,7 +151,7 @@ export default function Navbar() {
           </div>
         </li>
         <li>
-          <h1 className="5xl:text-5xl 2xl:text-4xl xl-text-3.5xl lg:text-2.5xl font-black">
+          <h1 className={`5xl:text-5xl 2xl:text-4xl xl-text-3.5xl lg:text-2.5xl font-black`}>
             {preferences.Home_Page_Title?.toLowerCase() === "default" ||
             preferences.Home_Page_Title === "" ? (
               <>
@@ -153,7 +161,7 @@ export default function Navbar() {
                 </span>
               </>
             ) : (
-              <span className="text-text">preferences.Home_Page_Title</span>
+              <span className="text-text">{preferences.Home_Page_Title}</span>
             )}
           </h1>
         </li>

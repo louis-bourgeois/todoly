@@ -189,7 +189,7 @@ export default function WorkspaceLayoutSection({
                 className={copyStatus ? "opacity-50 cursor-default" : ""}
               />
               {copyStatus && (
-                <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-2 py-1 bg-gray-800 text-white text-xs rounded shadow transition-opacity duration-200 opacity-100">
+                <span className="absolute top-full left-1/2 transform -translate-x-1/2 mt-1 px-2 py-1 bg-gray-800 text-white text-xs rounded transition-opacity duration-200 opacity-100">
                   {copyStatus}
                 </span>
               )}

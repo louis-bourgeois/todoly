@@ -15,7 +15,9 @@ export default function Appearance({ transitionStyles }) {
       .join("");
     return `#${hex}`;
   };
+
   const rows = [{ color: "#ffffff" }, { color: "#000000" }];
+
   const handleCircleClick = async (index) => {
     const siblingDiv = siblingRefs.current[index];
     if (siblingDiv) {
@@ -51,12 +53,13 @@ export default function Appearance({ transitionStyles }) {
         {rows.map((row, index) => (
           <div
             key={index}
-            className={`w-full flex justify-between items-center`}
+            className="w-full flex justify-between items-center"
           >
             <div
               ref={(el) => (siblingRefs.current[index] = el)}
               style={{ backgroundColor: row.color }}
-              className={`rounded-[10px] w-[87.5%] h-[5vh]  ${
+              onClick={() => handleCircleClick(index)}
+              className={`cursor-pointer rounded-[10px] w-[87.5%] h-[5vh] ${
                 (row.color === "#ffffff" || row.color === "#f7f4ed") &&
                 "border border-secondary"
               }`}

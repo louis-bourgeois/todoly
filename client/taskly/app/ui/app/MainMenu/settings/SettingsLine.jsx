@@ -1,7 +1,7 @@
 import React from "react";
 
 const SettingsLine = React.memo(
-  ({ children = true, index, setLayout, libelles, icons }) => {
+  ({ children = true, index, setLayout, libelles }) => {
     return (
       <>
         <div className="button-wrapper m-[5%] my-0 flex items-center justify-between px-4">
@@ -13,10 +13,10 @@ const SettingsLine = React.memo(
                 : setLayout("default")
             }
           >
-            <div className="flex justify-start gap-[7.5%] items-center ">
+            <div className="flex justify-start  gap-[10%] items-center w-full">
               {children}
-              <h2 className="ml-[0.4vw] w-full text-text">
-                {libelles[index].name}
+              <h2 className="ml-[0.4vw] text-text">
+                {libelles[index].name === "default" ? "Main Menu" : libelles[index].name}
               </h2>
             </div>
           </button>

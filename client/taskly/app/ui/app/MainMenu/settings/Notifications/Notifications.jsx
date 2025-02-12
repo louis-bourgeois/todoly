@@ -7,6 +7,8 @@ import Switcher from "../Switcher";
 
 export default function Notifications({ transitionStyles }) {
   const { updatePreference, preferences } = useUserPreferences();
+  
+  // Convertir la préférence Allow_Notifications en booléen
   const [allowNotifications, setAllowNotifications] = useState(
     JSON.parse(preferences.Allow_Notifications.toLowerCase())
   );
@@ -15,20 +17,32 @@ export default function Notifications({ transitionStyles }) {
   );
   const { isMobile } = useScreen();
 
+  // Effect pour mettre à jour Allow_Notifications
   useEffect(() => {
-    updatePreference({
-      key: "Allow_Notifications",
-      value: allowNotifications.toString(),
-    });
+    const newValue = allowNotifications.toString();
+    // Ne mettre à jour que si la valeur a changé
+    if (preferences.Allow_Notifications !== newValue) {
+      updatePreference({
+        key: "Allow_Notifications",
+        value: newValue,
+      });
+    }
     console.log(preferences);
-  }, [allowNotifications, updatePreference, preferences]);
+  }, [allowNotifications, updatePreference, preferences.Allow_Notifications]);
 
+  // Effect pour mettre à jour Notifications_List
   useEffect(() => {
-    updatePreference({
-      key: "Notifications_List",
-      value: notificationsList.toString(),
-    });
-  }, [notificationsList, updatePreference]);
+    const newListValue =
+      typeof notificationsList === "string"
+        ? notificationsList
+        : notificationsList.toString();
+    if (preferences.Notifications_List !== newListValue) {
+      updatePreference({
+        key: "Notifications_List",
+        value: newListValue,
+      });
+    }
+  }, [notificationsList, updatePreference, preferences.Notifications_List]);
 
   const notifications = [
     { name: "Daily Recap" },
@@ -63,7 +77,7 @@ export default function Notifications({ transitionStyles }) {
           isChecked={notificationsList.includes(notification.name)}
           onChange={() => handleNotificationChange(notification.name)}
         >
-          <span className={isMobile ? "text-sm" : "text-base"}>
+          <span style={{ display: 'inline-flex', alignItems: 'center' }} className={`${isMobile ? "text-sm" : "text-base"} text-secondary leading-none`}>
             {notification.name}
           </span>
         </CheckboxContainer>
