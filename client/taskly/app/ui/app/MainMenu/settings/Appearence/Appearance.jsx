@@ -24,7 +24,6 @@ export default function Appearance({ transitionStyles }) {
       setSelectedCircle(index);
       const bgColor = window.getComputedStyle(siblingDiv).backgroundColor;
       const hexColor = rgbToHex(bgColor);
-      console.log(hexColor);
       await updatePreference({
         key: "Color_Theme",
         value: hexColor,
@@ -42,7 +41,7 @@ export default function Appearance({ transitionStyles }) {
     } else {
       setSelectedCircle(null);
     }
-  }, [preferences?.Color_Theme]);
+  }, [preferences?.Color_Theme, rows]);
 
   return (
     <div

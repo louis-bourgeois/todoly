@@ -68,11 +68,10 @@ export default function TaskForm({
         )?.id || ""
       );
     }
-  }, [sections, preferences.Last_Section, currentWorkspace]);
+  }, [sections, preferences, currentWorkspace]);
 
   useEffect(() => {
     if (id) {
-      console.log("idddd", id);
       const foundTask = tasks.find((task) => task.id === id);
       if (foundTask) {
         setTask(foundTask);
@@ -125,8 +124,6 @@ export default function TaskForm({
   }, [linkedSection, sections, linkedSectionName]);
 
   const resetTaskMenu = useCallback(() => {
-    console.log("called");
-
     setTaskWorkspace(currentWorkspace || "");
     setTitleValue("");
     setStatus("todo");
@@ -147,9 +144,6 @@ export default function TaskForm({
     }
   }, [isTaskMenuOpen, resetTaskMenu]);
 
-  useEffect(() => {
-    console.log(dueDate);
-  }, [dueDate]);
 
   const handleDateSelect = useCallback(
     (date) => {
@@ -159,13 +153,11 @@ export default function TaskForm({
       ) {
         setDueDate(undefined);
       } else {
-        console.log(dueDate, date);
         setDueDate(date);
       }
 
       if (id) {
         const updatedTask = { ...task, due_date: date || null };
-        console.log(updatedTask);
         setTask(updatedTask);
         modifyTask(updatedTask, "post");
       }

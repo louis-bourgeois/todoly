@@ -17,20 +17,16 @@ export default function Notifications({ transitionStyles }) {
   );
   const { isMobile } = useScreen();
 
-  // Effect pour mettre à jour Allow_Notifications
   useEffect(() => {
     const newValue = allowNotifications.toString();
-    // Ne mettre à jour que si la valeur a changé
     if (preferences.Allow_Notifications !== newValue) {
       updatePreference({
         key: "Allow_Notifications",
         value: newValue,
       });
     }
-    console.log(preferences);
-  }, [allowNotifications, updatePreference, preferences.Allow_Notifications]);
-
-  // Effect pour mettre à jour Notifications_List
+  }, [allowNotifications, updatePreference, preferences]);
+  
   useEffect(() => {
     const newListValue =
       typeof notificationsList === "string"
@@ -42,7 +38,8 @@ export default function Notifications({ transitionStyles }) {
         value: newListValue,
       });
     }
-  }, [notificationsList, updatePreference, preferences.Notifications_List]);
+  }, [notificationsList, updatePreference, preferences]);
+  
 
   const notifications = [
     { name: "Daily Recap" },

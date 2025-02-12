@@ -4,6 +4,7 @@ const MobileTextContent = ({ children }) => {
   const contentRef = useRef(null);
 
   useEffect(() => {
+    const currentContent = contentRef.current;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -16,13 +17,13 @@ const MobileTextContent = ({ children }) => {
       { threshold: 0.1 }
     );
 
-    if (contentRef.current) {
-      observer.observe(contentRef.current);
+    if (currentContent) {
+      observer.observe(currentContent);
     }
 
     return () => {
-      if (contentRef.current) {
-        observer.unobserve(contentRef.current);
+      if (currentContent) {
+        observer.unobserve(currentContent);
       }
     };
   }, []);
