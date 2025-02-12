@@ -15,7 +15,7 @@ const AuthGuard = ({ children }) => {
   }, [user, loading, authChecked, router, pathname]);
 
   if (loading || !authChecked) {
-    return <div>Loading...</div>; // Ou un composant de chargement plus élaboré
+    return <div>Loading...</div>;
   }
 
   return user ? children : null;

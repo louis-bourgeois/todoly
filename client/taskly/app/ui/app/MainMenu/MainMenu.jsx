@@ -1,5 +1,6 @@
 "use client";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+
+import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import Div from "../Div";
 import Header from "./constantContent/Header";
 import DefaultContent from "./main/DefaultContent";
@@ -10,16 +11,19 @@ import Layout from "./settings/Layout/Layout";
 import MainSettingsMenuContent from "./settings/MainSettingsMenuContent";
 import Notifications from "./settings/Notifications/Notifications";
 
+// Precomputed dimensions for each panel.
+// Note: the key for the default panel is "default", but we’ll display "Main Menu" in the header.
 const LIBELLES = [
-  { name: "Layout", width: "25vw" },
-  { name: "Appearance", width: "25vw" },
-  { name: "Notifications", width: "25vw" },
-  { name: "Languages", width: "25vw" },
-  { name: "Integrations", width: "25vw" },
-  { name: "Main Menu", width: "17vw" },
-  { name: "Account", width: "45vw" },
+  { name: "Layout",        width: "25vw", height: "45vh" },
+  { name: "Appearance",    width: "25vw", height: "31.5vh" },
+  { name: "Notifications", width: "25vw", height: "38vh" },
+  { name: "Languages",     width: "25vw", height: "45vh" },
+  { name: "Integrations",  width: "25vw", height: "10vh" },
+  { name: "default",       width: "17vw", height: "37.5vh" },
+  { name: "Account",       width: "45vw", height: "40vh" },
 ];
 
+// Mapping layout keys to components.
 const LAYOUTS = {
   default: DefaultContent,
   settings: MainSettingsMenuContent,
@@ -36,96 +40,110 @@ export default function MainMenu({
   showMenu,
   marginTop,
   setShowMenu,
-  height,
+  height, // not used, but kept to avoid errors
   name,
   setProfilePictureVisibility,
   profilePictureVisibility,
 }) {
+  // Default dimensions for the default panel.
+  const DEFAULT_WIDTH = "17vw";
+  const DEFAULT_HEIGHT = "37.5vh";
+
+  // Internal state for the active panel key.
+  // We use "default" for the main panel.
   const [layout, setLayout] = useState("default");
   const [previousLayout, setPreviousLayout] = useState(null);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [width, setWidth] = useState("17vw");
+  const [menuWidth, setMenuWidth] = useState(DEFAULT_WIDTH);
+  const [menuHeight, setMenuHeight] = useState(DEFAULT_HEIGHT);
+
   const contentRef = useRef(null);
-  const wrapperRef = useRef(null);
 
-  const currentLayout = useMemo(() => {
-    return layout === "Main Menu" ? "default" : layout;
-  }, [layout]);
+  // Compute the header label separately.
+  // When the internal layout is "default", we want the header label to be "Main Menu".
+  const headerLabel = layout === "default" ? "Main Menu" : layout;
 
-  const handleSettingsChange = useCallback(
-    (value) => {
+  // The current layout component is simply looked up via the internal layout key.
+  const CurrentLayoutComponent = LAYOUTS[layout] || (() => <></>);
+  const PreviousLayoutComponent = previousLayout ? LAYOUTS[previousLayout] : null;
+
+  // Handle panel changes by recording the previous panel and updating layout.
+  const handlePanelChange = useCallback(
+    (newLayout) => {
       setPreviousLayout(layout);
-      setLayout(value);
+      setLayout(newLayout);
     },
     [layout]
   );
 
+  // When the menu opens/closes, reset the layout to "default".
   useEffect(() => {
-    if (!showMenu) setLayout("default");
-  }, [showMenu]);
-
-  useEffect(() => {
-    const isDefaultOrSettings = layout === "default" || layout === "settings";
-    if (isDefaultOrSettings) {
+    if (!showMenu) {
+      setLayout("default");
+    } else {
+      // When reopening, reset dimensions and force profile picture visibility.
+      setLayout("default");
+      setMenuWidth(DEFAULT_WIDTH);
+      setMenuHeight(DEFAULT_HEIGHT);
       setProfilePictureVisibility(true);
     }
+  }, [showMenu, setProfilePictureVisibility]);
 
-    setIsTransitioning(true);
-
-    const libelle = LIBELLES.find((l) => l.name === layout);
-    const newWidth = libelle ? libelle.width : "17vw";
-
-    // Set the wrapper to a fixed height before the transition
-    if (wrapperRef.current && contentRef.current) {
-      wrapperRef.current.style.height = `${contentRef.current.offsetHeight}px`;
+  // Update menu dimensions on layout change, using viewport scaling for height.
+  useEffect(() => {
+    // Display the profile picture only when in default or settings panels.
+    if (layout === "default" || layout === "settings") {
+      setProfilePictureVisibility(true);
+    } else {
+      setProfilePictureVisibility(false);
     }
 
-    // Start the transition
-    setTimeout(() => {
-      setWidth(isDefaultOrSettings ? "17vw" : newWidth);
+    // Retrieve dimensions from LIBELLES (if defined) or use defaults.
+    const libelle = LIBELLES.find((item) => item.name === layout) || { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT };
+    let newWidth = libelle.width;
+    let newHeight = libelle.height;
 
-      // After a short delay, update the height
-      setTimeout(() => {
-        if (wrapperRef.current && contentRef.current) {
-          wrapperRef.current.style.height = `${contentRef.current.offsetHeight}px`;
-        }
-      }, 50);
-    }, 0);
+    // Special case: if the panel is "settings", force a specific height.
+    if (layout === "settings") {
+      newHeight = "66.5vh";
+    }
 
-    // End the transition
-    const timer = setTimeout(() => {
-      setIsTransitioning(false);
-      setPreviousLayout(null);
-      if (wrapperRef.current) {
-        wrapperRef.current.style.height = "auto";
+    // Adjust the height if the viewport is larger than 1080px.
+    if (typeof window !== "undefined") {
+      const screenHeight = window.innerHeight;
+      if (screenHeight > 1080) {
+        const vhValue = parseFloat(newHeight.replace("vh", ""));
+        // Scale down using a ratio (1080 / screenHeight) and add an offset (here, 15).
+        const scaledVh = (layout !== "settings") ? (vhValue * (1080 / screenHeight) + 3) : (vhValue * (1080 / screenHeight));
+        newHeight = `${scaledVh}vh`;
       }
-    }, 300);
+    }
 
-    return () => clearTimeout(timer);
+    setMenuWidth(newWidth);
+    setMenuHeight(newHeight);
+    setPreviousLayout(null);
   }, [layout, setProfilePictureVisibility]);
-
-  const CurrentLayoutComponent = LAYOUTS[currentLayout] || (() => <></>);
-  const PreviousLayoutComponent = previousLayout
-    ? LAYOUTS[previousLayout]
-    : null;
 
   return (
     <Div
-      styles={`absolute bg-main_menu_bg ${
-        profilePictureVisibility ? "z-20" : "z-[225]"
-      } fontMenu top-0 left-0 flex flex-col justify-between rounded-[3.125vw] rounded-tl-[0] transition-all ease-in-out duration-300 ${
-        showMenu ? "opacity-100" : "w-0 opacity-0"
-      } overflow-hidden`}
+      ref={containerRef}
+      styles={`
+        absolute bg-main_menu_bg ${profilePictureVisibility ? "z-20" : "z-[225]"}
+        fontMenu top-0 left-0 flex flex-col justify-between rounded-[3.125vw] rounded-tl-[0]
+        transition-all ease-in-out duration-300 ${showMenu ? "opacity-100" : "w-0 opacity-0"}
+        overflow-hidden border border-gradient absolute
+      `}
       absolute
       notBorder
       style={{
-        width: showMenu ? width : "0",
+        width: showMenu ? menuWidth : "0",
+        height: showMenu ? menuHeight : "0",
       }}
     >
       <Header
         name={name}
-        handleSettingsChange={handleSettingsChange}
-        layout={layout}
+        // Pass the header label instead of the internal layout key.
+        layout={headerLabel}
+        handleSettingsChange={handlePanelChange}
         containerRef={containerRef}
         showContentMenu={showContentMenu}
         marginTop={marginTop}
@@ -135,9 +153,8 @@ export default function MainMenu({
         libelles={LIBELLES}
       />
       <div
-        ref={wrapperRef}
         className="transition-all duration-300 ease-in-out overflow-hidden"
-        style={{ padding: "25px 0" }} // Add some padding to prevent clipping
+        style={{ padding: "25px 0" }}
       >
         <div ref={contentRef} className="relative">
           {PreviousLayoutComponent && (
@@ -147,7 +164,6 @@ export default function MainMenu({
               libelles={LIBELLES}
             />
           )}
-
           <CurrentLayoutComponent
             setShowMenu={setShowMenu}
             transitionStyles=""

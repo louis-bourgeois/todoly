@@ -128,11 +128,7 @@ const WorkspaceView = ({ id }) => {
         handleWorkspaceClick={handleWorkspaceAction}
         update={true}
       />
-      <WorkspaceLayoutDescription
-        workspaceDescription={workspaceDescription}
-        setWorkspaceDescription={setWorkspaceDescription}
-        textareaRef={textareaRef}
-      />
+
       <WorkspaceLayoutSection
         label={"Collaborators"}
         searchLabel={"Add collaborator by username"}

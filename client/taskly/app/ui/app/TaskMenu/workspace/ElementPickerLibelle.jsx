@@ -10,7 +10,7 @@ export default function ElementPickerLibelle({
   return (
     <div
       onClick={() => setTaskArrowIsClicked((prev) => !prev)}
-      className="relative bg-dominant cursor-pointer rounded-full p-[1%] py-[0.5%] flex justify-between items-center"
+      className="relative  cursor-pointer rounded-full p-[1%] py-[0.5%] flex justify-between items-center"
     >
       <span className="pl-[5%] pb-[2%]  text-text">{elementType}</span>
       <svg
@@ -35,14 +35,14 @@ export default function ElementPickerLibelle({
         ></path>
       </svg>
       <div
-        className={`absolute  border-white top-full mt-2 left-0 right-0 bg-primary shadow-lg rounded-lg transition-opacity duration-300 z-[255] ${
+        className={`absolute top-full border border-secondary mt-2 left-0 right-0 bg-primary shadow-lg rounded-lg transition-opacity duration-300 z-[255] ${
           taskArrowIsClicked ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
         {elements.map((el) => (
           <div
             key={el}
-            className=" p-2 cursor-pointer "
+            className=" p-3 cursor-pointer"
             onClick={() => handleElementTypeChange(el)}
           >
             <span className="text-text hover:text-dominant transition transition-color">

@@ -61,7 +61,7 @@ export default function Languages({ transitionStyles }) {
         onClick={(newTz) => updateSetting("TZ", newTz)}
         options={["Europe/Paris", "America/New York"]}
       />
-      <div className="flex-col flex justify-start gap-[0.5vw]">
+      <div className="flex-col flex justify-start gap-[0.5vw] mb-5">
         <div className="flex justify-start w-full items-center gap-[2.5vw]">
           <Circle
             borderColor="dominant"

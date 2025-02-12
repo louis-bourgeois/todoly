@@ -1,3 +1,4 @@
+
 import CTA from "@/ui/landing_page/CTA";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -191,7 +192,7 @@ export default function Header({
         </h3>
         <p
           className={`text-grey delay-250 text-[0.8em] cursor-pointer font-light leading-none pl-[0.075vw]`}
-        >
+          >
           Free plan
         </p>
       </div>

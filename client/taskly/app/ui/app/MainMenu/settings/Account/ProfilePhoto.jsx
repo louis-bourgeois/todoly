@@ -1,11 +1,145 @@
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUser } from "../../../../../../context/UserContext";
+import { storage } from "../../../../../../firebaseClientConfig"; // ajustez le chemin si nécessaire
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
+import imageCompression from "browser-image-compression";
+
+// Fonction utilitaire pour recadrer l'image en carré
+async function cropToSquare(file) {
+  try {
+    // Crée un ImageBitmap à partir du fichier
+    const imageBitmap = await createImageBitmap(file);
+    const minSize = Math.min(imageBitmap.width, imageBitmap.height);
+    const canvas = document.createElement("canvas");
+    canvas.width = minSize;
+    canvas.height = minSize;
+    const ctx = canvas.getContext("2d");
+
+    // Calculer les offsets pour centrer le recadrage
+    const offsetX = (imageBitmap.width - minSize) / 2;
+    const offsetY = (imageBitmap.height - minSize) / 2;
+    ctx.drawImage(imageBitmap, offsetX, offsetY, minSize, minSize, 0, 0, minSize, minSize);
+
+    // Retourner un nouveau File à partir du canvas
+    return await new Promise((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          resolve(new File([blob], file.name, { type: file.type }));
+        } else {
+          reject(new Error("Erreur lors du recadrage de l'image."));
+        }
+      }, file.type);
+    });
+  } catch (error) {
+    throw error;
+  }
+}
+
 
 const ProfilePhoto = ({ size = 150 }) => {
   const { user, setUser } = useUser();
   const [isUploading, setIsUploading] = useState(false);
-  const [authToken, setAuthToken] = useState(null);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  // Limite de taille en octets (ici 2 MB)
+  const MAX_FILE_SIZE = 2 * 1024 * 1024;
+
+  useEffect(() => {
+    // Si l'utilisateur a déjà une image (Firebase URL), l'utiliser comme aperçu
+    if (user?.image_url) {
+      setPreviewUrl(user.image_url);
+      setImageLoaded(true);
+    }
+  }, [user]);
+
+  const handleFileChange = async (event) => {
+    let file = event.target.files[0];
+    if (!file) return;
+  
+    // Créer un aperçu local pour affichage immédiat
+    const localPreview = URL.createObjectURL(file);
+    setPreviewUrl(localPreview);
+    setIsUploading(true);
+    setUploadProgress(0);
+    setImageLoaded(false);
+  
+    try {
+      // Recadrer l'image en carré
+      file = await cropToSquare(file);
+  
+      // Compression si nécessaire
+      if (file.size > MAX_FILE_SIZE) {
+        const options = {
+          maxSizeMB: MAX_FILE_SIZE / (1024 * 1024),
+          useWebWorker: true,
+          onProgress: (p) => {
+            setUploadProgress(p);
+          },
+        };
+        file = await imageCompression(file, options);
+      }
+
+      // Suppression de l'ancienne image sur Firebase (si elle existe)
+      if (user?.image_url) {
+        const oldImageRef = ref(storage, user.image_url);
+        try {
+          await deleteObject(oldImageRef);
+        } catch (error) {
+          console.log("Erreur lors de la suppression de l'ancienne image", error);
+        }
+      }
+
+      const timestamp = Date.now();
+      const fileName = `${timestamp}_${file.name}`;
+      // Utilisation de l'email pour le chemin (vérifiez bien vos règles Firebase)
+      const storageRef = ref(storage, `profile_pictures/${user?.email}/${fileName}`);
+
+      // Upload avec suivi de la progression
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          setUploadProgress(progress);
+        },
+        (error) => {
+          console.error("Erreur d'upload : ", error);
+          setIsUploading(false);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          console.log("URL de téléchargement : ", downloadURL);
+          
+          // Appel de la route pour mettre à jour la DB
+          try {
+            await fetch("/api/profile/upload", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                user_email: user.email,
+                image_url: downloadURL,
+              }),
+            });
+          } catch (error) {
+            console.error("Erreur lors de la mise à jour de la DB", error);
+          }
+          // Mise à jour du contexte utilisateur et de l'aperçu
+          setUser({ ...user, image_url: downloadURL });
+          setPreviewUrl(downloadURL);
+          setIsUploading(false);
+        }
+      );
+    }  catch (error) {
+      console.error("Erreur lors du recadrage/upload de l'image", error);
+      setIsUploading(false);
+    }
+  };
 
   return (
     <div
@@ -13,50 +147,38 @@ const ProfilePhoto = ({ size = 150 }) => {
       style={{ width: `${size}px`, height: `${size}px` }}
       onClick={() => document.getElementById("photo-upload").click()}
     >
-      {user?.image_url ? (
-        <Image
-          src={user.image_url}
-          alt="Photo de profil"
-          width={size}
-          height={size}
-          quality={100}
-          className="rounded-full object-cover"
-        />
-      ) : (
-        <svg
-          viewBox="0 0 24 24"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          stroke="currentColor"
-          strokeWidth="1.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          className="w-3/4 h-3/4 text-text"
+      {/* Affichage de l'image (aperçu) avec effet de fondu */}
+      {previewUrl && (
+        <div
+          className={`w-full h-full transition-opacity duration-300 ${
+            imageLoaded ? "opacity-100" : "opacity-0"
+          }`}
         >
-          <circle cx="12" cy="8" r="4" />
-          <path d="M5 19c0-4 7-4 7-4s7 0 7 4" />
-        </svg>
+          <Image
+            src={previewUrl}
+            alt="Photo de profil"
+            width={size}
+            height={size}
+            quality={100}
+            className="w-full h-full object-cover object-center rounded-full"
+            onLoadingComplete={() => setImageLoaded(true)}
+          />
+        </div>
       )}
-      <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center transition-opacity duration-300 ease-in-out opacity-0 group-hover:opacity-100">
-        {isUploading ? (
-          <span className="text-white">Chargement...</span>
-        ) : (
-          <svg
-            fill="currentColor"
-            height="50%"
-            width="50%"
-            viewBox="0 0 487 487"
-            className="text-white"
-          >
-            <path d="M308.1,277.95c0,35.7-28.9,64.6-64.6,64.6s-64.6-28.9-64.6-64.6s28.9-64.6,64.6-64.6S308.1,242.25,308.1,277.95z M440.3,116.05c25.8,0,46.7,20.9,46.7,46.7v122.4v103.8c0,27.5-22.3,49.8-49.8,49.8H49.8c-27.5,0-49.8-22.3-49.8-49.8v-103.9 v-122.3l0,0c0-25.8,20.9-46.7,46.7-46.7h93.4l4.4-18.6c6.7-28.8,32.4-49.2,62-49.2h74.1c29.6,0,55.3,20.4,62,49.2l4.3,18.6H440.3z M97.4,183.45c0-12.9-10.5-23.4-23.4-23.4c-13,0-23.5,10.5-23.5,23.4s10.5,23.4,23.4,23.4C86.9,206.95,97.4,196.45,97.4,183.45z M358.7,277.95c0-63.6-51.6-115.2-115.2-115.2s-115.2,51.6-115.2,115.2s51.6,115.2,115.2,115.2S358.7,341.55,358.7,277.95z" />
-          </svg>
-        )}
-      </div>
+
+      {/* Overlay de progression pendant l'upload */}
+      {isUploading && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <span className="text-white text-xl font-bold">{Math.round(uploadProgress)}%</span>
+        </div>
+      )}
+
       <input
         id="photo-upload"
         type="file"
         accept="image/*"
         className="hidden"
+        onChange={handleFileChange}
       />
     </div>
   );
