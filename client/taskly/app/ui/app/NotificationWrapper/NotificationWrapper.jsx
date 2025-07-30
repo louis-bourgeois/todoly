@@ -20,7 +20,7 @@ export default function NotificationWrapper() {
   return (
     <div
       className={`
-      fixed top-0 right-0 flex flex-col items-end p-4 overflow-y-auto z-[49] 
+      fixed gap-5 top-0 right-0 flex flex-col items-end p-4 overflow-y-auto z-[8000] 
       ${isMobile ? "w-full max-h-[30vh] gap-1" : "max-h-[20vh] ga-10"}
     `}
     >

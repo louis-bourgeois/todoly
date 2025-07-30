@@ -1,10 +1,14 @@
-import { addDays, format, getDate } from "date-fns";
+import { useFormattedDate } from "../../../utils/time";
+import { addDays, getDate, format } from "date-fns";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useMenu } from "../../../../context/MenuContext";
 import { useWorkspace } from "../../../../context/WorkspaceContext";
 import { convertDateObjIntoDueDateType } from "../../../utils/utils";
+import { useUserPreferences } from "../../../../context/UserPreferencesContext";
 
 const DateHeader = ({ index, onDateChange }) => {
+  const { formatADate } = useFormattedDate();
+  const { preferences } = useUserPreferences();
   const { setCurrentWorkspace, currentWorkspace, workspaces } = useWorkspace();
   const { toggleViewsMenu } = useMenu();
   const [menuWidth, setMenuWidth] = useState(0);
@@ -12,14 +16,19 @@ const DateHeader = ({ index, onDateChange }) => {
   const menuRef = useRef(null);
   const dateOptions = useMemo(() => ({ weekday: "long" }), []);
   const [menuOpen, setMenuOpen] = useState(false);
+
   const { futureDate, dayLabel, dateNumber } = useMemo(() => {
     const today = new Date();
     const futureDate = addDays(today, index);
     const dayLabel =
-      index === 0 ? "Today" : index === 1 ? "Tomorrow" : undefined;
+      index === 0
+        ? "Today"
+        : index === 1
+        ? "Tomorrow"
+        : formatADate(futureDate, "EEEE");
     const dateNumber = getDate(futureDate);
     return { futureDate, dayLabel, dateNumber };
-  }, [index]);
+  }, [index, formatADate]);
 
   const [currentHour, setCurrentHour] = useState(new Date());
   const [workspacesName, setWorkspacesName] = useState(
@@ -29,32 +38,36 @@ const DateHeader = ({ index, onDateChange }) => {
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentHour(new Date());
-    }, 1000);
+    }, 1000); 
     return () => clearInterval(timer);
   }, []);
 
   const formattedHour = useMemo(
-    () => format(currentHour, "HH:mm"),
-    [currentHour]
+    () => formatADate(currentHour, preferences?.Date_Format === "12h" ? "hh:mm a" : "HH:mm"),
+    [currentHour, formatADate, preferences?.Date_Format]
   );
 
   useEffect(() => {
     setWorkspacesName(workspaces.map((workspace) => workspace.name));
   }, [workspaces]);
 
-  const handleCurrentWorkspaceDropdownClick = (name) => {
+  // MODIFICATION ICI : La fonction accepte l'événement (e) pour l'arrêter.
+  const handleCurrentWorkspaceDropdownClick = (e, name) => {
+    e.stopPropagation(); // Empêche le clic de se propager au parent
     const workspace = workspaces.find((workspace) => workspace.name === name);
-    if (workspace) setCurrentWorkspace(workspace.id);
-    setMenuOpen((prev) => !prev);
+    if (workspace) {
+      setCurrentWorkspace(workspace.id);
+    }
+    setMenuOpen(false); // Ferme le menu
   };
 
   const prevFutureDateRef = useRef();
   useEffect(() => {
     if (onDateChange && futureDate !== prevFutureDateRef.current) {
-      onDateChange(convertDateObjIntoDueDateType(futureDate));
+      onDateChange(index, convertDateObjIntoDueDateType(futureDate));
       prevFutureDateRef.current = futureDate;
     }
-  }, [futureDate, onDateChange]);
+  }, [futureDate, onDateChange, index]);
 
   useEffect(() => {
     if (triggerRef.current && menuRef.current) {
@@ -134,7 +147,8 @@ const DateHeader = ({ index, onDateChange }) => {
               {workspacesName.map((name, index) => (
                 <button
                   key={index}
-                  onClick={() => handleCurrentWorkspaceDropdownClick(name)}
+                  // MODIFICATION ICI : On passe l'événement à la fonction
+                  onClick={(e) => handleCurrentWorkspaceDropdownClick(e, name)}
                   className="hover:text-dominant transition-colors duration-300 whitespace-nowrap overflow-hidden text-ellipsis"
                 >
                   <span className="text-text hover:text-dominant">{name}</span>
@@ -143,7 +157,7 @@ const DateHeader = ({ index, onDateChange }) => {
             </div>
           </div>
         </div>
-        <span className="select-none text-xl text-text">{formattedHour}</span>
+        <span className="select-none text-xl text-text whitespace-nowrap">{formattedHour}</span>
       </div>
     </div>
   );

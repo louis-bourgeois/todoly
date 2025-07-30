@@ -1,7 +1,7 @@
 "use client";
-import FormMenu from "@/ui/FormMenu";
-import Blur from "@/ui/app/Blur";
-import LoginHeroe from "@/ui/app/LoginHeroe";
+import FormMenu from "../../ui/FormMenu";
+import Blur from "../../ui/app/Blur";
+import LoginHeroe from "../../ui/app/LoginHeroe";
 import { useState } from "react";
 export default function Page() {
   const [showComponent, setShowComponent] = useState(false);

@@ -10,17 +10,20 @@ import Languages from "./settings/Languages/Languages";
 import Layout from "./settings/Layout/Layout";
 import MainSettingsMenuContent from "./settings/MainSettingsMenuContent";
 import Notifications from "./settings/Notifications/Notifications";
+import EditProfile from "./settings/EditProfile";
+import Integrations from "./settings/Integrations/Integrations";
 
 // Precomputed dimensions for each panel.
 // Note: the key for the default panel is "default", but we’ll display "Main Menu" in the header.
 const LIBELLES = [
-  { name: "Layout",        width: "25vw", height: "45vh" },
-  { name: "Appearance",    width: "25vw", height: "31.5vh" },
-  { name: "Notifications", width: "25vw", height: "38vh" },
-  { name: "Languages",     width: "25vw", height: "45vh" },
-  { name: "Integrations",  width: "25vw", height: "10vh" },
-  { name: "default",       width: "17vw", height: "37.5vh" },
-  { name: "Account",       width: "45vw", height: "40vh" },
+  { name: "Layout",        width: "25vw"},
+  { name: "Appearance",    width: "25vw"},
+  { name: "Notifications", width: "25vw"},
+  { name: "Languages",     width: "25vw"},
+  { name: "Integrations",  width: "25vw"},
+  { name: "default",       width: "16vw"},
+  { name: "Account",       width: "45vw"},
+  { name: "Data",          width: "45vw"},
 ];
 
 // Mapping layout keys to components.
@@ -31,7 +34,9 @@ const LAYOUTS = {
   Appearance,
   Notifications,
   Languages,
+  Integrations,
   Account,
+  Data: EditProfile,
 };
 
 export default function MainMenu({
@@ -46,15 +51,14 @@ export default function MainMenu({
   profilePictureVisibility,
 }) {
   // Default dimensions for the default panel.
-  const DEFAULT_WIDTH = "17vw";
-  const DEFAULT_HEIGHT = "37.5vh";
+  const DEFAULT_WIDTH = LIBELLES.find((item) => item.name === "default").width;
+
 
   // Internal state for the active panel key.
   // We use "default" for the main panel.
   const [layout, setLayout] = useState("default");
   const [previousLayout, setPreviousLayout] = useState(null);
   const [menuWidth, setMenuWidth] = useState(DEFAULT_WIDTH);
-  const [menuHeight, setMenuHeight] = useState(DEFAULT_HEIGHT);
 
   const contentRef = useRef(null);
 
@@ -83,7 +87,6 @@ export default function MainMenu({
       // When reopening, reset dimensions and force profile picture visibility.
       setLayout("default");
       setMenuWidth(DEFAULT_WIDTH);
-      setMenuHeight(DEFAULT_HEIGHT);
       setProfilePictureVisibility(true);
     }
   }, [showMenu, setProfilePictureVisibility]);
@@ -98,28 +101,10 @@ export default function MainMenu({
     }
 
     // Retrieve dimensions from LIBELLES (if defined) or use defaults.
-    const libelle = LIBELLES.find((item) => item.name === layout) || { width: DEFAULT_WIDTH, height: DEFAULT_HEIGHT };
+    const libelle = LIBELLES.find((item) => item.name === layout) || { width: DEFAULT_WIDTH };
     let newWidth = libelle.width;
-    let newHeight = libelle.height;
-
-    // Special case: if the panel is "settings", force a specific height.
-    if (layout === "settings") {
-      newHeight = "66.5vh";
-    }
-
-    // Adjust the height if the viewport is larger than 1080px.
-    if (typeof window !== "undefined") {
-      const screenHeight = window.innerHeight;
-      if (screenHeight > 1080) {
-        const vhValue = parseFloat(newHeight.replace("vh", ""));
-        // Scale down using a ratio (1080 / screenHeight) and add an offset (here, 15).
-        const scaledVh = (layout !== "settings") ? (vhValue * (1080 / screenHeight) + 3) : (vhValue * (1080 / screenHeight));
-        newHeight = `${scaledVh}vh`;
-      }
-    }
 
     setMenuWidth(newWidth);
-    setMenuHeight(newHeight);
     setPreviousLayout(null);
   }, [layout, setProfilePictureVisibility]);
 
@@ -136,7 +121,7 @@ export default function MainMenu({
       notBorder
       style={{
         width: showMenu ? menuWidth : "0",
-        height: showMenu ? menuHeight : "0",
+        maxHeight: showMenu ? "9999px" : "0", // Use maxHeight for smooth animation
       }}
     >
       <Header
@@ -153,10 +138,11 @@ export default function MainMenu({
         libelles={LIBELLES}
       />
       <div
-        className="transition-all duration-300 ease-in-out overflow-hidden"
+        ref={contentRef}
+        className="a overflow-hidden"
         style={{ padding: "25px 0" }}
       >
-        <div ref={contentRef} className="relative">
+        <div className="relative">
           {PreviousLayoutComponent && (
             <PreviousLayoutComponent
               transitionStyles=""

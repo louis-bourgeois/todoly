@@ -82,7 +82,7 @@ const PricingCard = ({
           )}
           {isAnnual && annualPrice < price * 12 && (
             <p className="text-sm text-text leading-relaxed mt-2">
-              billed annually (${annualPrice}/year - save ${monthlySavings})
+              Billed annually (${annualPrice}/year - save ${monthlySavings})
               {title === "Enterprise" && (
                 <span className="block">per member</span>
               )}
@@ -268,6 +268,7 @@ const PricingSection = () => {
       >
         Choose Your Plan
       </motion.h2>
+      <p className="text-white text-center  mb-16">This pricing section is a conceptual section, this app is a student projet, free to use.</p>
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         {plans.map((plan, index) => (
           <PricingCard key={index} {...plan} index={index} />

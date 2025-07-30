@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import Circle from "../Circle";
 import DropdownMenu from "../DropdownMenu";
@@ -6,6 +7,7 @@ import SectionTitle from "../SectionTitle";
 
 export default function Languages({ transitionStyles }) {
   const { updatePreference, preferences } = useUserPreferences();
+  const { t, i18n } = useTranslation();
   const [settings, setSettings] = useState({
     language: preferences?.Language,
     tz: preferences?.TZ,
@@ -29,6 +31,9 @@ export default function Languages({ transitionStyles }) {
     }));
     try {
       await updatePreference({ key, value });
+      if (key === "Language") {
+        i18n.changeLanguage(value.toLowerCase());
+      }
       console.log("Mise à jour réussie:", key, value);
     } catch (error) {
       console.error("Erreur lors de la mise à jour:", error);
@@ -49,17 +54,17 @@ export default function Languages({ transitionStyles }) {
     <div
       className={`flex flex-col w-full px-[4%] mt-[4%] gap-[1.75vh] justify-start ${transitionStyles}`}
     >
-      <SectionTitle>Language</SectionTitle>
+      <SectionTitle>{t("Language")}</SectionTitle>
       <DropdownMenu
-        title={settings.language}
-        onClick={(newLanguage) => updateSetting("Language", newLanguage)}
+        title={t(settings.language)}
+        onSelect={(newLanguage) => updateSetting("Language", newLanguage)}
         options={["English", "French"]}
       />
-      <SectionTitle>Time Zone</SectionTitle>
+      <SectionTitle>{t("Time Zone")}</SectionTitle>
       <DropdownMenu
         title={settings.tz}
-        onClick={(newTz) => updateSetting("TZ", newTz)}
-        options={["Europe/Paris", "America/New York"]}
+        onSelect={(newTz) => updateSetting("TZ", newTz)}
+        options={["Europe/Paris", "America/New_York"]}
       />
       <div className="flex-col flex justify-start gap-[0.5vw] mb-5">
         <div className="flex justify-start w-full items-center gap-[2.5vw]">
@@ -68,7 +73,7 @@ export default function Languages({ transitionStyles }) {
             onClick={toggleDateFormat}
             isSelected={settings.dateFormat === "12h"}
           />
-          <h2 className="text-dominant font-bold">12h Date Format</h2>
+          <h2 className="text-dominant font-bold">{t("12h Date Format")}</h2>
         </div>
         <div className="flex justify-start w-full items-center gap-[2.5vw]">
           <Circle
@@ -76,7 +81,9 @@ export default function Languages({ transitionStyles }) {
             onClick={toggleWeekStart}
             isSelected={settings.weekStartOn === "Sunday"}
           />
-          <h2 className="text-dominant font-bold">Week Starts on Sunday</h2>
+          <h2 className="text-dominant font-bold">
+            {t("Week Starts on Sunday")}
+          </h2>
         </div>
       </div>
     </div>

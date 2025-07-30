@@ -5,29 +5,24 @@ import { storage } from "../../../../../../firebaseClientConfig"; // ajustez le 
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import imageCompression from "browser-image-compression";
 
-// Fonction utilitaire pour recadrer l'image en carré
+// La fonction utilitaire pour recadrer l'image en carré reste inchangée.
 async function cropToSquare(file) {
   try {
-    // Crée un ImageBitmap à partir du fichier
     const imageBitmap = await createImageBitmap(file);
     const minSize = Math.min(imageBitmap.width, imageBitmap.height);
     const canvas = document.createElement("canvas");
     canvas.width = minSize;
     canvas.height = minSize;
     const ctx = canvas.getContext("2d");
-
-    // Calculer les offsets pour centrer le recadrage
     const offsetX = (imageBitmap.width - minSize) / 2;
     const offsetY = (imageBitmap.height - minSize) / 2;
     ctx.drawImage(imageBitmap, offsetX, offsetY, minSize, minSize, 0, 0, minSize, minSize);
-
-    // Retourner un nouveau File à partir du canvas
     return await new Promise((resolve, reject) => {
       canvas.toBlob((blob) => {
         if (blob) {
           resolve(new File([blob], file.name, { type: file.type }));
         } else {
-          reject(new Error("Erreur lors du recadrage de l'image."));
+          reject(new Error("Erreur lors de la conversion du canvas en blob."));
         }
       }, file.type);
     });
@@ -44,11 +39,9 @@ const ProfilePhoto = ({ size = 150 }) => {
   const [imageLoaded, setImageLoaded] = useState(false);
   const [previewUrl, setPreviewUrl] = useState(null);
 
-  // Limite de taille en octets (ici 2 MB)
   const MAX_FILE_SIZE = 2 * 1024 * 1024;
 
   useEffect(() => {
-    // Si l'utilisateur a déjà une image (Firebase URL), l'utiliser comme aperçu
     if (user?.image_url) {
       setPreviewUrl(user.image_url);
       setImageLoaded(true);
@@ -59,7 +52,6 @@ const ProfilePhoto = ({ size = 150 }) => {
     let file = event.target.files[0];
     if (!file) return;
   
-    // Créer un aperçu local pour affichage immédiat
     const localPreview = URL.createObjectURL(file);
     setPreviewUrl(localPreview);
     setIsUploading(true);
@@ -67,37 +59,40 @@ const ProfilePhoto = ({ size = 150 }) => {
     setImageLoaded(false);
   
     try {
-      // Recadrer l'image en carré
+      // AJOUTÉ : Vérification cruciale de la présence du username.
+      if (!user?.username) {
+        console.error("Username non trouvé. L'upload est annulé.");
+        alert("Une erreur est survenue. Le nom d'utilisateur est manquant.");
+        setIsUploading(false);
+        return;
+      }
+
       file = await cropToSquare(file);
   
-      // Compression si nécessaire
       if (file.size > MAX_FILE_SIZE) {
         const options = {
           maxSizeMB: MAX_FILE_SIZE / (1024 * 1024),
           useWebWorker: true,
-          onProgress: (p) => {
-            setUploadProgress(p);
-          },
+          onProgress: (p) => setUploadProgress(p),
         };
         file = await imageCompression(file, options);
       }
 
-      // Suppression de l'ancienne image sur Firebase (si elle existe)
       if (user?.image_url) {
         const oldImageRef = ref(storage, user.image_url);
         try {
           await deleteObject(oldImageRef);
         } catch (error) {
-          console.log("Erreur lors de la suppression de l'ancienne image", error);
+          console.log("Info: L'ancienne image n'a pas pu être supprimée.", error);
         }
       }
 
       const timestamp = Date.now();
       const fileName = `${timestamp}_${file.name}`;
-      // Utilisation de l'email pour le chemin (vérifiez bien vos règles Firebase)
-      const storageRef = ref(storage, `profile_pictures/${user?.email}/${fileName}`);
+      
+      // MODIFIÉ : Utilisation de user.username pour le chemin de stockage.
+      const storageRef = ref(storage, `profile_pictures/${user.username}/${fileName}`);
 
-      // Upload avec suivi de la progression
       const uploadTask = uploadBytesResumable(storageRef, file);
 
       uploadTask.on(
@@ -112,31 +107,31 @@ const ProfilePhoto = ({ size = 150 }) => {
         },
         async () => {
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-          console.log("URL de téléchargement : ", downloadURL);
+          console.log("Fichier disponible à l'URL : ", downloadURL);
           
-          // Appel de la route pour mettre à jour la DB
           try {
+            // L'API a besoin d'un identifiant unique, l'email ou l'ID est parfait ici.
             await fetch("/api/profile/upload", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                user_email: user.email,
+                user_email: user.email, // On utilise l'email pour retrouver l'utilisateur dans la DB
                 image_url: downloadURL,
               }),
             });
           } catch (error) {
             console.error("Erreur lors de la mise à jour de la DB", error);
           }
-          // Mise à jour du contexte utilisateur et de l'aperçu
+          
           setUser({ ...user, image_url: downloadURL });
           setPreviewUrl(downloadURL);
           setIsUploading(false);
         }
       );
     }  catch (error) {
-      console.error("Erreur lors du recadrage/upload de l'image", error);
+      console.error("Erreur lors du traitement de l'image :", error);
       setIsUploading(false);
     }
   };
@@ -147,8 +142,11 @@ const ProfilePhoto = ({ size = 150 }) => {
       style={{ width: `${size}px`, height: `${size}px` }}
       onClick={() => document.getElementById("photo-upload").click()}
     >
-      {/* Affichage de l'image (aperçu) avec effet de fondu */}
-      {previewUrl && (
+      {/* 
+        Affichage de l'image (aperçu ou image existante)
+        S'il n'y a pas de previewUrl, on affiche un fond gris pour matérialiser l'emplacement.
+      */}
+      {previewUrl ? (
         <div
           className={`w-full h-full transition-opacity duration-300 ${
             imageLoaded ? "opacity-100" : "opacity-0"
@@ -164,12 +162,37 @@ const ProfilePhoto = ({ size = 150 }) => {
             onLoadingComplete={() => setImageLoaded(true)}
           />
         </div>
+      ) : (
+        // AJOUT : Fond gris si aucune image n'est présente
+        <div className="w-full h-full bg-gray-200 rounded-full"></div>
       )}
 
-      {/* Overlay de progression pendant l'upload */}
+      {/* 
+        Overlay de progression pendant l'upload. Il a la priorité sur tout le reste.
+      */}
       {isUploading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-full">
           <span className="text-white text-xl font-bold">{Math.round(uploadProgress)}%</span>
+        </div>
+      )}
+
+      {/*
+        NOUVEAU : Overlay avec l'icône qui apparaît au survol (hover)
+        Cet overlay n'apparaîtra pas si un upload est déjà en cours.
+      */}
+      {!isUploading && (
+        <div
+          className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 rounded-full"
+        >
+          {/* L'icône SVG elle-même. Elle est invisible par défaut et apparaît au survol grâce à group-hover */}
+          <svg
+            className="text-white h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+          >
+            <path d="M21.658 5.625h-3.931V4.25a.75.75 0 0 0-.75-.75h-7.95a.75.75 0 0 0-.75.75v1.375H4.342a1.25 1.25 0 0 0-1.25 1.25v11.25a1.25 1.25 0 0 0 1.25 1.25h17.316a1.25 1.25 0 0 0 1.25-1.25V6.875a1.25 1.25 0 0 0-1.25-1.25Zm-1.875 9.375a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" />
+          </svg>
         </div>
       )}
 
@@ -179,9 +202,9 @@ const ProfilePhoto = ({ size = 150 }) => {
         accept="image/*"
         className="hidden"
         onChange={handleFileChange}
+        disabled={isUploading}
       />
     </div>
   );
 };
-
 export default ProfilePhoto;

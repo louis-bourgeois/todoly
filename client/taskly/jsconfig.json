@@ -1,7 +1,17 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "moduleResolution": "node",
     "paths": {
-      "@/*": ["./app/*"],
+      "@/models/*": ["../../server/models/*"],
+      "@/utils/*": ["../../server/utils/*"],
+      "@/config/*": ["../../server/config/*"],
+      "@/lib/*": ["./lib/*"],
+      "@/components/*": ["./components/*"],
+      "@/styles/*": ["./styles/*"],
+      "@/app/*": ["./app/*"],
+      "@/context/*": ["./context/*"],
+      "@/hooks/*": ["./hooks/*"],
       "ui/*": ["./app/ui/*"],
       "mobile/*": ["./app/ui/_mobile"]
     }

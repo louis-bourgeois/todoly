@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useError } from "../../../../../context/ErrorContext"; // Import useError
 import { useMenu } from "../../../../../context/MenuContext";
 import { useSection } from "../../../../../context/SectionContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
@@ -20,10 +21,13 @@ export default function WorkspaceForm({
   const { createWorkspace, updateWorkspace, setActiveWorkspace, workspaces } =
     useWorkspace();
   const { sections } = useSection();
+  const { handleError } = useError(); // Use the error hook
   const [workspaceSections, setWorkspaceSections] = useState([]);
   const [collaborators, setCollaborators] = useState([]);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [nameValue, setNameValue] = useState("");
+
+  const isNameValid = nameValue.trim() !== "";
 
   const handleElementTypeChange = (newType, from = undefined) => {
     if (from) {
@@ -41,18 +45,32 @@ export default function WorkspaceForm({
   };
 
   const handleWorkspaceAction = async () => {
-    try {
+    console.log("handleWorkspaceAction called")
+    if (!isNameValid) {
+      // Afficher l'erreur directement via le handleError pour la cohérence
+      handleError({
+        response: {
+          data: {
+            message: "Workspace name must be a non-empty string.",
+            title: "Invalid Input"
+          }
+        }
+      });
+      return;
+    }
+
+    try { 
       const workspaceData = {
-        name: nameValue,
+        name: nameValue.trim(),
         linked_sections: workspaceSections,
         collaborators: collaborators,
       };
 
       if (id) {
-        console.log("okee");
+        console.log("Updating workspace with ID:", id);
         await updateWorkspace(id, workspaceData);
       } else {
-        console.log("ok");
+        console.log("Creating new workspace:", workspaceData)
         await createWorkspace(workspaceData);
       }
 
@@ -63,24 +81,22 @@ export default function WorkspaceForm({
       }
       setCallback("");
     } catch (error) {
-      console.error(error);
+      // C'est ici que la magie opère !
+      handleError(error);
     }
   };
+
   const resetWorkspaceForm = useCallback(() => {
     setActiveWorkspace("");
     setWorkspaceSections([]);
     setCollaborators([]);
     setNameValue("");
-  }, [
-    setActiveWorkspace,
-    setWorkspaceSections,
-    setCollaborators,
-    setNameValue,
-  ]);
+  }, [setActiveWorkspace]);
 
   const transitionStyles = `transition-all duration-300 ease-in-out ${
     isTransitioning || !showContent ? "opacity-0" : "opacity-100"
   }`;
+
   useEffect(() => {
     if (!isTaskMenuOpen) {
       resetWorkspaceForm();
@@ -94,13 +110,8 @@ export default function WorkspaceForm({
     if (!foundWorkspace) return;
 
     const uniqueSectionIds = [
-      ...new Set(
-        sections.filter((s) => {
-          return s.workspace_id === id;
-        })
-      ),
+      ...new Set(sections.filter((s) => s.workspace_id === id)),
     ];
-    console.log("Found Workspace:", foundWorkspace);
     setCollaborators(foundWorkspace.users || []);
     setNameValue(foundWorkspace.name);
     setWorkspaceSections(uniqueSectionIds);
@@ -115,14 +126,14 @@ export default function WorkspaceForm({
           handleElementTypeChange={handleElementTypeChange}
           elementType={elementType}
         />
-        <div className="flex-grow flex justify-center items-center">
+        <div className="flex-grow flex flex-col justify-center items-center">
           <input
             type="text"
             onChange={(e) => setNameValue(e.target.value)}
             value={nameValue}
             disabled={!visibility}
             placeholder={id ? "Edit Workspace" : "New Workspace"}
-            className="mb-4 w-full text-center placeholder:text-gray placeholder:font-light placeholder:text-5xl text-text text-5xl bg-transparent focus:outline-none"
+            className="w-full text-center placeholder:text-gray placeholder:font-light placeholder:text-5xl text-text text-5xl bg-transparent focus:outline-none"
           />
         </div>
       </div>
@@ -139,7 +150,8 @@ export default function WorkspaceForm({
           />
           <button
             onClick={handleWorkspaceAction}
-            className="addMenuElement text-text bg-main_menu_bg gradient-border h-[15%] rounded-[20px] text-2.5xl hover:scale-95 active:scale-100 transition-transform duration-100 ease-in"
+            disabled={!isNameValid}
+            className="addMenuElement text-text bg-main_menu_bg gradient-border h-[15%] rounded-[20px] text-2.5xl hover:scale-95 active:scale-100 transition-transform duration-100 ease-in disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {id ? "Update" : "Create"}
           </button>

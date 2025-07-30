@@ -1,0 +1,11 @@
+WorkspaceContext.js:133 
+ DELETE http://localhost:3000/api/workspaces/ce5d28f6-ef2c-499e-82c0-90d5060d47a8 401 (Unauthorized)
+eval	@	WorkspaceContext.js:133
+handleDeleteWorkspace	@	page.jsx:48
+onClick	@	page.jsx:107
+WorkspaceContext.js:142 Error deleting workspace: 
+AxiosError {message: 'Request failed with status code 401', name: 'AxiosError', code: 'ERR_BAD_REQUEST', config: {…}, request: XMLHttpRequest, …}
+eval	@	WorkspaceContext.js:142
+await in eval		
+handleDeleteWorkspace	@	page.jsx:48
+onClick	@	page.jsx:107

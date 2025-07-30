@@ -1,5 +1,5 @@
 
-import CTA from "@/ui/landing_page/CTA";
+import CTA from "@/app/ui/landing_page/CTA";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useUser } from "../../../../../context/UserContext";

@@ -32,7 +32,8 @@ export default function CollaboratorSelectContainer({
     <div className="addMenuElement p-2 gradient-border bg-main_menu_bg h-[80%] rounded-[20px] flex flex-col justify-between items-center">
       <h1 className="text-3xl font-bold text-text">Collaborators</h1>
       <div className="w-full h-[50%]  flex flex-col items-center justify-center p-5">
-        <Slider {...settings} className="w-full">
+        <p></p>
+        {/* <Slider {...settings} className="w-full">
           {collaborators.map((collaborator, index) => {
             console.log(collaborator);
             return (
@@ -65,7 +66,7 @@ export default function CollaboratorSelectContainer({
               </div>
             );
           })}
-        </Slider>
+        </Slider> */}
       </div>
       <div className="g addMenuElement bg-main_menu_bg  rounded-full w-[80%] flex justify-around items-center p-2">
         <svg
@@ -126,7 +127,7 @@ export default function CollaboratorSelectContainer({
           value={inputValue}
           name="collaborators"
           className="placeholder:text-gray w-full text-center focus:outline-none text-text bg-transparent"
-          placeholder="Type username"
+          placeholder="Coming soon!"
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => {
             handleConfirm(e.key);
@@ -137,7 +138,7 @@ export default function CollaboratorSelectContainer({
         />
       </div>
       <button className="h-[10%] hover:text-dominant text-text transition transition-color ease-in-out duration-300">
-        Copy link
+        Copy link (coming soon!)
       </button>
     </div>
   );

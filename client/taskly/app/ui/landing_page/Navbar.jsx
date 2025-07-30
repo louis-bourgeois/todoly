@@ -7,16 +7,16 @@ const Navbar = ({ logo: Logo }) => {
 
   return (
     <nav className="flex justify-between items-center py-4 px-4 sm:px-[9vw] w-full">
-      <div className="flex items-center gap-2">
+      <a href="/" className="flex items-center gap-2">
         <div className="lg:w-10 lg:h-10 w-7 h-7 flex items-center justify-center">
           <Logo className="w-full h-full" />
         </div>
         <span className="font-bold font-smooth antialiased text-m lg:text-xl text-text">
           Todo<span className="text-dominant">ly</span>
         </span>
-      </div>
+      </a>
       <div className="flex items-center sm:gap-6">
-        <button onClick={() => scrollToSection("pricing")}>
+        <button onClick={() => scrollToSection("pricing")}>          
           <CTA
             title="Pricing"
             type="ghost"

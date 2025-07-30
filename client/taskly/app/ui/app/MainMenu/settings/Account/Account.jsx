@@ -1,4 +1,5 @@
-import CTA from "@/ui/landing_page/CTA";
+import { useState } from "react"; // 1. Importer useState
+import CTA from "@/app/ui/landing_page/CTA";
 import { useAuth } from "../../../../../../context/AuthContext";
 import { useUser } from "../../../../../../context/UserContext";
 import ProfilePhoto from "./ProfilePhoto";
@@ -6,10 +7,20 @@ import ProfilePhoto from "./ProfilePhoto";
 export default function Account({ transitionStyles, setLayout }) {
   const { user } = useUser();
   const { logout } = useAuth();
+
+  // 2. Créer un état pour suivre le survol du bouton "premium"
+  const [isPremiumHovered, setIsPremiumHovered] = useState(false);
+
+  // Une fonction pour le bouton premium (au lieu de `logout`)
+  const handlePremiumClick = () => {
+    alert("La fonctionnalité Premium arrive bientôt !");
+  };
+
   return (
     <div className={`flex justify-between w-full ${transitionStyles}`}>
       <div className="flex flex-col justify-center items-center w-1/2 gap-[2.5vh]">
-        <ProfilePhoto />
+        {/* Le composant ProfilePhoto n'est pas modifié */}
+        <ProfilePhoto /> 
         <div className="mr-5 flex flex-col items-center  gap-[1vh] w-full">
           <CTA onClick={logout} type="secondary" title="Sign out"></CTA>
         </div>
@@ -24,7 +35,9 @@ export default function Account({ transitionStyles, setLayout }) {
             viewBox="0 0 24 24"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"
+            onClick={() => setLayout("Data")}
           >
+            {/* ... le contenu de votre SVG reste identique ... */}
             <g id="SVGRepo_bgCarrier" strokeWidth="0"></g>
             <g
               id="SVGRepo_tracerCarrier"
@@ -44,21 +57,29 @@ export default function Account({ transitionStyles, setLayout }) {
                 d="M11 4H6C4.93913 4 3.92178 4.42142 3.17163 5.17157C2.42149 5.92172 2 6.93913 2 8V18C2 19.0609 2.42149 20.0783 3.17163 20.8284C3.92178 21.5786 4.93913 22 6 22H17C19.21 22 20 20.2 20 18V13"
                 stroke="#007AFF"
                 strokeWidth="1.5"
-                stroke-linecap="round"
+                strokeLinecap="round"
                 strokeLinejoin="round"
               ></path>{" "}
             </g>
           </svg>
         </div>
 
-        <div className="mr-5 mt-[20%] flex flex-col items-center  gap-[1vh] w-full">
-          <CTA
-            onClick={logout}
-            type="primary"
-            title="Go premium"
-            className="p-3"
-            disabled={true}
-          />
+        <div className="mr-5 mt-[20%] flex flex-col items-center gap-[1vh] w-full">
+          {/* 3. Envelopper le CTA dans un div pour capturer les événements de la souris */}
+          <div
+            onMouseEnter={() => setIsPremiumHovered(true)}
+            onMouseLeave={() => setIsPremiumHovered(false)}
+            className="w-full flex flex-col items-center" // Assurez-vous que le div prend toute la largeur
+          >
+            <CTA
+              onClick={handlePremiumClick} // J'ai changé ceci pour ne pas déconnecter l'utilisateur
+              type="primary"
+              // 4. Changer le titre et ajouter les classes de style dynamiquement
+              title={isPremiumHovered ? "It is free !" : "Go premium"}
+              className="p-3 transition-all duration-300 hover:brightness-90"
+              disabled={true}
+            />
+          </div>
         </div>
       </div>
     </div>

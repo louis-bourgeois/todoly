@@ -1,6 +1,6 @@
 "use client";
-import Header from "@/ui/_mobile/app/profile/Header";
-import SettingsScroll from "@/ui/_mobile/app/profile/SettingsScroll";
+import Header from "../../ui/_mobile/app/profile/Header";
+import SettingsScroll from "../../ui/_mobile/app/profile/SettingsScroll";
 import { redirect } from "next/navigation";
 import { useScreen } from "../../../context/ScreenContext";
 

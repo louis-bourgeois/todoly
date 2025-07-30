@@ -1,10 +1,10 @@
 "use client";
 
-import DateHeader from "@/ui/app/currently/DateHeader";
-import SectionContainer from "@/ui/app/currently/SectionContainer";
-import SlideNav from "@/ui/app/currently/SlideNav";
-import SlickCarousel from "@/ui/app/SlickCarousel";
-import Slide from "@/ui/app/Slide";
+import DateHeader from "../../ui/app/currently/DateHeader";
+import SectionContainer from "../../ui/app/currently/SectionContainer";
+import SlideNav from "../../ui/app/currently/SlideNav";
+import SlickCarousel from "../../ui/app/SlickCarousel";
+import Slide from "../../ui/app/Slide";
 import { useCallback, useState } from "react";
 import { useMenu } from "../../../context/MenuContext";
 import { useScreen } from "../../../context/ScreenContext";
@@ -47,7 +47,7 @@ export default function Page() {
             <SlideNav>
               <DateHeader
                 index={index}
-                onDateChange={(date) => handleDateChange(index, date)}
+                onDateChange={handleDateChange}
               />
             </SlideNav>
             <SectionContainer date={dates[index]} />

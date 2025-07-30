@@ -133,6 +133,7 @@ export default function FormMenu({
               router.push("/app/currently");
             }
           } catch (error) {
+            console.log(error)
             handleError(error);
           }
         }
@@ -264,12 +265,12 @@ export default function FormMenu({
                 className="flex-grow text-xs md:text-sm text-text italic cursor-pointer"
               >
                 I have read and accepted the{" "}
-                <Link href="/legal/conditions" passHref legacyBehavior>
-                  <a className="custom-color-anchor">conditions</a>
+                <Link href="/terms_of_use" passHref legacyBehavior>
+                  <span className="text-blue-500">terms of use</span>
                 </Link>{" "}
                 and{" "}
-                <Link href="/legal/terms" passHref legacyBehavior>
-                  <a className="custom-color-anchor">terms of use</a>
+                <Link href="/legal_notice" passHref legacyBehavior>
+                  <span className="text-blue-500">legal notice</span>
                 </Link>
                 .
               </label>

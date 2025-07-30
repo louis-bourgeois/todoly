@@ -57,7 +57,7 @@ export default function WorkspaceSelect({
 
   return (
     <TaskMenuSectionContainer
-      othersStyles="h-[80%] flex flex-col justify-between"
+      othersStyles="h-[50%] flex flex-col justify-between"
       moreRoundedCorners="tr"
     >
       <h2 className="text-2xl font-bold text-text p-2">Workspace</h2>
@@ -93,7 +93,7 @@ export default function WorkspaceSelect({
         </div>
         <div
           ref={menuRef}
-          className={`max-h-[108px]  absolute top-full mt-2 left-0 bg-primary shadow-lg rounded-lg z-50 w-full transition-all duration-300 ease-in-out  ${
+          className={`max-h-[108px]  absolute top-full mt-2 left-0 bg-primary shadow-lg rounded-[25px] z-50 w-full transition-all duration-300 ease-in-out  ${
             menuOpen ? " opacity-100 visible" : "max-h-0 opacity-0 invisible"
           } border`}
         >

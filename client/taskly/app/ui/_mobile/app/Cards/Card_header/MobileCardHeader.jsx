@@ -1,4 +1,5 @@
-import { addDays, format } from "date-fns";
+import { useFormattedDate } from "@/app/utils/time";
+import { addDays } from "date-fns";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useMenu } from "../../../../../../context/MenuContext";
 import { useWorkspace } from "../../../../../../context/WorkspaceContext";
@@ -11,6 +12,7 @@ const truncateTitle = (title, maxLength = 15) => {
 };
 
 const MobileCardHeader = ({ index = 0, workspace = null }) => {
+  const { formatADate } = useFormattedDate();
   const { cardType, setIsMobileViewsMenuOpen, setCardType } = useMenu();
   const [currentTime, setCurrentTime] = useState(new Date());
   const { currentWorkspace, workspaces, setCurrentWorkspace, deleteWorkspace } =
@@ -29,13 +31,13 @@ const MobileCardHeader = ({ index = 0, workspace = null }) => {
     const futureDate = addDays(today, index);
     const dayLabel =
       index === 0 ? "Today" : index === 1 ? "Tomorrow" : undefined;
-    const formattedDate = format(futureDate, "EEEE");
+    const formattedDate = formatADate(futureDate, "EEEE");
     return { dayLabel, formattedDate };
-  }, [index]);
+  }, [index, formatADate]);
 
   const formattedTime = useMemo(() => {
-    return format(currentTime, "HH:mm");
-  }, [currentTime]);
+    return formatADate(currentTime, "HH:mm");
+  }, [currentTime, formatADate]);
 
   const handleCurrentWorkspaceDropdownClick = useCallback(
     (workspaceId) => {

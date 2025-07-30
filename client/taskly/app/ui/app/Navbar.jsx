@@ -159,6 +159,7 @@ export default function Navbar() {
                 <span className="bg-gradient-2 bg-clip-text text-transparent inline-block">
                   {name}
                 </span>
+                <span className="text-text">.</span>
               </>
             ) : (
               <span className="text-text">{preferences.Home_Page_Title}</span>
@@ -169,7 +170,7 @@ export default function Navbar() {
           <NavButton
             styles="border border-dominant rounded-full shadow-2xl bg-primary text-text"
             onClick={toggleSearchMenu}
-            disabled={true} // i gotta turn this off when search will be ready
+            disabled={false} 
           >
             <svg
               xmlns="http://www.w3.org/2000/svg"

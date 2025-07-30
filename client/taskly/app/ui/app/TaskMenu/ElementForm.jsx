@@ -1,3 +1,4 @@
+import { useFormattedDate } from "../../../utils/time";
 import { useCallback } from "react";
 import { useUserPreferences } from "../../../../context/UserPreferencesContext";
 import DatePicker from "../DatePicker/DatePicker";
@@ -12,6 +13,7 @@ import TaskMenuSectionContainer from "./TaskMenuSectionContainer";
 import TitleInput from "./TitleInput";
 
 export default function ElementForm({ transitionStyles, id, visibility }) {
+  const { formatADate } = useFormattedDate();
   const { preferences } = useUserPreferences();
   const { sections } = useSection();
   const { setActiveTask, addTask, modifyTask, deleteTask, tasks } = useTask();
@@ -182,7 +184,7 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
           >
             <DatePicker
               onDateSelect={handleDateSelect}
-              selectedDate={dueDate ? format(dueDate, "yyyy-MM-dd") : undefined}
+              selectedDate={dueDate ? formatADate(dueDate, "yyyy-MM-dd") : undefined}
               startOfWeekOnSunday={preferences.Week_Starts_On}
             />
           </TaskMenuSectionContainer>

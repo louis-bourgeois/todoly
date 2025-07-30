@@ -1,5 +1,5 @@
-import AutoResizeInput from "@/ui/_mobile/app/AutoResizeInput";
-import Task from "@/ui/app/Task/Task";
+import AutoResizeInput from "../../_mobile/app/AutoResizeInput";
+import Task from "../Task/Task";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useError } from "../../../../context/ErrorContext";
 import { useMenu } from "../../../../context/MenuContext";

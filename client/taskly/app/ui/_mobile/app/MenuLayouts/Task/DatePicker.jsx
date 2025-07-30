@@ -1,30 +1,25 @@
+import { useFormattedDate } from "@/app/utils/time";
 import { useEffect, useState } from "react";
 
 const DatePicker = ({ dueDate, handleDateChange }) => {
+  const { formatADate } = useFormattedDate();
   const [displayValue, setDisplayValue] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     if (dueDate) {
       const date = new Date(dueDate);
-      setDisplayValue(formatDate(date));
+      setDisplayValue(formatADate(date));
     } else {
       setDisplayValue("");
     }
-  }, [dueDate]);
-
-  const formatDate = (date) => {
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${month}/${day}/${year}`;
-  };
+  }, [dueDate, formatADate]);
 
   const handleInputChange = (e) => {
     handleDateChange(e);
     // Update display value immediately when date is changed
     const date = new Date(e.target.value);
-    setDisplayValue(formatDate(date));
+    setDisplayValue(formatADate(date));
   };
 
   return (

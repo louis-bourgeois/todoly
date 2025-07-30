@@ -1,9 +1,9 @@
 "use client";
 
-import { format } from "date-fns";
 import { useCallback, useEffect, useState } from "react";
 import { useMenu } from "../../../../../context/MenuContext";
 import { useSection } from "../../../../../context/SectionContext";
+import { useFormattedDate } from "@/app/utils/time";
 import { useTask } from "../../../../../context/TaskContext";
 import { useUserPreferences } from "../../../../../context/UserPreferencesContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
@@ -17,6 +17,8 @@ import ElementPicker from "./ElementPicker";
 import SectionSelection from "./SectionSelection";
 import TagSelect from "./TagSelect";
 import WorkspaceSelect from "./WorkspaceSelect";
+import { RecurrenceSelection } from "./RecurrenceSelection";
+
 
 export default function TaskForm({
   transitionStyles,
@@ -25,6 +27,7 @@ export default function TaskForm({
   elementType,
   handleElementTypeChange,
 }) {
+  const { formatADate } = useFormattedDate();
   const { isTaskMenuOpen, toggleTaskMenu } = useMenu();
   const { currentWorkspace } = useWorkspace();
   const { setActiveTask, addTask, modifyTask, deleteTask, tasks } = useTask();
@@ -32,6 +35,7 @@ export default function TaskForm({
   const { sections } = useSection();
 
   const [sectionSelectMenuOpen, setSectionSelectMenuOpen] = useState(false);
+  const [recurrenceSelectMenuOpen, setRecurrenceSelectMenuOpen] = useState(false);
   const [workspaceSelectMenuOpen, setWorkspaceSelectMenuOpen] = useState(false);
   const [elementPickerMenuOpen, setElementPickerMenuOpen] = useState(false);
 
@@ -149,7 +153,7 @@ export default function TaskForm({
     (date) => {
       if (
         dueDate &&
-        format(dueDate, "yyyy-MM-dd") === format(date, "yyyy-MM-dd")
+        formatADate(dueDate, "yyyy-MM-dd") === formatADate(date, "yyyy-MM-dd")
       ) {
         setDueDate(undefined);
       } else {
@@ -162,7 +166,7 @@ export default function TaskForm({
         modifyTask(updatedTask, "post");
       }
     },
-    [dueDate, task, id, modifyTask]
+    [dueDate, task, id, modifyTask, formatADate]
   );
 
   const createTask = useCallback(async () => {
@@ -213,7 +217,7 @@ export default function TaskForm({
     (newSection, newSectionName) => {
       setLinkedSection(newSection); // pas cela
       setLinkedSectionName(newSectionName); // pas cela
-      updatePreference({ key: "Last_Section", value: newSection }); // cela fait bug
+      updatePreference({ key: "Last_Section", value: newSection }); 
       if (id) {
         const updatedTask = { ...task, linked_section: newSection };
         setTask(updatedTask);
@@ -268,7 +272,7 @@ export default function TaskForm({
           >
             <DatePicker
               onDateSelect={handleDateSelect}
-              selectedDate={dueDate ? format(dueDate, "yyyy-MM-dd") : undefined}
+              selectedDate={dueDate ? formatADate(dueDate, "yyyy-MM-dd") : undefined}
               startOfWeekOnSunday={preferences.Week_Starts_On}
             />
           </TaskMenuSectionContainer>
@@ -281,6 +285,11 @@ export default function TaskForm({
               menuOpen={workspaceSelectMenuOpen}
               setMenuOpen={setWorkspaceSelectMenuOpen}
               taskWorkspace={taskWorkspace}
+            />
+            <RecurrenceSelection
+              setMenuOpen={setRecurrenceSelectMenuOpen}
+              menuOpen={recurrenceSelectMenuOpen}
+              handleRecurrenceChange={null}
             />
             <SectionSelection
               linked_section_name={linkedSectionName}

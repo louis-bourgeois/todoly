@@ -8,6 +8,7 @@ import {
   getUserData,
   getWorkspacesByUserId,
   removeUserFromWorkspace,
+  updateUser,
 } from "../controllers/userControllers.js";
 import { hashPassword } from "../middleware/pasword.js";
 const router = express.Router();
@@ -32,6 +33,7 @@ router.post("/login", (req, res, next) => {
     }
 
     if (!user) {
+
       return res
         .status(401)
         .json({ message: "Authentication failed", reason: info.message });
@@ -56,5 +58,7 @@ router.get("/workspaces", getWorkspacesByUserId);
 router.post("/:workspaceId/users/:userId", addUserToWorkspace);
 router.delete("/", deleteUser);
 router.delete("/:workspaceId/users/:userId", removeUserFromWorkspace);
+
+router.put("/", updateUser);
 
 export default router;

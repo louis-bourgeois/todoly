@@ -1,4 +1,4 @@
-import ProfilePhoto from "@/ui/app/MainMenu/settings/Account/ProfilePhoto";
+import ProfilePhoto from "@/app/ui/app/MainMenu/settings/Account/ProfilePhoto";
 import { useMemo } from "react";
 import { useUser } from "../../../../../context/UserContext";
 

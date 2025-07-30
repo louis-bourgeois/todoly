@@ -13,24 +13,39 @@ const Input = forwardRef(
       value,
       onChange,
       id,
-      visible,
+      visible, // La prop 'visible' est la clé ici
       required = false,
       disabled = false,
       "aria-describedby": ariaDescribedBy,
     },
     ref
   ) => {
-    const isPassword = name === "password" || name === "confirm_password";
+    // --- DÉBUT DE LA MODIFICATION ---
+
+    // On supprime la constante 'isPassword' qui était trop restrictive.
+    // La nouvelle logique se base directement sur la prop 'type'.
     const inputType = useMemo(() => {
-      if (isPassword) return visible ? "text" : "password";
+      // Si le composant est censé être un champ de mot de passe...
+      if (type === "password") {
+        // ...alors on bascule son type HTML entre 'text' et 'password'
+        // en fonction de l'état de visibilité parent.
+        return visible ? "text" : "password";
+      }
+      // Pour tous les autres types d'input (text, email, etc.), on retourne le type tel quel.
       return type;
-    }, [isPassword, visible, type]);
+    }, [type, visible]);
+
+    // --- FIN DE LA MODIFICATION ---
 
     const handleChange = (e) => {
       onChange?.(e);
     };
 
     const className = useMemo(() => {
+      // Le reste du composant n'a pas besoin de savoir si c'est un mot de passe ou non,
+      // on peut simplifier ici aussi.
+      const isPasswordField = type === "password";
+
       const baseClasses = `
         bg-transparent
         font-light
@@ -54,7 +69,7 @@ const Input = forwardRef(
       const conditionalClasses = `
         ${flexShrinkGrow ? "flex-grow flex-shrink" : ""}
         ${disabled ? "cursor-not-allowed opacity-50" : ""}
-        ${!isPassword ? "border border-secondary rounded-2xl" : ""}
+        ${!isPasswordField ? "border border-secondary rounded-2xl" : ""}
         ${autoDimensions ? "min-w-[300px]" : ""}
       `;
 
@@ -62,7 +77,7 @@ const Input = forwardRef(
     }, [
       flexShrinkGrow,
       disabled,
-      isPassword,
+      type, // On remplace isPassword par type
       autoDimensions,
       additionalStyles,
     ]);
@@ -73,7 +88,7 @@ const Input = forwardRef(
         id={id}
         value={value}
         name={name}
-        type={inputType}
+        type={inputType} // Utilise notre nouvelle logique
         autoComplete={autoComplete}
         placeholder={placeholder}
         className={`${className}`}

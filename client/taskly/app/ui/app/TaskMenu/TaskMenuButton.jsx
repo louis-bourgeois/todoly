@@ -1,4 +1,4 @@
-export default function TaskMenuButton({
+const TaskMenuButton = ({
   disabled = false,
   flex = true,
   children,
@@ -8,7 +8,7 @@ export default function TaskMenuButton({
   flexCol = false,
   othersStyles = "",
   onClick,
-}) {
+}) => {
   return (
     <button
       disabled={disabled}
@@ -27,3 +27,5 @@ export default function TaskMenuButton({
     </button>
   );
 }
+
+export default TaskMenuButton;

@@ -1,19 +1,42 @@
 import pool from "../config/dbConfig.js";
-import User from "./User.js";
 
 class Workspace {
   constructor(name) {
     this.name = name;
   }
+  
+  static async createInitialForUser(userId, client) {
+    const insertWorkspaceQuery =
+      "INSERT INTO workspace (name, is_deletable) VALUES ($1, $2) RETURNING id";
+    const workspaceResult = await client.query(insertWorkspaceQuery, [
+      "Personal",
+      false,
+    ]);
+    const workspaceId = workspaceResult.rows[0].id;
 
-  async save(userId, sections) {
+    const insertUserWorkspaceQuery =
+      "INSERT INTO user_workspaces (user_id, workspace_id) VALUES ($1, $2)";
+    await client.query(insertUserWorkspaceQuery, [userId, workspaceId]);
+
+    const insertDefaultSection =
+      "INSERT INTO section (name, user_id, workspace_id) VALUES ($1, $2, $3) RETURNING id";
+    const sectionResult = await client.query(insertDefaultSection, ["Other", userId, workspaceId]);
+    const defaultSectionId = sectionResult.rows[0].id;
+
+    return { workspaceId, defaultSectionId };
+  }
+  
+  async save(userId, sections, isDeletable = true) {
     const client = await pool.connect();
     try {
       await client.query("BEGIN");
 
       const insertWorkspaceQuery =
-        "INSERT INTO workspace (name) VALUES ($1) RETURNING id";
-      const { rows } = await client.query(insertWorkspaceQuery, [this.name]);
+        "INSERT INTO workspace (name, is_deletable) VALUES ($1, $2) RETURNING id";
+      const { rows } = await client.query(insertWorkspaceQuery, [
+        this.name,
+        isDeletable,
+      ]);
       const workspaceId = rows[0].id;
 
       const insertUserWorkspaceQuery =
@@ -28,7 +51,7 @@ class Workspace {
         workspaceId,
       ]);
 
-      if (sections) {
+      if (sections && sections.length > 0) {
         await Promise.all(
           sections.map(async (section) => {
             await client.query(
@@ -67,15 +90,15 @@ class Workspace {
 
   static async update(id, data) {
     const client = await pool.connect();
-
     try {
       await client.query("BEGIN");
 
-      // 1. Update workspace name
-      await client.query("UPDATE workspace SET name = $1 WHERE id = $2", [
-        data.name,
-        id,
-      ]);
+      if (data.name) {
+        await client.query("UPDATE workspace SET name = $1 WHERE id = $2", [
+          data.name,
+          id,
+        ]);
+      }
 
       // 2. Update collaborators
       const currentCollaborators = await client.query(
@@ -188,26 +211,37 @@ class Workspace {
         }
       }
 
-      await client.query("COMMIT");
+  await client.query("COMMIT");
     } catch (error) {
       await client.query("ROLLBACK");
-
       throw error;
     } finally {
       client.release();
     }
   }
-
+  
   static async findById(id) {
     const query = "SELECT * FROM workspace WHERE id = $1";
     const { rows } = await pool.query(query, [id]);
     return rows[0];
   }
+
+  static async findByNameAndUser(name, userId) {
+    const query = `
+      SELECT w.* 
+      FROM workspace w
+      JOIN user_workspaces uw ON w.id = uw.workspace_id
+      WHERE LOWER(w.name) = LOWER($1) AND uw.user_id = $2
+      LIMIT 1;
+    `;
+    const { rows } = await pool.query(query, [name, userId]);
+    return rows[0];
+  }
+  
   static async deleteById(workspaceId, userId) {
     const client = await pool.connect();
     try {
       await client.query("BEGIN");
-      // Check if the user has permission to delete the workspace
       const permissionCheck = await client.query(
         "SELECT * FROM user_workspaces WHERE workspace_id = $1 AND user_id = $2",
         [workspaceId, userId]
@@ -218,7 +252,6 @@ class Workspace {
         );
       }
 
-      // Perform deletions in parallel
       const deletions = [
         client.query("DELETE FROM task_workspaces WHERE workspace_id = $1", [
           workspaceId,
@@ -236,7 +269,6 @@ class Workspace {
 
       const results = await Promise.all(deletions);
 
-      // Check if the workspace was actually deleted
       const deletedWorkspace = results[3].rows[0];
       if (!deletedWorkspace) {
         throw new Error("Workspace not found");
@@ -246,11 +278,6 @@ class Workspace {
       return {
         message: "Workspace successfully deleted",
         deletedWorkspace: deletedWorkspace.name,
-        affectedRows: {
-          tasks: results[0].rowCount,
-          users: results[1].rowCount,
-          sections: results[2].rowCount,
-        },
       };
     } catch (error) {
       await client.query("ROLLBACK");
@@ -264,45 +291,31 @@ class Workspace {
       client.release();
     }
   }
+
   static async findUsersByWorkspaceId(workspaceId) {
     const query = `
-      SELECT u.*
+      SELECT u.id, u.username, u.first_name, u.last_name
       FROM user_profile u
       INNER JOIN user_workspaces uw ON u.id = uw.user_id
       WHERE uw.workspace_id = $1`;
     const { rows } = await pool.query(query, [workspaceId]);
     return rows;
   }
+  
   static async findTasksByWorkspaceId(workspaceId) {
     try {
       const query = `
-  SELECT t.id, t.creation_date, tp.title, tp.due_date, tp.status, tp.priority, tp.tags, tp.description, t.linked_section 
-  FROM task t
-  JOIN task_workspaces tw ON t.id = tw.task_id
-  JOIN task_properties tp ON t.id = tp.task_id
-  WHERE tw.workspace_id = $1
-`;
+      SELECT t.id, t.creation_date, tp.title, tp.due_date, tp.status, tp.priority, tp.tags, tp.description, t.linked_section 
+      FROM task t
+      JOIN task_workspaces tw ON t.id = tw.task_id
+      JOIN task_properties tp ON t.id = tp.task_id
+      WHERE tw.workspace_id = $1
+    `;
       const { rows } = await pool.query(query, [workspaceId]);
-
-      const updatedRows = rows.map((row) => {
-        const dueDate = new Date(row.due_date);
-
-        // Ajouter un jour en UTC
-        dueDate.setUTCDate(dueDate.getUTCDate() + 1);
-
-        // Obtenir la date au format "yyyy-MM-dd" en UTC
-        const year = dueDate.getUTCFullYear();
-        const month = String(dueDate.getUTCMonth() + 1).padStart(2, "0");
-        const day = String(dueDate.getUTCDate()).padStart(2, "0");
-        const formattedDate = `${year}-${month}-${day}`;
-
-        return {
-          ...row,
-          tags: JSON.stringify(row.tags),
-          due_date: formattedDate,
-        };
-      });
-      return updatedRows;
+      return rows.map((row) => ({
+        ...row,
+        tags: JSON.stringify(row.tags),
+      }));
     } catch (error) {
       throw error;
     }

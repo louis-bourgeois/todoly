@@ -23,36 +23,48 @@ class User {
     this.password_hash = password_hash;
   }
 
+  
   async save() {
     const client = await pool.connect();
     try {
       await client.query("BEGIN");
 
+      // 1. Créer le profil utilisateur et récupérer l'ID
       const insertUserProfile =
         "INSERT INTO user_profile (username, creation_date, first_name, last_name) VALUES ($1, $2, $3, $4) RETURNING id";
-      const { rows } = await client.query(insertUserProfile, [
+      const profileResult = await client.query(insertUserProfile, [
         this.username,
         new Date().toISOString(),
         this.firstName,
         this.lastName,
       ]);
-      const userId = rows[0].id;
+      const userId = profileResult.rows[0].id;
 
+      // 2. Créer les données de sécurité
       const insertUserSecurity =
         "INSERT INTO user_security (id, password_hash) VALUES ($1, $2)";
       await client.query(insertUserSecurity, [userId, this.password_hash]);
 
+      // 3. Créer les données de contact
       if (this.phone_number) {
-        const query =
+        const insertContact =
           "INSERT INTO user_contact (user_id, email, phone_number) VALUES ($1, $2, $3);";
-        await client.query(query, [userId, this.email, this.phone_number]);
+        await client.query(insertContact, [userId, this.email, this.phone_number]);
       } else {
-        const query =
+        const insertContact =
           "INSERT INTO user_contact (user_id, email) VALUES ($1, $2);";
-        await client.query(query, [userId, this.email]);
+        await client.query(insertContact, [userId, this.email]);
       }
+
+      // CORRECTION DÉFINITIVE APPLIQUÉE ICI :
+      // On capture la valeur de retour dans des variables déclarées.
+      const { workspaceId, defaultSectionId } = await Workspace.createInitialForUser(userId, client);
+
       await client.query("COMMIT");
-      return [userId];
+
+      // Maintenant, ces variables existent et peuvent être retournées.
+      return { userId, workspaceId, defaultSectionId };
+
     } catch (e) {
       await client.query("ROLLBACK");
       throw e;
@@ -60,6 +72,70 @@ class User {
       client.release();
     }
   }
+
+  static async findById(id) {
+    const user = await this.getData("all", id);
+    if (!user) {
+      return null;
+    }
+    return new User(user.username, user.first_name, user.last_name, user.email);
+  }
+
+  static async update(fname, lname, email, password_hash, id) {
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+
+      const updateUserProfile = `
+        UPDATE user_profile
+        SET first_name = $1, last_name = $2
+        WHERE id = $3
+      `;
+      await client.query(updateUserProfile, [fname, lname, id]);
+
+      const updateUserContact = `
+        UPDATE user_contact
+        SET email = $1
+        WHERE user_id = $2
+      `;
+      await client.query(updateUserContact, [email, id]);
+
+      if (password_hash) {
+        const updateUserSecurity = `
+          UPDATE user_security
+          SET password_hash = $1
+          WHERE id = $2
+        `;
+        await client.query(updateUserSecurity, [password_hash, id]);
+      }
+      await client.query("COMMIT");
+    } catch (e) {
+      await client.query("ROLLBACK");
+      throw e;
+    } finally {
+      client.release();
+    }
+  }
+
+  static async findWorkspacesByUserId(id) {
+    const query = `
+      SELECT w.id, w.name, w.is_deletable
+      FROM workspace w
+      INNER JOIN user_workspaces uw ON w.id = uw.workspace_id
+      WHERE uw.user_id = $1`;
+    const { rows } = await pool.query(query, [id]);
+
+    const detailedRows = await Promise.all(
+      rows.map(async (row) => {
+        const tasks = await Workspace.findTasksByWorkspaceId(row.id);
+        const users = await Workspace.findUsersByWorkspaceId(row.id);
+        return { ...row, tasks, users };
+      })
+    );
+
+    return detailedRows;
+  }
+  
   static async find(criteria, bool = false) {
     const result = await this.findId(
       criteria.username,
@@ -70,7 +146,7 @@ class User {
     if (!result) {
       return undefined;
     }
-
+    console.log("this is really..;", result)
     let result_clean = [];
 
     for (const r of result) {
@@ -114,110 +190,103 @@ class User {
   }
 
   static async delete(userId) {
-    if (!userId) {
-      throw new Error("L'ID de l'utilisateur est requis pour la suppression");
-    }
-
-    const client = await pool.connect();
-
-    try {
-      await client.query("BEGIN");
-
-      // Suppression des données liées à l'utilisateur
-      const deleteQueries = [
-        "DELETE FROM user_security WHERE id = $1",
-        "DELETE FROM user_profile_image WHERE user_id = $1",
-        "DELETE FROM user_role_assignment WHERE user_id = $1",
-        "DELETE FROM user_preferences WHERE user_id = $1",
-        "DELETE FROM tag WHERE user_id = $1",
-        "DELETE FROM user_contact WHERE user_id = $1",
-      ];
-
-      for (const query of deleteQueries) {
-        await client.query(query, [userId]);
-      }
-
-      // Identification des espaces de travail à supprimer
-      const workspacesQuery = `
-        SELECT workspace_id
-        FROM user_workspaces uw
-        WHERE uw.user_id = $1
-        AND NOT EXISTS (
-          SELECT 1
-          FROM user_workspaces uw2
-          WHERE uw2.workspace_id = uw.workspace_id
-          AND uw2.user_id != $1
-        )
-      `;
-      const { rows: workspaces } = await client.query(workspacesQuery, [
-        userId,
-      ]);
-
-      // Suppression des espaces de travail et des tâches associées
-      for (const workspace of workspaces) {
-        const workspaceId = workspace.workspace_id;
-
-        // Suppression des propriétés des tâches liées à l'espace de travail
-        const deleteTaskPropertiesQuery = `
-          DELETE FROM task_properties
-          WHERE task_id IN (
-            SELECT task_id 
-            FROM task_workspaces 
-            WHERE workspace_id = $1
-          )
-        `;
-        await client.query(deleteTaskPropertiesQuery, [workspaceId]);
-
-        // Suppression des tâches liées à l'espace de travail
-        const deleteTasksQuery = `
-          DELETE FROM task
-          WHERE id IN (
-            SELECT task_id 
-            FROM task_workspaces 
-            WHERE workspace_id = $1
-          )
-        `;
-        await client.query(deleteTasksQuery, [workspaceId]);
-
-        // Suppression des associations tâches-espaces de travail
-        await client.query(
-          "DELETE FROM task_workspaces WHERE workspace_id = $1",
-          [workspaceId]
-        );
-
-        // Suppression de l'espace de travail
-        await client.query("DELETE FROM workspace WHERE id = $1", [
-          workspaceId,
-        ]);
-      }
-
-      // Suppression des associations utilisateur-espace de travail
-      await client.query("DELETE FROM user_workspaces WHERE user_id = $1", [
-        userId,
-      ]);
-
-      // Suppression des propriétés des tâches de l'utilisateur
-      await client.query(
-        "DELETE FROM task_properties WHERE task_id IN (SELECT id FROM task WHERE user_id = $1)",
-        [userId]
-      );
-
-      // Suppression des tâches de l'utilisateur
-      await client.query("DELETE FROM task WHERE user_id = $1", [userId]);
-
-      // Suppression du profil utilisateur
-      await client.query("DELETE FROM user_profile WHERE id = $1", [userId]);
-
-      await client.query("COMMIT");
-      console.log(`Utilisateur avec l'ID ${userId} supprimé avec succès`);
-    } catch (error) {
-      await client.query("ROLLBACK");
-      console.error("Erreur lors de la suppression de l'utilisateur:", error);
-      throw error;
-    } finally {
-      client.release();
-    }
+  if (!userId) {
+    throw new Error("L'ID de l'utilisateur est requis pour la suppression");
   }
+
+  const client = await pool.connect();
+
+  try {
+    // Démarrer une transaction pour garantir l'intégrité des données
+    await client.query("BEGIN");
+
+    // ÉTAPE 1: Récupérer l'email avant de supprimer le contact, pour l'image de profil
+    const emailRes = await client.query(
+      "SELECT email FROM user_contact WHERE user_id = $1",
+      [userId]
+    );
+    if (emailRes.rows.length > 0) {
+      const email = emailRes.rows[0].email;
+      await client.query(
+        "DELETE FROM user_profile_image WHERE user_email = $1",
+        [email]
+      );
+    }
+
+    // ÉTAPE 2: Supprimer les propriétés des tâches liées à l'utilisateur.
+    // C'est une étape cruciale à faire en amont car la table `task_properties` a une contrainte
+    // qui empêche la suppression d'une tâche si elle y est référencée.
+    await client.query("DELETE FROM task_properties WHERE user_id = $1", [
+      userId,
+    ]);
+
+    // ÉTAPE 3: Supprimer les sections de l'utilisateur.
+    // La suppression des sections entraînera la suppression en cascade des tâches qui y sont liées
+    // grâce à la contrainte "ON DELETE CASCADE" sur la clé étrangère `fk_linked_section`.
+    await client.query("DELETE FROM section WHERE user_id = $1", [userId]);
+
+    // ÉTAPE 4: Supprimer les tâches restantes de l'utilisateur (celles sans section).
+    // La suppression en cascade s'occupera des entrées dans `task_workspaces`.
+    await client.query("DELETE FROM task WHERE user_id = $1", [userId]);
+
+    // ÉTAPE 5: Gérer les espaces de travail (workspaces).
+    // Identifier les workspaces où l'utilisateur est le seul membre.
+    const soloWorkspacesQuery = `
+      SELECT workspace_id FROM user_workspaces uw
+      WHERE uw.user_id = $1 AND NOT EXISTS (
+        SELECT 1 FROM user_workspaces uw2
+        WHERE uw2.workspace_id = uw.workspace_id AND uw2.user_id != $1
+      )`;
+    const { rows: soloWorkspaces } = await client.query(soloWorkspacesQuery, [
+      userId,
+    ]);
+
+    // Si des workspaces uniques à cet utilisateur existent, les supprimer.
+    if (soloWorkspaces.length > 0) {
+      const soloWorkspaceIds = soloWorkspaces.map((ws) => ws.workspace_id);
+      await client.query("DELETE FROM workspace WHERE id = ANY($1::uuid[])", [
+        soloWorkspaceIds,
+      ]);
+    }
+
+    // ÉTAPE 6: Supprimer toutes les associations de l'utilisateur avec les workspaces (partagés ou non).
+    await client.query("DELETE FROM user_workspaces WHERE user_id = $1", [
+      userId,
+    ]);
+
+    // ÉTAPE 7: Supprimer les données restantes directement liées à l'utilisateur.
+    const simpleDeleteQueries = [
+      "DELETE FROM user_security WHERE id = $1",
+      "DELETE FROM user_role_assignment WHERE user_id = $1",
+      "DELETE FROM user_preferences WHERE user_id = $1",
+      "DELETE FROM tag WHERE user_id = $1",
+      "DELETE FROM user_subscription WHERE user_id = $1",
+      "DELETE FROM user_contact WHERE user_id = $1",
+    ];
+
+    for (const query of simpleDeleteQueries) {
+      await client.query(query, [userId]);
+    }
+
+    // ÉTAPE 8: Finalement, supprimer l'utilisateur de la table principale.
+    // C'était l'oubli majeur de la fonction précédente.
+    await client.query("DELETE FROM user_profile WHERE id = $1", [userId]);
+
+    // Valider la transaction
+    await client.query("COMMIT");
+  } catch (error) {
+    // En cas d'erreur, annuler toutes les opérations
+    await client.query("ROLLBACK");
+    console.error(
+      "Erreur lors de la suppression de l'utilisateur:",
+      error
+    );
+    throw error;
+  } finally {
+    // Libérer le client de la pool
+    client.release();
+  }
+}
 
   static async findId(
     username = undefined,
@@ -360,24 +429,6 @@ class User {
     }
   }
 
-  static async findWorkspacesByUserId(id) {
-    const query = `
-      SELECT w.*
-      FROM workspace w
-      INNER JOIN user_workspaces uw ON w.id = uw.workspace_id
-      WHERE uw.user_id = $1`;
-    const { rows } = await pool.query(query, [id]);
-
-    const detailedRows = await Promise.all(
-      rows.map(async (row) => {
-        const tasks = await Workspace.findTasksByWorkspaceId(row.id);
-        const users = await Workspace.findUsersByWorkspaceId(row.id);
-        return { ...row, tasks, users };
-      })
-    );
-
-    return detailedRows;
-  }
   static async addUserToWorkspace(userId, workspaceId) {
     const client = await pool.connect();
     try {

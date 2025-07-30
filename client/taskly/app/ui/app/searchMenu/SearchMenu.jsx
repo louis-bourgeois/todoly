@@ -25,7 +25,7 @@ const SearchMenu = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [commandMode, setCommandMode] = useState(null);
   const [placeholder, setPlaceholder] = useState(
-    "Search or type / for commands..."
+    "Search is currently in development... Stay tuned!"
   );
   const [visibility, setVisibility] = useState(isSearchMenuOpen);
   const menuRef = useRef(null);
@@ -35,7 +35,7 @@ const SearchMenu = () => {
     setSelectedTask(null);
     setCommandMode(null);
     setQuery("");
-    setPlaceholder("Search or type / for commands...");
+
   }, []);
 
   const filteredResults = useMemo(() => {
@@ -124,56 +124,59 @@ const SearchMenu = () => {
   );
   const handleResultSelection = useCallback(
     (result) => {
-      if (query.startsWith("/")) {
-        setCommandMode(result.id);
-        setQuery("");
-        if (result.id === "goto") {
-          setPlaceholder("Select destination");
-        } else if (
-          result.id === "changeWorkspace" ||
-          result.id === "deleteWorkspace"
-        ) {
-          setPlaceholder("Select workspace");
-        } else if (result.id === "addTag") {
-          setPlaceholder("New tag name");
-        } else {
-          handleCommand(result.id);
-        }
-      } else if (commandMode === "goto") {
-        router.push(`/app/${result.id}`);
-        resetState();
-      } else if (commandMode === "changeWorkspace") {
-        console.log("Change to workspace:", result.title);
-        resetState();
-      } else if (commandMode === "deleteWorkspace") {
-        console.log("Delete workspace:", result.title);
-        resetState();
-      } else if (selectedTask) {
-        switch (result.id) {
-          case "update":
-            if (toggleTaskMenu) toggleTaskMenu(selectedTask.id, "", "Task");
-            break;
-          case "delete":
-            console.log("Delete task:", selectedTask.title);
-            break;
-        }
-        resetState();
-      } else {
-        setSelectedTask(result);
-        setSelectedIndex(-1);
-      }
-    },
-    [
-      query,
-      commandMode,
-      router,
-      handleCommand,
-      resetState,
-      toggleTaskMenu,
-      selectedTask,
-      setSelectedTask,
-      setSelectedIndex,
-    ]
+    console.log("Called, this functionnality is in development, stay tuned!")
+  }
+    // (result) => {
+    //   if (query.startsWith("/")) {
+    //     setCommandMode(result.id);
+    //     setQuery("");
+    //     if (result.id === "goto") {
+    //       setPlaceholder("Select destination");
+    //     } else if (
+    //       result.id === "changeWorkspace" ||
+    //       result.id === "deleteWorkspace"
+    //     ) {
+    //       setPlaceholder("Select workspace");
+    //     } else if (result.id === "addTag") {
+    //       setPlaceholder("New tag name");
+    //     } else {
+    //       handleCommand(result.id);
+    //     }
+    //   } else if (commandMode === "goto") {
+    //     router.push(`/app/${result.id}`);
+    //     resetState();
+    //   } else if (commandMode === "changeWorkspace") {
+    //     console.log("Change to workspace:", result.title);
+    //     resetState();
+    //   } else if (commandMode === "deleteWorkspace") {
+    //     console.log("Delete workspace:", result.title);
+    //     resetState();
+    //   } else if (selectedTask) {
+    //     switch (result.id) {
+    //       case "update":
+    //         if (toggleTaskMenu) toggleTaskMenu(selectedTask.id, "", "Task");
+    //         break;
+    //       case "delete":
+    //         console.log("Delete task:", selectedTask.title);
+    //         break;
+    //     }
+    //     resetState();
+    //   } else {
+    //     setSelectedTask(result);
+    //     setSelectedIndex(-1);
+    //   }
+    // },
+    // [
+    //   query,
+    //   commandMode,
+    //   router,
+    //   handleCommand,
+    //   resetState,
+    //   toggleTaskMenu,
+    //   selectedTask,
+    //   setSelectedTask,
+    //   setSelectedIndex,
+    // ]
   );
 
   useEffect(() => {
@@ -260,7 +263,7 @@ const SearchMenu = () => {
         <SearchResults
           results={filteredResults}
           selectedIndex={selectedIndex}
-          onResultSelect={handleResultSelection}
+          onItemClick={handleResultSelection}
         />
       </div>
     </div>

@@ -10,6 +10,7 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
     Show: preferences?.Show || "All tasks",
   });
   const [isClosing, setIsClosing] = useState(false);
+  const [showContent, setShowContent] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -20,10 +21,19 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
   }, [preferences]);
 
   useEffect(() => {
-    if (isOpen) setIsClosing(false);
+    if (isOpen) {
+      setIsClosing(false);
+      const timer = setTimeout(() => {
+        setShowContent(true);
+      }, 50);
+      return () => clearTimeout(timer);
+    } else {
+      setShowContent(false);
+    }
   }, [isOpen]);
 
   const closeMenu = useCallback(() => {
+    setShowContent(false);
     setIsClosing(true);
     setTimeout(() => {
       onClose();
@@ -82,14 +92,14 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
 
   return (
     <div
-      className={`fixed inset-0 flex items-center justify-center bg-secondary-10 backdrop-blur-sm z-[190] transition-opacity duration-300 ${
-        isOpen && !isClosing ? "opacity-100" : "opacity-0"
+      className={`fixed inset-0 flex items-center justify-center bg-secondary-10 backdrop-blur-sm z-[190] transition-opacity duration-300 ease-in-out ${
+        showContent ? "opacity-100" : "opacity-0"
       }`}
     >
       <div
         ref={menuRef}
-        className={`w-[90vw] max-w-md bg-primary backdrop-blur-md rounded-3xl shadow-2xl p-8 transition-all duration-300 border border-white/50 ${
-          isOpen && !isClosing ? "scale-100 opacity-100" : "scale-5 opacity-0"
+        className={`w-[90vw] max-w-md bg-primary backdrop-blur-md rounded-3xl shadow-2xl p-8 transition-all duration-300 ease-in-out border border-white/50 ${
+          showContent ? "scale-100 opacity-100" : "scale-5 opacity-0"
         }`}
       >
         <h2 className="text-3xl font-bold mb-8 text-center text-text">

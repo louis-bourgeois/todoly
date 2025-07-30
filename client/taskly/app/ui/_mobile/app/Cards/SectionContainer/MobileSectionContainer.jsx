@@ -1,4 +1,4 @@
-import MobileTask from "@/ui/_mobile/task/MobileTask";
+import MobileTask from "../../../task/MobileTask";
 import { useCallback, useMemo } from "react";
 import { useMenu } from "../../../../../../context/MenuContext";
 import { useSection } from "../../../../../../context/SectionContext";

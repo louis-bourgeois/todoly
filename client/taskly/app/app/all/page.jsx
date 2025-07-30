@@ -1,8 +1,8 @@
 "use client";
-import SectionContainer from "@/ui/app/currently/SectionContainer";
-import SlideNav from "@/ui/app/currently/SlideNav";
-import SlickCarousel from "@/ui/app/SlickCarousel";
-import Slide from "@/ui/app/Slide";
+import SectionContainer from "../../ui/app/currently/SectionContainer";
+import SlideNav from "../../ui/app/currently/SlideNav";
+import SlickCarousel from "../../ui/app/SlickCarousel";
+import Slide from "../../ui/app/Slide";
 import { useEffect, useState } from "react";
 import { useMenu } from "../../../context/MenuContext";
 import { useWorkspace } from "../../../context/WorkspaceContext";

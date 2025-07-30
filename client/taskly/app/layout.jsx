@@ -1,4 +1,4 @@
-import { overusedGrotesk } from "@/font";
+import { overusedGrotesk } from "../app/font"
 import dynamic from "next/dynamic";
 import CanonicalTag from "./CanonicalTag";
 import AppProviders from "./contextProvider";

@@ -42,9 +42,9 @@ export default function Notifications({ transitionStyles }) {
   
 
   const notifications = [
-    { name: "Daily Recap" },
-    { name: "Weekly Recap" },
-    { name: "Monthly Recap" },
+    // { name: "Daily Recap" },
+    // { name: "Weekly Recap" },
+    // { name: "Monthly Recap" },
   ];
 
   const handleNotificationChange = (notificationName) => {
@@ -59,10 +59,10 @@ export default function Notifications({ transitionStyles }) {
 
   return (
     <div
-      className={`flex flex-col w-full px-[4%] mt-[4%] gap-[1.75vh] ${transitionStyles}`}
+      className={`flex flex-col w-full px-[4%] my-[4%] gap-[1.75vh] ${transitionStyles}`}
     >
       <div className="flex justify-between items-center">
-        <SectionTitle>Notification</SectionTitle>
+        <SectionTitle>Coming soon, stay tuned!</SectionTitle>
         <Switcher
           isChecked={allowNotifications}
           onChange={() => setAllowNotifications((prev) => !prev)}
