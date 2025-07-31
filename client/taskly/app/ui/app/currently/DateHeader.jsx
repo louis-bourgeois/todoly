@@ -5,30 +5,38 @@ import { useMenu } from "../../../../context/MenuContext";
 import { useWorkspace } from "../../../../context/WorkspaceContext";
 import { convertDateObjIntoDueDateType } from "../../../utils/utils";
 import { useUserPreferences } from "../../../../context/UserPreferencesContext";
+import { useTranslation } from "../../../i18n/client";
 
 const DateHeader = ({ index, onDateChange }) => {
+  const { t } = useTranslation();
   const { formatADate } = useFormattedDate();
   const { preferences } = useUserPreferences();
   const { setCurrentWorkspace, currentWorkspace, workspaces } = useWorkspace();
   const { toggleViewsMenu } = useMenu();
+  const locales = {
+      fr: "fr",
+      en: "enUS", 
+    }
+  const currentLocale = locales[t("lang")]
   const [menuWidth, setMenuWidth] = useState(0);
   const triggerRef = useRef(null);
   const menuRef = useRef(null);
-  const dateOptions = useMemo(() => ({ weekday: "long" }), []);
+  const dateOptions = useMemo(() => ({ weekday: "long", locale: currentLocale }), []);
   const [menuOpen, setMenuOpen] = useState(false);
+
 
   const { futureDate, dayLabel, dateNumber } = useMemo(() => {
     const today = new Date();
     const futureDate = addDays(today, index);
     const dayLabel =
       index === 0
-        ? "Today"
+        ? t('today')
         : index === 1
-        ? "Tomorrow"
+        ? t('tomorrow')
         : formatADate(futureDate, "EEEE");
     const dateNumber = getDate(futureDate);
     return { futureDate, dayLabel, dateNumber };
-  }, [index, formatADate]);
+  }, [index, formatADate, t]);
 
   const [currentHour, setCurrentHour] = useState(new Date());
   const [workspacesName, setWorkspacesName] = useState(
@@ -83,7 +91,7 @@ const DateHeader = ({ index, onDateChange }) => {
         {(dateNumber < 10 ? "0" : "") + dateNumber}
       </h2>
       <h2 className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 select-none xl:text-3xl text-2.5xl font-bold bg-gradient-2 bg-clip-text text-transparent whitespace-nowrap">
-        {dayLabel || format(futureDate, "EEEE", dateOptions)}
+        {t(`dateHeader.${dayLabel}`) || format(futureDate, "EEEE", dateOptions)}
       </h2>
       <div className="flex items-center gap-[0.7vw] relative">
         <button
@@ -147,7 +155,6 @@ const DateHeader = ({ index, onDateChange }) => {
               {workspacesName.map((name, index) => (
                 <button
                   key={index}
-                  // MODIFICATION ICI : On passe l'événement à la fonction
                   onClick={(e) => handleCurrentWorkspaceDropdownClick(e, name)}
                   className="hover:text-dominant transition-colors duration-300 whitespace-nowrap overflow-hidden text-ellipsis"
                 >

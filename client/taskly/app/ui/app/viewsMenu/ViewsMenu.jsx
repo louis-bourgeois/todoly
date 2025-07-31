@@ -1,13 +1,15 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useUserPreferences } from "../../../../context/UserPreferencesContext";
 import DropdownMenu from "../MainMenu/settings/DropdownMenu";
+import { useTranslation } from "../../../i18n/client";
 
 const ViewsMenu = ({ options, isOpen, onClose }) => {
   const { updatePreference, preferences } = useUserPreferences();
+  const { t } = useTranslation();
 
   const [selectedOptions, setSelectedOptions] = useState({
-    "Sort by": preferences?.Sort_By || "Importance",
-    Show: preferences?.Show || "All tasks",
+    [t('viewsMenu.sortBy')]: preferences?.Sort_By || "Importance",
+    [t('viewsMenu.show')]: preferences?.Show || "All tasks",
   });
   const [isClosing, setIsClosing] = useState(false);
   const [showContent, setShowContent] = useState(false);
@@ -15,10 +17,10 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
 
   useEffect(() => {
     setSelectedOptions({
-      "Sort by": preferences?.Sort_By || "Importance",
-      Show: preferences?.Show || "All tasks",
+      [t('viewsMenu.sortBy')]: preferences?.Sort_By || "Importance",
+      [t('viewsMenu.show')]: preferences?.Show || "All tasks",
     });
-  }, [preferences]);
+  }, [preferences, t]);
 
   useEffect(() => {
     if (isOpen) {
@@ -63,12 +65,12 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
     await Promise.all([
       updatePreference({
         key: "Sort_By",
-        value: selectedOptions["Sort by"],
+        value: selectedOptions[t('viewsMenu.sortBy')],
       }),
-      updatePreference({ key: "Show", value: selectedOptions["Show"] }),
+      updatePreference({ key: "Show", value: selectedOptions[t('viewsMenu.show')] }),
     ]);
     closeMenu();
-  }, [updatePreference, selectedOptions, closeMenu]);
+  }, [updatePreference, selectedOptions, closeMenu, t]);
 
   const renderMenuContent = useCallback(
     () =>
@@ -78,14 +80,14 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
             {option.title}
           </h3>
           <DropdownMenu
-            title={selectedOptions[option.title] || "Select an option"}
+            title={selectedOptions[option.title] || t('viewsMenu.selectOption')}
             options={option.items}
             onSelect={(item) => handleOptionSelect(option.title, item)}
             className="text-secondary"
           />
         </div>
       )),
-    [options, selectedOptions, handleOptionSelect]
+    [options, selectedOptions, handleOptionSelect, t]
   );
 
   if (!isOpen && !isClosing) return null;
@@ -103,7 +105,7 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
         }`}
       >
         <h2 className="text-3xl font-bold mb-8 text-center text-text">
-          Views Menu
+          {t('viewsMenu.title')}
         </h2>
         <div className="space-y-6">
           {renderMenuContent()}
@@ -111,7 +113,7 @@ const ViewsMenu = ({ options, isOpen, onClose }) => {
             onClick={handleConfirm}
             className="w-full py-2 bg-dominant text-primary rounded-full hover:bg-opacity-80 transition-colors duration-200 text-lg font-semibold mt-4"
           >
-            Confirm
+            {t('viewsMenu.confirm')}
           </button>
         </div>
       </div>

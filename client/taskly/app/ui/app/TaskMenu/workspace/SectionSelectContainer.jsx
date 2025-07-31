@@ -6,6 +6,7 @@ import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import { useSection } from "../../../../../context/SectionContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
+import { useTranslation } from "../../../../i18n/client";
 
 const fuseOptions = { keys: ["name"], threshold: 0.3 };
 
@@ -19,6 +20,7 @@ export default function SectionSelectContainer({
   const [inputValue, setInputValue] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const inputRef = useRef(null);
+  const { t } = useTranslation();
   const fuse = useMemo(() => {
     return new Fuse(
       sections.filter((section) => section.name.toLowerCase() !== "other"),
@@ -27,7 +29,7 @@ export default function SectionSelectContainer({
   }, [sections]);
 
   const allowedToDelete = (() => {
-    const personalWorkspace = workspaces?.find((w) => w.name === "Personal");
+    const personalWorkspace = workspaces?.find((w) => w.name === t('sectionSelect.personal'));
     if (!personalWorkspace) {
       console.warn("Personal workspace not found in the list of workspaces.");
       return false;
@@ -70,7 +72,7 @@ export default function SectionSelectContainer({
 
   return (
     <div className="gradient-border h-[95%] rounded-[20px] p-2 w-[55%] addMenuElement bg-main_menu_bg  flex flex-col justify-start gap-[7.5%] items-center">
-      <h1 className="text-3xl font-bold text-text">Sections</h1>
+      <h1 className="text-3xl font-bold text-text">{t('sectionSelect.title')}</h1>
       <Downshift
         inputValue={inputValue}
         onInputValueChange={handleInputChange}
@@ -143,7 +145,7 @@ export default function SectionSelectContainer({
                 {...getInputProps({
                   ref: inputRef,
                   onKeyDown: handleKeyDown,
-                  placeholder: "What sections do you want to link ?",
+                  placeholder: t('sectionSelect.placeholder'),
                   className:
                     "placeholder:text-gray  w-full text-center focus:outline-none text-text bg-transparent",
                 })}
@@ -172,7 +174,7 @@ export default function SectionSelectContainer({
                             key: section.id,
                             index,
                             item: section,
-                            className: `bg-primary text-text p-2 my-1  cursor-pointer hover:text-dominant gradient-border rounded-full transition duration-300 ${
+                            className: `bg-primary text-text p-2 my-1 cursor-pointer hover:text-dominant gradient-border rounded-full transition duration-300 ${
                               highlightedIndex === index ? "bg-gray-200" : ""
                             } ${selectedItem === section ? "font-bold" : ""}`,
                           })}

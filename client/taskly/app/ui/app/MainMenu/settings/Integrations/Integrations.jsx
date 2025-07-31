@@ -1,9 +1,12 @@
+import { useTranslation } from "@/app/i18n/client";
+
 export default function Integrations({ transitionStyles }) {
+  const { t } = useTranslation();
   return (
     <div
       className={`flex flex-col w-full px-[4%] mt-[4%] gap-[1.75vh] justify-start ${transitionStyles}`}
     >
-      <p className="text-text items-center text-base/6">No app integration has been made yet... Coming soon, I&apos;m working on it!</p>
+      <p className="text-text items-center text-base/6">{t('integrations.noIntegration')}</p>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import { useTask } from "../../../../context/TaskContext";
 import TaskMenuSectionContainer from "./TaskMenuSectionContainer";
+import { useTranslation } from "../../../i18n/client";
 
 export default function DescriptionContainer({
   id,
@@ -9,6 +10,7 @@ export default function DescriptionContainer({
   setTask,
 }) {
   const { modifyTask } = useTask();
+  const { t } = useTranslation();
   const handleDescriptionChange = async (e) => {
     const value = e.target.value;
     setDescriptionValue(value);
@@ -24,14 +26,14 @@ export default function DescriptionContainer({
       flex={false}
       othersStyles="font-bold text-2xl text-text w-[55%]"
     >
-      <h2 className="pb-0 p-[2%]">Description</h2>
+      <h2 className="pb-0 p-[2%]">{t('descriptionContainer.title')}</h2>
       <textarea
         style={{ resize: "none", outline: "none" }}
         name="description"
         value={descriptionValue}
         onChange={(e) => handleDescriptionChange(e)}
         className="h-[80%] p-[2.5%] w-full text-base text-text pt-[4%] bg-transparent"
-        placeholder="Enter a description"
+        placeholder={t('descriptionContainer.placeholder')}
       ></textarea>
     </TaskMenuSectionContainer>
   );

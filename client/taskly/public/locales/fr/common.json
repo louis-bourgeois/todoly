@@ -1,44 +1,340 @@
 {
-  "Language": "Langue",
-  "Time Zone": "Fuseau horaire",
-  "12h Date Format": "Format 12h",
-  "Week Starts on Sunday": "La semaine commence le dimanche",
-  "Today": "Aujourd'hui",
-  "Tomorrow": "Demain",
-  "This Weekend": "Ce week-end",
-  "Next Week": "La semaine prochaine",
-  "Other": "Autre",
-  "Personal": "Personnel",
-  "Work": "Travail",
-  "Home": "Maison",
-  "Create": "Créer",
-  "Delete": "Supprimer",
-  "Update": "Mettre à jour",
-  "Cancel": "Annuler",
-  "Save": "Sauvegarder",
-  "Add": "Ajouter",
-  "Edit": "Modifier",
-  "Title": "Titre",
-  "Description": "Description",
-  "Priority": "Priorité",
-  "Due Date": "Date d'échéance",
-  "Tags": "Tags",
-  "Workspace": "Espace de travail",
-  "Section": "Section",
-  "Settings": "Paramètres",
-  "Profile": "Profil",
-  "Appearance": "Apparence",
-  "Notifications": "Notifications",
-  "Layout": "Mise en page",
-  "Account": "Compte",
-  "Logout": "Déconnexion",
-  "Login": "Connexion",
-  "Signup": "S'inscrire",
-  "Email": "Email",
-  "Password": "Mot de passe",
-  "Username": "Nom d'utilisateur",
-  "First Name": "Prénom",
-  "Last Name": "Nom",
-  "Bio": "Bio",
-  "Search": "Rechercher"
+  "navbar": {
+    "greeting": {
+      "evening": "Bonsoir,",
+      "night": "Bonne nuit,",
+      "morning": "Bonjour,",
+      "afternoon": "Bon après-midi,",
+      "meal": "Bon appétit,"
+    },
+    "guestName": "invité",
+    "buttons": {
+      "search": "Rechercher",
+      "add": "Ajouter"
+    }
+  },
+  "lang": "fr",
+  "languages": {
+    "english": "Anglais",
+    "french": "Français"
+  },
+  "settings": {
+    "languages": {
+      "title": "Langue"
+    },
+    "timezone": {
+      "title": "Fuseau horaire"
+    },
+    "dateFormat": {
+      "12h": "Format de date 12h"
+    },
+    "weekStart": {
+      "sunday": "La semaine commence le dimanche"
+    }
+  },
+  "layout": {
+    "tip": "Astuce",
+    "scrollHorizontally": "Faites défiler horizontalement pour ajouter d'autres types d'éléments",
+    "doNotShowAgain": "Ne plus afficher",
+    "create": "Créer",
+    "noTaskSelected": "Aucune tâche sélectionnée",
+    "noWorkspaceSelected": "Aucun workspace sélectionné",
+    "defaultCardContent": "Contenu de la carte par défaut",
+    "sortBy": "Trier par",
+    "creationDate": "Date de création",
+    "tags": "Tags",
+    "importance": "Importance",
+    "lastUpdated": "Dernière mise à jour",
+    "show": "Afficher",
+    "allTasks": "Toutes les tâches",
+    "completedOnly": "Tâches terminées uniquement",
+    "todoOnly": "Tâches à faire uniquement",
+    "defaultHomePage": "Page d'accueil par défaut",
+    "currently": "Actuellement",
+    "all": "Tous",
+    "homePageTitle": "Titre de la page d'accueil",
+    "reset": "Réinitialiser",
+    "customizeAddMenu": "Personnaliser le menu d'ajout"
+  },
+  "all": {
+    "addWorkspace": "Ajouter un workspace"
+  },
+  "profile": {
+    "username": "Nom d'utilisateur",
+    "email": "E-mail",
+    "bio": "Bio",
+    "updateSuccess": "Profil mis à jour avec succès",
+    "error": "Erreur lors du chargement des données utilisateur.",
+    "loading": "Chargement...",
+    "updating": "Mise à jour...",
+    "updateProfile": "Mettre à jour le profil"
+  },
+  "viewsMenu": {
+    "sortBy": "Trier par",
+    "show": "Afficher",
+    "selectOption": "Sélectionnez une option",
+    "title": "Options des vues",
+    "confirm": "Confirmer"
+  },
+  "searchResults": {
+    "noResults": "Aucun résultat trouvé"
+  },
+  "searchMenu": {
+    "placeholder": "La recherche est en cours de développement... Restez à l'écoute !",
+    "openAddMenu": "Ouvrir le menu d'ajout",
+    "goTo": "Aller à",
+    "logout": "Se déconnecter",
+    "addWorkspace": "Ajouter un workspace",
+    "openMainMenu": "Ouvrir le menu principal",
+    "openSettings": "Ouvrir les paramètres",
+    "changeWorkspace": "Changer l'workspace actuel",
+    "deleteWorkspace": "Supprimer l'workspace",
+    "addTag": "Ajouter une tag",
+    "currently": "Actuellement",
+    "all": "Tous",
+    "updateTask": "Mettre à jour la tâche",
+    "deleteTask": "Supprimer la tâche",
+    "selectDestination": "Sélectionnez la destination",
+    "selectWorkspace": "Sélectionnez l'workspace",
+    "newTagName": "Nouveau nom d'tag"
+  },
+  "sectionContainer": {
+    "placeholder": "Entrez le nom de la section",
+    "other": "Autre"
+  },
+  "dateHeader": {
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "Monday": "Lundi",
+    "Tuesday": "Mardi",
+    "Wednesday": "Mercredi",
+    "Thursday": "Jeudi",
+    "Friday": "Vendredi",
+    "Saturday": "Samedi",
+    "Sunday": "Dimanche"
+  },
+  "workspaceForm": {
+    "error": {
+      "emptyName": "Le nom de l'workspace ne peut pas être vide.",
+      "invalidInput": "Entrée invalide"
+    },
+    "editPlaceholder": "Modifier l'workspace",
+    "newPlaceholder": "nouveau workspace",
+    "updateButton": "Mettre à jour",
+    "createButton": "Créer"
+  },
+  "sectionSelect": {
+    "personal": "Personnel",
+    "title": "Sections",
+    "placeholder": "Sélectionner une section"
+  },
+  "elementPicker": {
+    "task": "Tâche",
+    "workspace": "Workspace"
+  },
+  "collaboratorSelect": {
+    "title": "Collaborateurs",
+    "comingSoon": "Bientôt disponible !",
+    "copyLink": "Copier le lien (bientôt disponible !)"
+  },
+  "workspaceSelect": {
+    "title": "Workspace",
+    "placeholder": "Sélectionnez un workspace",
+    "newWorkspaceButton": "Créer un nouveau workspace"
+  },
+  "taskForm": {
+    "other": "Autre",
+    "delete": "Supprimer",
+    "create": "Créer"
+  },
+  "tagSelect": {
+    "error": {
+      "duplicate": {
+        "title": "tag en double",
+        "subtitle": "Ce tag existe déjà."
+      }
+    },
+    "title": "tag(s)"
+  },
+  "sectionSelection": {
+    "error": {
+      "add": "Échec de l'ajout de la section",
+      "modify": "Échec de la modification de la section",
+      "delete": "Échec de la suppression de la section"
+    },
+    "selectPlaceholder": "Sélectionnez une section",
+    "addSection": "Ajouter une section",
+    "other": "Autre",
+    "edit": "Modifier",
+    "newSectionPlaceholder": "Nom de la nouvelle section"
+  },
+  "recurrence": {
+    "notAvailable": "Pas encore disponible, en dév...",
+    "onlyThisTime": "Seulement cette fois",
+    "addSection": "Ajouter une section"
+  },
+  "titleInput": {
+    "placeholder": "Titre"
+  },
+  "prioritySelection": {
+    "title": "Priorité"
+  },
+  "elementForm": {
+    "other": "Autre",
+    "task": "Tâche",
+    "delete": "Supprimer",
+    "create": "Créer"
+  },
+  "descriptionContainer": {
+    "title": "Description",
+    "placeholder": "Entrez une description"
+  },
+  "notifications": {
+    "comingSoon": "Bientôt disponible !"
+  },
+  "integrations": {
+    "noIntegration": "Aucune intégration d'application n'a encore été réalisée... Bientôt disponible, j'y travaille !"
+  },
+  "appearance": {
+    "colorTheme": "Thèmes"
+  },
+  "profilePhoto": {
+    "error": {
+      "canvas": "Erreur lors de la conversion du canevas en blob.",
+      "usernameNotFound": "Nom d'utilisateur introuvable. Téléchargement annulé.",
+      "usernameMissing": "Une erreur est survenue. Le nom d'utilisateur est manquant.",
+      "upload": "Erreur de téléchargement : ",
+      "dbUpdate": "Erreur lors de la mise à jour de la base de données",
+      "imageProcessing": "Erreur lors du traitement de l'image :"
+    },
+    "info": {
+      "oldImageNotDeleted": "Info : L'ancienne image n'a pas pu être supprimée.",
+      "fileAvailable": "Fichier disponible à l'URL : "
+    },
+    "alt": "Photo de profil"
+  },
+  "account": {
+    "premiumComingSoon": "La fonctionnalité Premium arrive... jamais !",
+    "signOut": "Se déconnecter",
+    "itIsFree": "C'est gratuit !",
+    "goPremium": "Passez à la version premium"
+  },
+  "settingsLine": {
+    "mainMenu": "Menu principal"
+  },
+  "editProfile": {
+    "error": {
+      "password": "Le mot de passe doit comporter au moins 13 caractères et inclure des caractères spéciaux et des chiffres.",
+      "passwordMatch": "Les mots de passe ne correspondent pas."
+    },
+    "firstName": "Prénom",
+    "lastName": "Nom de famille",
+    "email": "E-mail",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmer le nouveau mot de passe",
+    "confirm": "Confirmer"
+  },
+  "defaultContent": {
+    "currently": "Actuellement",
+    "all": "Tous"
+  },
+  "libelles" : {
+    "Layout": "Disposition",
+    "Appearance" : "Apparence",
+    "Notifications": "Notifications",
+    "Languages": "Languages",
+    "Integrations": "Intégrations"
+  },
+  "header": {
+    "mainMenu": "Menu principal",
+    "account": "Compte",
+    "confirmDelete": "Confirmer la suppression du compte",
+    "irreversibleAction": "Cette action est",
+    "irreversible": "irréversible",
+    "confirmTyping": "Pour confirmer, veuillez taper",
+    "below": "ci-dessous.",
+    "cancel": "Annuler",
+    "deleteAccount": "Supprimer le compte",
+    "freePlan": "Plan gratuit"
+  },
+  "mainMenu": {
+    "layout": "Mise en page",
+    "appearance": "Apparence",
+    "notifications": "Notifications",
+    "languages": "Langues",
+    "integrations": "Intégrations",
+    "account": "Compte",
+    "data": "Données",
+    "mainMenu": "Menu principal"
+  },
+  "datePicker": {
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "nextWeek": "La semaine prochaine",
+    "thisWeekend": "Ce week-end"
+  },
+    "error": {
+    "tag": "Erreur",
+    "accountAlreadyExists": {
+      "title": "Le compte existe déjà",
+      "subtitle": "Nous avons déjà un compte associé à ces informations.",
+      "action": "Se connecter à la place"
+    },
+    "incorrectPassword": {
+      "title": "Mot de passe incorrect",
+      "subtitle": "Les identifiants fournis sont incorrects. Veuillez réessayer."
+    },
+    "titleAlreadyUsed": {
+      "title": "Titre déjà utilisé",
+      "subtitle": "Veuillez utiliser un titre unique."
+    },
+    "nameAlreadyTaken": {
+      "title": "Nom déjà pris",
+      "subtitle": "Vous avez déjà un espace de travail avec ce nom. Veuillez en choisir un autre."
+    },
+    "usernameUnavailable": {
+      "title": "Nom d'utilisateur non disponible",
+      "subtitle": "Ce nom d'utilisateur est déjà utilisé. Veuillez en choisir un différent."
+    },
+    "unableToDelete": {
+      "title": "Impossible de supprimer",
+      "subtitle": "Cet élément ne peut pas être supprimé car d'autres éléments en dépendent (par ex., des tâches ou des sections)."
+    },
+    "userNotFound": {
+      "title": "Échec de l'authentification",
+      "subtitle": "Nous n'avons pas pu trouver de compte associé à ces identifiants.",
+      "action": "Créer un compte"
+    },
+    "missingCredentials": {
+      "title": "Informations manquantes",
+      "subtitle": "Veuillez fournir toutes les informations requises pour continuer."
+    },
+    "authenticationFailed": {
+      "title": "Échec de l'authentification",
+      "subtitle": "Nous n'avons pas pu vous authentifier. Veuillez vérifier vos identifiants et réessayer."
+    },
+    "incorrectCurrentPassword": {
+      "title": "Mot de passe incorrect",
+      "subtitle": "Le mot de passe actuel fourni est incorrect."
+    },
+    "sectionNotEmpty": {
+      "title": "Cette section n'est pas vide",
+      "subtitle": "Veuillez supprimer ou déplacer les tâches vers une autre section pour pouvoir supprimer cette section."
+    },
+    "serverError": {
+      "title": "Erreur de serveur",
+      "subtitle": "Nous rencontrons des difficultés techniques.",
+      "action": "Signaler ce problème"
+    },
+    "registrationError": {
+      "title": "Erreur d'inscription",
+      "subtitle": "Nous n'avons pas pu finaliser votre inscription. Veuillez réessayer ou contacter le support."
+    },
+    "default": {
+      "title": "Erreur inattendue",
+      "subtitle": "Quelque chose s'est mal passé. Veuillez réessayer ou contacter notre équipe de support si le problème persiste.",
+      "action": "Contacter le support"
+    }
+  }
 }

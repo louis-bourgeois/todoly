@@ -1,6 +1,7 @@
 import { useTask } from "../../../../context/TaskContext";
 import { Counter } from "./note/Counter";
 import TaskMenuSectionContainer from "./TaskMenuSectionContainer";
+import { useTranslation } from "../../../i18n/client";
 
 export default function PrioritySelection({
   visibility,
@@ -11,6 +12,7 @@ export default function PrioritySelection({
   setPriority,
 }) {
   const { modifyTask } = useTask();
+  const { t } = useTranslation();
   const handlePriorityChange = (value) => {
     setPriority(value);
     if (id) {
@@ -25,7 +27,7 @@ export default function PrioritySelection({
       flex={true}
       othersStyles={`w-full h-[70%] items-center`}
     >
-      <h2 className="font-bold text-2xl p-[2%] text-text">Priority</h2>
+      <h2 className="font-bold text-2xl p-[2%] text-text">{t('prioritySelection.title')}</h2>
 
       <div className="h-[70%] flex w-full justify-center items-center">
         {visibility && (

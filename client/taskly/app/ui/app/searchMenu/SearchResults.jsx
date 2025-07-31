@@ -1,9 +1,12 @@
+import { useTranslation } from "../../../i18n/client";
+
 const SearchResults = ({ results, selectedIndex, onItemClick }) => {
+  const { t } = useTranslation();
   return (
     <div className="absolute w-full mt-2 bg-white rounded-2xl shadow-lg max-h-[40vh] overflow-y-auto transition-all duration-300 ease-in-out scrollbar-custom">
       {results.length === 0 ? (
         <div className="px-[2vw] py-[1vw] text-[1vw] text-gray-500">
-          No results found
+          {t('searchResults.noResults')}
         </div>
       ) : (
         <ul className="py-[0.5vw] ">

@@ -6,6 +6,7 @@ import { useUser, useUserMutation } from '@/hooks/user';
 import { Button, Input, Avatar, Textarea } from '@nextui-org/react';
 import { toast } from 'react-toastify';
 import { EyeFilledIcon, EyeSlashFilledIcon } from '@/components/Provider/EyeFilledIcon';
+import { useTranslation } from '../../i18n/client';
 
 export default function EditProfile() {
   const { user } = useAuth();
@@ -15,6 +16,7 @@ export default function EditProfile() {
   const [email, setEmail] = useState('');
   const [bio, setBio] = useState('');
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (userData) {
@@ -27,14 +29,14 @@ export default function EditProfile() {
   const handleUpdate = async () => {
     try {
       await updateUserMutation.mutateAsync({ username, email, bio });
-      toast.success('Profile updated successfully');
+      toast.success(t('profile.updateSuccess'));
     } catch (error) {
       toast.error(error.message);
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading user data.</div>;
+  if (isLoading) return <div>{t('profile.loading')}</div>;
+  if (isError) return <div>{t('profile.error')}</div>;
 
   return (
     <div className="flex flex-col items-center gap-4">
@@ -42,23 +44,23 @@ export default function EditProfile() {
       <div className="w-full max-w-md p-4 bg-white rounded-lg shadow-md">
         <div className="flex flex-col gap-4">
           <Input
-            label="Username"
+            label={t('profile.username')}
             value={username}
             onChange={(e) => setUsername(e.target.value)}
           />
           <Input
-            label="Email"
+            label={t('profile.email')}
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <Textarea
-            label="Bio"
+            label={t('profile.bio')}
             value={bio}
             onChange={(e) => setBio(e.target.value)}
           />
           <Button color="primary" onClick={handleUpdate} disabled={updateUserMutation.isLoading}>
-            {updateUserMutation.isLoading ? 'Updating...' : 'Update Profile'}
+            {updateUserMutation.isLoading ? t('profile.updating') : t('profile.updateProfile')}
           </Button>
         </div>
       </div>

@@ -1,7 +1,9 @@
 import React from "react";
+import { useTranslation } from "../../../../i18n/client";
 
 const SettingsLine = React.memo(
   ({ children = true, index, setLayout, libelles }) => {
+    const { t } = useTranslation();
     return (
       <>
         <div className="button-wrapper m-[5%] my-0 flex items-center justify-between px-4">
@@ -16,7 +18,7 @@ const SettingsLine = React.memo(
             <div className="flex justify-start  gap-[10%] items-center w-full">
               {children}
               <h2 className="ml-[0.4vw] text-text">
-                {libelles[index].name === "default" ? "Main Menu" : libelles[index].name}
+                {libelles[index].name === "default" ? t('settingsLine.mainMenu') : t(`libelles.${libelles[index].name}`)}
               </h2>
             </div>
           </button>

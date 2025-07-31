@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useScreen } from "../context/ScreenContext.js";
 import { useUserPreferences } from "../context/UserPreferencesContext.js";
+import MobileMessage from "./ui/MobileMessage.jsx";
 
 export default function ScreenWrapper({ children }) {
   const { isMobile, isDelayActive } = useScreen();
@@ -72,10 +73,16 @@ export default function ScreenWrapper({ children }) {
       <div
         className={`overflow-x-none flex flex-col items-center  lg:gap-[20vh]`}
       >
+        {isMobile && <MobileMessage />}
         {children}
       </div>
     );
   } else {
-    return children;
+    return (
+      <>
+        {isMobile && <MobileMessage />}
+        {children}
+      </>
+    );
   }
 }

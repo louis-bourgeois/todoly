@@ -19,6 +19,7 @@ export default function Task({ task, onTaskClick, minWidth }) {
   const handleTaskDoneClick = useCallback(
     (e) => {
       e.stopPropagation();
+      console.log()
       const newStatus = taskStatus !== "done" ? "done" : "todo";
       setTaskStatus(newStatus);
       modifyTask({ ...task, status: newStatus }, "post");
@@ -46,7 +47,7 @@ export default function Task({ task, onTaskClick, minWidth }) {
       <div className="flex justify-left items-center pt-5 pb-2">
         <div
           onClick={handleTaskDoneClick}
-          className={`z-40 transition-all ${taskCircleColor} cursor-pointer gradient-border border border-secondary min-w-[1.5rem] min-h-[1.5rem] rounded-full mx-5`}
+          className={`z-40 transition-all ${taskCircleColor} cursor-pointer border border-secondary min-w-[1.5rem] min-h-[1.5rem] rounded-full mx-5`}
         />
         <h3 className="text-text font-bold text-lg 4xl:text-xl px-5 font-inter text-right">
           {task.title}

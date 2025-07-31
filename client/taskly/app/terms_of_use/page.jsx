@@ -2,8 +2,7 @@
 "use client";
 
 import { useState } from 'react';
-import Header from '@/ui/app/MainMenu/constantContent/Header';
-import Navbar from '@/ui/landing_page/Navbar';
+import Navbar from '../ui/landing_page/Navbar';
 // Optionnel: Métadonnées pour le SEO (fonctionne aussi dans les Client Components)
 // Next.js lira ceci sur le serveur avant de rendre la page côté client.
 

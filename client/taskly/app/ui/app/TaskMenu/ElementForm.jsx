@@ -11,6 +11,7 @@ import WorkspaceSelect from "./task/WorkspaceSelect";
 import TaskMenuButton from "./TaskMenuButton";
 import TaskMenuSectionContainer from "./TaskMenuSectionContainer";
 import TitleInput from "./TitleInput";
+import { useTranslation } from "../../../i18n/client";
 
 export default function ElementForm({ transitionStyles, id, visibility }) {
   const { formatADate } = useFormattedDate();
@@ -29,6 +30,7 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
   const [workspaceMenuOpen, setWorkspaceMenuOpen] = useState(false);
   const [sectionSelectMenuOpen, setSectionSelectMenuOpen] = useState(false);
   const [elementPickerMenuOpen, setElementPickerMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (id) {
@@ -37,7 +39,7 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
         setTask(foundTask);
         setTitleValue(foundTask.title || "");
         setStatus(foundTask.status || "todo");
-        setLinked_section(foundTask.linked_section || "Other");
+        setLinked_section(foundTask.linked_section || t('elementForm.other'));
         setLinked_section_name(
           sections.find((section) => section.id === foundTask.linked_section)
             ?.name
@@ -53,7 +55,7 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
     } else {
       setCanSubmit(false);
     }
-  }, [id, sections, tasks, setTaskWorkspace]);
+  }, [id, sections, tasks, setTaskWorkspace, t]);
 
   useEffect(() => {
     if (linked_section) {
@@ -72,7 +74,7 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
     setTaskWorkspace("");
     setTitleValue("");
     setStatus("todo");
-    setLinked_section("Other");
+    setLinked_section(t('elementForm.other'));
     setLinked_section_name(
       sections.find((section) => section.id === preferences.Last_Section)?.name
     );
@@ -84,7 +86,7 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
     setTask(null);
     setElementPickerMenuOpen(false);
     setSectionSelectMenuOpen(false);
-    setElementType("Task");
+    setElementType(t('elementForm.task'));
     setCallback("");
   }, [
     setTaskWorkspace,
@@ -100,6 +102,7 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
     setSectionSelectMenuOpen,
     sections,
     preferences.Last_Section,
+    t
   ]);
 
   const handleDateSelect = (date) => {
@@ -239,7 +242,7 @@ export default function ElementForm({ transitionStyles, id, visibility }) {
               othersStyles={`w-full h-[25%] items-center justify-left font-bold text-4xl`}
               flex
             >
-              <span>{id ? "Delete" : "Create"}</span>
+              <span>{id ? t('elementForm.delete') : t('elementForm.create')}</span>
             </TaskMenuButton>
           </div>
         </div>

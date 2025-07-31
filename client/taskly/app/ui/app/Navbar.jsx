@@ -6,18 +6,21 @@ import { useMenu } from "../../../context/MenuContext";
 import { useUser } from "../../../context/UserContext";
 import { useUserPreferences } from "../../../context/UserPreferencesContext";
 import MainMenu from "./MainMenu/MainMenu";
+import { useTranslation } from "@/app/i18n/client";
 
-const TITLES = {
-  evening: "Good Evening,",
-  night: "Good Night,",
-  morning: "Good Morning,",
-  afternoon: "Good Afternoon,",
-  meal: "Bon Appétit,",
+const GREETING_KEYS = {
+  evening: "navbar.greeting.evening",
+  night: "navbar.greeting.night",
+  morning: "navbar.greeting.morning",
+  afternoon: "navbar.greeting.afternoon",
+  meal: "navbar.greeting.meal",
 };
 
 export default function Navbar() {
-  const { user, loading } = useUser();
   const { preferences } = useUserPreferences();
+  const lng = preferences?.Language;
+  const { t } = useTranslation(lng);
+  const { user, loading } = useUser();
   const { toggleTaskMenu, toggleSearchMenu } = useMenu();
   const [showMenu, setShowMenu] = useState(false);
   const [showContentMenu, setShowContentMenu] = useState(false);
@@ -31,16 +34,22 @@ export default function Navbar() {
   const containerRef = useRef(null);
 
   const name = useMemo(() => {
-    return user ? user.first_name : "guest";
-  }, [user]);
+    return user ? user.first_name : t('navbar.guestName');
+  }, [user, t]);
+
   const title = useMemo(() => {
     const currentHour = new Date().getHours();
-    if (currentHour >= 23 || currentHour < 6) return TITLES.night;
-    if (currentHour >= 6 && currentHour < 12) return TITLES.morning;
-    if (currentHour === 12) return TITLES.meal;
-    if (currentHour > 12 && currentHour < 18) return TITLES.afternoon;
-    return TITLES.evening;
-  }, []);
+    let key;
+    if (currentHour >= 23 || currentHour < 6) key = GREETING_KEYS.night;
+    else if (currentHour >= 6 && currentHour < 12) key = GREETING_KEYS.morning;
+    else if (currentHour === 12) key = GREETING_KEYS.meal;
+    else if (currentHour > 12 && currentHour < 18) key = GREETING_KEYS.afternoon;
+    else key = GREETING_KEYS.evening;
+    
+    // On retourne directement la chaîne traduite.
+    console.log("translated key", t(key))
+    return t(key);
+  }, [t]); // Ajout de `t` aux dépendances pour que le titre se mette à jour si la langue change.
 
   const updateDimensions = useCallback(() => {
     if (showMenu && elementRef.current) {
@@ -176,7 +185,7 @@ export default function Navbar() {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               className="grow-0 shrink-0 w-full p-[20%]"
-              aria-label="Search"
+              aria-label={t('navbar.buttons.search')}
             >
               <path
                 fill="currentColor"
@@ -193,7 +202,7 @@ export default function Navbar() {
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 24 24"
               className="flex justify-center items-center text-dominant"
-              aria-label="Add"
+              aria-label={t('navbar.buttons.add')}
               fill="currentColor"
             >
               <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8 A8,8,0,0,1,12,20Zm4-9H13V8a1,1,0,0,0-2,0v3H8a1,1,0,0,0,0,2h3v3a1,1,0,0,0,2,0V13h3a1,1,0,0,0,0-2Z" />

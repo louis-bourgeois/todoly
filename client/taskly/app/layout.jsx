@@ -4,12 +4,20 @@ import CanonicalTag from "./CanonicalTag";
 import AppProviders from "./contextProvider";
 import "./globals.css";
 
+import { dir } from "i18next";
+import { languages } from "../app/i18n/settings";
+
+export async function generateStaticParams() {
+  return languages.map((lng) => ({ lng }));
+}
+
 const NotificationWrapper = dynamic(
   () => import("./ui/app/NotificationWrapper/NotificationWrapper"),
   {
     ssr: false,
   }
 );
+
 
 export const metadata = {
   title: "Todoly",
@@ -33,10 +41,11 @@ export const viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({ children }) {
+export default function RootLayout({ children, params: { lng } }) {
   return (
     <html
-      lang="fr"
+      lang={lng}
+      dir="ltr"
       className={`${overusedGrotesk.variable} font-sans m-0 p-0 scroll-smooth h-screen bg-bg theme-dark `}
     >
       <head>

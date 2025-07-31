@@ -1,4 +1,4 @@
-import useSmoothScroll from "@/useSmoothScroll";
+import useSmoothScroll from "@/app/useSmoothScroll";
 import Link from "next/link";
 import CTA from "./CTA";
 

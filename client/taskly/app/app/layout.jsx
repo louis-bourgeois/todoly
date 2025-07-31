@@ -26,6 +26,7 @@ import { useScreen } from "../../context/ScreenContext.js";
 import { useTask } from "../../context/TaskContext.js";
 import { useUserPreferences } from "../../context/UserPreferencesContext.js";
 import { useWorkspace } from "../../context/WorkspaceContext.js";
+import { useTranslation } from "../i18n/client";
 
 const SLIDE_NUMBER = 14;
 const ELEMENTS = ["Task", "Workspace"];
@@ -33,6 +34,7 @@ const ELEMENTS = ["Task", "Workspace"];
 const AddWorkspaceBubble = ({ onDontShowAgain }) => {
   const [isVisible, setIsVisible] = useState(true);
   const [opacity, setOpacity] = useState(1);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const visibilityTimer = setTimeout(() => {
@@ -57,18 +59,17 @@ const AddWorkspaceBubble = ({ onDontShowAgain }) => {
       style={{ opacity }}
     >
       <div className="mb-2">
-        <h3 className="font-semibold text-lg text-text">Astuce</h3>
+        <h3 className="font-semibold text-lg text-text">{t('layout.tip')}</h3>
       </div>
       <p className="text-sm mb-3 text-text">
-        Faites défiler horizontalement pour ajouter d&apos;autres types
-        d&apos;éléments
+        {t('layout.scrollHorizontally')}
       </p>
       <div className="flex justify-end">
         <button
           onClick={onDontShowAgain}
           className="text-xs bg-white  text-dominant px-3 py-1 rounded hover:scale-105 transition-scale transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
         >
-          Do not show again
+          {t('layout.doNotShowAgain')}
         </button>
       </div>
     </div>
@@ -97,6 +98,7 @@ const CardContent = ({ children, el, cardType }) => {
 };
 const AddCard = (type = "Workspace") => {
   const { setCardType } = useMenu();
+  const { t } = useTranslation();
   console.log(type);
 
   return (
@@ -107,7 +109,7 @@ const AddCard = (type = "Workspace") => {
             onClick={() => setCardType("Add")}
             className="bg-dominant text-text font-bold p-4 rounded-full"
           >
-            {"Create " + type.type}
+            {t('layout.create') + " " + type.type}
           </button>
         </div>
       </CardContent>
@@ -141,6 +143,8 @@ const ScrollableContent = ({ children }) => {
 
 export default function AppLayout({ children }) {
   const { addUserPreference, preferences } = useUserPreferences();
+  const lng = preferences?.Language;
+  const { t, i18n } = useTranslation(lng);
   const { isMobile } = useScreen();
   const { loading, isAuthenticated, checkAuth } = useAuth();
   const { activeTask } = useTask();
@@ -176,6 +180,15 @@ export default function AppLayout({ children }) {
       ...currentWorkspaceTasks.filter((task) => task.id !== activeTask),
     ];
   }, [currentWorkspaceTasks, activeTask]);
+
+  useEffect(() => {
+    const userPrefLang = preferences?.Language?.toLowerCase() || "en";
+    const currentAppLang = i18n.language
+    if (userPrefLang && userPrefLang !== currentAppLang) {
+      i18n.changeLanguage(userPrefLang);
+    }
+  }, [preferences?.Language, i18n] )
+
 
   useEffect(() => {
     setCurrentCardType(cardType);
@@ -331,7 +344,7 @@ export default function AppLayout({ children }) {
             isTransitioning={isTransitioning}
           >
             <CardContent cardType={currentCardType}>
-              {task ? <TaskView id={task.id} /> : <div>No task selected</div>}
+              {task ? <TaskView id={task.id} /> : <div>{t('layout.noTaskSelected')}</div>}
             </CardContent>
           </Card>
         );
@@ -350,7 +363,7 @@ export default function AppLayout({ children }) {
               {workspace ? (
                 <WorkspaceView id={workspace.id}></WorkspaceView>
               ) : (
-                <div>No workspace selected</div>
+                <div>{t('layout.noWorkspaceSelected')}</div>
               )}
             </CardContent>
           </Card>
@@ -375,7 +388,7 @@ export default function AppLayout({ children }) {
             isTransitioning={isTransitioning}
           >
             <CardContent cardType={currentCardType}>
-              <div>Default card content</div>
+              <div>{t('layout.defaultCardContent')}</div>
             </CardContent>
           </Card>
         );
@@ -470,8 +483,7 @@ export default function AppLayout({ children }) {
                 </SwiperSlide>
               ))
             ) : currentCardType === "All" || nextCardType === "All" ? (
-              [...workspaces, { id: "add-workspace" }]
-                .sort((a, b) => {
+              [...workspaces, { id: "add-workspace" }].sort((a, b) => {
                   if (a.id === "add-workspace") return 1;
                   if (b.id === "add-workspace") return -1;
                   return b.tasks.length - a.tasks.length;
@@ -524,12 +536,12 @@ export default function AppLayout({ children }) {
           <ViewsMenu
             options={[
               {
-                title: "Sort by",
-                items: ["Creation date", "Tags", "Importance", "Last updated"],
+                title: t('layout.sortBy'),
+                items: [t('layout.creationDate'), t('layout.tags'), t('layout.importance')],
               },
               {
-                title: "Show",
-                items: ["All tasks", "Completed only", "Todo only"],
+                title: t('layout.show'),
+                items: [t('layout.allTasks'), t('layout.completedOnly'), t('layout.todoOnly')],
               },
             ]}
             isOpen={isViewsMenuOpen}

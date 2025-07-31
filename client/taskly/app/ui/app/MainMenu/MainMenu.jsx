@@ -12,6 +12,7 @@ import MainSettingsMenuContent from "./settings/MainSettingsMenuContent";
 import Notifications from "./settings/Notifications/Notifications";
 import EditProfile from "./settings/EditProfile";
 import Integrations from "./settings/Integrations/Integrations";
+import { useTranslation } from "../../../i18n/client";
 
 // Precomputed dimensions for each panel.
 // Note: the key for the default panel is "default", but we’ll display "Main Menu" in the header.
@@ -50,6 +51,7 @@ export default function MainMenu({
   setProfilePictureVisibility,
   profilePictureVisibility,
 }) {
+  const { t } = useTranslation();
   // Default dimensions for the default panel.
   const DEFAULT_WIDTH = LIBELLES.find((item) => item.name === "default").width;
 
@@ -64,7 +66,7 @@ export default function MainMenu({
 
   // Compute the header label separately.
   // When the internal layout is "default", we want the header label to be "Main Menu".
-  const headerLabel = layout === "default" ? "Main Menu" : layout;
+  const headerLabel = layout === "default" ? t('mainMenu.mainMenu') : layout;
 
   // The current layout component is simply looked up via the internal layout key.
   const CurrentLayoutComponent = LAYOUTS[layout] || (() => <></>);

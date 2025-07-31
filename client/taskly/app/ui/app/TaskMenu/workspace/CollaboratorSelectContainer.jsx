@@ -2,12 +2,14 @@ import { useState } from "react";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
+import { useTranslation } from "../../../../i18n/client";
 
 export default function CollaboratorSelectContainer({
   collaborators,
   setCollaborators,
 }) {
   const [inputValue, setInputValue] = useState("");
+  const { t } = useTranslation();
 
   const handleConfirm = async (key = "Enter") => {
     if (key === "Enter" || !key) {
@@ -30,7 +32,7 @@ export default function CollaboratorSelectContainer({
 
   return (
     <div className="addMenuElement p-2 gradient-border bg-main_menu_bg h-[80%] rounded-[20px] flex flex-col justify-between items-center">
-      <h1 className="text-3xl font-bold text-text">Collaborators</h1>
+      <h1 className="text-3xl font-bold text-text">{t('collaboratorSelect.title')}</h1>
       <div className="w-full h-[50%]  flex flex-col items-center justify-center p-5">
         <p></p>
         {/* <Slider {...settings} className="w-full">
@@ -127,7 +129,7 @@ export default function CollaboratorSelectContainer({
           value={inputValue}
           name="collaborators"
           className="placeholder:text-gray w-full text-center focus:outline-none text-text bg-transparent"
-          placeholder="Coming soon!"
+          placeholder={t('collaboratorSelect.comingSoon')}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={(e) => {
             handleConfirm(e.key);
@@ -138,7 +140,7 @@ export default function CollaboratorSelectContainer({
         />
       </div>
       <button className="h-[10%] hover:text-dominant text-text transition transition-color ease-in-out duration-300">
-        Copy link (coming soon!)
+        {t('collaboratorSelect.copyLink')}
       </button>
     </div>
   );

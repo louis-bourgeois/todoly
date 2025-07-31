@@ -3,17 +3,20 @@ import CTA from "@/app/ui/landing_page/CTA";
 import { useAuth } from "../../../../../../context/AuthContext";
 import { useUser } from "../../../../../../context/UserContext";
 import ProfilePhoto from "./ProfilePhoto";
+import { useTranslation } from "@/app/i18n/client";
+
 
 export default function Account({ transitionStyles, setLayout }) {
   const { user } = useUser();
   const { logout } = useAuth();
+  const { t } = useTranslation();
 
   // 2. Créer un état pour suivre le survol du bouton "premium"
   const [isPremiumHovered, setIsPremiumHovered] = useState(false);
 
   // Une fonction pour le bouton premium (au lieu de `logout`)
   const handlePremiumClick = () => {
-    alert("La fonctionnalité Premium arrive bientôt !");
+    alert(t('account.premiumComingSoon'));
   };
 
   return (
@@ -22,7 +25,7 @@ export default function Account({ transitionStyles, setLayout }) {
         {/* Le composant ProfilePhoto n'est pas modifié */}
         <ProfilePhoto /> 
         <div className="mr-5 flex flex-col items-center  gap-[1vh] w-full">
-          <CTA onClick={logout} type="secondary" title="Sign out"></CTA>
+          <CTA onClick={logout} type="secondary" title={t('account.signOut')}></CTA>
         </div>
       </div>
       <div className=" text-text flex flex-col gap-[2%] justify-center items-center w-1/2">
@@ -75,7 +78,7 @@ export default function Account({ transitionStyles, setLayout }) {
               onClick={handlePremiumClick} // J'ai changé ceci pour ne pas déconnecter l'utilisateur
               type="primary"
               // 4. Changer le titre et ajouter les classes de style dynamiquement
-              title={isPremiumHovered ? "It is free !" : "Go premium"}
+              title={isPremiumHovered ? t('account.itIsFree') : t('account.goPremium')}
               className="p-3 transition-all duration-300 hover:brightness-90"
               disabled={true}
             />

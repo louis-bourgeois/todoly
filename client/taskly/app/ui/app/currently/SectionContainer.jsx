@@ -7,6 +7,7 @@ import { useSection } from "../../../../context/SectionContext";
 import { useTask } from "../../../../context/TaskContext";
 import { useUserPreferences } from "../../../../context/UserPreferencesContext";
 import { useWorkspace } from "../../../../context/WorkspaceContext";
+import { useTranslation } from "../../../i18n/client";
 
 const SectionContainer = ({
   date = undefined,
@@ -23,6 +24,7 @@ const SectionContainer = ({
   const headerRefs = useRef({});
   const [editingSectionId, setEditingSectionId] = useState(null);
   const [localSectionName, setLocalSectionName] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     setWorkspace(selectedWorkspace?.id || currentWorkspace);
@@ -162,7 +164,7 @@ const SectionContainer = ({
                       onChange={handleSectionNameInputChange}
                       onBlur={handleSectionNameInputBlur}
                       onKeyDown={handleSectionNameInputKeyDown}
-                      placeholder="Enter section name"
+                      placeholder={t('sectionContainer.placeholder')}
                     />
                   ) : (
                     <h1 className="text-text font-bold text-xl 4xl:text-2xl whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
@@ -173,7 +175,7 @@ const SectionContainer = ({
                       )}
                     </h1>
                   )}
-                  {section.name !== "Other" && (
+                  {section.name !== t('sectionContainer.other') && (
                     <div className="flex justify-between items-center">
                       <button
                         className=" text-secondary hover:text-dominant"

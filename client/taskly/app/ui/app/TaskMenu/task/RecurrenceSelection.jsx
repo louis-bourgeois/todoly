@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useSection } from "../../../../../context/SectionContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
+import { useTranslation } from "../../../../i18n/client";
 
 // NOTE : Le nom du composant est "RecurrenceSelection", mais sa logique interne
 // et son affichage sont liés aux "Sections". Il serait peut-être plus clair
@@ -18,6 +19,7 @@ export function RecurrenceSelection({
   // Cela allège considérablement le composant.
   const { sections } = useSection();
   const { currentWorkspace } = useWorkspace();
+  const { t } = useTranslation();
 
   // Cette logique est correcte, on la conserve.
   const filteredSections = sections.filter(
@@ -36,12 +38,12 @@ export function RecurrenceSelection({
                    transition-opacity duration-300 ease-in-out opacity-0 group-hover:opacity-100`}
       >
         <p className="text-white font-bold text-lg">
-          Pas encore disponible, en dev
+          {t('recurrence.notAvailable')}
         </p>
       </div>
 
       {/* Le titre semble lié à la récurrence, ce qui est en contradiction avec le reste. */}
-      <h2 className="pl-[4%] font-bold text-xl text-text">Seulement cette fois</h2>
+      <h2 className="pl-[4%] font-bold text-xl text-text">{t('recurrence.onlyThisTime')}</h2>
       
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -74,7 +76,7 @@ export function RecurrenceSelection({
       >
         <div className="opacity-100 rounded-xl m-1 p-4 cursor-pointer font-bold hover:text-dominant transition-color transition-transform hover:scale-95 text-text gradient-border">
           {/* TODO: Implémenter la logique pour ajouter une section */}
-          Ajouter une section
+          {t('recurrence.addSection')}
         </div>
         
         <div

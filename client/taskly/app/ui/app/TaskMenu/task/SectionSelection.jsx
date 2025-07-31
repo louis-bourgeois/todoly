@@ -3,6 +3,7 @@ import { useError } from "../../../../../context/ErrorContext";
 import { useSection } from "../../../../../context/SectionContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
+import { useTranslation } from "../../../../i18n/client";
 
 export default function SectionSelection({
   linked_section_name,
@@ -20,6 +21,7 @@ export default function SectionSelection({
     name: "",
     workspace_id: null,
   });
+  const { t } = useTranslation();
 
   const newSectionInputRef = useRef(null);
 
@@ -31,7 +33,7 @@ export default function SectionSelection({
         setNewSection({ name: "", workspace_id: null });
         setIsEditingNewSection(false);
       } catch (error) {
-        handleError("Failed to add section");
+        handleError(t('sectionSelection.error.add'));
       }
     } else {
         // If the new section name is empty, just close the input
@@ -82,7 +84,7 @@ export default function SectionSelection({
       await modifySection(editingName, editingSectionId);
     } catch (error) {
       console.error("Failed to modify section", error);
-      handleError("Failed to modify section");
+      handleError(t('sectionSelection.error.modify'));
     } finally {
       // Always close the input field after the operation
       setEditingSectionId(null);
@@ -121,7 +123,7 @@ export default function SectionSelection({
       onClick={() => setMenuOpen((prev) => !prev)}
     >
       <h2 className="pl-[4%] font-bold text-xl text-text">
-        {linked_section_name || "Select a section"}
+        {linked_section_name || t('sectionSelect.placeholder')}
       </h2>
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -160,7 +162,7 @@ export default function SectionSelection({
             handleAddSection();
           }}
         >
-          Add Section
+          {t('sectionSelection.addSection')}
         </div>
         <div
           className={`${
@@ -195,7 +197,7 @@ export default function SectionSelection({
                   {section.name}
                 </span>
               )}
-              {section.name !== "Other" && editingSectionId !== section.id && (
+              {section.name !== t('sectionSelection.other') && editingSectionId !== section.id && (
                 <>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -224,7 +226,7 @@ export default function SectionSelection({
                       handleStartEditing(section);
                     }}
                   >
-                    Edit
+                    {t('sectionSelection.edit')}
                   </button>
                 </>
               )}
@@ -237,7 +239,7 @@ export default function SectionSelection({
               ref={newSectionInputRef}
               type="text"
               className="text-text cursor-pointer rounded-full px-4 w-full py-2 border border-secondary bg-primary focus:outline-none"
-              placeholder="New section name"
+              placeholder={t('sectionSelection.newSectionPlaceholder')}
               value={newSection.name}
               onChange={(e) =>
                 setNewSection({

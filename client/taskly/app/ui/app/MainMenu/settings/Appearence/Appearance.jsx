@@ -2,11 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import Circle from "../Circle";
 import SectionTitle from "../SectionTitle";
+import { useTranslation } from "@/app/i18n/client";
 
 export default function Appearance({ transitionStyles }) {
   const { updatePreference, preferences } = useUserPreferences();
   const [selectedCircle, setSelectedCircle] = useState(null);
   const siblingRefs = useRef([]);
+  const { t } = useTranslation();
 
   const rgbToHex = (rgb) => {
     let hex = rgb
@@ -47,7 +49,7 @@ export default function Appearance({ transitionStyles }) {
     <div
       className={`flex flex-col w-full px-[4%] gap-[1.75vh] justify-start ${transitionStyles}`}
     >
-      <SectionTitle>Color Theme</SectionTitle>
+      <SectionTitle>{t('appearance.colorTheme')}</SectionTitle>
       <div className="w-full flex flex-col justify-around gap-[1.25vw]">
         {rows.map((row, index) => (
           <div

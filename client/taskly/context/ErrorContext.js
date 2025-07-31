@@ -1,93 +1,95 @@
 "use client";
 import Link from "next/link";
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext, useEffect, useMemo } from "react";
 import { NotificationsContext } from "./NotificationsContext";
+import { useTranslation } from "@/app/i18n/client";
 
 const ErrorContext = createContext();
 
 // Comprehensive error messages
-const errorMessages = {
-  "already exist": {
-    title: "Account Already Exists",
-    subtitle: "We already have an account associated with this information.",
-    action: {
-      text: "Log in instead",
-      href: "/auth/login",
-    },
-  },
-  "Incorrect Password": {
-    title: "Incorrect Password",
-    subtitle: "The provided credentials are incorrect. Please try again.",
-  },
-  "Title already used": {
-    title: "Title Already Used",
-    subtitle: "Please use a unique title.",
-  },
-  "Workspace name already used": {
-    title: "Name Already Taken",
-    subtitle: "You already have a workspace with this name. Please choose another.",
-  },
-  "username already taken": {
-    title: "Username Unavailable",
-    subtitle: "This username is already in use. Please choose a different one.",
-  },
-  "Still dependencies in it": {
-    title: "Unable to Delete",
-    subtitle:
-      "This item cannot be deleted because other elements depend on it (e.g., tasks or sections).",
-  },
-  "User not found": {
-    title: "Authentication Failed",
-    subtitle: "We couldn't find an account associated with these credentials.",
-    action: {
-      text: "Create an account",
-      href: "/auth/signup",
-    },
-  },
-  "Missing credentials": {
-    title: "Missing Information",
-    subtitle: "Please provide all required credentials to proceed.",
-  },
-  "Authentication failed": {
-    title: "Authentication Failed",
-    subtitle:
-      "We couldn't authenticate you. Please check your credentials and try again.",
-  },
-  "Incorrect current password": {
-    title: "Incorrect Password",
-    subtitle: "The provided current password is incorrect.",
-  },
-  INTERNAL_SERVER_ERROR: {
-    title: "Server Error",
-    subtitle: "We're experiencing some technical difficulties.",
-    action: {
-      text: "Report this issue",
-      href: "/support/report",
-    },
-  },
-  UNAUTHORIZED_SIGNUP: {
-    title: "Registration Error",
-    subtitle:
-      "We couldn't complete your registration. Please try again or contact support.",
-  },
-  "You cannot delete this section because there are still tasks in it!": {
-    title: "This section is not empty",
-    subtitle: "Please delete or move the tasks to another section to delete this section."
-  },
-  DEFAULT: {
-    title: "Unexpected Error",
-    subtitle:
-      "Something went wrong. Please try again or contact our support team if the issue persists.",
-    action: {
-      text: "Contact Support",
-      href: "/support/report",
-    },
-  },
-};
+
 
 export const ErrorProvider = ({ children }) => {
+  
   const { addNotification, notificationsList } =
     useContext(NotificationsContext);
+
+  const { t } = useTranslation()
+
+ const errorMessages = useMemo(() => ({
+    "already exist": {
+      title: t('error.accountAlreadyExists.title'),
+      subtitle: t('error.accountAlreadyExists.subtitle'),
+      action: {
+        text: t('error.accountAlreadyExists.action'),
+        href: "/auth/login",
+      },
+    },
+    "Incorrect Password": {
+      title: t('error.incorrectPassword.title'),
+      subtitle: t('error.incorrectPassword.subtitle'),
+    },
+    "Title already used": {
+      title: t('error.titleAlreadyUsed.title'),
+      subtitle: t('error.titleAlreadyUsed.subtitle'),
+    },
+    "Workspace name already used": {
+      title: t('error.nameAlreadyTaken.title'),
+      subtitle: t('error.nameAlreadyTaken.subtitle'),
+    },
+    "username already taken": {
+      title: t('error.usernameUnavailable.title'),
+      subtitle: t('error.usernameUnavailable.subtitle'),
+    },
+    "Still dependencies in it": {
+      title: t('error.unableToDelete.title'),
+      subtitle: t('error.unableToDelete.subtitle'),
+    },
+    "User not found": {
+      title: t('error.authenticationFailed.title'),
+      subtitle: t('error.userNotFound.subtitle'),
+      action: {
+        text: t('error.userNotFound.action'),
+        href: "/auth/signup",
+      },
+    },
+    "Missing credentials": {
+      title: t('error.missingCredentials.title'),
+      subtitle: t('error.missingCredentials.subtitle'),
+    },
+    "Authentication failed": {
+      title: t('error.authenticationFailed.title'),
+      subtitle: t('error.authenticationFailed.subtitle'),
+    },
+    "Incorrect current password": {
+      title: t('error.incorrectCurrentPassword.title'),
+      subtitle: t('error.incorrectCurrentPassword.subtitle'),
+    },
+    "You cannot delete this section because there are still tasks in it!": {
+      title: t('error.sectionNotEmpty.title'),
+      subtitle: t('error.sectionNotEmpty.subtitle'),
+    },
+    INTERNAL_SERVER_ERROR: {
+      title: t('error.serverError.title'),
+      subtitle: t('error.serverError.subtitle'),
+      action: {
+        text: t('error.serverError.action'),
+        href: "/support/report",
+      },
+    },
+    UNAUTHORIZED_SIGNUP: {
+      title: t('error.registrationError.title'),
+      subtitle: t('error.registrationError.subtitle'),
+    },
+    DEFAULT: {
+      title: t('error.default.title'),
+      subtitle: t('error.default.subtitle'),
+      action: {
+        text: t('error.default.action'),
+        href: "/support/report",
+      },
+    },
+  }), [t]);
 
   useEffect(() => {
     // Logic to handle changes in notificationsList if necessary

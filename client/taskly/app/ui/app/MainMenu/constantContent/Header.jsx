@@ -1,8 +1,9 @@
-
 import CTA from "@/app/ui/landing_page/CTA";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useUser } from "../../../../../context/UserContext";
+import { useUser } from "@/context/UserContext";
+import { useTranslation } from "@/app/i18n/client";
+
 export default function Header({
   name,
   handleSettingsChange,
@@ -19,15 +20,16 @@ export default function Header({
   const { deleteUser, user } = useUser();
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (
       libelles.some((libelle) => libelle.name === layout) &&
-      layout !== "Main Menu"
+      layout !== t('header.mainMenu')
     ) {
       setProfilePictureVisibility((prev) => !prev);
     }
-  }, [layout, setProfilePictureVisibility, libelles]);
+  }, [layout, setProfilePictureVisibility, libelles, t]);
 
   const isSettingsLayout = libelles.some((libelle) => libelle.name === layout);
   const [isHovered, setIsHovered] = useState(false);
@@ -43,7 +45,7 @@ export default function Header({
       await deleteUser();
     }
   };
-  if (isSettingsLayout && layout !== "Main Menu") {
+  if (isSettingsLayout && layout !== t('header.mainMenu')) {
     return (
       <>
         <div
@@ -79,7 +81,7 @@ export default function Header({
           <h1 className="text-text font-extrabold text-2xl absolute left-1/2 transform -translate-x-1/2">
             {layout}
           </h1>
-          {layout === "Account" ? (
+          {layout === t('header.account') ? (
             <button onClick={handleDeleteClick}>
               <svg
                 height={"40"}
@@ -136,13 +138,13 @@ export default function Header({
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-primary gradient-border p-8 rounded-[33px] shadow-shadow_01 max-w-md w-full">
               <h2 className="text-2xl font-bold mb-4 text-text">
-                Confirm Account Deletion
+                {t('header.confirmDelete')}
               </h2>
               <p className="mb-4 text-text">
-                This action is{" "}
-                <span className="text-red-500">irreversible</span>. To confirm,
-                please type &quot;delete-
-                {user.username}&quot; below.
+                {t('header.irreversibleAction')}{" "}
+                <span className="text-red-500">{t('header.irreversible')}</span>. {t('header.confirmTyping')}
+                &quot;delete-
+                {user.username}&quot; {t('header.below')}
               </p>
               <input
                 type="text"
@@ -154,12 +156,12 @@ export default function Header({
               <div className="flex justify-end space-x-4">
                 <CTA
                   onClick={() => setIsDeleteModalOpen(false)}
-                  title="Cancel"
+                  title={t('header.cancel')}
                   type="secondary"
                 />
                 <CTA
                   onClick={handleConfirmDelete}
-                  title="Delete Account"
+                  title={t('header.deleteAccount')}
                   type="ghost"
                   disabled={deleteConfirmation !== `delete-${user.username}`}
                   className={` ${
@@ -187,16 +189,16 @@ export default function Header({
       }}
     >
       <div className="flex flex-col items-start justify-between">
-        <h3 className={`text-text text-[2em] font-extrabold leading-none`}>
+        <h3 className={`text-text text-[2em] font-extrabold select-none leading-none`}>
           {name}
         </h3>
         <p
-          className={`text-grey delay-250 text-[0.8em] cursor-pointer font-light leading-none pl-[0.075vw]`}
+          className={`text-grey delay-250 text-[0.8em] cursor-not-allowed select-none font-light leading-none pl-[0.075vw]`}
           >
-          Free plan
+          {t('header.freePlan')}
         </p>
       </div>
-      {layout === "Main Menu" || layout === "default" ? (
+      {layout === t('header.mainMenu') || layout === "default" ? (
         <div
           className="relative w-[10%] mr-[1vw] cursor-pointer"
           onMouseEnter={() => setIsHovered(true)}
@@ -211,7 +213,7 @@ export default function Header({
             xmlns="http://www.w3.org/2000/svg"
             onClick={() => handleSettingsChange("settings")}
           >
-            <path
+             <path
               d="M4.32086 18.3589L4.3578 18.6459L4.12735 18.8209L0.612505 21.4902C0.612289 21.4904 0.612076 21.4905 0.61186 21.4907C0.502794 21.5748 0.461592 21.7328 0.541822 21.8801L3.87127 27.4739L3.8714 27.4738L3.87756 27.4848C3.94976 27.6133 4.11534 27.6803 4.27899 27.619C4.27955 27.6188 4.28011 27.6186 4.28067 27.6183L8.4266 26.0013L8.6815 25.9019L8.90266 26.063C9.74336 26.6753 10.6402 27.2029 11.6098 27.5888L11.8775 27.6953L11.9196 27.9803L12.5529 32.2696L12.553 32.2696L12.5542 32.2788C12.5691 32.3943 12.6852 32.5224 12.8749 32.5224H19.5416C19.7313 32.5224 19.8475 32.3943 19.8624 32.2788L19.8623 32.2788L19.8636 32.2696L20.497 27.9803L20.5391 27.6953L20.8067 27.5888C21.7799 27.2015 22.6751 26.6896 23.509 26.0666L23.7314 25.9005L23.99 26.0013L28.1309 27.6164C28.3001 27.6729 28.4755 27.5979 28.539 27.4848L28.5389 27.4847L28.5453 27.4739L31.8747 21.8801C31.955 21.7328 31.9138 21.5748 31.8047 21.4907C31.8045 21.4905 31.8043 21.4904 31.8041 21.4902L28.2892 18.8209L28.0588 18.6459L28.0957 18.3589C28.161 17.8515 28.2083 17.3408 28.2083 16.8365C28.2083 16.3323 28.161 15.8216 28.0957 15.3141L28.0588 15.0271L28.2892 14.8521L31.8041 12.1828C31.8043 12.1827 31.8045 12.1825 31.8047 12.1823C31.9295 12.0862 31.9576 11.9293 31.8811 11.8036L31.8786 11.7995L28.5453 6.19915L28.5452 6.19923L28.539 6.18827C28.4668 6.0597 28.3012 5.99276 28.1375 6.05412L23.99 7.67175L23.7351 7.77116L23.5139 7.61008C22.6732 6.99774 21.7764 6.47021 20.8067 6.08426L20.5391 5.97773L20.497 5.69274L19.8636 1.40348L19.8636 1.40349L19.8624 1.39427C19.8475 1.27879 19.7313 1.15063 19.5416 1.15063H12.8749C12.6852 1.15063 12.5691 1.27879 12.5542 1.39427L12.5543 1.39428L12.5529 1.40348L11.9196 5.69274L11.8775 5.97773L11.6098 6.08426C10.6366 6.47161 9.74146 6.9835 8.90752 7.60649L8.68517 7.7726L8.4266 7.67175L4.28572 6.05672C4.11643 6.00014 3.94109 6.07517 3.87756 6.18827L3.8777 6.18835L3.87127 6.19915L0.541807 11.793C0.461617 11.9403 0.502779 12.0982 0.611782 12.1823C0.612022 12.1825 0.612263 12.1827 0.612505 12.1828L4.12735 14.8521L4.3578 15.0271L4.32086 15.3141C4.25548 15.8221 4.20828 16.3164 4.20828 16.8365C4.20828 17.3566 4.25548 17.851 4.32086 18.3589ZM22.5416 16.8365C22.5416 20.2502 19.6872 23.0016 16.2083 23.0016C12.7294 23.0016 9.87495 20.2502 9.87495 16.8365C9.87495 13.4228 12.7294 10.6715 16.2083 10.6715C19.6872 10.6715 22.5416 13.4228 22.5416 16.8365Z"
               stroke="currentColor"
               strokeWidth="1"

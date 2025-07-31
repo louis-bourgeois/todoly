@@ -1,11 +1,13 @@
 import { useState } from "react";
+import { useTranslation } from "../../../../i18n/client";
 
 export default function ElementPickerLibelle({
   handleElementTypeChange,
   elementType,
 }) {
   const [taskArrowIsClicked, setTaskArrowIsClicked] = useState(false);
-  const [elements] = useState(["Task", "Workspace"]);
+  const { t } = useTranslation();
+  const [elements] = useState([t('elementPicker.task'), t('elementPicker.workspace')]);
 
   return (
     <div
@@ -43,7 +45,7 @@ export default function ElementPickerLibelle({
           <div
             key={el}
             className=" p-3 cursor-pointer"
-            onClick={() => handleElementTypeChange(el)}
+            onClick={() => handleElementTypeChange(el === t('elementPicker.task') ? "Task" : "Workspace")}
           >
             <span className="text-text hover:text-dominant transition transition-color">
               {el.charAt(0).toUpperCase() + el.slice(1)}

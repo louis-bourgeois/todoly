@@ -6,10 +6,12 @@ import { useError } from '../../../../../context/ErrorContext'; // 1. Importer l
 import axios from 'axios';
 import Input from "../../../Input";
 import PasswordInputContainer from '@/app/ui/auth/PasswordInputContainer';
+import { useTranslation } from "../../../../i18n/client";
 
 export default function EditProfile({ setLayout }) {
   const { user, setUser, fetchUser } = useUser();
   const { handleError } = useError(); // 2. Initialiser le gestionnaire d'erreurs
+  const { t } = useTranslation();
 
   // State pour les données du formulaire
   const [firstName, setFirstName] = useState('');
@@ -43,10 +45,10 @@ export default function EditProfile({ setLayout }) {
     // --- Validation locale (côté client) ---
     // Ces erreurs sont affichées instantanément sous les champs.
     if (newPassword && !validatePassword(newPassword)) {
-      newErrors.newPassword = 'Password must be at least 13 characters long and include special characters and numbers.';
+      newErrors.newPassword = t('editProfile.error.password');
     }
     if (newPassword && newPassword !== confirmPassword) {
-      newErrors.confirmPassword = 'The passwords do not match.';
+      newErrors.confirmPassword = t('editProfile.error.passwordMatch');
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -91,28 +93,28 @@ export default function EditProfile({ setLayout }) {
         <Input
           name="first_name"
           type="text"
-          placeholder="First Name"
+          placeholder={t('editProfile.firstName')}
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
         />
         <Input
           name="last_name"
           type="text"
-          placeholder="Last Name"
+          placeholder={t('editProfile.lastName')}
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
         />
         <Input
           name="email"
           type="email"
-          placeholder="Email"
+          placeholder={t('editProfile.email')}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
 
         <PasswordInputContainer
           name="currentPassword"
-          placeholder="Current Password"
+          placeholder={t('editProfile.currentPassword')}
           value={currentPassword}
           onChange={(e) => setCurrentPassword(e.target.value)}
           newUser={false}
@@ -121,7 +123,7 @@ export default function EditProfile({ setLayout }) {
         <div>
           <PasswordInputContainer
             name="newPassword"
-            placeholder="New Password"
+            placeholder={t('editProfile.newPassword')}
             value={newPassword}
             onChange={(e) => setNewPassword(e.target.value)}
             newUser={true}
@@ -133,7 +135,7 @@ export default function EditProfile({ setLayout }) {
         <div>
           <PasswordInputContainer
             name="confirmPassword"
-            placeholder="Confirm New Password"
+            placeholder={t('editProfile.confirmNewPassword')}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             newUser={true}
@@ -149,7 +151,7 @@ export default function EditProfile({ setLayout }) {
         onClick={handleConfirm}
         className="p-2 bg-blue-500 text-white rounded"
       >
-        Confirm
+        {t('editProfile.confirm')}
       </button>
     </div>
   );

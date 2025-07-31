@@ -18,6 +18,7 @@ import SectionSelection from "./SectionSelection";
 import TagSelect from "./TagSelect";
 import WorkspaceSelect from "./WorkspaceSelect";
 import { RecurrenceSelection } from "./RecurrenceSelection";
+import { useTranslation } from "../../../../i18n/client";
 
 
 export default function TaskForm({
@@ -33,6 +34,7 @@ export default function TaskForm({
   const { setActiveTask, addTask, modifyTask, deleteTask, tasks } = useTask();
   const { updatePreference, preferences } = useUserPreferences();
   const { sections } = useSection();
+  const { t } = useTranslation();
 
   const [sectionSelectMenuOpen, setSectionSelectMenuOpen] = useState(false);
   const [recurrenceSelectMenuOpen, setRecurrenceSelectMenuOpen] = useState(false);
@@ -59,7 +61,7 @@ export default function TaskForm({
       if (!sections.find((s) => s.id === preferences.Last_Section)) {
         return (
           sections.find(
-            (s) => s.name === "Other" && s.workspace_id === currentWorkspace
+            (s) => s.name === t('taskForm.other') && s.workspace_id === currentWorkspace
           )?.id || ""
         );
       } else {
@@ -68,11 +70,11 @@ export default function TaskForm({
     } else {
       return (
         sections.find(
-          (s) => s.name === "Other" && s.workspace_id === currentWorkspace
+          (s) => s.name === t('taskForm.other') && s.workspace_id === currentWorkspace
         )?.id || ""
       );
     }
-  }, [sections, preferences, currentWorkspace]);
+  }, [sections, preferences, currentWorkspace, t]);
 
   useEffect(() => {
     if (id) {
@@ -326,10 +328,10 @@ export default function TaskForm({
               disabled={!canSubmit}
               onClick={() => (id ? delTask() : createTask())}
               moreRoundedCorners="br"
-              othersStyles={`w-full h-[25%] items-center justify-left font-bold text-4xl text-text `}
+              othersStyles={`w-full h-[25%] hover:scale-95 items-center justify-left font-bold text-4xl text-text `}
               flex
             >
-              <span className="text-2xl">{id ? "Delete" : "Create"}</span>
+              <span className="text-2xl">{id ? t('taskForm.delete') : t('taskForm.create')}</span>
             </TaskMenuButton>
           </div>
         </div>

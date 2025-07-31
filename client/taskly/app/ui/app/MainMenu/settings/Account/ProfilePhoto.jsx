@@ -1,12 +1,12 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useUser } from "../../../../../../context/UserContext";
-import { storage } from "../../../../../../firebaseClientConfig"; // ajustez le chemin si nécessaire
+import { storage } from "../../../../../../firebaseClientConfig";
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
 import imageCompression from "browser-image-compression";
+import { useTranslation } from "@/app/i18n/client";
 
-// La fonction utilitaire pour recadrer l'image en carré reste inchangée.
-async function cropToSquare(file) {
+async function cropToSquare(file, canvasErrorMessage) {
   try {
     const imageBitmap = await createImageBitmap(file);
     const minSize = Math.min(imageBitmap.width, imageBitmap.height);
@@ -22,7 +22,7 @@ async function cropToSquare(file) {
         if (blob) {
           resolve(new File([blob], file.name, { type: file.type }));
         } else {
-          reject(new Error("Erreur lors de la conversion du canvas en blob."));
+          reject(new Error(canvasErrorMessage));
         }
       }, file.type);
     });
@@ -31,9 +31,9 @@ async function cropToSquare(file) {
   }
 }
 
-
 const ProfilePhoto = ({ size = 150 }) => {
   const { user, setUser } = useUser();
+  const { t } = useTranslation()
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [imageLoaded, setImageLoaded] = useState(false);
@@ -61,13 +61,13 @@ const ProfilePhoto = ({ size = 150 }) => {
     try {
       // AJOUTÉ : Vérification cruciale de la présence du username.
       if (!user?.username) {
-        console.error("Username non trouvé. L'upload est annulé.");
-        alert("Une erreur est survenue. Le nom d'utilisateur est manquant.");
+        console.error(t("profilePhoto.error.usernameNotFound"));
+        alert(t("profilePhoto.error.usernameMissing"));
         setIsUploading(false);
         return;
       }
 
-      file = await cropToSquare(file);
+      file = await cropToSquare(file, t("profilePhoto.error.canvas"));
   
       if (file.size > MAX_FILE_SIZE) {
         const options = {
@@ -83,7 +83,7 @@ const ProfilePhoto = ({ size = 150 }) => {
         try {
           await deleteObject(oldImageRef);
         } catch (error) {
-          console.log("Info: L'ancienne image n'a pas pu être supprimée.", error);
+          console.log(t("profilePhoto.info.oldImageNotDeleted"), error);
         }
       }
 
@@ -102,7 +102,7 @@ const ProfilePhoto = ({ size = 150 }) => {
           setUploadProgress(progress);
         },
         (error) => {
-          console.error("Erreur d'upload : ", error);
+          console.error(error)
           setIsUploading(false);
         },
         async () => {
@@ -122,16 +122,16 @@ const ProfilePhoto = ({ size = 150 }) => {
               }),
             });
           } catch (error) {
-            console.error("Erreur lors de la mise à jour de la DB", error);
+            console.error(error)
           }
-          
+          console.log(downloadURL)
           setUser({ ...user, image_url: downloadURL });
           setPreviewUrl(downloadURL);
           setIsUploading(false);
         }
       );
     }  catch (error) {
-      console.error("Erreur lors du traitement de l'image :", error);
+      console.error(error);
       setIsUploading(false);
     }
   };
@@ -142,10 +142,6 @@ const ProfilePhoto = ({ size = 150 }) => {
       style={{ width: `${size}px`, height: `${size}px` }}
       onClick={() => document.getElementById("photo-upload").click()}
     >
-      {/* 
-        Affichage de l'image (aperçu ou image existante)
-        S'il n'y a pas de previewUrl, on affiche un fond gris pour matérialiser l'emplacement.
-      */}
       {previewUrl ? (
         <div
           className={`w-full h-full transition-opacity duration-300 ${
@@ -154,7 +150,7 @@ const ProfilePhoto = ({ size = 150 }) => {
         >
           <Image
             src={previewUrl}
-            alt="Photo de profil"
+            alt={t("profilePhoto.alt")}
             width={size}
             height={size}
             quality={100}
@@ -163,28 +159,17 @@ const ProfilePhoto = ({ size = 150 }) => {
           />
         </div>
       ) : (
-        // AJOUT : Fond gris si aucune image n'est présente
         <div className="w-full h-full bg-gray-200 rounded-full"></div>
       )}
-
-      {/* 
-        Overlay de progression pendant l'upload. Il a la priorité sur tout le reste.
-      */}
       {isUploading && (
         <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-70 rounded-full">
           <span className="text-white text-xl font-bold">{Math.round(uploadProgress)}%</span>
         </div>
       )}
-
-      {/*
-        NOUVEAU : Overlay avec l'icône qui apparaît au survol (hover)
-        Cet overlay n'apparaîtra pas si un upload est déjà en cours.
-      */}
       {!isUploading && (
         <div
           className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 rounded-full"
         >
-          {/* L'icône SVG elle-même. Elle est invisible par défaut et apparaît au survol grâce à group-hover */}
           <svg
             className="text-white h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
             xmlns="http://www.w3.org/2000/svg"

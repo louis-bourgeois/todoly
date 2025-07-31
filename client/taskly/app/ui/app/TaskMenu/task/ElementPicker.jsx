@@ -1,5 +1,6 @@
 import { useState } from "react";
 import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
+import { useTranslation } from "../../../../i18n/client";
 
 export default function ElementPicker({
   elementType,
@@ -8,7 +9,8 @@ export default function ElementPicker({
   setMenuOpen,
 }) {
   const [isFading, setIsFading] = useState(false);
-  const [elements] = useState(["Task", "Workspace"]);
+  const { t } = useTranslation();
+  const [elements] = useState([t('elementPicker.task'), t('elementPicker.workspace')]);
 
   const handleElementTypeChangeWithFade = (newType) => {
     setMenuOpen(false);

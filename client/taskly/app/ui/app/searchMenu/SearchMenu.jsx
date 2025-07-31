@@ -9,6 +9,7 @@ import { useUser } from "../../../../context/UserContext";
 import { useWorkspace } from "../../../../context/WorkspaceContext";
 import SearchInput from "./SearchInput";
 import SearchResults from "./SearchResults";
+import { useTranslation } from "../../../i18n/client";
 
 const SearchMenu = () => {
   const router = useRouter();
@@ -18,6 +19,7 @@ const SearchMenu = () => {
   const { workspaces } = useWorkspace() || { workspaces: [] }; // Assure workspaces is defined
   const { toggleTaskMenu, isSearchMenuOpen, toggleSearchMenu } =
     useMenu() || {}; // Assure functions are defined
+  const { t } = useTranslation();
 
   const [query, setQuery] = useState("");
   const [isMenuVisible, setIsMenuVisible] = useState(false);
@@ -25,7 +27,7 @@ const SearchMenu = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [commandMode, setCommandMode] = useState(null);
   const [placeholder, setPlaceholder] = useState(
-    "Search is currently in development... Stay tuned!"
+    t('searchMenu.placeholder')
   );
   const [visibility, setVisibility] = useState(isSearchMenuOpen);
   const menuRef = useRef(null);
@@ -41,23 +43,23 @@ const SearchMenu = () => {
   const filteredResults = useMemo(() => {
     if (query.startsWith("/")) {
       const commands = [
-        { id: "add", title: "Open add Menu" },
-        { id: "goto", title: "Go to" },
-        { id: "logout", title: "Logout" },
-        { id: "addWorkspace", title: "Add Workspace" },
-        { id: "openMainMenu", title: "Open Main Menu" },
-        { id: "openSettings", title: "Open Settings" },
-        { id: "changeWorkspace", title: "Change Current Workspace" },
-        { id: "deleteWorkspace", title: "Delete Workspace" },
-        { id: "addTag", title: "Add Tag" },
+        { id: "add", title: t('searchMenu.openAddMenu') },
+        { id: "goto", title: t('searchMenu.goTo') },
+        { id: "logout", title: t('searchMenu.logout') },
+        { id: "addWorkspace", title: t('searchMenu.addWorkspace') },
+        { id: "openMainMenu", title: t('searchMenu.openMainMenu') },
+        { id: "openSettings", title: t('searchMenu.openSettings') },
+        { id: "changeWorkspace", title: t('searchMenu.changeWorkspace') },
+        { id: "deleteWorkspace", title: t('searchMenu.deleteWorkspace') },
+        { id: "addTag", title: t('searchMenu.addTag') },
       ];
       return commands.filter((cmd) =>
         cmd.title.toLowerCase().includes(query.slice(1).toLowerCase())
       );
     } else if (commandMode === "goto") {
       return [
-        { id: "currently", title: "Currently" },
-        { id: "all", title: "All" },
+        { id: "currently", title: t('searchMenu.currently') },
+        { id: "all", title: t('searchMenu.all') },
       ];
     } else if (
       commandMode === "changeWorkspace" ||
@@ -69,8 +71,8 @@ const SearchMenu = () => {
       }));
     } else if (selectedTask) {
       return [
-        { id: "update", title: `Update task: ${selectedTask.title}` },
-        { id: "delete", title: `Delete task: ${selectedTask.title}` },
+        { id: "update", title: `${t('searchMenu.updateTask')}: ${selectedTask.title}` },
+        { id: "delete", title: `${t('searchMenu.deleteTask')}: ${selectedTask.title}` },
       ];
     } else if (commandMode === "addTag") {
       return tags.map((tag) => ({ id: tag.id, title: tag.name }));
@@ -80,7 +82,7 @@ const SearchMenu = () => {
           task.title && task.title.toLowerCase().includes(query.toLowerCase())
       );
     }
-  }, [query, tasks, selectedTask, commandMode, workspaces, tags]);
+  }, [query, tasks, selectedTask, commandMode, workspaces, tags, t]);
 
   const handleQueryChange = (newQuery) => {
     setQuery(newQuery);
@@ -131,14 +133,14 @@ const SearchMenu = () => {
     //     setCommandMode(result.id);
     //     setQuery("");
     //     if (result.id === "goto") {
-    //       setPlaceholder("Select destination");
+    //       setPlaceholder(t('searchMenu.selectDestination'));
     //     } else if (
     //       result.id === "changeWorkspace" ||
     //       result.id === "deleteWorkspace"
     //     ) {
-    //       setPlaceholder("Select workspace");
+    //       setPlaceholder(t('searchMenu.selectWorkspace'));
     //     } else if (result.id === "addTag") {
-    //       setPlaceholder("New tag name");
+    //       setPlaceholder(t('searchMenu.newTagName'));
     //     } else {
     //       handleCommand(result.id);
     //     }
@@ -176,6 +178,7 @@ const SearchMenu = () => {
     //   selectedTask,
     //   setSelectedTask,
     //   setSelectedIndex,
+    //   t
     // ]
   );
 

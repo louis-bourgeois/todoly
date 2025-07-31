@@ -9,6 +9,7 @@ import { useError } from "../../../../../context/ErrorContext";
 import { useTag } from "../../../../../context/TagContext";
 import { useTask } from "../../../../../context/TaskContext";
 import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
+import { useTranslation } from "../../../../i18n/client";
 
 export default function TagSelect({
   id,
@@ -26,6 +27,7 @@ export default function TagSelect({
   const [isAddingTag, setIsAddingTag] = useState(false);
   const swiperRef = useRef(null);
   const [hoveredTag, setHoveredTag] = useState(null);
+  const { t } = useTranslation();
 
   const handleTagsChange = useCallback(
     async (newTags) => {
@@ -57,8 +59,8 @@ export default function TagSelect({
           handleError({
             response: {
               data: {
-                title: "Duplicate tag",
-                subtitle: "This tag already exists.",
+                title: t('tagSelect.error.duplicate.title'),
+                subtitle: t('tagSelect.error.duplicate.subtitle'),
               },
             },
           });
@@ -73,7 +75,7 @@ export default function TagSelect({
         }
       }, 0);
     },
-    [handleError, setTaskTags]
+    [handleError, setTaskTags, t]
   );
 
   const adjustInputWidth = useCallback((index) => {
@@ -136,8 +138,8 @@ export default function TagSelect({
           handleError({
             response: {
               data: {
-                title: "Duplicate tag",
-                subtitle: "This tag already exists.",
+                title: t('tagSelect.error.duplicate.title'),
+                subtitle: t('tagSelect.error.duplicate.subtitle'),
               },
             },
           });
@@ -163,7 +165,7 @@ export default function TagSelect({
         handleDeleteTag(index);
       }
     },
-    [taskTags, handleError, addTag, setTaskTags, updateTag, handleDeleteTag]
+    [taskTags, handleError, addTag, setTaskTags, updateTag, handleDeleteTag, t]
   );
 
   const handleTagClick = useCallback(
@@ -177,8 +179,8 @@ export default function TagSelect({
           handleError({
             response: {
               data: {
-                title: "Duplicate tag",
-                subtitle: "This tag already exists.",
+                title: t('tagSelect.error.duplicate.title'),
+                subtitle: t('tagSelect.error.duplicate.subtitle'),
               },
             },
           });
@@ -186,7 +188,7 @@ export default function TagSelect({
         }
       });
     },
-    [handleError, setTaskTags]
+    [handleError, setTaskTags, t]
   );
 
   return (
@@ -196,7 +198,7 @@ export default function TagSelect({
       othersStyles={`justify-between ${id ? "h-full" : "h-[90%]"}`}
     >
       <div className="flex justify-between items-center m-[1%]">
-        <h2 className="p-[3%] font-bold text-2xl text-text">Tag(s)</h2>
+        <h2 className="p-[3%] font-bold text-2xl text-text">{t('tagSelect.title')?.replace(/^./, match => match.toUpperCase())}</h2>
         <button
           className="justify-center items-center font-bold hover:scale-105 transition-transform active:scale-100"
           onClick={() => handleAddTag("")}

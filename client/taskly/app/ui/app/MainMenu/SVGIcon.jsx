@@ -1,10 +1,11 @@
-const SVGIcon = ({ children, width = 48, height = 48 }) => (
+const SVGIcon = ({ children, width = 48, height = 48, className }) => (
   <svg
     viewBox="0 0 24 24"
     width={width}
     height={height}
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
+    className={className}
   >
     <defs>
       <linearGradient id="gradient-1" x1="0%" y1="0%" x2="0%" y2="100%">

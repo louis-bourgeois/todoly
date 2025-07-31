@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useRef } from "react";
 import { useTask } from "../../../../context/TaskContext";
+import { useTranslation } from "../../../i18n/client";
 
 export default function TitleInput({
   id,
@@ -13,6 +14,7 @@ export default function TitleInput({
 }) {
   const { modifyTask } = useTask();
   const taskTitleRef = useRef(null);
+  const { t } = useTranslation();
 
   const handleTitleInputChange = (e) => {
     const newValue = e.target.value;
@@ -54,7 +56,7 @@ export default function TitleInput({
         ref={taskTitleRef}
         type="text"
         disabled={!visibility}
-        placeholder={id ? titleValue : placeholder}
+        placeholder={id ? titleValue : t('titleInput.placeholder')}
         value={titleValue}
         onChange={(e) => handleTitleInputChange(e)}
         className={`${

@@ -6,6 +6,7 @@ import Slide from "../../ui/app/Slide";
 import { useEffect, useState } from "react";
 import { useMenu } from "../../../context/MenuContext";
 import { useWorkspace } from "../../../context/WorkspaceContext";
+import { useTranslation } from "../../i18n/client";
 
 export default function Page() {
   const { workspaces } = useWorkspace();
@@ -13,6 +14,7 @@ export default function Page() {
   const { deleteWorkspace } = useWorkspace();
   const [filteredTasks, setFilteredTasks] = useState({});
   const { toggleViewsMenu } = useMenu();
+  const { t } = useTranslation();
 
   const settings = {
     dots: false,
@@ -202,7 +204,7 @@ export default function Page() {
           "
           >
             <span className="relative z-10 transition-transform duration-300 group-hover:translate-x-1">
-              Add Workspace
+              {t('all.addWorkspace')}
             </span>
             <span
               className={`

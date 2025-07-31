@@ -4,6 +4,7 @@ import { useTask } from "../../../../../context/TaskContext";
 import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import TaskMenuButton from "../TaskMenuButton";
 import TaskMenuSectionContainer from "../TaskMenuSectionContainer";
+import { useTranslation } from "../../../../i18n/client";
 
 export default function WorkspaceSelect({
   handleNewWorkspaceClick,
@@ -18,6 +19,7 @@ export default function WorkspaceSelect({
   const { currentWorkspace, setCurrentWorkspace, workspaces } = useWorkspace();
   const [selectedWorkspace, setSelectedWorkspace] = useState(null);
   const menuRef = useRef(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     if (task) {
@@ -60,7 +62,7 @@ export default function WorkspaceSelect({
       othersStyles="h-[50%] flex flex-col justify-between"
       moreRoundedCorners="tr"
     >
-      <h2 className="text-2xl font-bold text-text p-2">Workspace</h2>
+      <h2 className="text-2xl font-bold text-text p-2">{t('workspaceSelect.title')}</h2>
 
       <div className="flex items-center gap-[0.7vw] relative">
         <div
@@ -69,7 +71,7 @@ export default function WorkspaceSelect({
         >
           <span className="text-m 3xl:text-lg">
             {workspaces.find((workspace) => workspace.id === selectedWorkspace)
-              ?.name || "Select Workspace"}
+              ?.name || t('workspaceSelect.placeholder')}
           </span>
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -112,11 +114,11 @@ export default function WorkspaceSelect({
       </div>
 
       <TaskMenuButton
-        othersStyles="glass-morphism flex justify-center items-center hover:scale-105 m-1"
+        othersStyles="glass-morphism flex justify-center items-center hover:scale-95 m-1"
         onClick={() => handleNewWorkspaceClick("Workspace", "Task")}
       >
         <span className="text-l font-bold text-text">
-          Build a new Workspace
+          {t('workspaceSelect.newWorkspaceButton')}
         </span>
       </TaskMenuButton>
     </TaskMenuSectionContainer>

@@ -4,9 +4,11 @@ import { useUserPreferences } from "../../../../../../context/UserPreferencesCon
 import CheckboxContainer from "../CheckboxContainer";
 import SectionTitle from "../SectionTitle";
 import Switcher from "../Switcher";
+import { useTranslation } from "@/app/i18n/client";
 
 export default function Notifications({ transitionStyles }) {
   const { updatePreference, preferences } = useUserPreferences();
+  const { t } = useTranslation();
   
   // Convertir la préférence Allow_Notifications en booléen
   const [allowNotifications, setAllowNotifications] = useState(
@@ -62,7 +64,7 @@ export default function Notifications({ transitionStyles }) {
       className={`flex flex-col w-full px-[4%] my-[4%] gap-[1.75vh] ${transitionStyles}`}
     >
       <div className="flex justify-between items-center">
-        <SectionTitle>Coming soon, stay tuned!</SectionTitle>
+        <SectionTitle>{t('notifications.comingSoon')}</SectionTitle>
         <Switcher
           isChecked={allowNotifications}
           onChange={() => setAllowNotifications((prev) => !prev)}

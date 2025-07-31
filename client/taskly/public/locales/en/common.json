@@ -1,44 +1,347 @@
 {
-  "Language": "Language",
-  "Time Zone": "Time Zone",
-  "12h Date Format": "12h Date Format",
-  "Week Starts on Sunday": "Week Starts on Sunday",
-  "Today": "Today",
-  "Tomorrow": "Tomorrow",
-  "This Weekend": "This Weekend",
-  "Next Week": "Next Week",
-  "Other": "Other",
-  "Personal": "Personal",
-  "Work": "Work",
-  "Home": "Home",
-  "Create": "Create",
-  "Delete": "Delete",
-  "Update": "Update",
-  "Cancel": "Cancel",
-  "Save": "Save",
-  "Add": "Add",
-  "Edit": "Edit",
-  "Title": "Title",
-  "Description": "Description",
-  "Priority": "Priority",
-  "Due Date": "Due Date",
-  "Tags": "Tags",
-  "Workspace": "Workspace",
-  "Section": "Section",
-  "Settings": "Settings",
-  "Profile": "Profile",
-  "Appearance": "Appearance",
-  "Notifications": "Notifications",
-  "Layout": "Layout",
-  "Account": "Account",
-  "Logout": "Logout",
-  "Login": "Login",
-  "Signup": "Signup",
-  "Email": "Email",
-  "Password": "Password",
-  "Username": "Username",
-  "First Name": "First Name",
-  "Last Name": "Last Name",
-  "Bio": "Bio",
-  "Search": "Search"
+  "navbar": {
+    "greeting": {
+      "evening": "Good Evening,",
+      "night": "Good Night,",
+      "morning": "Good Morning,",
+      "afternoon": "Good Afternoon,",
+      "meal": "Enjoy your meal,"
+    },
+    "guestName": "guest",
+    "buttons": {
+      "search": "Search",
+      "add": "Add"
+    }
+  },
+  "lang": "en",
+  "languages": {
+    "english": "English",
+    "french": "French"
+  },
+  "settings": {
+    "languages": {
+      "title": "Language"
+    },
+    "timezone": {
+      "title": "Time Zone"
+    },
+    "dateFormat": {
+      "12h": "12h Date Format"
+    },
+    "weekStart": {
+      "sunday": "Week Starts on Sunday"
+    }
+  },
+  "layout": {
+    "tip": "Tip",
+    "scrollHorizontally": "Scroll horizontally to add other types of items",
+    "doNotShowAgain": "Do not show again",
+    "create": "Create",
+    "noTaskSelected": "No task selected",
+    "noWorkspaceSelected": "No workspace selected",
+    "defaultCardContent": "Default card content",
+    "sortBy": "Sort by",
+    "creationDate": "Creation date",
+    "tags": "Tags",
+    "importance": "Importance",
+    "lastUpdated": "Last updated",
+    "show": "Show",
+    "allTasks": "All tasks",
+    "completedOnly": "Completed only",
+    "todoOnly": "Todo only",
+    "defaultHomePage": "Default Home Page",
+    "currently": "Currently",
+    "all": "All",
+    "homePageTitle": "Home Page Title",
+    "reset": "Reset",
+    "customizeAddMenu": "Customise the Add Menu"
+  },
+  "all": {
+    "addWorkspace": "Add Workspace"
+  },
+  "profile": {
+    "username": "Username",
+    "email": "Email",
+    "bio": "Bio",
+    "updateSuccess": "Profile updated successfully",
+    "error": "Error loading user data.",
+    "loading": "Loading...",
+    "updating": "Updating...",
+    "updateProfile": "Update Profile"
+  },
+  "viewsMenu": {
+    "sortBy": "Sort by",
+    "show": "Show",
+    "selectOption": "Select an option",
+    "title": "Views Menu",
+    "confirm": "Confirm"
+  },
+  "searchResults": {
+    "noResults": "No results found"
+  },
+  "searchMenu": {
+    "placeholder": "Search is currently in development... Stay tuned!",
+    "openAddMenu": "Open add Menu",
+    "goTo": "Go to",
+    "logout": "Logout",
+    "addWorkspace": "Add Workspace",
+    "openMainMenu": "Open Main Menu",
+    "openSettings": "Open Settings",
+    "changeWorkspace": "Change Current Workspace",
+    "deleteWorkspace": "Delete Workspace",
+    "addTag": "Add Tag",
+    "currently": "Currently",
+    "all": "All",
+    "updateTask": "Update task",
+    "deleteTask": "Delete task",
+    "selectDestination": "Select destination",
+    "selectWorkspace": "Select workspace",
+    "newTagName": "New tag name"
+  },
+  "sectionContainer": {
+    "placeholder": "Enter section name",
+    "other": "Other"
+  },
+  "dateHeader": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "Monday": "Monday",
+    "Tuesday": "Tuesday",
+    "Wednesday": "Wednesday",
+    "Thursday": "Thursday",
+    "Friday": "Friday",
+    "Saturday": "Saturday",
+    "Sunday": "Sunday"
+  },
+  "workspaceForm": {
+    "error": {
+      "emptyName": "Workspace name must be a non-empty string.",
+      "invalidInput": "Invalid Input"
+    },
+    "editPlaceholder": "Edit Workspace",
+    "newPlaceholder": "New Workspace",
+    "updateButton": "Update",
+    "createButton": "Create"
+  },
+  "sectionSelect": {
+    "personal": "Personal",
+    "title": "Sections",
+    "placeholder": "Select a section"
+  },
+  "elementPicker": {
+    "task": "Task",
+    "workspace": "Workspace"
+  },
+  "collaboratorSelect": {
+    "title": "Collaborators",
+    "comingSoon": "Coming soon!",
+    "copyLink": "Copy link (coming soon!)"
+  },
+  "workspaceSelect": {
+    "title": "Workspace",
+    "placeholder": "Select Workspace",
+    "newWorkspaceButton": "Build a new Workspace"
+  },
+  "taskForm": {
+    "other": "Other",
+    "delete": "Delete",
+    "create": "Create"
+  },
+  "tagSelect": {
+    "error": {
+      "duplicate": {
+        "title": "Duplicate tag",
+        "subtitle": "This tag already exists."
+      }
+    },
+    "title": "Tag(s)"
+  },
+  "sectionSelection": {
+    "error": {
+      "add": "Failed to add section",
+      "modify": "Failed to modify section",
+      "delete": "Failed to delete section"
+    },
+    "selectPlaceholder": "Select a section",
+    "addSection": "Add Section",
+    "other": "Other",
+    "edit": "Edit",
+    "newSectionPlaceholder": "New section name"
+  },
+  "recurrence": {
+    "notAvailable": "Not yet available, in dev",
+    "onlyThisTime": "Only this time",
+    "addSection": "Add a section"
+  },
+  "titleInput": {
+    "placeholder": "Title"
+  },
+  "prioritySelection": {
+    "title": "Priority"
+  },
+  "elementForm": {
+    "other": "Other",
+    "task": "Task",
+    "delete": "Delete",
+    "create": "Create"
+  },
+  "descriptionContainer": {
+    "title": "Description",
+    "placeholder": "Enter a description"
+  },
+  "notifications": {
+    "comingSoon": "Coming soon, stay tuned!"
+  },
+  "integrations": {
+    "noIntegration": "No app integration has been made yet... Coming soon, I'm working on it!"
+  },
+  "appearance": {
+    "colorTheme": "Color Theme"
+  },
+  "profilePhoto": {
+    "error": {
+      "canvas": "Error converting canvas to blob.",
+      "usernameNotFound": "Username not found. Upload cancelled.",
+      "usernameMissing": "An error occurred. Username is missing.",
+      "upload": "Upload error: ",
+      "dbUpdate": "Error updating DB",
+      "imageProcessing": "Error processing image:"
+    },
+    "info": {
+      "oldImageNotDeleted": "Info: The old image could not be deleted.",
+      "fileAvailable": "File available at URL: "
+    },
+    "alt": "Profile picture"
+  },
+  "account": {
+    "premiumComingSoon": "Premium functionality is coming soon!",
+    "signOut": "Sign out",
+    "itIsFree": "It is free !",
+    "goPremium": "Go premium"
+  },
+  "settingsLine": {
+    "mainMenu": "Main Menu"
+  },
+  "editProfile": {
+    "error": {
+      "password": "Password must be at least 13 characters long and include special characters and numbers.",
+      "passwordMatch": "The passwords do not match."
+    },
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "confirm": "Confirm"
+  },
+  "defaultContent": {
+    "currently": "Currently",
+    "all": "All"
+  },
+  "libelles" : {
+    "Layout": "Layout",
+    "Appearance" : "Appearance",
+    "Notifications": "Notifications",
+    "Languages": "Languages",
+    "Integrations": "Integrations"
+  },
+  "header": {
+    "mainMenu": "Main Menu",
+    "account": "Account",
+    "confirmDelete": "Confirm Account Deletion",
+    "irreversibleAction": "This action is",
+    "irreversible": "irreversible",
+    "confirmTyping": "To confirm, please type",
+    "below": "below.",
+    "cancel": "Cancel",
+    "deleteAccount": "Delete Account",
+    "freePlan": "Free plan"
+  },
+  "mainMenu": {
+    "layout": "Layout",
+    "appearance": "Appearance",
+    "notifications": "Notifications",
+    "languages": "Languages",
+    "integrations": "Integrations",
+    "account": "Account",
+    "data": "Data",
+    "mainMenu": "Main Menu"
+  },
+  "datePicker": {
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "nextWeek": "Next Week",
+    "thisWeekend": "This Weekend",
+    "Monday": "Monday",
+    "Tuesday": "Tuesday",
+    "Wednesday": "Wednesday",
+    "Thursday": "Thursday",
+    "Friday": "Friday",
+    "Saturday": "Saturday",
+    "Sunday": "Sunday"
+  },
+  "error": {
+    "tag": "Error",
+    "accountAlreadyExists": {
+      "title": "Account Already Exists",
+      "subtitle": "We already have an account associated with this information.",
+      "action": "Log in instead"
+    },
+    "incorrectPassword": {
+      "title": "Incorrect Password",
+      "subtitle": "The provided credentials are incorrect. Please try again."
+    },
+    "titleAlreadyUsed": {
+      "title": "Title Already Used",
+      "subtitle": "Please use a unique title."
+    },
+    "nameAlreadyTaken": {
+      "title": "Name Already Taken",
+      "subtitle": "You already have a workspace with this name. Please choose another."
+    },
+    "usernameUnavailable": {
+      "title": "Username Unavailable",
+      "subtitle": "This username is already in use. Please choose a different one."
+    },
+    "unableToDelete": {
+      "title": "Unable to Delete",
+      "subtitle": "This item cannot be deleted because other elements depend on it (e.g., tasks or sections)."
+    },
+    "userNotFound": {
+      "title": "Authentication Failed",
+      "subtitle": "We couldn't find an account associated with these credentials.",
+      "action": "Create an account"
+    },
+    "missingCredentials": {
+      "title": "Missing Information",
+      "subtitle": "Please provide all required credentials to proceed."
+    },
+    "authenticationFailed": {
+      "title": "Authentication Failed",
+      "subtitle": "We couldn't authenticate you. Please check your credentials and try again."
+    },
+    "incorrectCurrentPassword": {
+      "title": "Incorrect Password",
+      "subtitle": "The provided current password is incorrect."
+    },
+    "sectionNotEmpty": {
+      "title": "This section is not empty",
+      "subtitle": "Please delete or move the tasks to another section to delete this section."
+    },
+    "serverError": {
+      "title": "Server Error",
+      "subtitle": "We're experiencing some technical difficulties.",
+      "action": "Report this issue"
+    },
+    "registrationError": {
+      "title": "Registration Error",
+      "subtitle": "We couldn't complete your registration. Please try again or contact support."
+    },
+    "default": {
+      "title": "Unexpected Error",
+      "subtitle": "Something went wrong. Please try again or contact our support team if the issue persists.",
+      "action": "Contact Support"
+    }
+  }
 }

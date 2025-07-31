@@ -6,6 +6,7 @@ import { useWorkspace } from "../../../../../context/WorkspaceContext";
 import CollaboratorSelectContainer from "./CollaboratorSelectContainer";
 import ElementPickerLibelle from "./ElementPickerLibelle";
 import SectionSelectContainer from "./SectionSelectContainer";
+import { useTranslation } from "../../../../i18n/client";
 
 export default function WorkspaceForm({
   id,
@@ -26,6 +27,7 @@ export default function WorkspaceForm({
   const [collaborators, setCollaborators] = useState([]);
   const [isTransitioning, setIsTransitioning] = useState(false);
   const [nameValue, setNameValue] = useState("");
+  const { t } = useTranslation();
 
   const isNameValid = nameValue.trim() !== "";
 
@@ -51,8 +53,8 @@ export default function WorkspaceForm({
       handleError({
         response: {
           data: {
-            message: "Workspace name must be a non-empty string.",
-            title: "Invalid Input"
+            message: t('workspaceForm.error.emptyName'),
+            title: t('workspaceForm.error.invalidInput')
           }
         }
       });
@@ -132,7 +134,11 @@ export default function WorkspaceForm({
             onChange={(e) => setNameValue(e.target.value)}
             value={nameValue}
             disabled={!visibility}
-            placeholder={id ? "Edit Workspace" : "New Workspace"}
+            placeholder={
+              (id ? t('workspaceForm.editPlaceholder') : t('workspaceForm.newPlaceholder'))
+                // Puis on applique la transformation sur le résultat
+                ?.replace(/^./, match => match.toUpperCase())
+            }
             className="w-full text-center placeholder:text-gray placeholder:font-light placeholder:text-5xl text-text text-5xl bg-transparent focus:outline-none"
           />
         </div>
@@ -153,7 +159,7 @@ export default function WorkspaceForm({
             disabled={!isNameValid}
             className="addMenuElement text-text bg-main_menu_bg gradient-border h-[15%] rounded-[20px] text-2.5xl hover:scale-95 active:scale-100 transition-transform duration-100 ease-in disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {id ? "Update" : "Create"}
+            {id ? t('workspaceForm.updateButton') : t('workspaceForm.createButton')}
           </button>
         </div>
       </div>

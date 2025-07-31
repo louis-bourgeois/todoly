@@ -10,10 +10,13 @@ import {
   startOfMonth,
   startOfWeek,
 } from "date-fns";
+import { fr, enUS } from 'date-fns/locale';
 import { useCallback, useEffect, useMemo, useState } from "react";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import TaskMenuSectionContainer from "../TaskMenu/TaskMenuSectionContainer";
+import { useTranslation } from "../../../i18n/client";
+import { i18n } from "next-i18next";
 
 const daysOfWeekSundayStart = ["S", "M", "T", "W", "T", "F", "S"];
 const daysOfWeekMondayStart = ["M", "T", "W", "T", "F", "S", "S"];
@@ -21,7 +24,12 @@ const daysOfWeekMondayStart = ["M", "T", "W", "T", "F", "S", "S"];
 const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [days, setDays] = useState([]);
-
+  const { t } = useTranslation();
+  const locales = {
+    fr: fr,
+    en: enUS, 
+  }
+  const currentLocale = locales[t("lang")]
   const adjustedDaysOfWeek = useMemo(
     () =>
       startOfWeekOnSunday === "Sunday"
@@ -85,17 +93,17 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
     let date;
     const today = new Date();
     switch (name) {
-      case "Today":
+      case t('datePicker.today'):
         date = today;
         break;
-      case "Tomorrow":
+      case t('datePicker.tomorrow'):
         date = addDays(today, 1);
         break;
-      case "Next Week":
+      case t('datePicker.nextWeek'):
         const weekStartsOn = startOfWeekOnSunday === "Sunday" ? 0 : 1;
         date = startOfWeek(addDays(today, 7), { weekStartsOn });
         break;
-      case "This Weekend":
+      case t('datePicker.thisWeekend'):
         const dayOfWeek = today.getDay();
         if (dayOfWeek === 6 || dayOfWeek === 0) {
           date = addDays(today, 7 + (6 - dayOfWeek));
@@ -121,10 +129,10 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
           className="!overflow-visible"
         >
           {[
-            { name: "Today" },
-            { name: "Tomorrow" },
-            { name: "This Weekend" },
-            { name: "Next Week" },
+            { name: t('datePicker.today') },
+            { name: t('datePicker.tomorrow') },
+            { name: t('datePicker.thisWeekend') },
+            { name: t('datePicker.nextWeek') },
           ].map((fastDate, index) => (
             <SwiperSlide key={index} className="!w-auto">
               <div
@@ -163,7 +171,8 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
             </svg>
           </button>
           <h2 className="text-text text-lg font-extrabold 5xl:text-xl">
-            {format(currentDate, "MMMM yyyy")}
+          {format(currentDate, "MMMM yyyy", { locale: currentLocale })
+          .replace(/^./, (match) => match.toUpperCase())}
           </h2>
           <button className="select-none" onClick={handleNextMonth}>
             <svg
