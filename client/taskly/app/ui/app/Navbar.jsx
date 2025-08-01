@@ -45,20 +45,15 @@ export default function Navbar() {
     else if (currentHour === 12) key = GREETING_KEYS.meal;
     else if (currentHour > 12 && currentHour < 18) key = GREETING_KEYS.afternoon;
     else key = GREETING_KEYS.evening;
-    
-    // On retourne directement la chaîne traduite.
-    console.log("translated key", t(key))
     return t(key);
-  }, [t]); // Ajout de `t` aux dépendances pour que le titre se mette à jour si la langue change.
+  }, [t]); 
 
   const updateDimensions = useCallback(() => {
     if (showMenu && elementRef.current) {
       const scale = 0.8;
       const rect = elementRef.current.getBoundingClientRect();
-      // On prend la plus petite dimension pour garantir un carré
       const minSize = Math.min(rect.width, rect.height);
       const adjustedSize = minSize * scale;
-      // Calculer marginTop en se basant sur la hauteur d'origine
       const adjustedTop = rect.top + (rect.height - adjustedSize) / 2;
       setWidth(adjustedSize);
       setHeight(adjustedSize);

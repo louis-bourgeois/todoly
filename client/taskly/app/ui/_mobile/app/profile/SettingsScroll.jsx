@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useUserPreferences } from "../../../../../context/UserPreferencesContext";
+import { useUserPreferences } from "@/context/UserPreferencesContext";
 import SettingsSection from "./SettingsSection";
 
 const sections = [

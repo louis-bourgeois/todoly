@@ -1,0 +1,14 @@
+# *
+User-agent: *
+Allow: /
+
+# *
+User-agent: *
+Disallow: /admin/
+
+# Host
+Host: https://todoly.app
+
+# Sitemaps
+Sitemap: https://todoly.app/sitemap.xml
+Sitemap: https://todoly.app/server-sitemap.xml

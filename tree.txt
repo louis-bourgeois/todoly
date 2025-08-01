@@ -11,11 +11,14 @@
 |       |   |-- app
 |       |   |   |-- all
 |       |   |   |   `-- page.jsx
+|       |   |   |-- api
+|       |   |   |   `-- user
 |       |   |   |-- currently
 |       |   |   |   `-- page.jsx
 |       |   |   |-- layout.jsx
 |       |   |   |-- page.jsx
 |       |   |   `-- profile
+|       |   |       |-- EditProfile.jsx
 |       |   |       `-- page.jsx
 |       |   |-- auth
 |       |   |   |-- layout.jsx
@@ -28,15 +31,22 @@
 |       |   |   `-- page.jsx
 |       |   |-- font.js
 |       |   |-- globals.css
+|       |   |-- i18n
+|       |   |   |-- client.js
+|       |   |   |-- index.js
+|       |   |   `-- settings.js
 |       |   |-- layout.jsx
+|       |   |-- legal_notice
+|       |   |   `-- page.jsx
 |       |   |-- page.jsx
-|       |   |-- pricing
+|       |   |-- terms_of_use
 |       |   |   `-- page.jsx
 |       |   |-- ui
 |       |   |   |-- AnchorPoint.jsx
 |       |   |   |-- Form.jsx
 |       |   |   |-- FormMenu.jsx
 |       |   |   |-- Input.jsx
+|       |   |   |-- MobileMessage.jsx
 |       |   |   |-- NavItem.jsx
 |       |   |   |-- ScrollAnimation
 |       |   |   |   |-- MobileTextContent.jsx
@@ -124,6 +134,7 @@
 |       |   |   |   |       |-- CheckboxContainer.jsx
 |       |   |   |   |       |-- Circle.jsx
 |       |   |   |   |       |-- DropdownMenu.jsx
+|       |   |   |   |       |-- EditProfile.jsx
 |       |   |   |   |       |-- Integrations
 |       |   |   |   |       |   `-- Integrations.jsx
 |       |   |   |   |       |-- Languages
@@ -159,6 +170,7 @@
 |       |   |   |   |   |   `-- Counter.jsx
 |       |   |   |   |   |-- task
 |       |   |   |   |   |   |-- ElementPicker.jsx
+|       |   |   |   |   |   |-- RecurrenceSelection.jsx
 |       |   |   |   |   |   |-- SectionSelection.jsx
 |       |   |   |   |   |   |-- TagSelect.jsx
 |       |   |   |   |   |   |-- TaskForm.jsx
@@ -187,6 +199,8 @@
 |       |   |       `-- Navbar.jsx
 |       |   |-- useSmoothScroll.js
 |       |   `-- utils
+|       |       |-- time.js
+|       |       |-- time.test.js
 |       |       `-- utils.js
 |       |-- context
 |       |   |-- AuthContext.js
@@ -204,9 +218,8 @@
 |       |   |   `-- AuthGuard.jsx
 |       |   `-- searchContext.js
 |       |-- firebaseClientConfig.js
-|       |-- i18n.js
+|       |-- jest.config.js
 |       |-- jsconfig.json
-|       |-- next-i18next.config.js
 |       |-- next-sitemap.config.js
 |       |-- next.config.mjs
 |       |-- package-lock.json
@@ -396,11 +409,15 @@
 |       |   |   |-- 0179.webp
 |       |   |   `-- 0180.webp
 |       |   |-- locales
-|       |   |   `-- en
-|       |   |       `-- translation.json
+|       |   |   |-- en
+|       |   |   |   `-- common.json
+|       |   |   `-- fr
+|       |   |       `-- common.json
 |       |   |-- manifest.json
+|       |   |-- robots.txt
+|       |   |-- sitemap-0.xml
+|       |   |-- sitemap.xml
 |       |   |-- sw.js
-|       |   |-- sw.js.map
 |       |   |-- taskly
 |       |   |   |-- Tech-Design-Template-SIWA-XD.dmg
 |       |   |   |-- gradient.png
@@ -409,12 +426,14 @@
 |       |   |   |-- logo.svg
 |       |   |   |-- sign-in-with-apple-bambi.zip
 |       |   |   `-- signin-assets.zip
-|       |   |-- workbox-e43f5367.js
-|       |   `-- workbox-e43f5367.js.map
+|       |   `-- workbox-4754cb34.js
 |       `-- tailwind.config.js
+|-- errors.txt
 |-- illustrator_logo
 |   |-- 01.ai
 |   `-- 01.svg
+|-- package-lock.json
+|-- package.json
 |-- server
 |   |-- config
 |   |   `-- dbConfig.js
@@ -446,31 +465,16 @@
 |   |   |-- taskRoutes.js
 |   |   |-- userRoutes.js
 |   |   `-- workspaceRoutes.js
-|   |-- uploads
-|   |   |-- 281d45694711140775bcfef3ffcd0e78
-|   |   |-- 31a2d7cd30ca393d862dd906f1d3766f
-|   |   |-- 373c9bf54478251d73b30bc479dc6411
-|   |   |-- 5a89ed22601e3219a0bc7b2fb0f6a8cd
-|   |   |-- 6db81020a1401be31101f354fa3e16ce
-|   |   |-- 6f1f636b53fe08de9e3fa510a4f825d9
-|   |   |-- 6fb64998c513fa6695139a780383f8be
-|   |   |-- 7151ebaab8afc524927331011a2b7a39
-|   |   |-- 9d4ba73fa8a6fb9f119c42c002aa9020
-|   |   |-- bfd883171cbb46bd26efa583da164034
-|   |   |-- c238798f6b393be0979a59f973aeac1b
-|   |   |-- c6259db311593d4f1f2184803e7c0772
-|   |   |-- cdbaf7ceac223252ef8c2cb28d8c5096
-|   |   |-- d10eace22cecbcb4a03278a200d5964b
-|   |   |-- d17b418f677a9f0fbee2dcb7eeaf4b45
-|   |   `-- fcbec82d6e962c84e36f095e372b260d
 |   `-- utils
 |       |-- compare.js
-|       |-- logger.js
 |       |-- now.js
 |       `-- validate.js
 |-- test.sql
 |-- todoly.dump
 |-- todoly.sql
-`-- todoly_structure.txt
+|-- todoly_structure.txt
+|-- tree.txt
+|-- tree_latest.txt
+`-- tree_output.txt
 
-74 directories, 399 files
+78 directories, 399 files

@@ -25,9 +25,6 @@ export const WorkspaceProvider = ({ children }) => {
   const [workspaces, setWorkspaces] = useState([]);
   const { isAuthenticated } = useAuth();
   const { setSections } = useSection();
-  useEffect(() => {
-    console.log(workspaces);
-  }, []);
   const fetchWorkspaces = useCallback(async () => {
     if (!isAuthenticated) return;
 

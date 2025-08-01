@@ -44,7 +44,7 @@ export default function MobileMessage() {
         <p>
           For the best experience and full feature set, we recommend using the desktop version of our application.
         </p>
-        <p>The mobile version is still in development (alpha version) and is not finished at all, I'm working on it!</p>
+        <p>The mobile version is still in development (alpha version) and is not finished at all, I&apos;m working on it!</p>
       </div>
     </div>
   );

@@ -20,7 +20,6 @@ export default function ScreenWrapper({ children }) {
 
   useEffect(() => {
     if (preferences?.Color_Theme) {
-      console.log(preferences.Color_Theme);
       document.documentElement.classList.remove(
         "theme-light",
         "theme-blue",

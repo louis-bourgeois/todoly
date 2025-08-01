@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { useTask } from "../../../context/TaskContext";
 
 export default function Blur({
   trigger,

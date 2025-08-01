@@ -50,7 +50,6 @@ export const MenuProvider = ({ children }) => {
     setActiveTask(taskId);
     setActiveWorkspace(workspaceId);
     const availableElements = ["Workspace", "Task"];
-    console.log(el);
     if (el !== "" && availableElements.includes(el)) {
       setElement(el);
     } else if (el) {

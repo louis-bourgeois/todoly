@@ -104,6 +104,7 @@ export default function TaskForm({
       setDescriptionValue(descriptionValue || "");
       setTaskWorkspace(currentWorkspace || "");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, tasks, getDefaultSection, currentWorkspace]);
 
   useEffect(() => {

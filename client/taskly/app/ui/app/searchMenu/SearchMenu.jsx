@@ -124,10 +124,10 @@ const SearchMenu = () => {
     },
     [resetState]
   );
-  const handleResultSelection = useCallback(
-    (result) => {
-    console.log("Called, this functionnality is in development, stay tuned!")
-  }
+  // const handleResultSelection = useCallback(
+  //   (result) => {
+  //   console.log("Called, this functionnality is in development, stay tuned!")
+  // }
     // (result) => {
     //   if (query.startsWith("/")) {
     //     setCommandMode(result.id);
@@ -180,7 +180,7 @@ const SearchMenu = () => {
     //   setSelectedIndex,
     //   t
     // ]
-  );
+  // );
 
   useEffect(() => {
     setVisibility(isSearchMenuOpen);
@@ -207,7 +207,7 @@ const SearchMenu = () => {
           } else {
             const selectedResult =
               filteredResults[selectedIndex] || filteredResults[0];
-            handleResultSelection(selectedResult);
+            // handleResultSelection(selectedResult);
           }
         }
       }
@@ -217,7 +217,7 @@ const SearchMenu = () => {
       filteredResults,
       selectedIndex,
       handleAddTag,
-      handleResultSelection,
+      // handleResultSelection,
       query,
       commandMode,
     ]
@@ -266,7 +266,7 @@ const SearchMenu = () => {
         <SearchResults
           results={filteredResults}
           selectedIndex={selectedIndex}
-          onItemClick={handleResultSelection}
+          // onItemClick={handleResultSelection}
         />
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import Circle from "../Circle";
 import SectionTitle from "../SectionTitle";
@@ -18,8 +18,10 @@ export default function Appearance({ transitionStyles }) {
     return `#${hex}`;
   };
 
-  const rows = [{ color: "#ffffff" }, { color: "#000000" }];
-
+const rows = useMemo(() => [
+  { color: "#ffffff" },
+  { color: "#000000" },
+], []);
   const handleCircleClick = async (index) => {
     const siblingDiv = siblingRefs.current[index];
     if (siblingDiv) {

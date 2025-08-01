@@ -15,12 +15,13 @@ server/report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 demo
 demo/*
 
+# sql files 
+*.sql
+
 #temporary uploading files 
 uploads/*
 uploads
 
-# yarn
-server/./yarn.lock
 server/todoly-430912-firebase-adminsdk-np6ok-88e1a12385.json
 # Runtime data
 server/pids
@@ -143,9 +144,7 @@ server/.pnp.*
 
 # client
 
-node_modules/
-**/node_modules/
-client/taskly/node_modules/
+**/node_modules
 client/taskly/.next/
 client/taskly/.swc/
 client/taskly/.*.env
@@ -154,7 +153,6 @@ client/taskly/public/sw.js
 client/taskly/public/sw.js.map
 client/taskly/public/workbox-e43f5367.js
 client/taskly/public/workbox-e43f5367.js.map
-client/taskly/yarn.lock
 .vscode/*
 .vscode
 
@@ -167,3 +165,5 @@ illustrator_logo/*
 Screeens/
 Screeens/*
 .aider*
+
+**/.env

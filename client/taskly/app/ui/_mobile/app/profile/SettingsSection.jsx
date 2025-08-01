@@ -1,5 +1,5 @@
-import DropdownMenu from "@/ui/app/MainMenu/settings/DropdownMenu";
-import Switcher from "@/ui/app/MainMenu/settings/Switcher";
+import DropdownMenu from "@/app/ui/app/MainMenu/settings/DropdownMenu";
+import Switcher from "@/app/ui/app/MainMenu/settings/Switcher";
 import React from "react";
 import TagToggle from "./TagToggle";
 

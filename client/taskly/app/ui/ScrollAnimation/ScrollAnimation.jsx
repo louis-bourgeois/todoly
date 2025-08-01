@@ -256,6 +256,7 @@ const ScrollAnimation = ({ children }) => {
               isMobile ? "" : "sticky top-0"
             } w-full h-screen flex items-center justify-center`}
           >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={isMobile ? "/0001_mobile.png" : currentImageSrc}
               alt={`Animation frame ${currentFrame}`}

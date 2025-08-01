@@ -71,7 +71,7 @@ export default function MainMenu({
       setMenuWidth(DEFAULT_WIDTH);
       setProfilePictureVisibility(true);
     }
-  }, [showMenu, setProfilePictureVisibility]);
+  }, [showMenu, setProfilePictureVisibility, DEFAULT_WIDTH]);
   useEffect(() => {
     if (layout === "default" || layout === "settings") {
       setProfilePictureVisibility(true);
@@ -83,7 +83,7 @@ export default function MainMenu({
 
     setMenuWidth(newWidth);
     setPreviousLayout(null);
-  }, [layout, setProfilePictureVisibility]);
+  }, [layout, setProfilePictureVisibility, DEFAULT_WIDTH]);
 
   return (
     <Div

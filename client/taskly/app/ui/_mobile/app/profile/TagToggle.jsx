@@ -1,4 +1,4 @@
-import Switcher from "@/ui/app/MainMenu/settings/Switcher";
+import Switcher from "@/app/ui/app/MainMenu/settings/Switcher";
 
 const TagToggle = ({ libelle, onChange, isChecked }) => {
   return (

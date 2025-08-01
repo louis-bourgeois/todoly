@@ -30,18 +30,15 @@ export const UserProvider = ({ children }) => {
       if (response.status === 200 && response.data.user) {
         setUser(response.data.user);
       }
-      console.log(response.data.user);
     } catch (error) {
       handleError(error);
     }
   }, [isAuthenticated]);
 
   const deleteUser = useCallback(async () => {
-    console.log();
     if (!isAuthenticated) return;
     try {
       const response = await axios.delete(`${baseUrl}`);
-      console.log(response.data.message);
     } catch (error) {
       handleError(error);
     }
@@ -50,10 +47,6 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     fetchUser();
   }, [fetchUser]);
-
-  useEffect(() => {
-    console.log(user)
-  }, [user])
 
   return (
     <UserContext.Provider value={{ user, setUser, fetchUser, deleteUser }}>

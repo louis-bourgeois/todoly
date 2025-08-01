@@ -21,7 +21,7 @@ const DateHeader = ({ index, onDateChange }) => {
   const [menuWidth, setMenuWidth] = useState(0);
   const triggerRef = useRef(null);
   const menuRef = useRef(null);
-  const dateOptions = useMemo(() => ({ weekday: "long", locale: currentLocale }), []);
+  const dateOptions = useMemo(() => ({ weekday: "long", locale: currentLocale }), [currentLocale]);
   const [menuOpen, setMenuOpen] = useState(false);
 
 
