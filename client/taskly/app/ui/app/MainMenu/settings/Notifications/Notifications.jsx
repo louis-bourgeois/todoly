@@ -9,8 +9,7 @@ import { useTranslation } from "@/app/i18n/client";
 export default function Notifications({ transitionStyles }) {
   const { updatePreference, preferences } = useUserPreferences();
   const { t } = useTranslation();
-  
-  // Convertir la préférence Allow_Notifications en booléen
+
   const [allowNotifications, setAllowNotifications] = useState(
     JSON.parse(preferences.Allow_Notifications.toLowerCase())
   );
@@ -76,7 +75,7 @@ export default function Notifications({ transitionStyles }) {
           isChecked={notificationsList.includes(notification.name)}
           onChange={() => handleNotificationChange(notification.name)}
         >
-          <span style={{ display: 'inline-flex', alignItems: 'center' }} className={`${isMobile ? "text-sm" : "text-base"} text-secondary leading-none`}>
+          <span style={{ display: 'inline-flex', alignItems: 'center' }} className={`${isMobile ? "text-sm" : "text-base"} select-none text-secondary leading-none`}>
             {notification.name}
           </span>
         </CheckboxContainer>

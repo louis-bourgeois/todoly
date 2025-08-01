@@ -127,7 +127,7 @@ export default function Navbar() {
                 height={125}
                 priority
                 quality={100}
-                className={`rounded-full transition-all duration-300 max-w-full ease ${
+                className={`rounded-full select-none transition-all duration-300 max-w-full ease ${
                   showMenu ? "scale-[0.8]" : ""
                 } ${profilePictureVisibility ? "opacity-100" : "opacity-0"}`}
                 onLoad={updateDimensions}

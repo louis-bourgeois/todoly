@@ -198,7 +198,7 @@ export default function TagSelect({
       othersStyles={`justify-between ${id ? "h-full" : "h-[90%]"}`}
     >
       <div className="flex justify-between items-center m-[1%]">
-        <h2 className="p-[3%] font-bold text-2xl text-text">{t('tagSelect.title')?.replace(/^./, match => match.toUpperCase())}</h2>
+        <h2 className="p-[3%] font-bold text-2xl text-text select-none">{t('tagSelect.title')?.replace(/^./, match => match.toUpperCase())}</h2>
         <button
           className="justify-center items-center font-bold hover:scale-105 transition-transform active:scale-100"
           onClick={() => handleAddTag("")}

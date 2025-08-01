@@ -19,7 +19,6 @@ import userRoutes from "./routes/userRoutes.js";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
 import profileImageRoutes from "./routes/profilImageRoutes.js"
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
@@ -27,10 +26,8 @@ const server = createServer(app);
 
 const port = process.env.PORT
 
-// Trust the first proxy
 app.set("trust proxy", 1);
 
-// CORS options
 const corsOptions = {
   origin: [
     "http://localhost:3000",
@@ -43,10 +40,9 @@ const corsOptions = {
   optionsSuccessStatus: 200,
 };
 
-// Rate limiter configuration
 const limiter = rateLimit({
-  windowMs: 60 * 1000, // 1 minute
-  max: 60000, // limit each IP to 60000 requests per windowMs
+  windowMs: 60 * 1000, 
+  max: 60000, 
   handler: (req, res) => {
     res
       .status(429)
@@ -54,11 +50,10 @@ const limiter = rateLimit({
   },
 });
 
-// Middlewares
-app.use(cors(corsOptions)); // Active CORS avec les options spécifiées
+app.use(cors(corsOptions)); 
 app.options("*", cors(corsOptions));
-app.use(helmet()); // Sécurise les réponses avec divers en-têtes HTTP
-app.use(limiter); // Applique la limitation de débit
+app.use(helmet()); 
+app.use(limiter); 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -71,7 +66,7 @@ app.use(
       httpOnly: true,
       maxAge: 24 * 60 * 60 * 1000,
       sameSite: "lax",
-      secure: process.env.NODE_ENV === "production", // HTTP uniquement, pas HTTPS pour l'instant
+      secure: process.env.NODE_ENV === "production", 
     },
   })
 );
@@ -79,7 +74,6 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// Routes
 app.use("/app", appRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/tasks", taskRoutes);
@@ -89,7 +83,6 @@ app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/preferences", preferenceRoutes);
 app.use("/api/profile", profileImageRoutes);
 
-// Root endpoint for basic server check
 app.get("/", (req, res) => {
   res.send(
     "Welcome to the Taskly API server! (don't act as a hacker please, that's boring)"

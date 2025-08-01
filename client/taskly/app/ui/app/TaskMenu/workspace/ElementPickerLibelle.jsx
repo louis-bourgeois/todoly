@@ -14,7 +14,7 @@ export default function ElementPickerLibelle({
       onClick={() => setTaskArrowIsClicked((prev) => !prev)}
       className="relative  cursor-pointer rounded-full p-[1%] py-[0.5%] flex justify-between items-center"
     >
-      <span className="pl-[5%] pb-[2%]  text-text">{elementType}</span>
+      <span className="pl-[5%] pb-[2%] select-none text-text">{elementType}</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         x="0"
@@ -47,7 +47,7 @@ export default function ElementPickerLibelle({
             className=" p-3 cursor-pointer"
             onClick={() => handleElementTypeChange(el === t('elementPicker.task') ? "Task" : "Workspace")}
           >
-            <span className="text-text hover:text-dominant transition transition-color">
+            <span className="text-text select-none hover:text-dominant transition transition-color">
               {el.charAt(0).toUpperCase() + el.slice(1)}
             </span>
           </div>

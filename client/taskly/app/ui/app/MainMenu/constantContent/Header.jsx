@@ -78,7 +78,7 @@ export default function Header({
               ></path>{" "}
             </g>
           </svg>
-          <h1 className="text-text font-extrabold text-2xl absolute left-1/2 transform -translate-x-1/2">
+          <h1 className="text-text font-extrabold text-2xl absolute select-none left-1/2 transform -translate-x-1/2">
             {layout}
           </h1>
           {layout === t('header.account') ? (

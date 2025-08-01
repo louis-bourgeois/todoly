@@ -1,5 +1,5 @@
 export default function SectionTitle({ children, className }) {
   return (
-    <h2 className={"text-xl font-bold text-text " + className}>{children}</h2>
+    <h2 className={"text-xl font-bold select-none text-text " + className}>{children}</h2>
   );
 }

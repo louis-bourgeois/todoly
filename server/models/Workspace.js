@@ -100,7 +100,7 @@ class Workspace {
         ]);
       }
 
-      // 2. Update collaborators
+      
       const currentCollaborators = await client.query(
         "SELECT user_id FROM user_workspaces WHERE workspace_id = $1",
         [id]
@@ -109,7 +109,7 @@ class Workspace {
         (row) => row.user_id
       );
 
-      // Resolve collaborator IDs
+      
       const newCollaboratorIds = await Promise.all(
         data.collaborators.map(async (collaborator) => {
           if (collaborator.id) {
@@ -117,19 +117,19 @@ class Workspace {
           } else if (collaborator.name) {
             const result = await User.findId(collaborator.name);
             if (result && result.length > 0) {
-              return result[0][0]; // Assuming the first result is the correct one
+              return result[0][0]; 
             }
           }
-          return null; // If we couldn't resolve an ID
+          return null; 
         })
       );
 
-      // Filter out any null values (unresolved IDs)
+      
       const resolvedCollaboratorIds = newCollaboratorIds.filter(
         (id) => id !== null
       );
 
-      // Remove collaborators
+      
       for (const currentId of currentCollaboratorIds) {
         if (!resolvedCollaboratorIds.includes(currentId)) {
           await client.query(
@@ -139,7 +139,7 @@ class Workspace {
         }
       }
 
-      // Add new collaborators
+      
       for (const newId of resolvedCollaboratorIds) {
         if (!currentCollaboratorIds.includes(newId)) {
           await client.query(
@@ -149,7 +149,7 @@ class Workspace {
         }
       }
 
-      // 3. Update sections
+      
       const currentSections = await client.query(
         "SELECT id FROM section WHERE workspace_id = $1",
         [id]
@@ -158,7 +158,7 @@ class Workspace {
 
       const newSectionIds = data.linked_sections.map((section) => section.id);
 
-      // Find the personal workspace id
+      
       const personalWorkspace = await client.query(
         "SELECT id FROM workspace WHERE name = $1",
         ["Personal"]
@@ -170,7 +170,7 @@ class Workspace {
         throw new Error("Personal workspace not found");
       }
 
-      // Update sections
+      
       for (const currentId of currentSectionIds) {
         if (!newSectionIds.includes(currentId)) {
           await client.query(

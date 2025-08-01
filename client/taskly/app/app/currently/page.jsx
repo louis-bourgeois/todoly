@@ -25,7 +25,7 @@ export default function Page() {
   }, []);
 
   if (isMobile) {
-    return null; // The mobile view is now handled in layout.jsx
+    return null; 
   }
 
   const settings = {

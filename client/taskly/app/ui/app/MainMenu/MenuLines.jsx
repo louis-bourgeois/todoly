@@ -19,7 +19,7 @@ const MenuLines = React.memo(
             <LinesElement>{children}</LinesElement>
             <LinesElement>
               <span
-                className={`transition duration-300 ease-in-out ${
+                className={`transition duration-300 select-none ease-in-out ${
                   isActive ? "text-dominant font-bold" : "text-text"
                 }`}
               >

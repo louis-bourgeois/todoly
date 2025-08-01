@@ -23,7 +23,6 @@ export async function addTag(req, res) {
     const found_user = await User.findId(undefined, req.user.email, undefined);
     const userId = found_user[0][0];
 
-    // Check if tag already exists for this user
     const existingTag = await Tag.find(userId, name.trim());
     if (existingTag.length > 0) {
       return res.status(400).json("Duplicate tag");
@@ -50,7 +49,6 @@ export async function updateTag(req, res) {
       return res.status(400).json("Tag name cannot be empty.");
     }
 
-    // Check if new tag name already exists for this user
     const existingTag = await Tag.find(userId, newName.trim());
     if (existingTag.length > 0 && existingTag[0].id !== id) {
       return res.status(400).json({

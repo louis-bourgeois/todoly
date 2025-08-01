@@ -26,13 +26,13 @@ export default function DescriptionContainer({
       flex={false}
       othersStyles="font-bold text-2xl text-text w-[55%]"
     >
-      <h2 className="pb-0 p-[2%]">{t('descriptionContainer.title')}</h2>
+      <h2 className="pb-0 p-[2%] select-none">{t('descriptionContainer.title')}</h2>
       <textarea
         style={{ resize: "none", outline: "none" }}
         name="description"
         value={descriptionValue}
         onChange={(e) => handleDescriptionChange(e)}
-        className="h-[80%] p-[2.5%] w-full text-base text-text pt-[4%] bg-transparent"
+        className="h-[80%] p-[2.5%] w-full text-base font-normal text-text pt-[4%] bg-transparent"
         placeholder={t('descriptionContainer.placeholder')}
       ></textarea>
     </TaskMenuSectionContainer>

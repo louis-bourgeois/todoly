@@ -121,7 +121,7 @@ export default function WorkspaceForm({
 
   return (
     <div
-      className={`w-full h-full flex flex-col overflow-clip ${transitionStyles}`}
+      className={`w-full h-full flex flex-col  ${transitionStyles}`}
     >
       <div className="flex justify-between items-center h-[15%] mb-4">
         <ElementPickerLibelle

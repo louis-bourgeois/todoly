@@ -139,7 +139,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
                 onClick={() => handleFastDateClick(fastDate.name)}
                 className="shadow-shadow_01 cursor-pointer hover:scale-105 transition-all flex items-center justify-center bg-dominant rounded-[20px] p-3 my-4"
               >
-                <p className="text-xs 5xl:text-base text-primary font-bold whitespace-nowrap px-2">
+                <p className="text-xs 5xl:text-base select-none text-primary font-bold whitespace-nowrap px-2">
                   {fastDate.name}
                 </p>
               </div>
@@ -170,7 +170,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
               />
             </svg>
           </button>
-          <h2 className="text-text text-lg font-extrabold 5xl:text-xl">
+          <h2 className="text-text text-lg font-extrabold select-none 5xl:text-xl">
           {format(currentDate, "MMMM yyyy", { locale: currentLocale })
           .replace(/^./, (match) => match.toUpperCase())}
           </h2>
@@ -199,7 +199,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
                 key={index}
                 className="text-center text-text text-xs font-bold"
               >
-                <span className="5xl:text-base">{day}</span>
+                <span className="5xl:text-base select-none">{day}</span>
               </div>
             ))}
           </div>
@@ -220,7 +220,7 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
                   isSameMonth(day, currentDate) && handleDateClick(day)
                 }
               >
-                <span className="font-medium text-sm 4xl:text-base">
+                <span className="font-medium text-sm 4xl:text-base select-none">
                   {format(day, "d")}
                 </span>
               </div>

@@ -20,7 +20,7 @@ class Task {
     this.status = status;
     this.priority = priority;
     this.dueDate = dueDate;
-    this.tags = tags; // No need to stringify, pg will handle this
+    this.tags = tags; 
     this.linked_section = linked_section;
     this.description = description;
     this.workspaceId = workspaceId;
@@ -54,7 +54,7 @@ class Task {
         this.status || null,
         this.priority,
         this.owner_id,
-        JSON.stringify(this.tags), // pg will automatically handle the conversion to JSONB
+        JSON.stringify(this.tags), 
         this.description,
       ]);
 
@@ -114,7 +114,7 @@ s
       result.rows = result.rows.map((row) => {
         const parsedRow = { ...row };
         parsedRow.tags = Array.isArray(row.tags) ? row.tags : [];
-        // Handle due_date
+        
         if (row.due_date) {
           const dueDate = new Date(row.due_date);
           dueDate.setUTCDate(dueDate.getUTCDate() + 1);
@@ -186,19 +186,19 @@ s
 
     let columnsToUpdate = Object.keys(changes);
 
-    // Determine if specific fields are updated
+    
     const linkedSectionUpdated = columnsToUpdate.includes("linked_section");
     const workspaceIdUpdated = columnsToUpdate.includes("workspace_id");
     const dueDateUpdated = columnsToUpdate.includes("dueDate");
 
-    // Handle dueDate to due_date conversion
+    
     if (dueDateUpdated) {
       columnsToUpdate = columnsToUpdate.map((col) =>
         col === "dueDate" ? "due_date" : col
       );
     }
 
-    // Tables to update based on the fields that have changed
+    
     const tablesToUpdate = [];
     if (linkedSectionUpdated) {
       tablesToUpdate.push("task");
@@ -214,13 +214,13 @@ s
       tablesToUpdate.push("task_properties");
     }
 
-    // Remove duplicates while keeping the last occurrence
+    
     columnsToUpdate = columnsToUpdate
       .reverse()
       .filter((col, index, self) => self.indexOf(col) === index)
       .reverse();
 
-    // Update the necessary tables
+    
     for (const table of tablesToUpdate) {
       let setParts = [];
       let queryParams = [];

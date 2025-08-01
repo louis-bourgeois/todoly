@@ -1,12 +1,8 @@
-// /app/terms/page.jsx
 "use client";
 
 import { useState } from 'react';
 import Navbar from '../ui/landing_page/Navbar';
-// Optionnel: Métadonnées pour le SEO (fonctionne aussi dans les Client Components)
-// Next.js lira ceci sur le serveur avant de rendre la page côté client.
 
-// Objet contenant les textes pour les deux langues
 const translations = {
   legal: {
     fr: {

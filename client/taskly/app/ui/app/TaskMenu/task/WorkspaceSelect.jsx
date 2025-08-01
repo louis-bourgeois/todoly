@@ -62,14 +62,14 @@ export default function WorkspaceSelect({
       othersStyles="h-[50%] flex flex-col justify-between"
       moreRoundedCorners="tr"
     >
-      <h2 className="text-2xl font-bold text-text p-2">{t('workspaceSelect.title')}</h2>
+      <h2 className="text-2xl font-bold text-text p-2 select-none">{t('workspaceSelect.title')}</h2>
 
       <div className="flex items-center gap-[0.7vw] relative">
         <div
           className="addMenuElement p-[10px] cursor-pointer rounded-full flex items-center justify-between w-full text-text gradient-border"
           onClick={toggleMenu}
         >
-          <span className="text-m 3xl:text-lg">
+          <span className="text-m 3xl:text-lg select-none">
             {workspaces.find((workspace) => workspace.id === selectedWorkspace)
               ?.name || t('workspaceSelect.placeholder')}
           </span>
@@ -117,7 +117,7 @@ export default function WorkspaceSelect({
         othersStyles="glass-morphism flex justify-center items-center hover:scale-95 m-1"
         onClick={() => handleNewWorkspaceClick("Workspace", "Task")}
       >
-        <span className="text-l font-bold text-text">
+        <span className="text-l font-bold select-none text-text">
           {t('workspaceSelect.newWorkspaceButton')}
         </span>
       </TaskMenuButton>

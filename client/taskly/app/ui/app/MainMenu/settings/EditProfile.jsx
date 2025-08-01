@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useUser } from '../../../../../context/UserContext';
-import { useError } from '../../../../../context/ErrorContext'; // 1. Importer le hook d'erreur
+import { useError } from '../../../../../context/ErrorContext';
 import axios from 'axios';
 import Input from "../../../Input";
 import PasswordInputContainer from '@/app/ui/auth/PasswordInputContainer';
@@ -10,10 +10,10 @@ import { useTranslation } from "../../../../i18n/client";
 
 export default function EditProfile({ setLayout }) {
   const { user, setUser, fetchUser } = useUser();
-  const { handleError } = useError(); // 2. Initialiser le gestionnaire d'erreurs
+  const { handleError } = useError(); 
   const { t } = useTranslation();
 
-  // State pour les données du formulaire
+
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
@@ -21,7 +21,6 @@ export default function EditProfile({ setLayout }) {
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  // State pour les erreurs de validation locales (inline)
   const [errors, setErrors] = useState({});
 
   useEffect(() => {

@@ -31,7 +31,7 @@ export default function Page() {
       return w.tasks.map((task) => ({ ...task, workspace_id: w.id }));
     });
 
-    // Group tasks by workspace
+    
     const tasksByWorkspace = allTasks.reduce((acc, task) => {
       if (!acc[task.workspace_id]) {
         acc[task.workspace_id] = [];

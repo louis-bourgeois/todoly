@@ -13,9 +13,6 @@ import Notifications from "./settings/Notifications/Notifications";
 import EditProfile from "./settings/EditProfile";
 import Integrations from "./settings/Integrations/Integrations";
 import { useTranslation } from "../../../i18n/client";
-
-// Precomputed dimensions for each panel.
-// Note: the key for the default panel is "default", but we’ll display "Main Menu" in the header.
 const LIBELLES = [
   { name: "Layout",        width: "25vw"},
   { name: "Appearance",    width: "25vw"},
@@ -26,8 +23,6 @@ const LIBELLES = [
   { name: "Account",       width: "45vw"},
   { name: "Data",          width: "45vw"},
 ];
-
-// Mapping layout keys to components.
 const LAYOUTS = {
   default: DefaultContent,
   settings: MainSettingsMenuContent,
@@ -46,33 +41,21 @@ export default function MainMenu({
   showMenu,
   marginTop,
   setShowMenu,
-  height, // not used, but kept to avoid errors
+  height,
   name,
   setProfilePictureVisibility,
   profilePictureVisibility,
 }) {
   const { t } = useTranslation();
-  // Default dimensions for the default panel.
   const DEFAULT_WIDTH = LIBELLES.find((item) => item.name === "default").width;
-
-
-  // Internal state for the active panel key.
-  // We use "default" for the main panel.
   const [layout, setLayout] = useState("default");
   const [previousLayout, setPreviousLayout] = useState(null);
   const [menuWidth, setMenuWidth] = useState(DEFAULT_WIDTH);
 
   const contentRef = useRef(null);
-
-  // Compute the header label separately.
-  // When the internal layout is "default", we want the header label to be "Main Menu".
   const headerLabel = layout === "default" ? t('mainMenu.mainMenu') : layout;
-
-  // The current layout component is simply looked up via the internal layout key.
   const CurrentLayoutComponent = LAYOUTS[layout] || (() => <></>);
   const PreviousLayoutComponent = previousLayout ? LAYOUTS[previousLayout] : null;
-
-  // Handle panel changes by recording the previous panel and updating layout.
   const handlePanelChange = useCallback(
     (newLayout) => {
       setPreviousLayout(layout);
@@ -80,29 +63,21 @@ export default function MainMenu({
     },
     [layout]
   );
-
-  // When the menu opens/closes, reset the layout to "default".
   useEffect(() => {
     if (!showMenu) {
       setLayout("default");
     } else {
-      // When reopening, reset dimensions and force profile picture visibility.
       setLayout("default");
       setMenuWidth(DEFAULT_WIDTH);
       setProfilePictureVisibility(true);
     }
   }, [showMenu, setProfilePictureVisibility]);
-
-  // Update menu dimensions on layout change, using viewport scaling for height.
   useEffect(() => {
-    // Display the profile picture only when in default or settings panels.
     if (layout === "default" || layout === "settings") {
       setProfilePictureVisibility(true);
     } else {
       setProfilePictureVisibility(false);
     }
-
-    // Retrieve dimensions from LIBELLES (if defined) or use defaults.
     const libelle = LIBELLES.find((item) => item.name === layout) || { width: DEFAULT_WIDTH };
     let newWidth = libelle.width;
 
@@ -123,12 +98,11 @@ export default function MainMenu({
       notBorder
       style={{
         width: showMenu ? menuWidth : "0",
-        maxHeight: showMenu ? "9999px" : "0", // Use maxHeight for smooth animation
+        maxHeight: showMenu ? "9999px" : "0",
       }}
     >
       <Header
         name={name}
-        // Pass the header label instead of the internal layout key.
         layout={headerLabel}
         handleSettingsChange={handlePanelChange}
         containerRef={containerRef}

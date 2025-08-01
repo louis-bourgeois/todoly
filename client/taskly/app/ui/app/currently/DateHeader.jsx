@@ -59,14 +59,14 @@ const DateHeader = ({ index, onDateChange }) => {
     setWorkspacesName(workspaces.map((workspace) => workspace.name));
   }, [workspaces]);
 
-  // MODIFICATION ICI : La fonction accepte l'événement (e) pour l'arrêter.
+  
   const handleCurrentWorkspaceDropdownClick = (e, name) => {
-    e.stopPropagation(); // Empêche le clic de se propager au parent
+    e.stopPropagation();
     const workspace = workspaces.find((workspace) => workspace.name === name);
     if (workspace) {
       setCurrentWorkspace(workspace.id);
     }
-    setMenuOpen(false); // Ferme le menu
+    setMenuOpen(false);
   };
 
   const prevFutureDateRef = useRef();

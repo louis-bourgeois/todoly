@@ -72,7 +72,7 @@ export default function SectionSelectContainer({
 
   return (
     <div className="gradient-border h-[95%] rounded-[20px] p-2 w-[55%] addMenuElement bg-main_menu_bg  flex flex-col justify-start gap-[7.5%] items-center">
-      <h1 className="text-3xl font-bold text-text">{t('sectionSelect.title')}</h1>
+      <h1 className="text-3xl font-bold text-text select-none">{t('sectionSelect.title')}</h1>
       <Downshift
         inputValue={inputValue}
         onInputValueChange={handleInputChange}
@@ -120,17 +120,10 @@ export default function SectionSelectContainer({
                       values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
                       result="hardAlpha"
                     />
-                    <feOffset dy="4" />
-                    <feGaussianBlur stdDeviation="0.5" />
                     <feComposite in2="hardAlpha" operator="out" />
                     <feColorMatrix
                       type="matrix"
                       values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-                    />
-                    <feBlend
-                      mode="normal"
-                      in2="BackgroundImageFix"
-                      result="effect1_dropShadow_336_5534"
                     />
                     <feBlend
                       mode="normal"

@@ -26,6 +26,6 @@ export default function Page() {
     }
   }, [setCardType, preferences?.Default_Main_Page, isMobile]);
 
-  // Afficher un message de chargement pendant que nous attendons les préférences
+  
   return null;
 }

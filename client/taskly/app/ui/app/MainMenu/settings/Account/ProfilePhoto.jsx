@@ -1,3 +1,4 @@
+"use client"
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useUser } from "../../../../../../context/UserContext";
@@ -59,7 +60,6 @@ const ProfilePhoto = ({ size = 150 }) => {
     setImageLoaded(false);
   
     try {
-      // AJOUTÉ : Vérification cruciale de la présence du username.
       if (!user?.username) {
         console.error(t("profilePhoto.error.usernameNotFound"));
         alert(t("profilePhoto.error.usernameMissing"));
@@ -89,8 +89,6 @@ const ProfilePhoto = ({ size = 150 }) => {
 
       const timestamp = Date.now();
       const fileName = `${timestamp}_${file.name}`;
-      
-      // MODIFIÉ : Utilisation de user.username pour le chemin de stockage.
       const storageRef = ref(storage, `profile_pictures/${user.username}/${fileName}`);
 
       const uploadTask = uploadBytesResumable(storageRef, file);
@@ -110,14 +108,13 @@ const ProfilePhoto = ({ size = 150 }) => {
           console.log("Fichier disponible à l'URL : ", downloadURL);
           
           try {
-            // L'API a besoin d'un identifiant unique, l'email ou l'ID est parfait ici.
             await fetch("/api/profile/upload", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
               },
               body: JSON.stringify({
-                user_email: user.email, // On utilise l'email pour retrouver l'utilisateur dans la DB
+                user_email: user.email,
                 image_url: downloadURL,
               }),
             });

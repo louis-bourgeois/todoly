@@ -97,7 +97,7 @@ class Section {
     } catch (error) {
       await client.query("ROLLBACK");
       if (error.code === "23503") {
-        // Lever une erreur spécifique pour être attrapée par le contrôleur
+        
         throw new Error(
           "You cannot delete this section because there are still tasks in it!"
         );

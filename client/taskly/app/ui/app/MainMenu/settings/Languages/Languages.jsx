@@ -16,7 +16,6 @@ export default function Languages({ transitionStyles }) {
     try {
       await updatePreference({ key, value });
       if (key === "Language") {
-        // We use window.location.href for a full page reload...
         window.location.href = "/app";
       }
     } catch (error) {
@@ -28,15 +27,10 @@ export default function Languages({ transitionStyles }) {
     { code: 'en', labelKey: 'languages.english' },
     { code: 'fr', labelKey: 'languages.french' },
   ];
-
-  // --- AMÉLIORATION ICI ---
-  // On s'assure d'avoir une valeur par défaut robuste même si les préférences sont en cours de chargement.
   const currentLanguageCode = preferences?.Language?.toLowerCase() || i18n.language;
-  
-  // On trouve l'option correspondante et on s'assure d'avoir un fallback pour la clé.
   const currentLanguageKey = languageOptions.find(opt => opt.code === currentLanguageCode)?.labelKey || 'languages.english';
   const currentLanguageLabel = t(currentLanguageKey);
-  // --- FIN DE L'AMÉLIORATION ---
+
 
   const toggleDateFormat = () => {
     const newFormat = preferences?.Date_Format === "24h" ? "12h" : "24h";
@@ -47,10 +41,8 @@ export default function Languages({ transitionStyles }) {
     const newDayStart = preferences?.Week_Starts_On === "Monday" ? "Sunday" : "Monday";
     handleUpdatePreference("Week_Starts_On", newDayStart);
   };
-
-  // On peut s'assurer que les traductions sont prêtes avant d'afficher.
   if (!ready) {
-    return <div>Loading...</div>; // Ou un composant de chargement plus élégant
+    return <div>Loading...</div>;
   }
 
   return (
@@ -78,7 +70,7 @@ export default function Languages({ transitionStyles }) {
             onClick={toggleDateFormat}
             isSelected={preferences?.Date_Format === "12h"}
           />
-          <h2 className="text-dominant font-bold">{t("settings.dateFormat.12h")}</h2>
+          <h2 className="text-dominant select-none font-bold">{t("settings.dateFormat.12h")}</h2>
         </div>
         <div className="flex justify-start w-full items-center gap-[2.5vw]">
           <Circle
@@ -86,7 +78,7 @@ export default function Languages({ transitionStyles }) {
             onClick={toggleWeekStart}
             isSelected={preferences?.Week_Starts_On === "Sunday"}
           />
-          <h2 className="text-dominant font-bold">
+          <h2 className="text-dominant select-none font-bold">
             {t("settings.weekStart.sunday")}
           </h2>
         </div>

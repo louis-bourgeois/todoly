@@ -32,8 +32,8 @@ export default function CollaboratorSelectContainer({
 
   return (
     <div className="addMenuElement p-2 gradient-border bg-main_menu_bg h-[80%] rounded-[20px] flex flex-col justify-between items-center">
-      <h1 className="text-3xl font-bold text-text">{t('collaboratorSelect.title')}</h1>
-      <div className="w-full h-[50%]  flex flex-col items-center justify-center p-5">
+      <h1 className="text-3xl font-bold text-text select-none">{t('collaboratorSelect.title')}</h1>
+      <div className="w-full h-[50%] flex flex-col items-center justify-center p-5">
         <p></p>
         {/* <Slider {...settings} className="w-full">
           {collaborators.map((collaborator, index) => {

@@ -12,7 +12,7 @@ export default function SectionSelection({
   setMenuOpen,
 }) {
   const [editingSectionId, setEditingSectionId] = useState(null);
-  const [editingName, setEditingName] = useState(""); // State to hold the name during edit
+  const [editingName, setEditingName] = useState("");
   const { handleError } = useError();
   const { sections, addSection, modifySection, deleteSection } = useSection();
   const { currentWorkspace } = useWorkspace();
@@ -36,7 +36,6 @@ export default function SectionSelection({
         handleError(t('sectionSelection.error.add'));
       }
     } else {
-        // If the new section name is empty, just close the input
         setIsEditingNewSection(false);
     }
   };
@@ -64,29 +63,24 @@ export default function SectionSelection({
     }, 0);
   };
 
-  // --- Start of Edit Logic ---
-
   const handleStartEditing = (section) => {
     setEditingSectionId(section.id);
-    setEditingName(section.name); // Initialize editingName with the current section name
+    setEditingName(section.name);
   };
 
   const handleFinishEditing = async () => {
-    // Trim the name to check if it's empty
     if (editingName.trim() === "") {
-      // If the name is empty, cancel the edit and revert to the original state
+
       setEditingSectionId(null);
-      return; // Exit the function to prevent modification
+      return;
     }
 
     try {
-      // Only call modifySection if the name is valid
       await modifySection(editingName, editingSectionId);
     } catch (error) {
       console.error("Failed to modify section", error);
       handleError(t('sectionSelection.error.modify'));
     } finally {
-      // Always close the input field after the operation
       setEditingSectionId(null);
     }
   };
@@ -96,13 +90,9 @@ export default function SectionSelection({
       handleFinishEditing();
     }
     if (e.code === "Escape") {
-      // Optional: allow canceling with the Escape key
       setEditingSectionId(null);
     }
   };
-
-  // --- End of Edit Logic ---
-
 
   const handleDeleteSection = async (sectionId) => {
     try {
@@ -122,7 +112,7 @@ export default function SectionSelection({
       othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer"
       onClick={() => setMenuOpen((prev) => !prev)}
     >
-      <h2 className="pl-[4%] font-bold text-xl text-text">
+      <h2 className="pl-[4%] font-bold text-xl select-none text-text">
         {linked_section_name || t('sectionSelect.placeholder')}
       </h2>
       <svg
@@ -175,7 +165,6 @@ export default function SectionSelection({
               className="flex items-center p-4 hover:bg-secondary/20"
               onClick={(e) => {
                 e.stopPropagation();
-                // Do not select section if we are in edit mode
                 if (!editingSectionId) {
                     handleSelectSection(section);
                 }
@@ -189,11 +178,11 @@ export default function SectionSelection({
                   value={editingName}
                   onChange={(e) => setEditingName(e.target.value)}
                   onKeyDown={handleEditKeyDown}
-                  onBlur={handleFinishEditing} // Use the new handler
+                  onBlur={handleFinishEditing} 
                   onClick={(e) => e.stopPropagation()}
                 />
               ) : (
-                <span className="cursor-pointer flex-grow py-1 hover:text-dominant text-text">
+                <span className="cursor-pointer select-none flex-grow py-1 hover:text-dominant text-text">
                   {section.name}
                 </span>
               )}
@@ -220,7 +209,7 @@ export default function SectionSelection({
                     />
                   </svg>
                   <button
-                    className="ml-2 hover:text-dominant text-text"
+                    className="ml-2 hover:text-dominant select-none text-text"
                     onClick={(e) => {
                       e.stopPropagation();
                       handleStartEditing(section);

@@ -117,14 +117,14 @@ const AddCard = (type = "Workspace") => {
   );
 };
 const ScrollableContent = ({ children }) => {
-  const layers = 8; // Nombre de couches pour le dégradé
+  const layers = 8; 
 
   return (
     <div className="relative w-full h-full overflow-hidden">
-      {/* Contenu défilable */}
+      
       <div className="absolute inset-0 overflow-y-auto">{children}</div>
 
-      {/* Couches de dégradé simulé */}
+      
       {[...Array(layers)].map((_, index) => (
         <div
           key={index}
@@ -232,7 +232,7 @@ export default function AppLayout({ children }) {
           swiperRef.current.swiper.slideTo(ELEMENTS.indexOf("Task"));
         }
       }
-      // Début de la transition
+      
       if (transitionTimeoutRef.current) {
         clearTimeout(transitionTimeoutRef.current);
       }
@@ -243,7 +243,7 @@ export default function AppLayout({ children }) {
         setIsTransitioning(false);
         setNextCardType(null);
         setContextNextCardType(null);
-      }, 300); // Durée de la transition en ms
+      }, 300); 
     }
 
     return () => {
@@ -281,7 +281,7 @@ export default function AppLayout({ children }) {
       const today = new Date();
       const date = new Date(today);
       date.setDate(today.getDate() + index);
-      return date.toISOString().split("T")[0]; // Format YYYY-MM-DD
+      return date.toISOString().split("T")[0]; 
     };
 
     const cardTypes = {

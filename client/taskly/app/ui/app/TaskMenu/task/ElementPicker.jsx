@@ -31,7 +31,7 @@ export default function ElementPicker({
       othersStyles="rounded-full justify-between items-center h-[80%] z-[200] relative cursor-pointer"
       onClick={toggleMenu}
     >
-      <h2 className="pl-[4%] font-bold text-2xl text-text">{elementType}</h2>
+      <h2 className="pl-[4%] font-bold text-2xl text-text select-none">{elementType}</h2>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         x="0"
@@ -64,7 +64,7 @@ export default function ElementPicker({
         {elements.map((el) => (
           <div
             key={el}
-            className=" p-4 cursor-pointer hover:text-dominant transition-colors duration-300 text-text"
+            className=" p-4 cursor-pointer hover:text-dominant transition-colors select-none duration-300 text-text"
             onClick={() => handleElementTypeChangeWithFade(el)}
           >
             {el.charAt(0).toUpperCase() + el.slice(1)}

@@ -6,9 +6,6 @@ import { useTranslation } from "@/app/i18n/client";
 
 const ErrorContext = createContext();
 
-// Comprehensive error messages
-
-
 export const ErrorProvider = ({ children }) => {
   
   const { addNotification, notificationsList } =
@@ -92,26 +89,26 @@ export const ErrorProvider = ({ children }) => {
   }), [t]);
 
   useEffect(() => {
-    // Logic to handle changes in notificationsList if necessary
+    
   }, [notificationsList]);
 
   const handleError = (error) => {
-    console.error(error); // Log the error for debugging
+    console.error(error); 
     let errorInfo;
 
-    // Check for Axios-like error structure first
+    
     if (error.response && error.response.data) {
         const { status, data } = error.response;
         const errorMessageKey = data.message || data.err || (typeof data === 'string' && data) || `ERROR_${status}`;
         
         errorInfo = errorMessages[errorMessageKey] || errorMessages.DEFAULT;
         
-        // Handle cases where the message is dynamic but we want a generic title
+        
         if (errorInfo === errorMessages.DEFAULT && data.message) {
             errorInfo = { ...errorInfo, subtitle: data.message };
         }
 
-    } else { // Handle other types of errors (e.g., network, plain JS objects)
+    } else { 
         errorInfo = errorMessages.DEFAULT;
         if (error.message) {
             errorInfo = { ...errorInfo, subtitle: error.message };
