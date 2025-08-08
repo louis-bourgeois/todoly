@@ -81,7 +81,7 @@ class Task {
       client.release();
     }
   }
-s
+
   static async find(workspaceId = false, taskId = false, userId = false) {
     let query = `
       SELECT t.*, tp.*, tw.*
@@ -113,8 +113,17 @@ s
 
       result.rows = result.rows.map((row) => {
         const parsedRow = { ...row };
-        parsedRow.tags = Array.isArray(row.tags) ? row.tags : [];
-        
+
+        if (Array.isArray(row.tags)) {
+          parsedRow.tags = row.tags;
+        } else {
+          try {
+            parsedRow.tags = JSON.parse(row.tags || "[]");
+          } catch {
+            parsedRow.tags = [];
+          }
+        }
+
         if (row.due_date) {
           const dueDate = new Date(row.due_date);
           dueDate.setUTCDate(dueDate.getUTCDate() + 1);
