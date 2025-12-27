@@ -3,6 +3,25 @@ import { compareObjects } from "../utils/compare.js";
 import { isUUID } from "../utils/validate.js";
 import Section from "./Section.js";
 
+let taskPropsColumnsEnsured = false;
+async function ensureTaskPropertiesColumns(client = null) {
+  if (taskPropsColumnsEnsured) return;
+  const runner = client ? client.query.bind(client) : pool.query.bind(pool);
+  await runner(
+    `ALTER TABLE IF EXISTS task_properties ADD COLUMN IF NOT EXISTS subtasks jsonb`
+  );
+  await runner(
+    `ALTER TABLE IF EXISTS task_properties ADD COLUMN IF NOT EXISTS recurrence jsonb DEFAULT '{"type":"none","days":[],"endDate":null}'::jsonb`
+  );
+  await runner(
+    `UPDATE task_properties SET subtasks = '[]'::jsonb WHERE subtasks IS NULL`
+  );
+  await runner(
+    `UPDATE task_properties SET recurrence = COALESCE(recurrence, '{"type":"none","days":[],"endDate":null}'::jsonb)`
+  );
+  taskPropsColumnsEnsured = true;
+}
+
 class Task {
   constructor(
     owner_id,
@@ -13,7 +32,9 @@ class Task {
     dueDate = undefined,
     tags = [],
     description,
-    workspaceId
+    workspaceId,
+    subtasks = [],
+    recurrence = { type: "none", days: [], endDate: null }
   ) {
     this.owner_id = owner_id;
     this.title = title;
@@ -24,6 +45,8 @@ class Task {
     this.linked_section = linked_section;
     this.description = description;
     this.workspaceId = workspaceId;
+    this.subtasks = subtasks;
+    this.recurrence = recurrence;
   }
 
   async save() {
@@ -31,6 +54,7 @@ class Task {
 
     try {
       await client.query("BEGIN");
+      await ensureTaskPropertiesColumns(client);
 
       const linked_section = isUUID(this.linked_section)
         ? this.linked_section
@@ -44,18 +68,34 @@ class Task {
       ]);
 
       const taskId = result.rows[0].id;
-      const insertTaskProp =
-        "INSERT INTO task_properties (task_id, title, due_date, status, priority, user_id, tags, description) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)";
+      const insertTaskProp = `
+        INSERT INTO task_properties (
+          task_id,
+          title,
+          due_date,
+          status,
+          subtasks,
+          priority,
+          user_id,
+          tags,
+          description,
+          recurrence
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      `;
 
       await client.query(insertTaskProp, [
         taskId,
         this.title,
         this.dueDate || null,
         this.status || null,
+        JSON.stringify(this.subtasks || []),
         this.priority,
         this.owner_id,
-        JSON.stringify(this.tags), 
+        JSON.stringify(this.tags || []), 
         this.description,
+        JSON.stringify(
+          this.recurrence || { type: "none", days: [], endDate: null }
+        ),
       ]);
 
       const twQuery = `INSERT INTO task_workspaces (task_id, workspace_id) VALUES ($1, $2)`;
@@ -81,7 +121,6 @@ class Task {
       client.release();
     }
   }
-s
   static async find(workspaceId = false, taskId = false, userId = false) {
     let query = `
       SELECT t.*, tp.*, tw.*
@@ -113,7 +152,40 @@ s
 
       result.rows = result.rows.map((row) => {
         const parsedRow = { ...row };
-        parsedRow.tags = Array.isArray(row.tags) ? row.tags : [];
+        parsedRow.tags = Array.isArray(row.tags)
+          ? row.tags
+          : typeof row.tags === "string"
+          ? (() => {
+              try {
+                return JSON.parse(row.tags);
+              } catch {
+                return [];
+              }
+            })()
+          : [];
+
+        parsedRow.subtasks = Array.isArray(row.subtasks)
+          ? row.subtasks
+          : typeof row.subtasks === "string"
+          ? (() => {
+              try {
+                return JSON.parse(row.subtasks);
+              } catch {
+                return [];
+              }
+            })()
+          : [];
+
+        const defaultRecurrence = { type: "none", days: [], endDate: null };
+        if (typeof row.recurrence === "string") {
+          try {
+            parsedRow.recurrence = JSON.parse(row.recurrence);
+          } catch {
+            parsedRow.recurrence = defaultRecurrence;
+          }
+        } else {
+          parsedRow.recurrence = row.recurrence || defaultRecurrence;
+        }
         
         if (row.due_date) {
           const dueDate = new Date(row.due_date);
@@ -162,6 +234,7 @@ s
   }
 
   static async update(taskToUpdate) {
+    await ensureTaskPropertiesColumns();
     const [currentTask] = await this.find(undefined, taskToUpdate.id);
 
     if (!currentTask) {
@@ -170,19 +243,26 @@ s
     }
 
     const changes = compareObjects(currentTask, taskToUpdate);
-    if (changes.tags) {
-      if (Array.isArray(changes.tags)) {
-        changes.tags = JSON.stringify(changes.tags);
-      } else if (typeof changes.tags === "string") {
-        try {
-          JSON.parse(changes.tags);
-        } catch (e) {
-          changes.tags = JSON.stringify([]);
+    const jsonColumns = ["tags", "subtasks", "recurrence"];
+    jsonColumns.forEach((key) => {
+      if (changes[key] !== undefined) {
+        if (key === "recurrence" && changes[key] === null) {
+          changes[key] = JSON.stringify({ type: "none", days: [], endDate: null });
+          return;
         }
-      } else {
-        changes.tags = JSON.stringify([]);
+        if (Array.isArray(changes[key]) || typeof changes[key] === "object") {
+          changes[key] = JSON.stringify(changes[key]);
+        } else if (typeof changes[key] === "string") {
+          try {
+            JSON.parse(changes[key]);
+          } catch (e) {
+            changes[key] = JSON.stringify(key === "recurrence" ? { type: "none", days: [], endDate: null } : []);
+          }
+        } else {
+          changes[key] = JSON.stringify(key === "recurrence" ? { type: "none", days: [], endDate: null } : []);
+        }
       }
-    }
+    });
 
     let columnsToUpdate = Object.keys(changes);
 

@@ -6,6 +6,7 @@ import { useTask } from "../../../../../../context/TaskContext";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import { useWorkspace } from "../../../../../../context/WorkspaceContext";
 import SectionHeader from "./SectionHeader";
+import { occursOnDate } from "@/app/utils/recurrence";
 
 export default function MobileSectionContainer({
   date,
@@ -82,7 +83,7 @@ export default function MobileSectionContainer({
         (task) =>
           task &&
           task.linked_section === section.id &&
-          (selectedWorkspace || task.due_date === date)
+          (selectedWorkspace || !date || occursOnDate(task, date))
       );
       if (sectionTasksFiltered.length > 0) {
         taskMap.set(section.id, sectionTasksFiltered);

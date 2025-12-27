@@ -11,11 +11,38 @@ import {
 import { useAuth } from "./AuthContext";
 import { useError } from "./ErrorContext";
 import { useWorkspace } from "./WorkspaceContext";
+import { normalizeRecurrence } from "@/app/utils/recurrence";
 
 const TaskContext = createContext();
 const baseUrl = "/api/tasks";
 
 export const useTask = () => useContext(TaskContext);
+
+const normalizeSubtasks = (subtasks = []) => {
+  if (!Array.isArray(subtasks)) return [];
+  return subtasks.map((subtask, index) => {
+    const fallbackId =
+      subtask?.id ||
+      (typeof crypto !== "undefined" && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `subtask-${Date.now()}-${index}`);
+    return {
+      id: fallbackId,
+      title: subtask?.title || subtask?.name || "",
+      done:
+        typeof subtask?.done === "boolean"
+          ? subtask.done
+          : !!subtask?.completed || subtask?.status === "done",
+    };
+  });
+};
+
+const normalizeTask = (task = {}) => ({
+  ...task,
+  tags: Array.isArray(task.tags) ? task.tags : [],
+  subtasks: normalizeSubtasks(task.subtasks),
+  recurrence: normalizeRecurrence(task.recurrence),
+});
 
 export const TaskProvider = ({ children }) => {
   const { handleError } = useError();
@@ -31,7 +58,10 @@ export const TaskProvider = ({ children }) => {
       const response = await axios.get(`${baseUrl}`, {
         withCredentials: true,
       });
-      setTasks(response.data.tasks);
+      const fetchedTasks = Array.isArray(response.data.tasks)
+        ? response.data.tasks.map((task) => normalizeTask(task))
+        : [];
+      setTasks(fetchedTasks);
     } catch (error) {
       handleError(error);
     }
@@ -42,6 +72,8 @@ export const TaskProvider = ({ children }) => {
       const formattedTaskData = {
         ...taskData,
         tags: taskData.tags,
+        subtasks: normalizeSubtasks(taskData.subtasks),
+        recurrence: normalizeRecurrence(taskData.recurrence),
       };
       try {
         const response = await axios.post(
@@ -50,27 +82,35 @@ export const TaskProvider = ({ children }) => {
           { withCredentials: true }
         );
         if (response.status === 201 && response.data.savedTask) {
-          const newTask = response.data.savedTask[0];
+          const createdTask = response.data.savedTask?.[0];
+          const newTask = createdTask
+            ? normalizeTask(createdTask)
+            : null;
           if (newTask && newTask.id) {
             setTasks((prevTasks) => [...prevTasks, newTask]);
             setWorkspaces((prevWorkspaces) => {
               return prevWorkspaces.map((workspace) => {
+                const workspaceTasks = Array.isArray(workspace.tasks)
+                  ? workspace.tasks
+                  : [];
                 if (workspace.id === newTask.workspace_id) {
                   return {
                     ...workspace,
-                    tasks: [...workspace.tasks, newTask],
+                    tasks: [...workspaceTasks, newTask],
                   };
                 }
                 return workspace;
               });
             });
+          } else {
+            fetchTasks();
           }
         }
       } catch (error) {
         handleError(error);
       }
     },
-    [handleError, setWorkspaces]
+    [handleError, setWorkspaces, fetchTasks]
   );
 
   const modifyTask = useCallback(
@@ -84,16 +124,38 @@ export const TaskProvider = ({ children }) => {
         if (response.status === 200) {
           setTasks((prevTasks) =>
             prevTasks.map((task) =>
-              task.id === updatedTask.id ? updatedTask : task
+              task.id === updatedTask.id
+                ? normalizeTask({ ...task, ...updatedTask })
+                : task
             )
           );
           setWorkspaces((prevWorkspaces) => {
             return prevWorkspaces.map((workspace) => {
-              if (workspace.id === updatedTask.workspace_id) {
+              const workspaceTasks = Array.isArray(workspace.tasks)
+                ? workspace.tasks
+                : [];
+              const hasTask = workspaceTasks.some(
+                (task) => task.id === updatedTask.id
+              );
+              const normalized = normalizeTask({
+                ...workspaceTasks.find((t) => t.id === updatedTask.id),
+                ...updatedTask,
+              });
+              if (workspace.id === normalized.workspace_id) {
+                const nextTasks = hasTask
+                  ? workspaceTasks.map((task) =>
+                      task.id === updatedTask.id ? normalized : task
+                    )
+                  : [...workspaceTasks, normalized];
                 return {
                   ...workspace,
-                  tasks: workspace.tasks.map((task) =>
-                    task.id === updatedTask.id ? updatedTask : task
+                  tasks: nextTasks,
+                };
+              } else if (hasTask) {
+                return {
+                  ...workspace,
+                  tasks: workspaceTasks.filter(
+                    (task) => task.id !== updatedTask.id
                   ),
                 };
               }

@@ -61,7 +61,9 @@ export async function addTask(req, res) {
       newTaskData.dueDate,
       newTaskData.tags,
       newTaskData.description,
-      newTaskData.workspaceId
+      newTaskData.workspaceId,
+      newTaskData.subtasks || [],
+      newTaskData.recurrence || { type: "none", days: [], endDate: null }
     );
 
     const newTaskId = await task.save();

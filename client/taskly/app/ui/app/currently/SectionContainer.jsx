@@ -8,6 +8,7 @@ import { useTask } from "../../../../context/TaskContext";
 import { useUserPreferences } from "../../../../context/UserPreferencesContext";
 import { useWorkspace } from "../../../../context/WorkspaceContext";
 import { useTranslation } from "../../../i18n/client";
+import { occursOnDate } from "@/app/utils/recurrence";
 
 const SectionContainer = ({
   date = undefined,
@@ -83,7 +84,7 @@ const SectionContainer = ({
         (task) =>
           task &&
           task.linked_section === section.id &&
-          (!date || task.due_date === date)
+          (!date || occursOnDate(task, date))
       );
       if (sectionTasksFiltered.length > 0) {
         taskMap.set(section.id, sectionTasksFiltered);

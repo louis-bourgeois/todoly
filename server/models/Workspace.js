@@ -1,4 +1,5 @@
 import pool from "../config/dbConfig.js";
+import Task from "./Task.js";
 
 class Workspace {
   constructor(name) {
@@ -304,18 +305,7 @@ class Workspace {
   
   static async findTasksByWorkspaceId(workspaceId) {
     try {
-      const query = `
-      SELECT t.id, t.creation_date, tp.title, tp.due_date, tp.status, tp.priority, tp.tags, tp.description, t.linked_section 
-      FROM task t
-      JOIN task_workspaces tw ON t.id = tw.task_id
-      JOIN task_properties tp ON t.id = tp.task_id
-      WHERE tw.workspace_id = $1
-    `;
-      const { rows } = await pool.query(query, [workspaceId]);
-      return rows.map((row) => ({
-        ...row,
-        tags: JSON.stringify(row.tags),
-      }));
+      return await Task.find(workspaceId);
     } catch (error) {
       throw error;
     }

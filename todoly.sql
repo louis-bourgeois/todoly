@@ -89,7 +89,8 @@ CREATE TABLE public.task_properties (
     priority integer NOT NULL,
     user_id uuid NOT NULL,
     tags jsonb DEFAULT '[]'::jsonb,
-    description text
+    description text,
+    recurrence jsonb DEFAULT '{"type":"none","days":[],"endDate":null}'::jsonb
 );
 
 
@@ -366,16 +367,16 @@ acb63fab-caad-4199-b7d1-72cdbc23d261	0ee28fa5-0cf9-470a-b388-7bc11733437d	2024-1
 -- Data for Name: task_properties; Type: TABLE DATA; Schema: public; Owner: todoly_app_user
 --
 
-COPY public.task_properties (task_id, title, due_date, status, subtasks, priority, user_id, tags, description) FROM stdin;
-ea0e4016-5a1e-40d0-8959-0342594bf2cd	Coffee	2024-09-22	todo	\N	5	0a95c413-7baa-41f4-9343-b824132ce241	[]	
-c3424b92-d52a-47e3-8ebe-3e23c55f4331	Work physique ++	2024-10-11	todo	\N	5	0ee28fa5-0cf9-470a-b388-7bc11733437d	[]	
-fc38654a-31d4-496b-b93f-2182df5be74f	Résumer cours et le rentrer | Ens. Sc. SVT	2024-10-11	todo	\N	5	0ee28fa5-0cf9-470a-b388-7bc11733437d	[]	
-56a0f428-de5c-4844-a7d7-3f63ed00addf	être monstrueux pour de vrai en maths	2024-10-11	todo	\N	10	0ee28fa5-0cf9-470a-b388-7bc11733437d	[]	
-acb63fab-caad-4199-b7d1-72cdbc23d261	Questions en histoire	2024-10-11	todo	\N	5	0ee28fa5-0cf9-470a-b388-7bc11733437d	[]	
-053dac24-da37-4063-9bde-25a5bacd94af	18cm	2024-08-16	done	\N	10	166eb602-2281-4fc4-a51d-87f7a45fcd30	[]	
-8f1e229a-3138-4184-a2fd-f197fbdd6a0e	ffdfd	2024-08-08	todo	\N	5	b2e56e76-baae-4071-870e-6b3ea1b7391c	[]	
-933e3b1b-f495-44be-adb3-842539e0f1fc	Judo	2024-08-14	todo	\N	5	80c396c1-2f4f-499f-ae8e-ee070ba60077	[{"id": "d7772441-3b1b-446a-a04f-4fbcf36ee8c5", "name": "#judo", "user_id": "80c396c1-2f4f-499f-ae8e-ee070ba60077"}]	
-4097b4f5-7855-4f32-a7d5-7915c1a0a803	Exos Physique	2024-10-11	todo	\N	8	0ee28fa5-0cf9-470a-b388-7bc11733437d	[]	
+COPY public.task_properties (task_id, title, due_date, status, subtasks, priority, user_id, tags, description, recurrence) FROM stdin;
+ea0e4016-5a1e-40d0-8959-0342594bf2cd	Coffee	2024-09-22	todo	\N	5	0a95c413-7baa-41f4-9343-b824132ce241	[]		{"type":"none","days":[],"endDate":null}
+c3424b92-d52a-47e3-8ebe-3e23c55f4331	Work physique ++	2024-10-11	todo	\N	5	0ee28fa5-0cf9-470a-b388-7bc11733437d	[]		{"type":"none","days":[],"endDate":null}
+fc38654a-31d4-496b-b93f-2182df5be74f	R?sumer cours et le rentrer | Ens. Sc. SVT	2024-10-11	todo	\N	5	0ee28fa5-0cf9-470a-b388-7bc11733437d	[]		{"type":"none","days":[],"endDate":null}
+56a0f428-de5c-4844-a7d7-3f63ed00addf	?tre monstrueux pour de vrai en maths	2024-10-11	todo	\N	10	0ee28fa5-0cf9-470a-b388-7bc11733437d	[]		{"type":"none","days":[],"endDate":null}
+acb63fab-caad-4199-b7d1-72cdbc23d261	Questions en histoire	2024-10-11	todo	\N	5	0ee28fa5-0cf9-470a-b388-7bc11733437d	[]		{"type":"none","days":[],"endDate":null}
+053dac24-da37-4063-9bde-25a5bacd94af	18cm	2024-08-16	done	\N	10	166eb602-2281-4fc4-a51d-87f7a45fcd30	[]		{"type":"none","days":[],"endDate":null}
+8f1e229a-3138-4184-a2fd-f197fbdd6a0e	ffdfd	2024-08-08	todo	\N	5	b2e56e76-baae-4071-870e-6b3ea1b7391c	[]		{"type":"none","days":[],"endDate":null}
+933e3b1b-f495-44be-adb3-842539e0f1fc	Judo	2024-08-14	todo	\N	5	80c396c1-2f4f-499f-ae8e-ee070ba60077	[{"id": "d7772441-3b1b-446a-a04f-4fbcf36ee8c5", "name": "#judo", "user_id": "80c396c1-2f4f-499f-ae8e-ee070ba60077"}]		{"type":"none","days":[],"endDate":null}
+4097b4f5-7855-4f32-a7d5-7915c1a0a803	Exos Physique	2024-10-11	todo	\N	8	0ee28fa5-0cf9-470a-b388-7bc11733437d	[]		{"type":"none","days":[],"endDate":null}
 \.
 
 
