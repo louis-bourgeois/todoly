@@ -163,23 +163,6 @@ export default function TaskForm({
     }
   }, [isTaskMenuOpen, resetTaskMenu]);
 
-  useEffect(() => {
-    const handleEnterSubmit = (event) => {
-      if (event.key === "Enter" && !id && !isDescriptionFocused) {
-        if (event.target && event.target.tagName === "TEXTAREA") {
-          return;
-        }
-        if (canSubmit) {
-          event.preventDefault();
-          createTask();
-        }
-      }
-    };
-    window.addEventListener("keydown", handleEnterSubmit);
-    return () => window.removeEventListener("keydown", handleEnterSubmit);
-  }, [id, isDescriptionFocused, canSubmit, createTask]);
-
-
   const handleDateSelect = useCallback(
     (date) => {
       if (
@@ -253,6 +236,22 @@ export default function TaskForm({
     updatePreference,
     toggleTaskMenu,
   ]);
+
+  useEffect(() => {
+    const handleEnterSubmit = (event) => {
+      if (event.key === "Enter" && !id && !isDescriptionFocused) {
+        if (event.target && event.target.tagName === "TEXTAREA") {
+          return;
+        }
+        if (canSubmit) {
+          event.preventDefault();
+          createTask();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleEnterSubmit);
+    return () => window.removeEventListener("keydown", handleEnterSubmit);
+  }, [id, isDescriptionFocused, canSubmit, createTask]);
 
   const delTask = useCallback(() => {
     try {
