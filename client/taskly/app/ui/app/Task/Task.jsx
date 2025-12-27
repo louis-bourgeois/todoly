@@ -1,6 +1,7 @@
 "use client";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useTask } from "../../../../context/TaskContext";
+import { toFormattedHtml } from "@/app/utils/text";
 
 const statusColors = {
   todo: "bg-primary",
@@ -54,9 +55,10 @@ export default function Task({ task, onTaskClick, minWidth }) {
         </h3>
       </div>
       {taskDescription && taskDescription.length > 0 && (
-        <p className="text-text font-light text-left pb-2 px-5 text-xs">
-          {taskDescription}
-        </p>
+        <p
+          className="text-text font-light text-left pb-2 px-5 text-xs"
+          dangerouslySetInnerHTML={{ __html: toFormattedHtml(taskDescription) }}
+        />
       )}
       <div className="pt-2 pb-2 px-5 w-full flex justify-end">
         {taskTags.length > 0 && (

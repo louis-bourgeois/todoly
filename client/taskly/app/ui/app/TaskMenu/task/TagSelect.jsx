@@ -17,6 +17,7 @@ export default function TagSelect({
   taskTags,
   setTaskTags,
   task,
+  compact = false,
 }) {
   const { modifyTask } = useTask();
   const { addTag, updateTag, tags, deleteTag } = useTag();
@@ -194,13 +195,24 @@ export default function TagSelect({
   return (
     <TaskMenuSectionContainer
       flexCol
-      moreRoundedCorners="bl"
-      othersStyles={`justify-between ${id ? "h-full" : "h-[90%]"}`}
+      moreRoundedCorners={compact ? undefined : "bl"}
+      othersStyles={`justify-between ${
+        id ? "h-full" : "h-[90%]"
+      } ${compact ? "min-h-[150px]" : ""}`}
+      padding={compact ? "5px" : "5px"}
     >
-      <div className="flex justify-between items-center m-[1%]">
-        <h2 className="p-[3%] font-bold text-2xl text-text select-none">{t('tagSelect.title')?.replace(/^./, match => match.toUpperCase())}</h2>
+      <div className="flex justify-between items-center m-[1%] w-full">
+        <h2
+          className={`p-[3%] font-bold ${
+            compact ? "text-xl" : "text-2xl"
+          } text-text select-none`}
+        >
+          {t('tagSelect.title')?.replace(/^./, match => match.toUpperCase())}
+        </h2>
         <button
-          className="justify-center items-center font-bold hover:scale-105 transition-transform active:scale-100"
+          className={`justify-center items-center font-bold hover:scale-105 transition-transform active:scale-100 ${
+            compact ? "scale-90" : ""
+          }`}
           onClick={() => handleAddTag("")}
         >
           <svg
@@ -209,13 +221,19 @@ export default function TagSelect({
             className="flex justify-center items-center text-dominant"
             aria-label="Add"
             fill="currentColor"
-            width="60"
+            width={compact ? "42" : "60"}
           >
             <path d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm0,18a8,8,0,1,1,8-8 A8,8,0,0,1,12,20Zm4-9H13V8a1,1,0,0,0-2,0v3H8a1,1,0,0,0,0,2h3v3a1,1,0,0,0,2,0V13h3a1,1,0,0,0,0-2Z"></path>
           </svg>
         </button>
       </div>
-      <div className="flex flex-col items-start overflow-y-auto relative">
+      <div
+        className={`${
+          compact
+            ? "relative flex items-center gap-2 overflow-x-auto w-full py-1 px-1"
+            : "flex flex-col items-start overflow-y-auto relative"
+        }`}
+      >
         <span
           ref={measureRef}
           className="absolute invisible whitespace-pre"
@@ -228,7 +246,9 @@ export default function TagSelect({
           taskTags.map((tag, index) => (
             <div
               key={index}
-              className="gradient-border p-2 flex items-center justify-start mb-2 rounded-full !shadow-none addMenuElement  m-2"
+              className={`gradient-border p-2 flex items-center justify-start rounded-full !shadow-none addMenuElement ${
+                compact ? "m-1" : "mb-2 m-2"
+              }`}
             >
               <input
                 ref={(el) => {
@@ -262,9 +282,13 @@ export default function TagSelect({
                 />
               </svg>
             </div>
-          ))}
+            ))}
       </div>
-      <div className="w-[97%] h-[60px] ml-auto">
+      <div
+        className={`${
+          compact ? "w-full h-[64px] mt-1" : "w-[97%] h-[60px] ml-auto"
+        }`}
+      >
         <Swiper
           ref={swiperRef}
           modules={[FreeMode]}

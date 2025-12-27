@@ -156,6 +156,14 @@
     },
     "title": "Tag(s)"
   },
+  "subtasks": {
+    "title": "Subtasks",
+    "add": "Add subtask",
+    "empty": "No subtasks yet",
+    "placeholder": "Describe the subtask",
+    "delete": "Delete subtask",
+    "toggle": "Toggle completion"
+  },
   "sectionSelection": {
     "error": {
       "add": "Failed to add section",
@@ -169,9 +177,23 @@
     "newSectionPlaceholder": "New section name"
   },
   "recurrence": {
-    "notAvailable": "Not yet available, in dev",
+    "label": "Recurrence",
     "onlyThisTime": "Only this time",
-    "addSection": "Add a section"
+    "daily": "Every day",
+    "weekend": "Weekends",
+    "custom": "Custom days",
+    "customPlaceholder": "Pick one or more days",
+    "endDate": "End date",
+    "days": {
+      "label": "Days",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat",
+      "sun": "Sun"
+    }
   },
   "titleInput": {
     "placeholder": "Title"
@@ -187,7 +209,9 @@
   },
   "descriptionContainer": {
     "title": "Description",
-    "placeholder": "Enter a description"
+    "placeholder": "Enter a description",
+    "bold": "Bold",
+    "italic": "Italic"
   },
   "notifications": {
     "comingSoon": "Coming soon, stay tuned!"

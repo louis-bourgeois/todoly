@@ -156,6 +156,14 @@
     },
     "title": "tag(s)"
   },
+  "subtasks": {
+    "title": "Sous-tâches",
+    "add": "Ajouter une sous-tâche",
+    "empty": "Aucune sous-tâche pour l'instant",
+    "placeholder": "Décrire la sous-tâche",
+    "delete": "Supprimer la sous-tâche",
+    "toggle": "Basculer l'état"
+  },
   "sectionSelection": {
     "error": {
       "add": "Échec de l'ajout de la section",
@@ -169,9 +177,23 @@
     "newSectionPlaceholder": "Nom de la nouvelle section"
   },
   "recurrence": {
-    "notAvailable": "Pas encore disponible, en dév...",
+    "label": "Récurrence",
     "onlyThisTime": "Seulement cette fois",
-    "addSection": "Ajouter une section"
+    "daily": "Chaque jour",
+    "weekend": "Chaque week-end",
+    "custom": "Jours personnalisés",
+    "customPlaceholder": "Choisissez un ou plusieurs jours",
+    "endDate": "Date de fin",
+    "days": {
+      "label": "Jours",
+      "mon": "Lun",
+      "tue": "Mar",
+      "wed": "Mer",
+      "thu": "Jeu",
+      "fri": "Ven",
+      "sat": "Sam",
+      "sun": "Dim"
+    }
   },
   "titleInput": {
     "placeholder": "Titre"
@@ -187,7 +209,9 @@
   },
   "descriptionContainer": {
     "title": "Description",
-    "placeholder": "Entrez une description"
+    "placeholder": "Entrez une description",
+    "bold": "Gras",
+    "italic": "Italique"
   },
   "notifications": {
     "comingSoon": "Bientôt disponible !"

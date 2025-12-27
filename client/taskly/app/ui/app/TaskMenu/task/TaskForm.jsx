@@ -16,9 +16,11 @@ import TitleInput from "../TitleInput";
 import ElementPicker from "./ElementPicker";
 import SectionSelection from "./SectionSelection";
 import TagSelect from "./TagSelect";
+import SubtaskList from "./SubtaskList";
 import WorkspaceSelect from "./WorkspaceSelect";
 import { RecurrenceSelection } from "./RecurrenceSelection";
 import { useTranslation } from "../../../../i18n/client";
+import { defaultRecurrence, normalizeRecurrence } from "@/app/utils/recurrence";
 
 
 export default function TaskForm({
@@ -47,11 +49,14 @@ export default function TaskForm({
   const [status, setStatus] = useState("todo");
   const [priority, setPriority] = useState(5);
   const [taskTags, setTaskTags] = useState([]);
+  const [subtasks, setSubtasks] = useState([]);
+  const [recurrence, setRecurrence] = useState(defaultRecurrence);
   const [descriptionValue, setDescriptionValue] = useState("");
   const [canSubmit, setCanSubmit] = useState(false);
   const [linkedSection, setLinkedSection] = useState("");
   const [linkedSectionName, setLinkedSectionName] = useState("");
   const [taskWorkspace, setTaskWorkspace] = useState("");
+  const [isDescriptionFocused, setIsDescriptionFocused] = useState(false);
 
   const getDefaultSection = useCallback(() => {
     const workspaceSection = sections.find(
@@ -89,6 +94,8 @@ export default function TaskForm({
           foundTask.due_date ? new Date(foundTask.due_date) : new Date()
         );
         setTaskTags(foundTask.tags || []);
+        setSubtasks(foundTask.subtasks || []);
+        setRecurrence(normalizeRecurrence(foundTask.recurrence));
         setDescriptionValue(foundTask.description || "");
         setCanSubmit(true);
         setTaskWorkspace(foundTask.workspace_id || "");
@@ -101,6 +108,8 @@ export default function TaskForm({
       setPriority(priority || 5);
       setDueDate(dueDate || new Date());
       setTaskTags(taskTags || []);
+      setSubtasks(subtasks || []);
+      setRecurrence(defaultRecurrence);
       setDescriptionValue(descriptionValue || "");
       setTaskWorkspace(currentWorkspace || "");
     }
@@ -137,12 +146,15 @@ export default function TaskForm({
     setPriority(5);
     setDueDate(new Date());
     setTaskTags([]);
+    setSubtasks([]);
+    setRecurrence(defaultRecurrence);
     setDescriptionValue("");
     setTask(null);
     setElementPickerMenuOpen(false);
     setSectionSelectMenuOpen(false);
     setLinkedSection(getDefaultSection());
     setActiveTask(null);
+    setIsDescriptionFocused(false);
   }, [setActiveTask, currentWorkspace, getDefaultSection]);
 
   useEffect(() => {
@@ -150,6 +162,22 @@ export default function TaskForm({
       resetTaskMenu();
     }
   }, [isTaskMenuOpen, resetTaskMenu]);
+
+  useEffect(() => {
+    const handleEnterSubmit = (event) => {
+      if (event.key === "Enter" && !id && !isDescriptionFocused) {
+        if (event.target && event.target.tagName === "TEXTAREA") {
+          return;
+        }
+        if (canSubmit) {
+          event.preventDefault();
+          createTask();
+        }
+      }
+    };
+    window.addEventListener("keydown", handleEnterSubmit);
+    return () => window.removeEventListener("keydown", handleEnterSubmit);
+  }, [id, isDescriptionFocused, canSubmit, createTask]);
 
 
   const handleDateSelect = useCallback(
@@ -168,8 +196,23 @@ export default function TaskForm({
         setTask(updatedTask);
         modifyTask(updatedTask, "post");
       }
+      if (recurrence.endDate && date) {
+        const recurrenceEnd = new Date(recurrence.endDate);
+        if (recurrenceEnd < date) {
+          const adjustedRecurrence = {
+            ...recurrence,
+            endDate: formatADate(date, "yyyy-MM-dd"),
+          };
+          setRecurrence(adjustedRecurrence);
+          if (id) {
+            const updatedTask = { ...task, recurrence: adjustedRecurrence };
+            setTask(updatedTask);
+            modifyTask(updatedTask, "post");
+          }
+        }
+      }
     },
-    [dueDate, task, id, modifyTask, formatADate]
+    [dueDate, task, id, modifyTask, formatADate, recurrence]
   );
 
   const createTask = useCallback(async () => {
@@ -181,6 +224,8 @@ export default function TaskForm({
         priority: priority,
         dueDate: dueDate,
         tags: taskTags,
+        subtasks: subtasks,
+        recurrence: normalizeRecurrence(recurrence),
         description: descriptionValue,
         workspaceId: currentWorkspace,
       };
@@ -200,6 +245,8 @@ export default function TaskForm({
     priority,
     dueDate,
     taskTags,
+    subtasks,
+    recurrence,
     descriptionValue,
     currentWorkspace,
     addTask,
@@ -215,6 +262,19 @@ export default function TaskForm({
       console.error(e);
     }
   }, [deleteTask, id, toggleTaskMenu]);
+
+  const handleRecurrenceChange = useCallback(
+    (value) => {
+      const normalized = normalizeRecurrence(value);
+      setRecurrence(normalized);
+      if (id && task) {
+        const updatedTask = { ...task, recurrence: normalized };
+        setTask(updatedTask);
+        modifyTask(updatedTask, "post");
+      }
+    },
+    [id, task, modifyTask]
+  );
 
   const handleSectionChange = useCallback(
     (newSection, newSectionName) => {
@@ -256,12 +316,12 @@ export default function TaskForm({
               />
             </div>
           )}
-          <TagSelect
+          <SubtaskList
             id={id}
             setTask={setTask}
-            taskTags={taskTags}
-            setTaskTags={setTaskTags}
             task={task}
+            subtasks={subtasks}
+            setSubtasks={setSubtasks}
           />
         </div>
       </div>
@@ -290,9 +350,10 @@ export default function TaskForm({
               taskWorkspace={taskWorkspace}
             />
             <RecurrenceSelection
+              recurrence={recurrence}
+              onChange={handleRecurrenceChange}
               setMenuOpen={setRecurrenceSelectMenuOpen}
               menuOpen={recurrenceSelectMenuOpen}
-              handleRecurrenceChange={null}
             />
             <SectionSelection
               linked_section_name={linkedSectionName}
@@ -312,11 +373,12 @@ export default function TaskForm({
             setDescriptionValue={setDescriptionValue}
             task={task}
             setTask={setTask}
+            onFocusChange={setIsDescriptionFocused}
             priority={priority}
             setPriority={setPriority}
           />
 
-          <div className="flex flex-col justify-between w-[45%] ml-[2%]">
+          <div className="flex flex-col justify-between w-[45%] ml-[2%] h-full gap-3">
             <PrioritySelection
               visibility={true}
               id={id}
@@ -324,12 +386,23 @@ export default function TaskForm({
               task={task}
               priority={priority}
               setPriority={setPriority}
+              containerStyles="w-full h-[40%] items-center"
             />
+            <div className="flex-1 flex">
+              <TagSelect
+                id={id}
+                setTask={setTask}
+                taskTags={taskTags}
+                setTaskTags={setTaskTags}
+                task={task}
+                compact
+              />
+            </div>
             <TaskMenuButton
               disabled={!canSubmit}
               onClick={() => (id ? delTask() : createTask())}
               moreRoundedCorners="br"
-              othersStyles={`w-full h-[25%] hover:scale-95 items-center justify-left font-bold text-4xl text-text `}
+              othersStyles={`w-full h-[18%] hover:scale-95 items-center justify-left font-bold text-4xl text-text `}
               flex
             >
               <span className="text-2xl">{id ? t('taskForm.delete') : t('taskForm.create')}</span>

@@ -10,6 +10,7 @@ export default function PrioritySelection({
   task,
   priority,
   setPriority,
+  containerStyles = "w-full h-[70%] items-center",
 }) {
   const { modifyTask } = useTask();
   const { t } = useTranslation();
@@ -25,7 +26,7 @@ export default function PrioritySelection({
   return (
     <TaskMenuSectionContainer
       flex={true}
-      othersStyles={`w-full h-[70%] items-center`}
+      othersStyles={containerStyles}
     >
       <h2 className="font-bold text-2xl p-[2%] text-text select-none">{t('prioritySelection.title')}</h2>
 
