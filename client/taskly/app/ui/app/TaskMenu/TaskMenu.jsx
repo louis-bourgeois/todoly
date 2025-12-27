@@ -76,7 +76,7 @@ export default function TaskMenu({
         ref={taskMenuRef}
         styles={`${
           elementType === "Workspace" ? "flex flex-col" : "flex"
-        } border gap-[0.5%] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[80] fontMenu transition-all duration-300 rounded-[3.125vw] py-[1.5vh] px-[1.3227%] ${
+        } border gap-[0.5%] absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-[3000] fontMenu transition-all duration-300 rounded-[3.125vw] py-[1.5vh] px-[1.3227%] ${
           visibility
             ? "5xl:w-[1700px] 4xl:w-[1482px] lg:h-[720px] 4xl:h-[850px] 5xl:h-[950px] 2xl:w-[1280px] lg:w-[1024px] md:w-[600px] sm:w-[400px] opacity-100"
             : "w-0 h-0 opacity-0 pointer-events-none"
