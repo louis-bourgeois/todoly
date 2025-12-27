@@ -5,6 +5,7 @@ export default function TaskMenuSectionContainer({
   flexCol = false,
   othersStyles = "",
   padding = "5px",
+  allowOverflow = false,
   ...props
 }) {
   return (
@@ -13,7 +14,7 @@ export default function TaskMenuSectionContainer({
         flexCol ? "flex-col" : ""
       } rounded-[20px] gradient-border ${
         moreRoundedCorners ? `rounded-${moreRoundedCorners}-[3.125vw]` : ""
-      } ${othersStyles}`}
+      } ${allowOverflow ? "overflow-visible" : ""} ${othersStyles}`}
       style={{ padding: ` 10px ${padding}` }}
       {...props}
     >

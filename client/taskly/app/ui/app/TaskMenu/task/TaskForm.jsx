@@ -347,13 +347,7 @@ export default function TaskForm({
               menuOpen={workspaceSelectMenuOpen}
               setMenuOpen={setWorkspaceSelectMenuOpen}
               taskWorkspace={taskWorkspace}
-            />
-            <RecurrenceSelection
-              recurrence={recurrence}
-              onChange={handleRecurrenceChange}
-              setMenuOpen={setRecurrenceSelectMenuOpen}
-              menuOpen={recurrenceSelectMenuOpen}
-            />
+            /> 
             <SectionSelection
               linked_section_name={linkedSectionName}
               handleSectionChange={handleSectionChange}
@@ -362,6 +356,12 @@ export default function TaskForm({
               setTask={setTask}
               menuOpen={sectionSelectMenuOpen}
               setMenuOpen={setSectionSelectMenuOpen}
+            />
+            <RecurrenceSelection
+              recurrence={recurrence}
+              onChange={handleRecurrenceChange}
+              setMenuOpen={setRecurrenceSelectMenuOpen}
+              menuOpen={recurrenceSelectMenuOpen}
             />
           </div>
         </div>

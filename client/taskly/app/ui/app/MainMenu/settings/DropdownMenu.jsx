@@ -23,7 +23,7 @@ export default function DropdownMenu({
 
   return (
     <SelectionDiv
-      className={`relative cursor-pointer ${
+      className={`relative z-[950] cursor-pointer ${
         size === "little" ? "px-3 gap-2" : "px-4 gap-4"
       } ${className}`}
       onClick={() => setMenuOpen((prev) => !prev)}
@@ -51,7 +51,7 @@ export default function DropdownMenu({
         />
       </svg>
       <div
-        className={`border bg-primary flex flex-col gap-[0.8vw] p-[1vw] absolute top-full mt-[1%] left-0 right-0 shadow-lg rounded-lg transition-opacity duration-300 z-[255] ${
+        className={`border bg-primary flex flex-col gap-[0.8vw] p-[1vw] absolute top-full mt-[1%] left-0 right-0 shadow-lg rounded-lg transition-opacity duration-300 z-[999] ${
           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
