@@ -81,7 +81,7 @@ export default function SubtaskList({
     <TaskMenuSectionContainer
       flexCol
       moreRoundedCorners="bl"
-      othersStyles="justify-between h-full"
+      othersStyles="justify-start gap-3 max-h-[360px] min-h-[220px]"
     >
       <div className="flex justify-between items-center m-[1%]">
         <h2 className="p-[3%] font-bold text-2xl text-text select-none">
@@ -104,7 +104,7 @@ export default function SubtaskList({
           </svg>
         </button>
       </div>
-      <div className="flex flex-col gap-2 overflow-y-auto pr-1 h-full max-h-[420px]">
+      <div className="flex flex-col gap-2 overflow-y-auto pr-1 w-full">
         {sortedSubtasks.length === 0 && (
           <p className="text-text text-sm opacity-70 px-2 pb-2">
             {t("subtasks.empty")}

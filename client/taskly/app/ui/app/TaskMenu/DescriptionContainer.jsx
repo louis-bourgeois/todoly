@@ -36,46 +36,11 @@ export default function DescriptionContainer({
   };
 
   const toggleFormatting = (type) => {
-    const textarea = descriptionRef.current;
-    const activating = type === "bold" ? !isBold : !isItalic;
     if (type === "bold") {
-      setIsBold(activating);
+      setIsBold((prev) => !prev);
     } else if (type === "italic") {
-      setIsItalic(activating);
+      setIsItalic((prev) => !prev);
     }
-    if (textarea && textarea.selectionStart !== textarea.selectionEnd) {
-      applyFormatting(type);
-    }
-  };
-
-  const applyFormatting = (type) => {
-    const textarea = descriptionRef.current;
-    if (!textarea) return;
-    const marker = type === "bold" ? "**" : "_";
-    const { selectionStart, selectionEnd } = textarea;
-    const selectedText = descriptionValue.substring(
-      selectionStart,
-      selectionEnd
-    );
-    const insertion =
-      selectionStart !== selectionEnd
-        ? `${marker}${selectedText}${marker}`
-        : `${marker}${marker}`;
-    const newValue =
-      descriptionValue.slice(0, selectionStart) +
-      insertion +
-      descriptionValue.slice(selectionEnd);
-    updateDescription(newValue);
-
-    requestAnimationFrame(() => {
-      textarea.focus();
-      const offset = marker.length;
-      textarea.selectionStart = selectionStart + offset;
-      textarea.selectionEnd =
-        selectionStart !== selectionEnd
-          ? selectionEnd + offset
-          : selectionStart + offset;
-    });
   };
 
   return (
