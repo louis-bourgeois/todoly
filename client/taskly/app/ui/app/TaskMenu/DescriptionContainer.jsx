@@ -23,7 +23,11 @@ export default function DescriptionContainer({
       const updatedTask = { ...task, description: value };
 
       setTask(updatedTask);
-      modifyTask(updatedTask, "post");
+      try {
+        await modifyTask(updatedTask, "post");
+      } catch (error) {
+        console.error("Failed to update description", error);
+      }
     }
   };
   const handleDescriptionChange = async (e) => {

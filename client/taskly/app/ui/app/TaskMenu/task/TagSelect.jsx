@@ -198,8 +198,8 @@ export default function TagSelect({
       moreRoundedCorners={compact ? undefined : "bl"}
       othersStyles={`justify-between ${
         id ? "h-full" : "h-[90%]"
-      } ${compact ? "min-h-[150px]" : ""}`}
-      padding={compact ? "5px" : "5px"}
+      } ${compact ? "min-h-[170px] w-full" : ""}`}
+      padding={compact ? "8px" : "5px"}
     >
       <div className="flex justify-between items-center m-[1%] w-full">
         <h2

@@ -83,9 +83,14 @@ export const TaskProvider = ({ children }) => {
         );
         if (response.status === 201 && response.data.savedTask) {
           const createdTask = response.data.savedTask?.[0];
-          const newTask = createdTask
-            ? normalizeTask(createdTask)
-            : null;
+          const newTaskRaw = createdTask
+            ? {
+                ...createdTask,
+                subtasks:
+                  createdTask.subtasks ?? formattedTaskData.subtasks ?? [],
+              }
+            : { ...formattedTaskData };
+          const newTask = normalizeTask(newTaskRaw);
           if (newTask && newTask.id) {
             setTasks((prevTasks) => [...prevTasks, newTask]);
             setWorkspaces((prevWorkspaces) => {

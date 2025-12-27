@@ -26,9 +26,17 @@ export default function SubtaskList({
   const handlePersist = async (nextSubtasks) => {
     setSubtasks(nextSubtasks);
     if (id && task) {
-      const updatedTask = { ...task, subtasks: nextSubtasks };
+      const updatedTask = {
+        ...task,
+        subtasks: nextSubtasks,
+        workspace_id: task.workspace_id,
+      };
       setTask(updatedTask);
-      await modifyTask(updatedTask);
+      try {
+        await modifyTask(updatedTask);
+      } catch (error) {
+        console.error("Failed to update subtasks", error);
+      }
     }
   };
 
@@ -61,7 +69,7 @@ export default function SubtaskList({
       }
       return subtask;
     });
-    handlePersist(nextSubtasks);
+    setSubtasks(nextSubtasks);
   };
 
   const sortedSubtasks = useMemo(
@@ -138,6 +146,7 @@ export default function SubtaskList({
               type="text"
               value={subtask.title}
               onChange={(e) => handleTitleChange(subtask.id, e.target.value)}
+              onBlur={() => handlePersist(sortedSubtasks)}
               className={`flex-1 bg-transparent text-text text-base focus:outline-none ${
                 subtask.done ? "line-through opacity-60" : ""
               }`}
