@@ -91,6 +91,7 @@ export function RecurrenceSelection({
   return (
     <TaskMenuSectionContainer
       allowOverflow
+      disableStacking
       othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer overflow-visible z-[1100]"
       onClick={() => setMenuOpen && setMenuOpen(!menuOpen)}
     >
@@ -133,7 +134,7 @@ export function RecurrenceSelection({
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => handlePreset("none")}
-              className="w-full text-left font-bold hover:text-dominant transition-colors"
+              className="w-full select-none text-left font-bold hover:text-dominant transition-colors"
             >
               {t("recurrence.onlyThisTime")}
             </button>

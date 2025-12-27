@@ -59,6 +59,8 @@ export default function WorkspaceSelect({
 
   return (
     <TaskMenuSectionContainer
+      allowOverflow
+      disableStacking
       othersStyles="h-[50%] flex flex-col justify-between"
       moreRoundedCorners="tr"
     >
@@ -67,6 +69,7 @@ export default function WorkspaceSelect({
       <div className="flex items-center gap-[0.7vw] relative">
         <div
           className="addMenuElement p-[10px] cursor-pointer rounded-full flex items-center justify-between w-full text-text gradient-border"
+          style={{ zIndex: "auto" }}
           onClick={toggleMenu}
         >
           <span className="text-m 3xl:text-lg select-none">

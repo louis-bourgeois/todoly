@@ -6,8 +6,14 @@ export default function TaskMenuSectionContainer({
   othersStyles = "",
   padding = "5px",
   allowOverflow = false,
+  disableStacking = false,
   ...props
 }) {
+  const inlineStyle = {
+    padding: ` 10px ${padding}`,
+    ...(disableStacking ? { zIndex: "auto" } : {}),
+  };
+
   return (
     <div
       className={`addMenuElement ${flex && "flex"} ${
@@ -15,7 +21,7 @@ export default function TaskMenuSectionContainer({
       } rounded-[20px] gradient-border ${
         moreRoundedCorners ? `rounded-${moreRoundedCorners}-[3.125vw]` : ""
       } ${allowOverflow ? "overflow-visible" : ""} ${othersStyles}`}
-      style={{ padding: ` 10px ${padding}` }}
+      style={inlineStyle}
       {...props}
     >
       {children}

@@ -110,7 +110,8 @@ export default function SectionSelection({
   return (
     <TaskMenuSectionContainer
       allowOverflow
-      othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer z-[700]"
+      disableStacking
+      othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer z-[1200]"
       onClick={() => setMenuOpen((prev) => !prev)}
     >
       <h2 className="pl-[4%] font-bold text-xl select-none text-text">
@@ -142,7 +143,7 @@ export default function SectionSelection({
         ></path>
       </svg>
       <div
-        className={`absolute top-full mt-2 left-0 right-0 bg-primary shadow-lg rounded-lg transition-opacity duration-300 z-[1200] ${
+        className={`absolute top-full mt-2 left-0 right-0 bg-primary shadow-lg rounded-lg transition-opacity duration-300 z-[1300] ${
           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         } `}
       >
