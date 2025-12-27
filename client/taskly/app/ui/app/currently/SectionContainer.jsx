@@ -273,7 +273,10 @@ const SectionContainer = ({
                     task={task}
                     key={task.id}
                     onTaskClick={() => expandTask(task.id)}
-                    minWidth={headerRefs.current[section.id]?.offsetWidth - 150}
+                    minWidth={Math.max(
+                      180,
+                      (headerRefs.current[section.id]?.offsetWidth || 0) - 150
+                    )}
                   />
                 ))}
               </div>

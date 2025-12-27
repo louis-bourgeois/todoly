@@ -14,6 +14,7 @@ export default function Task({ task, onTaskClick, minWidth }) {
   const [taskStatus, setTaskStatus] = useState(task.status);
   const [taskTags, setTaskTags] = useState([]);
   const [taskDescription, setTaskDescription] = useState(task.description);
+  const safeMinWidth = Number.isFinite(minWidth) ? minWidth : 180;
 
   const taskCircleColor = useMemo(() => statusColors[taskStatus], [taskStatus]);
 
@@ -42,7 +43,7 @@ export default function Task({ task, onTaskClick, minWidth }) {
   return (
     <div
       onClick={() => onTaskClick(task.id)}
-      style={{ minWidth: minWidth }}
+      style={{ minWidth: safeMinWidth }}
       className={`gradient-border bg-primary transition hover:scale-105 cursor-pointer shadow-shadow_card rounded-2xl flex flex-col`}
     >
       <div className="flex justify-left items-center pt-5 pb-2">

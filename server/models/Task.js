@@ -122,6 +122,7 @@ class Task {
     }
   }
   static async find(workspaceId = false, taskId = false, userId = false) {
+    await ensureTaskPropertiesColumns();
     let query = `
       SELECT t.*, tp.*, tw.*
       FROM task t
@@ -202,6 +203,12 @@ class Task {
 
       return result.rows;
     } catch (error) {
+      if (error.code === "42703") {
+        console.error("Missing columns detected during find(), retrying ensure", error);
+        await ensureTaskPropertiesColumns();
+        const result = await pool.query(query, queryParams);
+        return result.rows;
+      }
       console.error("Error executing find query:", error);
       throw error;
     }
@@ -234,97 +241,103 @@ class Task {
   }
 
   static async update(taskToUpdate) {
-    await ensureTaskPropertiesColumns();
-    const [currentTask] = await this.find(undefined, taskToUpdate.id);
+    const client = await pool.connect();
+    try {
+      await ensureTaskPropertiesColumns(client);
+      const [currentTask] = await this.find(undefined, taskToUpdate.id);
 
-    if (!currentTask) {
-      console.error("Task not found (check Task.js in update)");
-      throw new Error("Task not found");
-    }
+      if (!currentTask) {
+        console.error("Task not found (check Task.js in update)");
+        throw new Error("Task not found");
+      }
 
-    const changes = compareObjects(currentTask, taskToUpdate);
-    const jsonColumns = ["tags", "subtasks", "recurrence"];
-    jsonColumns.forEach((key) => {
-      if (changes[key] !== undefined) {
-        if (key === "recurrence" && changes[key] === null) {
-          changes[key] = JSON.stringify({ type: "none", days: [], endDate: null });
-          return;
-        }
-        if (Array.isArray(changes[key]) || typeof changes[key] === "object") {
-          changes[key] = JSON.stringify(changes[key]);
-        } else if (typeof changes[key] === "string") {
-          try {
-            JSON.parse(changes[key]);
-          } catch (e) {
+      const changes = compareObjects(currentTask, taskToUpdate);
+      const jsonColumns = ["tags", "subtasks", "recurrence"];
+      jsonColumns.forEach((key) => {
+        if (changes[key] !== undefined) {
+          if (key === "recurrence" && changes[key] === null) {
+            changes[key] = JSON.stringify({ type: "none", days: [], endDate: null });
+            return;
+          }
+          if (Array.isArray(changes[key]) || typeof changes[key] === "object") {
+            changes[key] = JSON.stringify(changes[key]);
+          } else if (typeof changes[key] === "string") {
+            try {
+              JSON.parse(changes[key]);
+            } catch (e) {
+              changes[key] = JSON.stringify(key === "recurrence" ? { type: "none", days: [], endDate: null } : []);
+            }
+          } else {
             changes[key] = JSON.stringify(key === "recurrence" ? { type: "none", days: [], endDate: null } : []);
           }
-        } else {
-          changes[key] = JSON.stringify(key === "recurrence" ? { type: "none", days: [], endDate: null } : []);
+        }
+      });
+
+      let columnsToUpdate = Object.keys(changes);
+
+      const linkedSectionUpdated = columnsToUpdate.includes("linked_section");
+      const workspaceIdUpdated = columnsToUpdate.includes("workspace_id");
+      const dueDateUpdated = columnsToUpdate.includes("dueDate");
+
+      if (dueDateUpdated) {
+        columnsToUpdate = columnsToUpdate.map((col) =>
+          col === "dueDate" ? "due_date" : col
+        );
+      }
+
+      const tablesToUpdate = [];
+      if (linkedSectionUpdated) {
+        tablesToUpdate.push("task");
+      }
+      if (workspaceIdUpdated) {
+        tablesToUpdate.push("task_workspaces");
+      }
+      if (
+        columnsToUpdate.some(
+          (col) => col !== "linked_section" && col !== "workspace_id"
+        )
+      ) {
+        tablesToUpdate.push("task_properties");
+      }
+
+      columnsToUpdate = columnsToUpdate
+        .reverse()
+        .filter((col, index, self) => self.indexOf(col) === index)
+        .reverse();
+
+      for (const table of tablesToUpdate) {
+        let setParts = [];
+        let queryParams = [];
+        let paramIndex = 1;
+
+        for (const col of columnsToUpdate) {
+          if (
+            (table === "task" && col === "linked_section") ||
+            (table === "task_workspaces" && col === "workspace_id") ||
+            (table === "task_properties" &&
+              col !== "linked_section" &&
+              col !== "workspace_id")
+          ) {
+            setParts.push(`${col} = $${paramIndex++}`);
+            queryParams.push(changes[col]);
+          }
+        }
+        if (queryParams.length > 0) {
+          queryParams.push(taskToUpdate.id);
+          const sqlQuery = `UPDATE ${table} SET ${setParts.join(", ")} WHERE ${
+            table !== "task" ? "task_id" : "id"
+          } = $${paramIndex}`;
+          await client.query(sqlQuery, queryParams);
         }
       }
-    });
-
-    let columnsToUpdate = Object.keys(changes);
-
-    
-    const linkedSectionUpdated = columnsToUpdate.includes("linked_section");
-    const workspaceIdUpdated = columnsToUpdate.includes("workspace_id");
-    const dueDateUpdated = columnsToUpdate.includes("dueDate");
-
-    
-    if (dueDateUpdated) {
-      columnsToUpdate = columnsToUpdate.map((col) =>
-        col === "dueDate" ? "due_date" : col
-      );
-    }
-
-    
-    const tablesToUpdate = [];
-    if (linkedSectionUpdated) {
-      tablesToUpdate.push("task");
-    }
-    if (workspaceIdUpdated) {
-      tablesToUpdate.push("task_workspaces");
-    }
-    if (
-      columnsToUpdate.some(
-        (col) => col !== "linked_section" && col !== "workspace_id"
-      )
-    ) {
-      tablesToUpdate.push("task_properties");
-    }
-
-    
-    columnsToUpdate = columnsToUpdate
-      .reverse()
-      .filter((col, index, self) => self.indexOf(col) === index)
-      .reverse();
-
-    
-    for (const table of tablesToUpdate) {
-      let setParts = [];
-      let queryParams = [];
-      let paramIndex = 1;
-
-      for (const col of columnsToUpdate) {
-        if (
-          (table === "task" && col === "linked_section") ||
-          (table === "task_workspaces" && col === "workspace_id") ||
-          (table === "task_properties" &&
-            col !== "linked_section" &&
-            col !== "workspace_id")
-        ) {
-          setParts.push(`${col} = $${paramIndex++}`);
-          queryParams.push(changes[col]);
-        }
+    } catch (error) {
+      if (error.code === "42703") {
+        console.error("Missing columns detected, retrying column creation", error);
+        await ensureTaskPropertiesColumns();
       }
-      if (queryParams.length > 0) {
-        queryParams.push(taskToUpdate.id);
-        const sqlQuery = `UPDATE ${table} SET ${setParts.join(", ")} WHERE ${
-          table !== "task" ? "task_id" : "id"
-        } = $${paramIndex}`;
-        await pool.query(sqlQuery, queryParams);
-      }
+      throw error;
+    } finally {
+      client.release();
     }
   }
 
