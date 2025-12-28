@@ -80,7 +80,7 @@
     "noResults": "Aucun résultat trouvé"
   },
   "searchMenu": {
-    "placeholder": "La recherche est en cours de développement... Restez à l'écoute !",
+    "placeholder": "Recherchez ou tapez / pour les commandes",
     "openAddMenu": "Ouvrir le menu d'ajout",
     "goTo": "Aller à",
     "logout": "Se déconnecter",
@@ -97,6 +97,16 @@
     "selectDestination": "Sélectionnez la destination",
     "selectWorkspace": "Sélectionnez l'workspace",
     "newTagName": "Nouveau nom d'tag"
+  },
+  "searchShortcuts": {
+    "title": "Raccourcis clavier",
+    "subtitle": "Restez rapide sans quitter le clavier",
+    "searchMenu": "Ouvrir le menu de recherche",
+    "addMenu": "Ouvrir le menu d'ajout",
+    "viewsMenu": "Ouvrir le menu des vues",
+    "settings": "Ouvrir les paramètres",
+    "close": "Fermer la recherche",
+    "navigate": "Naviguer dans les résultats"
   },
   "sectionContainer": {
     "placeholder": "Entrez le nom de la section",

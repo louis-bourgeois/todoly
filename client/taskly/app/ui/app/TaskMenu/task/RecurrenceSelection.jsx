@@ -95,9 +95,6 @@ export function RecurrenceSelection({
       onClick={() => setMenuOpen && setMenuOpen(!menuOpen)}
     >
       <div className="flex flex-col items-start pl-[4%] py-1">
-        <span className="text-xs text-secondary uppercase tracking-wide">
-          {t("recurrence.label")}
-        </span>
         <h2 className="font-bold text-xl text-text">{summary}</h2>
       </div>
 
@@ -161,8 +158,11 @@ export function RecurrenceSelection({
               {t("recurrence.custom")}
             </button>
           </div>
-
-          <div className="space-y-2">
+      <TaskMenuSectionContainer
+            allowOverflow
+            othersStyles="flex flex-col gap-5 justify-between items-center h-[17.5%] relative overflow-visible"
+          >
+          <div className="space-y-2 m-[2%]">
             <p className="text-sm font-semibold text-secondary uppercase">
               {t("recurrence.days.label")}
             </p>
@@ -173,7 +173,7 @@ export function RecurrenceSelection({
                   <button
                     key={day.key}
                     onClick={() => toggleDay(day.value)}
-                    className={`rounded-full border px-2 py-1 text-sm transition ${
+                    className={`rounded-full  border px-2 py-1 text-sm transition ${
                       isActive
                         ? "bg-dominant text-primary border-dominant"
                         : "border-secondary text-text"
@@ -185,18 +185,19 @@ export function RecurrenceSelection({
               })}
             </div>
           </div>
-
-          <div className="flex flex-col gap-1">
-            <label className="text-sm font-semibold text-secondary uppercase">
+      
+          <div className="flex flex-col justify-center items-left gap-1 w-full">
+            <label className="text-sm font-semibold text-secondary uppercase mb-3 p-2">
               {t("recurrence.endDate")}
             </label>
             <input
               type="date"
               value={localRecurrence.endDate || ""}
               onChange={(e) => handleEndDateChange(e.target.value)}
-              className="bg-transparent border border-secondary rounded-lg px-3 py-2 text-text focus:outline-none focus:border-dominant"
+              className="bg-transparent border border-secondary rounded-lg px-3 py-2 text-text w-[85%] focus:outline-none focus:border-dominant"
             />
           </div>
+          </TaskMenuSectionContainer>
         </div>
       </div>
     </TaskMenuSectionContainer>

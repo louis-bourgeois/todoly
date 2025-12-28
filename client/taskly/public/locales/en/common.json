@@ -80,7 +80,7 @@
     "noResults": "No results found"
   },
   "searchMenu": {
-    "placeholder": "Search is currently in development... Stay tuned!",
+    "placeholder": "Search or type / for commands",
     "openAddMenu": "Open add Menu",
     "goTo": "Go to",
     "logout": "Logout",
@@ -97,6 +97,16 @@
     "selectDestination": "Select destination",
     "selectWorkspace": "Select workspace",
     "newTagName": "New tag name"
+  },
+  "searchShortcuts": {
+    "title": "Keyboard shortcuts",
+    "subtitle": "Stay fast without leaving the keyboard",
+    "searchMenu": "Open search menu",
+    "addMenu": "Open add menu",
+    "viewsMenu": "Open views menu",
+    "settings": "Open settings",
+    "close": "Close search",
+    "navigate": "Navigate results"
   },
   "sectionContainer": {
     "placeholder": "Enter section name",

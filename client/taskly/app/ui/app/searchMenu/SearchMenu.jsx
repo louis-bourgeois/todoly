@@ -2,23 +2,35 @@
 
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "../../../../context/AuthContext";
 import { useMenu } from "../../../../context/MenuContext";
 import { useTag } from "../../../../context/TagContext";
 import { useTask } from "../../../../context/TaskContext";
-import { useUser } from "../../../../context/UserContext";
 import { useWorkspace } from "../../../../context/WorkspaceContext";
 import SearchInput from "./SearchInput";
+import SearchShortcuts from "./SearchShortcuts";
 import SearchResults from "./SearchResults";
 import { useTranslation } from "../../../i18n/client";
 
 const SearchMenu = () => {
   const router = useRouter();
-  const { addTag } = useUser() || {}; // Assure that addTag is defined
-  const { tasks } = useTask() || { tasks: [] }; // Assure tasks is defined
-  const { tags } = useTag() || { tags: [] }; // Assure tags is defined
-  const { workspaces } = useWorkspace() || { workspaces: [] }; // Assure workspaces is defined
-  const { toggleTaskMenu, isSearchMenuOpen, toggleSearchMenu } =
-    useMenu() || {}; // Assure functions are defined
+  const { logout } = useAuth() || {};
+  const taskContext = useTask() || {};
+  const { tasks = [], deleteTask } = taskContext;
+  const tagContext = useTag() || {};
+  const { tags = [], addTag, updateTag } = tagContext;
+  const workspaceContext = useWorkspace() || {};
+  const {
+    workspaces = [],
+    setCurrentWorkspace,
+    deleteWorkspace,
+  } = workspaceContext;
+  const {
+    toggleTaskMenu,
+    isSearchMenuOpen,
+    toggleSearchMenu,
+    toggleViewsMenu,
+  } = useMenu() || {};
   const { t } = useTranslation();
 
   const [query, setQuery] = useState("");
@@ -26,19 +38,32 @@ const SearchMenu = () => {
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [selectedTask, setSelectedTask] = useState(null);
   const [commandMode, setCommandMode] = useState(null);
-  const [placeholder, setPlaceholder] = useState(
-    t('searchMenu.placeholder')
-  );
+  const [editingTagId, setEditingTagId] = useState(null);
+  const defaultPlaceholder = useMemo(() => t("searchMenu.placeholder"), [t]);
+  const [placeholder, setPlaceholder] = useState(defaultPlaceholder);
   const [visibility, setVisibility] = useState(isSearchMenuOpen);
   const menuRef = useRef(null);
+
+  useEffect(() => {
+    if (!commandMode) {
+      setPlaceholder(defaultPlaceholder);
+    }
+  }, [defaultPlaceholder, commandMode]);
 
   const resetState = useCallback(() => {
     setIsMenuVisible(false);
     setSelectedTask(null);
     setCommandMode(null);
+    setEditingTagId(null);
     setQuery("");
+    setSelectedIndex(-1);
+    setPlaceholder(defaultPlaceholder);
+  }, [defaultPlaceholder]);
 
-  }, []);
+  const closeSearchMenu = useCallback(() => {
+    resetState();
+    if (toggleSearchMenu) toggleSearchMenu();
+  }, [resetState, toggleSearchMenu]);
 
   const filteredResults = useMemo(() => {
     if (query.startsWith("/")) {
@@ -86,101 +111,168 @@ const SearchMenu = () => {
 
   const handleQueryChange = (newQuery) => {
     setQuery(newQuery);
-    setIsMenuVisible(newQuery.length > 0);
+    setIsMenuVisible(
+      newQuery.length > 0 || commandMode !== null || selectedTask !== null
+    );
     setSelectedIndex(-1);
-    setSelectedTask(null);
-    setCommandMode(null);
+    if (newQuery.startsWith("/")) {
+      setSelectedTask(null);
+      setCommandMode(null);
+      setEditingTagId(null);
+      setPlaceholder(defaultPlaceholder);
+    }
   };
 
   const handleAddTag = useCallback(
-    (tagName) => {
-      if (addTag) {
-        addTag(tagName);
-        resetState();
+    async (tagName) => {
+      const trimmed = tagName?.trim();
+      if (!trimmed) return;
+      if (editingTagId && updateTag) {
+        await updateTag(trimmed, editingTagId);
+      } else if (addTag) {
+        await addTag(trimmed);
       }
+      setEditingTagId(null);
+      setQuery("");
+      setCommandMode("addTag");
+      setIsMenuVisible(true);
+      setSelectedIndex(0);
+      setPlaceholder(t("searchMenu.newTagName"));
     },
-    [addTag, resetState]
+    [addTag, updateTag, editingTagId, t]
   );
   const handleCommand = useCallback(
-    (commandId) => {
+    async (commandId) => {
       switch (commandId) {
         case "add":
-          console.log("Open add menu");
+          if (toggleTaskMenu) toggleTaskMenu("", "", "Task");
           break;
         case "logout":
-          console.log("Logout");
+          if (logout) await logout();
           break;
         case "addWorkspace":
-          console.log("Add workspace");
+          if (toggleTaskMenu) toggleTaskMenu("", "", "Workspace");
           break;
         case "openMainMenu":
-          console.log("Open main menu");
+          router.push("/app");
           break;
         case "openSettings":
-          console.log("Open settings");
+          router.push("/app/profile");
           break;
       }
-      resetState();
+      closeSearchMenu();
     },
-    [resetState]
+    [router, toggleTaskMenu, logout, closeSearchMenu]
   );
-  // const handleResultSelection = useCallback(
-  //   (result) => {
-  //   console.log("Called, this functionnality is in development, stay tuned!")
-  // }
-    // (result) => {
-    //   if (query.startsWith("/")) {
-    //     setCommandMode(result.id);
-    //     setQuery("");
-    //     if (result.id === "goto") {
-    //       setPlaceholder(t('searchMenu.selectDestination'));
-    //     } else if (
-    //       result.id === "changeWorkspace" ||
-    //       result.id === "deleteWorkspace"
-    //     ) {
-    //       setPlaceholder(t('searchMenu.selectWorkspace'));
-    //     } else if (result.id === "addTag") {
-    //       setPlaceholder(t('searchMenu.newTagName'));
-    //     } else {
-    //       handleCommand(result.id);
-    //     }
-    //   } else if (commandMode === "goto") {
-    //     router.push(`/app/${result.id}`);
-    //     resetState();
-    //   } else if (commandMode === "changeWorkspace") {
-    //     console.log("Change to workspace:", result.title);
-    //     resetState();
-    //   } else if (commandMode === "deleteWorkspace") {
-    //     console.log("Delete workspace:", result.title);
-    //     resetState();
-    //   } else if (selectedTask) {
-    //     switch (result.id) {
-    //       case "update":
-    //         if (toggleTaskMenu) toggleTaskMenu(selectedTask.id, "", "Task");
-    //         break;
-    //       case "delete":
-    //         console.log("Delete task:", selectedTask.title);
-    //         break;
-    //     }
-    //     resetState();
-    //   } else {
-    //     setSelectedTask(result);
-    //     setSelectedIndex(-1);
-    //   }
-    // },
-    // [
-    //   query,
-    //   commandMode,
-    //   router,
-    //   handleCommand,
-    //   resetState,
-    //   toggleTaskMenu,
-    //   selectedTask,
-    //   setSelectedTask,
-    //   setSelectedIndex,
-    //   t
-    // ]
-  // );
+
+  const navigateTo = useCallback(
+    (destination) => {
+      if (!destination) return;
+      router.push(`/app/${destination}`);
+      closeSearchMenu();
+    },
+    [router, closeSearchMenu]
+  );
+
+  const handleResultSelection = useCallback(
+    (result) => {
+      if (!result) return;
+
+      if (query.startsWith("/")) {
+        setSelectedIndex(-1);
+        setQuery("");
+        setEditingTagId(null);
+        switch (result.id) {
+          case "goto":
+            setCommandMode("goto");
+            setPlaceholder(t("searchMenu.selectDestination"));
+            setIsMenuVisible(true);
+            return;
+          case "changeWorkspace":
+          case "deleteWorkspace":
+            setCommandMode(result.id);
+            setEditingTagId(null);
+            setPlaceholder(t("searchMenu.selectWorkspace"));
+            setIsMenuVisible(true);
+            return;
+          case "addTag":
+            setCommandMode("addTag");
+            setEditingTagId(null);
+            setPlaceholder(t("searchMenu.newTagName"));
+            setIsMenuVisible(true);
+            return;
+          default:
+            handleCommand(result.id);
+            return;
+        }
+      }
+
+      if (commandMode === "goto") {
+        navigateTo(result.id);
+        return;
+      }
+
+      if (commandMode === "changeWorkspace") {
+        setEditingTagId(null);
+        if (setCurrentWorkspace) setCurrentWorkspace(result.id);
+        closeSearchMenu();
+        return;
+      }
+
+      if (commandMode === "deleteWorkspace") {
+        setEditingTagId(null);
+        if (deleteWorkspace) deleteWorkspace(result.id);
+        closeSearchMenu();
+        return;
+      }
+
+      if (commandMode === "addTag") {
+        setEditingTagId(result.id);
+        setQuery(result.title || "");
+        setPlaceholder(t("searchMenu.newTagName"));
+        setIsMenuVisible(true);
+        return;
+      }
+
+      if (selectedTask) {
+        switch (result.id) {
+          case "update":
+            if (toggleTaskMenu)
+              toggleTaskMenu(selectedTask.id, "", "Task");
+            break;
+          case "delete":
+            if (deleteTask) deleteTask(selectedTask.id);
+            break;
+        }
+        setEditingTagId(null);
+        closeSearchMenu();
+        return;
+      }
+
+      setSelectedTask(result);
+      setEditingTagId(null);
+      setSelectedIndex(-1);
+      setQuery("");
+      setIsMenuVisible(true);
+      setPlaceholder(
+        `${t("searchMenu.updateTask")} / ${t("searchMenu.deleteTask")}`
+      );
+    },
+    [
+      query,
+      commandMode,
+      handleCommand,
+      navigateTo,
+      closeSearchMenu,
+      t,
+      setCurrentWorkspace,
+      deleteWorkspace,
+      handleAddTag,
+      selectedTask,
+      toggleTaskMenu,
+      deleteTask,
+    ]
+  );
 
   useEffect(() => {
     setVisibility(isSearchMenuOpen);
@@ -189,25 +281,47 @@ const SearchMenu = () => {
 
   const handleKeyDown = useCallback(
     (e) => {
+      const key = e.key?.toLowerCase?.() || e.key;
+
+      if (key === "escape" && visibility) {
+        e.preventDefault();
+        closeSearchMenu();
+        return;
+      }
+
+      if (e.shiftKey && key === "a") {
+        e.preventDefault();
+        if (toggleTaskMenu) toggleTaskMenu("", "", "Task");
+        return;
+      }
+
+      if (e.altKey && key === "v") {
+        e.preventDefault();
+        if (toggleViewsMenu) toggleViewsMenu();
+        return;
+      }
+
       if (visibility) {
-        if (e.key === "ArrowDown") {
+        if (key === "arrowdown") {
           e.preventDefault();
+          if (filteredResults.length === 0) return;
           setSelectedIndex((prev) =>
             prev < filteredResults.length - 1 ? prev + 1 : 0
           );
-        } else if (e.key === "ArrowUp") {
+        } else if (key === "arrowup") {
           e.preventDefault();
+          if (filteredResults.length === 0) return;
           setSelectedIndex((prev) =>
             prev > 0 ? prev - 1 : filteredResults.length - 1
           );
-        } else if (e.key === "Enter") {
+        } else if (key === "enter") {
           e.preventDefault();
           if (commandMode === "addTag" && query.trim() !== "") {
             handleAddTag(query.trim());
           } else {
             const selectedResult =
               filteredResults[selectedIndex] || filteredResults[0];
-            // handleResultSelection(selectedResult);
+            handleResultSelection(selectedResult);
           }
         }
       }
@@ -217,9 +331,13 @@ const SearchMenu = () => {
       filteredResults,
       selectedIndex,
       handleAddTag,
-      // handleResultSelection,
+      handleResultSelection,
       query,
       commandMode,
+      closeSearchMenu,
+      toggleTaskMenu,
+      toggleViewsMenu,
+      router,
     ]
   );
 
@@ -249,7 +367,7 @@ const SearchMenu = () => {
         visibility ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
       onClick={() => {
-        toggleSearchMenu();
+        closeSearchMenu();
       }}
     >
       <div
@@ -257,17 +375,24 @@ const SearchMenu = () => {
         className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 z-[500] -translate-y-[20vh] w-[35vw] mx-auto transition-opacity duration-300 ease-in-out ${
           visibility ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
+        onClick={(e) => e.stopPropagation()}
       >
-        <SearchInput
-          query={query}
-          placeholder={placeholder}
-          onQueryChange={handleQueryChange}
-        />
-        <SearchResults
-          results={filteredResults}
-          selectedIndex={selectedIndex}
-          // onItemClick={handleResultSelection}
-        />
+        <div className="relative flex flex-col gap-3">
+          <SearchInput
+            query={query}
+            placeholder={placeholder}
+            onQueryChange={handleQueryChange}
+          />
+          {isMenuVisible && (
+            <SearchResults
+              results={filteredResults}
+              selectedIndex={selectedIndex}
+              onItemClick={handleResultSelection}
+              commandMode={commandMode}
+            />
+          )}
+          <SearchShortcuts />
+        </div>
       </div>
     </div>
   );
