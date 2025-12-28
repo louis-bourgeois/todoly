@@ -155,7 +155,7 @@ export default function Navbar() {
           </div>
         </li>
         <li>
-          <h1 className={`5xl:text-5xl 2xl:text-4xl xl-text-3.5xl lg:text-2.5xl font-black`}>
+          <h1 className={`5xl:text-5xl 2xl:text-4xl xl-text-3.5xl lg:text-2.5xl font-black select-none`}>
             {preferences.Home_Page_Title?.toLowerCase() === "default" ||
             preferences.Home_Page_Title === "" ? (
               <>

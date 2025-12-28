@@ -30,6 +30,8 @@ const SearchMenu = () => {
     isSearchMenuOpen,
     toggleSearchMenu,
     toggleViewsMenu,
+    isViewsMenuOpen,
+    isTaskMenuOpen,
   } = useMenu() || {};
   const { t } = useTranslation();
 
@@ -283,9 +285,11 @@ const SearchMenu = () => {
     (e) => {
       const key = e.key?.toLowerCase?.() || e.key;
 
-      if (key === "escape" && visibility) {
+      if (key === "escape") {
         e.preventDefault();
-        closeSearchMenu();
+        if (visibility) closeSearchMenu();
+        if (isViewsMenuOpen && toggleViewsMenu) toggleViewsMenu();
+        if (isTaskMenuOpen && toggleTaskMenu) toggleTaskMenu();
         return;
       }
 

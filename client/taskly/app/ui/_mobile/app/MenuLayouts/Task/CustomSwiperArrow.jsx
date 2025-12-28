@@ -5,6 +5,7 @@ const CustomArrow = ({ direction, onClick }) => {
         direction === "next" ? "custom-arrow-next" : "custom-arrow-prev"
       }`}
       onClick={onClick}
+      tabIndex="-1"
     >
       {direction === "next" ? (
         <svg
