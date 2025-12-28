@@ -44,7 +44,7 @@ export default function Task({ task, onTaskClick, minWidth }) {
     <div
       onClick={() => onTaskClick(task.id)}
       style={{ minWidth: safeMinWidth }}
-      className={`gradient-border bg-primary transition hover:scale-105 cursor-pointer shadow-shadow_card rounded-2xl flex flex-col`}
+      className={` bg-primary transition hover:scale-105 cursor-pointer shadow-shadow_card rounded-2xl flex flex-col gradient-border z-[0]`}
     >
       <div className="flex justify-left items-center pt-5 pb-2">
         <div

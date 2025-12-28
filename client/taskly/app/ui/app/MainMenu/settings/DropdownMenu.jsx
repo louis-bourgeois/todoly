@@ -55,25 +55,20 @@ export default function DropdownMenu({
           menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
       >
-        {/* *** DÉBUT DE LA CORRECTION *** */}
+
         {options.map((option, index) => {
-          // Déterminer la nature de l'option (objet, tableau, ou chaîne)
           const isObject = typeof option === 'object' && option !== null && !Array.isArray(option);
           const isArray = Array.isArray(option);
-
-          // Définir quoi afficher (le label) et quelle valeur utiliser pour la clé et le clic
           const displayLabel = isObject ? option.label : (isArray ? option[0] : option);
           const valueToSelect = isObject ? option.value : option;
-          const key = isObject ? option.value : `${(isArray ? option[0] : option)}-${index}`; // Clé unique et robuste
-
-          // Conserver la logique pour la couleur du texte si l'option est un tableau
+          const key = isObject ? option.value : `${(isArray ? option[0] : option)}-${index}`;
           const textColorClass = isArray ? option[1] : "text hover:text-dominant";
 
           return (
             <div
               key={key}
               className="cursor-pointer hover:text-dominant transition-all duration-300"
-              onClick={(event) => handleOptionClick(valueToSelect, event)} // Passer la `value` et non l'objet entier
+              onClick={(event) => handleOptionClick(valueToSelect, event)}
             >
               <span className={`text-${textColorClass} transition transition-color ease capitalize`}>
                 {displayLabel}
@@ -81,7 +76,7 @@ export default function DropdownMenu({
             </div>
           );
         })}
-        {/* *** FIN DE LA CORRECTION *** */}
+     
       </div>
     </SelectionDiv>
   );

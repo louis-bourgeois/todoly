@@ -197,20 +197,20 @@ export default function TagSelect({
       flexCol
       moreRoundedCorners={compact ? undefined : "bl"}
       othersStyles={`justify-between ${
-        id ? "h-full" : "h-[90%]"
-      } ${compact ? "min-h-[170px] w-full" : ""}`}
+        id ? "h-full" : "h-auto"
+      } ${compact ? "min-h-0 w-full" : ""}`}
       padding={compact ? "8px" : "5px"}
     >
-      <div className="flex justify-between items-center m-[1%] w-full">
+      <div className="flex justify-between items-center pl-[1%] pt-[0.5%] pr-0  w-[100%]">
         <h2
-          className={`p-[3%] font-bold ${
+          className={` font-bold ${
             compact ? "text-xl" : "text-2xl"
           } text-text select-none`}
         >
           {t('tagSelect.title')?.replace(/^./, match => match.toUpperCase())}
         </h2>
         <button
-          className={`justify-center items-center font-bold hover:scale-105 transition-transform active:scale-100 ${
+          className={`justify-center ml-[2%] items-center font-bold hover:scale-105 transition-transform active:scale-100 ${
             compact ? "scale-90" : ""
           }`}
           onClick={() => handleAddTag("")}
@@ -218,7 +218,7 @@ export default function TagSelect({
           <svg
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 24 24"
-            className="flex justify-center items-center text-dominant"
+            className="flex  justify-center items-center text-dominant"
             aria-label="Add"
             fill="currentColor"
             width={compact ? "42" : "60"}
@@ -286,7 +286,7 @@ export default function TagSelect({
       </div>
       <div
         className={`${
-          compact ? "w-full h-[64px] mt-1" : "w-[97%] h-[60px] ml-auto"
+          compact ? "w-full mt-1" : "w-[97%] h-auto ml-auto"
         }`}
       >
         <Swiper
@@ -295,7 +295,7 @@ export default function TagSelect({
           freeMode={true}
           slidesPerView="auto"
           spaceBetween={10}
-          className="h-full overflow-visible"
+          className="h-auto overflow-visible"
           observer={true}
           observeParents={true}
         >
@@ -313,7 +313,7 @@ export default function TagSelect({
                 <div
                   className={`
                     relative cursor-pointer transition-all flex items-center gradient-border m-1 justify-start
-                    bg-primary rounded-[20px] h-10 px-4 shadow-md
+                    bg-primary rounded-[20px] h-[30px] px-4 shadow-md
                     ${hoveredTag === tag.id ? "pr-10" : ""}
                   `}
                   style={{

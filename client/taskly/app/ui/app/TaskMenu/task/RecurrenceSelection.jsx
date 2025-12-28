@@ -91,8 +91,7 @@ export function RecurrenceSelection({
   return (
     <TaskMenuSectionContainer
       allowOverflow
-      disableStacking
-      othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer overflow-visible z-[1100]"
+      othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer z-[-1] overflow-visible"
       onClick={() => setMenuOpen && setMenuOpen(!menuOpen)}
     >
       <div className="flex flex-col items-start pl-[4%] py-1">

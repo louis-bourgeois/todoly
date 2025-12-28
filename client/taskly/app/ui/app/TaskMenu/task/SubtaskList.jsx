@@ -81,9 +81,9 @@ export default function SubtaskList({
     <TaskMenuSectionContainer
       flexCol
       moreRoundedCorners="bl"
-      othersStyles="justify-start gap-3 max-h-[360px] min-h-[220px]"
+      othersStyles="justify-start gap-3 h-full min-h-0"
     >
-      <div className="flex justify-between items-center m-[1%]">
+      <div className="flex  justify-between items-center m-[1%] min-h-0">
         <h2 className="p-[3%] font-bold text-2xl text-text select-none">
           {t("subtasks.title")}
         </h2>
@@ -104,78 +104,80 @@ export default function SubtaskList({
           </svg>
         </button>
       </div>
-      <div className="flex flex-col gap-2 overflow-y-auto pr-1 w-full">
-        {sortedSubtasks.length === 0 && (
-          <p className="text-text text-sm opacity-70 px-2 pb-2">
-            {t("subtasks.empty")}
-          </p>
-        )}
-        {sortedSubtasks.map((subtask, index) => (
-          <div
-            key={subtask.id}
-            className="flex items-center gap-3 gradient-border rounded-[16px] px-3 py-2 bg-primary/40"
-          >
-            <button
-              onClick={() => handleToggle(subtask.id)}
-              className={`w-6 h-6 flex items-center justify-center rounded-full border-2 transition-all ${
-                subtask.done
-                  ? "bg-dominant border-dominant"
-                  : "border-secondary"
-              }`}
-              aria-label={t("subtasks.toggle")}
+      <div className="flex-1 min-h-0 rounded-bl-[3.125vw] w-full  min-h-0 overflow-hidden">
+        <div className="flex h-full flex-col gap-2 overflow-y-auto pr-1 w-full">
+          {sortedSubtasks.length === 0 && (
+            <p className="text-text text-sm opacity-70 px-4 pb-2">
+              {t("subtasks.empty")}
+            </p>
+          )}
+          {sortedSubtasks.map((subtask, index) => (
+            <div
+              key={subtask.id}
+              className="flex items-center gap-3 gradient-border rounded-[16px] px-3 py-2 bg-primary/40 inset-0"
             >
-              {subtask.done && (
+              <button
+                onClick={() => handleToggle(subtask.id)}
+                className={`w-6 h-6 flex items-center justify-center rounded-full border-2 transition-all ${
+                  subtask.done
+                    ? "bg-dominant border-dominant"
+                    : "border-secondary"
+                }`}
+                aria-label={t("subtasks.toggle")}
+              >
+                {subtask.done && (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="none"
+                    className="w-4 h-4 text-primary"
+                  >
+                    <path
+                      d="M4.5 10.5 8 14l7.5-8"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </button>
+              <input
+                ref={index === sortedSubtasks.length - 1 ? lastInputRef : null}
+                type="text"
+                value={subtask.title}
+                onChange={(e) => handleTitleChange(subtask.id, e.target.value)}
+                onBlur={() => handlePersist(sortedSubtasks)}
+                className={`flex-1 bg-transparent text-text text-base focus:outline-none ${
+                  subtask.done ? "line-through opacity-60" : ""
+                }`}
+                placeholder={t("subtasks.placeholder")}
+              />
+              <button
+                onClick={() => handleDelete(subtask.id)}
+                className="text-important hover:scale-105 transition-transform"
+                aria-label={t("subtasks.delete")}
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 20 20"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  height="20"
                   fill="none"
-                  className="w-4 h-4 text-primary"
                 >
                   <path
-                    d="M4.5 10.5 8 14l7.5-8"
+                    fill="none"
                     stroke="currentColor"
-                    strokeWidth="2"
                     strokeLinecap="round"
                     strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
-              )}
-            </button>
-            <input
-              ref={index === sortedSubtasks.length - 1 ? lastInputRef : null}
-              type="text"
-              value={subtask.title}
-              onChange={(e) => handleTitleChange(subtask.id, e.target.value)}
-              onBlur={() => handlePersist(sortedSubtasks)}
-              className={`flex-1 bg-transparent text-text text-base focus:outline-none ${
-                subtask.done ? "line-through opacity-60" : ""
-              }`}
-              placeholder={t("subtasks.placeholder")}
-            />
-            <button
-              onClick={() => handleDelete(subtask.id)}
-              className="text-important hover:scale-105 transition-transform"
-              aria-label={t("subtasks.delete")}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                width="20"
-                height="20"
-                fill="none"
-              >
-                <path
-                  fill="none"
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-        ))}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </TaskMenuSectionContainer>
   );

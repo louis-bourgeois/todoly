@@ -55,7 +55,7 @@ export const Counter = ({ visibility, onChange, initialCount }) => {
   };
 
   return (
-    <div className="flex items-center justify-center bg-transparent">
+    <div className="ml-auto flex items-center justify-center bg-transparent">
       <button
         onClick={handleDecrement}
         className="w-12 h-12 flex items-center justify-center rounded-full text-text"

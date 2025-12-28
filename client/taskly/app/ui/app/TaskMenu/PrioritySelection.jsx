@@ -10,7 +10,7 @@ export default function PrioritySelection({
   task,
   priority,
   setPriority,
-  containerStyles = "w-full h-[70%] items-center",
+  containerStyles = "w-full h-[100%] items-center",
 }) {
   const { modifyTask } = useTask();
   const { t } = useTranslation();
@@ -30,7 +30,7 @@ export default function PrioritySelection({
     >
       <h2 className="font-bold text-2xl p-[2%] text-text select-none">{t('prioritySelection.title')}</h2>
 
-      <div className="h-[70%] flex w-full justify-center items-center">
+      <div className="h-[70%] flex w-full justify-right items-center">
         {visibility && (
           <Counter
             visibility={visibility}
