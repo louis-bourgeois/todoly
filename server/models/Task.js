@@ -1,5 +1,6 @@
 import pool from "../config/dbConfig.js";
 import { compareObjects } from "../utils/compare.js";
+import { normalizeRecurrence, occursOnDate } from "../utils/recurrence.js";
 import { isUUID } from "../utils/validate.js";
 import Section from "./Section.js";
 import TaskActivity from "./TaskActivity.js";
@@ -7,6 +8,52 @@ import TaskActivity from "./TaskActivity.js";
 let taskPropsColumnsEnsured = false;
 let taskPropsSchemaVersion = 0;
 const TASK_PROPS_SCHEMA_VERSION = 2;
+const dateOnlyPattern = /^\d{4}-\d{2}-\d{2}$/;
+const TASK_COLUMNS = new Set(["linked_section"]);
+const TASK_WORKSPACES_COLUMNS = new Set(["workspace_id"]);
+const TASK_PROPERTIES_COLUMNS = new Set([
+  "title",
+  "due_date",
+  "status",
+  "subtasks",
+  "priority",
+  "tags",
+  "description",
+  "recurrence",
+  "is_overdue",
+  "reschedule_count",
+  "auto_reschedule_limit",
+  "auto_reschedule_enabled",
+  "last_rescheduled_at",
+  "last_completed_at",
+  "completion_count",
+]);
+
+const toDateOnlyString = (value) => {
+  if (!value) return null;
+  if (typeof value === "string") {
+    if (dateOnlyPattern.test(value)) {
+      return value;
+    }
+    const leadingDate = value.match(/^(\d{4}-\d{2}-\d{2})/);
+    if (leadingDate?.[1]) {
+      return leadingDate[1];
+    }
+  }
+  if (value instanceof Date) {
+    const year = value.getFullYear();
+    const month = String(value.getMonth() + 1).padStart(2, "0");
+    const day = String(value.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 async function ensureTaskPropertiesColumns(client = null) {
   if (taskPropsColumnsEnsured && taskPropsSchemaVersion >= TASK_PROPS_SCHEMA_VERSION) {
     return;
@@ -263,15 +310,7 @@ class Task {
           parsedRow.recurrence = row.recurrence || defaultRecurrence;
         }
         
-        if (row.due_date) {
-          const dueDate = new Date(row.due_date);
-          dueDate.setUTCDate(dueDate.getUTCDate() + 1);
-
-          const year = dueDate.getUTCFullYear();
-          const month = String(dueDate.getUTCMonth() + 1).padStart(2, "0");
-          const day = String(dueDate.getUTCDate()).padStart(2, "0");
-          parsedRow.due_date = `${year}-${month}-${day}`;
-        }
+        parsedRow.due_date = toDateOnlyString(row.due_date);
 
         parsedRow.is_overdue = !!row.is_overdue;
         parsedRow.reschedule_count = Number(row.reschedule_count || 0);
@@ -332,12 +371,21 @@ class Task {
 
   static async update(taskToUpdate, alreadyRetried = false) {
     const client = await pool.connect();
+    let sanitizedTask;
+    let inTransaction = false;
     try {
-      const sanitizedTask = { ...taskToUpdate };
+      sanitizedTask = { ...taskToUpdate };
       delete sanitizedTask.recurrence_consistency;
       delete sanitizedTask.recurrenceConsistency;
-      await client.query("BEGIN");
-      await ensureTaskPropertiesColumns(client);
+      const completionContextDate = toDateOnlyString(
+        sanitizedTask.completion_context_date ||
+          sanitizedTask.completionContextDate ||
+          new Date()
+      );
+      delete sanitizedTask.completion_context_date;
+      delete sanitizedTask.completionContextDate;
+
+      await ensureTaskPropertiesColumns();
       const [currentTask] = await this.find(undefined, sanitizedTask.id);
 
       if (!currentTask) {
@@ -345,30 +393,74 @@ class Task {
         throw new Error("Task not found");
       }
 
+      await client.query("BEGIN");
+      inTransaction = true;
       const now = new Date();
-      const statusChangedToDone =
+      let statusChangedToDone =
         sanitizedTask.status === "done" && currentTask.status !== "done";
       const updatedDue = sanitizedTask.due_date || sanitizedTask.dueDate;
       const currentDue = currentTask.due_date || currentTask.dueDate;
-      const updatedDueDate =
-        updatedDue && !Number.isNaN(new Date(updatedDue).getTime())
-          ? new Date(updatedDue)
-          : null;
-      const currentDueDate =
-        currentDue && !Number.isNaN(new Date(currentDue).getTime())
-          ? new Date(currentDue)
-          : null;
+      const updatedDueDate = toDateOnlyString(updatedDue);
+      const currentDueDate = toDateOnlyString(currentDue);
+      const currentCompletedDate = toDateOnlyString(currentTask.last_completed_at);
+      const effectiveRecurrence = normalizeRecurrence(
+        sanitizedTask.recurrence || currentTask.recurrence
+      );
+      const isRecurringTask = effectiveRecurrence.type !== "none";
+      const effectiveDueDate = updatedDueDate || currentDueDate;
+      const todayDate = toDateOnlyString(now);
+      const isTodayCompletion =
+        !!completionContextDate && completionContextDate === todayDate;
+      const isValidCompletionDate =
+        !isRecurringTask ||
+        (isTodayCompletion &&
+          completionContextDate &&
+          occursOnDate(
+            { due_date: effectiveDueDate, recurrence: effectiveRecurrence },
+            completionContextDate
+          ));
+
       const dueDateChanged =
-        !!updatedDueDate &&
-        (!currentDueDate ||
-          currentDueDate.toISOString().slice(0, 10) !==
-            updatedDueDate.toISOString().slice(0, 10));
+        !!updatedDueDate && currentDueDate !== updatedDueDate;
+
+      let statusChangedFromDone =
+        sanitizedTask.status === "todo" && currentTask.status === "done";
+
+      if (statusChangedToDone && isRecurringTask && !isValidCompletionDate) {
+        sanitizedTask.status = currentTask.status;
+        statusChangedToDone = false;
+      }
 
       if (statusChangedToDone) {
-        sanitizedTask.last_completed_at = now;
-        sanitizedTask.completion_count =
-          (currentTask.completion_count || 0) + 1;
+        sanitizedTask.last_completed_at = completionContextDate || now;
+        sanitizedTask.completion_count = (currentTask.completion_count || 0) + 1;
         sanitizedTask.is_overdue = false;
+      }
+
+      if (statusChangedFromDone) {
+        if (isRecurringTask) {
+          const canUndoSameOccurrence =
+            completionContextDate &&
+            currentCompletedDate &&
+            completionContextDate === currentCompletedDate;
+
+          if (!canUndoSameOccurrence) {
+            sanitizedTask.status = currentTask.status;
+            statusChangedFromDone = false;
+          } else {
+            sanitizedTask.last_completed_at = null;
+            sanitizedTask.completion_count = Math.max(
+              0,
+              (currentTask.completion_count || 0) - 1
+            );
+          }
+        } else {
+          sanitizedTask.last_completed_at = null;
+          sanitizedTask.completion_count = Math.max(
+            0,
+            (currentTask.completion_count || 0) - 1
+          );
+        }
       }
 
       const changes = compareObjects(currentTask, sanitizedTask);
@@ -393,63 +485,55 @@ class Task {
         }
       });
 
-      let columnsToUpdate = Object.keys(changes);
-
-      const linkedSectionUpdated = columnsToUpdate.includes("linked_section");
-      const workspaceIdUpdated = columnsToUpdate.includes("workspace_id");
-      const dueDateUpdated = columnsToUpdate.includes("dueDate");
-
-      if (dueDateUpdated) {
-        columnsToUpdate = columnsToUpdate.map((col) =>
-          col === "dueDate" ? "due_date" : col
-        );
+      const normalizedChanges = { ...changes };
+      if (Object.prototype.hasOwnProperty.call(normalizedChanges, "dueDate")) {
+        normalizedChanges.due_date = toDateOnlyString(normalizedChanges.dueDate);
+        delete normalizedChanges.dueDate;
       }
+      delete normalizedChanges.completion_context_date;
+      delete normalizedChanges.completionContextDate;
+      delete normalizedChanges.recurrence_consistency;
+      delete normalizedChanges.recurrenceConsistency;
 
-      const tablesToUpdate = [];
-      if (linkedSectionUpdated) {
-        tablesToUpdate.push("task");
-      }
-      if (workspaceIdUpdated) {
-        tablesToUpdate.push("task_workspaces");
-      }
-      if (
-        columnsToUpdate.some(
-          (col) => col !== "linked_section" && col !== "workspace_id"
-        )
-      ) {
-        tablesToUpdate.push("task_properties");
-      }
+      const taskChanges = {};
+      const taskWorkspaceChanges = {};
+      const taskPropertiesChanges = {};
 
-      columnsToUpdate = columnsToUpdate
-        .reverse()
-        .filter((col, index, self) => self.indexOf(col) === index)
-        .reverse();
-
-      for (const table of tablesToUpdate) {
-        let setParts = [];
-        let queryParams = [];
-        let paramIndex = 1;
-
-        for (const col of columnsToUpdate) {
-          if (
-            (table === "task" && col === "linked_section") ||
-            (table === "task_workspaces" && col === "workspace_id") ||
-            (table === "task_properties" &&
-              col !== "linked_section" &&
-              col !== "workspace_id")
-          ) {
-            setParts.push(`${col} = $${paramIndex++}`);
-            queryParams.push(changes[col]);
-          }
+      Object.entries(normalizedChanges).forEach(([col, value]) => {
+        if (TASK_COLUMNS.has(col)) {
+          taskChanges[col] = value;
+          return;
         }
-        if (queryParams.length > 0) {
-          queryParams.push(taskToUpdate.id);
-          const sqlQuery = `UPDATE ${table} SET ${setParts.join(", ")} WHERE ${
-            table !== "task" ? "task_id" : "id"
-          } = $${paramIndex}`;
-          await client.query(sqlQuery, queryParams);
+        if (TASK_WORKSPACES_COLUMNS.has(col)) {
+          taskWorkspaceChanges[col] = value;
+          return;
         }
-      }
+        if (TASK_PROPERTIES_COLUMNS.has(col)) {
+          taskPropertiesChanges[col] = value;
+        }
+      });
+
+      const runUpdate = async (table, idColumn, payload) => {
+        const entries = Object.entries(payload);
+        if (entries.length === 0) return;
+        const setParts = [];
+        const queryParams = [];
+
+        entries.forEach(([col, value], index) => {
+          setParts.push(`${col} = $${index + 1}`);
+          queryParams.push(value);
+        });
+
+        queryParams.push(taskToUpdate.id);
+        const sqlQuery = `UPDATE ${table} SET ${setParts.join(
+          ", "
+        )} WHERE ${idColumn} = $${entries.length + 1}`;
+        await client.query(sqlQuery, queryParams);
+      };
+
+      await runUpdate("task", "id", taskChanges);
+      await runUpdate("task_workspaces", "task_id", taskWorkspaceChanges);
+      await runUpdate("task_properties", "task_id", taskPropertiesChanges);
 
       const workspaceId =
         sanitizedTask.workspace_id || currentTask.workspace_id || null;
@@ -463,7 +547,7 @@ class Task {
             eventType: "completed",
             metadata: {
               priority: sanitizedTask.priority ?? currentTask.priority,
-              dueDate: updatedDue || currentDue,
+              dueDate: updatedDueDate || currentDueDate,
               recurrence: sanitizedTask.recurrence || currentTask.recurrence,
             },
             eventDate: now,
@@ -480,8 +564,8 @@ class Task {
             workspaceId,
             eventType: "manual_reschedule",
             metadata: {
-              from: currentDue,
-              to: updatedDue,
+              from: currentDueDate,
+              to: updatedDueDate,
               priority: taskToUpdate.priority ?? currentTask.priority,
             },
             eventDate: now,
@@ -491,15 +575,20 @@ class Task {
       }
 
       await client.query("COMMIT");
+      inTransaction = false;
+      const [updatedTask] = await this.find(undefined, sanitizedTask.id);
+      return updatedTask || null;
     } catch (error) {
-      await client.query("ROLLBACK");
+      if (inTransaction) {
+        await client.query("ROLLBACK");
+      }
       if (error.code === "42703") {
         console.error("Missing columns detected, retrying column creation", error);
         taskPropsColumnsEnsured = false;
         taskPropsSchemaVersion = 0;
-        await ensureTaskPropertiesColumns(client);
+        await ensureTaskPropertiesColumns();
         if (!alreadyRetried) {
-          return await Task.update(sanitizedTask, true);
+          return await Task.update(sanitizedTask || taskToUpdate, true);
         }
       }
       throw error;
@@ -551,7 +640,7 @@ class Task {
       await ensureTaskPropertiesColumns(client);
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-      const todayDate = today.toISOString().slice(0, 10);
+      const todayDate = toDateOnlyString(today);
 
       const overdueQuery = `
         SELECT 

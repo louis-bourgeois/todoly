@@ -88,14 +88,26 @@ export function RecurrenceSelection({
     updateRecurrence({ ...localRecurrence, endDate: value || null });
   };
 
+  const presetButtonClass = (isActive) =>
+    `w-full rounded-full border px-3 py-2 text-sm font-semibold text-left transition-all duration-300 ${
+      isActive
+        ? "border-dominant text-dominant bg-dominant/10"
+        : "border-secondary/40 text-text hover:text-dominant hover:border-dominant/60 hover:scale-[1.02]"
+    }`;
+
   return (
     <TaskMenuSectionContainer
       allowOverflow
-      othersStyles="rounded-full justify-between items-center h-[17.5%] relative cursor-pointer z-[-1] overflow-visible"
+      othersStyles="rounded-full justify-between items-center min-h-[17.5%] relative cursor-pointer z-[0] overflow-visible px-3"
       onClick={() => setMenuOpen && setMenuOpen(!menuOpen)}
     >
-      <div className="flex flex-col items-start pl-[4%] py-1">
-        <h2 className="font-bold text-xl text-text">{summary}</h2>
+      <div className="flex flex-col items-start pr-3 py-1 min-w-0">
+        <span className="text-[10px] uppercase tracking-wide text-secondary/80 font-semibold">
+          {t("recurrence.label")}
+        </span>
+        <h2 className="font-bold text-base 4xl:text-lg text-text leading-tight break-words">
+          {summary}
+        </h2>
       </div>
 
       <svg
@@ -104,10 +116,10 @@ export function RecurrenceSelection({
         y="0"
         className={`cursor-pointer ${
           menuOpen ? "rotate-180" : ""
-        } transition-transform duration-500 text-text`}
+        } transition-transform duration-300 text-text`}
         viewBox="0 0 29 29"
-        width="62.5"
-        height="62.5"
+        width="48"
+        height="48"
       >
         <path
           fill="none"
@@ -121,28 +133,30 @@ export function RecurrenceSelection({
       </svg>
 
       <div
-        className={`absolute top-full mt-2 left-0 right-0 bg-primary shadow-lg rounded-lg transition-opacity duration-300 z-[1400] ${
-          menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`absolute top-full mt-2 right-0 w-[max(100%,20rem)] max-w-[calc(100vw-3rem)] bg-primary shadow-lg rounded-2xl transition-all duration-200 origin-top z-[1400] ${
+          menuOpen
+            ? "opacity-100 translate-y-0 scale-100"
+            : "opacity-0 -translate-y-1 scale-[0.98] pointer-events-none"
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="rounded-xl m-2 p-4 text-text gradient-border space-y-3">
+        <div className="rounded-2xl m-1.5 p-3 sm:p-4 text-text gradient-border space-y-4 max-h-[min(70vh,32rem)] overflow-y-auto">
           <div className="grid grid-cols-2 gap-2">
             <button
               onClick={() => handlePreset("none")}
-              className="w-full select-none text-left font-bold hover:text-dominant transition-colors"
+              className={presetButtonClass(localRecurrence.type === "none")}
             >
               {t("recurrence.onlyThisTime")}
             </button>
             <button
               onClick={() => handlePreset("daily")}
-              className="w-full text-left font-bold hover:text-dominant transition-colors"
+              className={presetButtonClass(localRecurrence.type === "daily")}
             >
               {t("recurrence.daily")}
             </button>
             <button
               onClick={() => handlePreset("weekend")}
-              className="w-full text-left font-bold hover:text-dominant transition-colors"
+              className={presetButtonClass(localRecurrence.type === "weekend")}
             >
               {t("recurrence.weekend")}
             </button>
@@ -153,51 +167,51 @@ export function RecurrenceSelection({
                   type: "custom",
                 })
               }
-              className="w-full text-left font-bold hover:text-dominant transition-colors"
+              className={presetButtonClass(localRecurrence.type === "custom")}
             >
               {t("recurrence.custom")}
             </button>
           </div>
-      <TaskMenuSectionContainer
-            allowOverflow
-            othersStyles="flex flex-col gap-5 justify-between items-center h-[17.5%] relative overflow-visible"
-          >
-          <div className="space-y-2 m-[2%]">
-            <p className="text-sm font-semibold text-secondary uppercase">
-              {t("recurrence.days.label")}
-            </p>
-            <div className="grid grid-cols-7 gap-2">
-              {weekDays.map((day) => {
-                const isActive = localRecurrence.days.includes(day.value);
-                return (
-                  <button
-                    key={day.key}
-                    onClick={() => toggleDay(day.value)}
-                    className={`rounded-full  border px-2 py-1 text-sm transition ${
-                      isActive
-                        ? "bg-dominant text-primary border-dominant"
-                        : "border-secondary text-text"
-                    }`}
-                  >
-                    {t(`recurrence.days.${day.key}`)}
-                  </button>
-                );
-              })}
+
+          {localRecurrence.type === "custom" && (
+            <div className="space-y-2">
+              <p className="text-xs sm:text-sm font-semibold text-secondary uppercase tracking-wide">
+                {t("recurrence.days.label")}
+              </p>
+              <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                {weekDays.map((day) => {
+                  const isActive = localRecurrence.days.includes(day.value);
+                  return (
+                    <button
+                      key={day.key}
+                      onClick={() => toggleDay(day.value)}
+                      className={`group rounded-full border px-2 py-1.5 text-sm transition-all duration-300 ${
+                        isActive
+                          ? "bg-dominant text-primary border-dominant"
+                          : "border-secondary/50 text-text hover:border-dominant/70 hover:scale-105"
+                      }`}
+                    >
+                      <span className="transition-colors duration-300 group-hover:text-dominant">
+                        {t(`recurrence.days.${day.key}`)}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
             </div>
-          </div>
-      
-          <div className="flex flex-col justify-center items-left gap-1 w-full">
-            <label className="text-sm font-semibold text-secondary uppercase mb-3 p-2">
+          )}
+
+          <div className="flex flex-col gap-2 w-full">
+            <label className="text-xs sm:text-sm font-semibold text-secondary uppercase tracking-wide">
               {t("recurrence.endDate")}
             </label>
             <input
               type="date"
               value={localRecurrence.endDate || ""}
               onChange={(e) => handleEndDateChange(e.target.value)}
-              className="bg-transparent border border-secondary rounded-lg px-3 py-2 text-text w-[85%] focus:outline-none focus:border-dominant"
+              className="bg-transparent border border-secondary/60 rounded-xl px-3 py-2 text-text w-full focus:outline-none focus:border-dominant transition-colors"
             />
           </div>
-          </TaskMenuSectionContainer>
         </div>
       </div>
     </TaskMenuSectionContainer>

@@ -131,9 +131,6 @@ CREATE TABLE IF NOT EXISTS public.task_activity (
 
 ALTER TABLE public.task_activity OWNER TO todoly_app_user;
 
-ALTER TABLE ONLY public.task_activity
-    ADD CONSTRAINT task_activity_task_id_fkey FOREIGN KEY (task_id) REFERENCES public.task(id) ON DELETE CASCADE;
-
 --
 -- Name: user_contact; Type: TABLE; Schema: public; Owner: todoly_app_user
 --
@@ -297,7 +294,8 @@ ALTER TABLE public.user_workspaces OWNER TO todoly_app_user;
 
 CREATE TABLE public.workspace (
     id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    name character varying(64) NOT NULL
+    name character varying(64) NOT NULL,
+    is_deletable boolean DEFAULT true NOT NULL
 );
 
 
@@ -930,6 +928,8 @@ dc90166f-de76-45a7-9dc5-8db4d542a100	Personal
 cd13a3f2-3826-4fd6-8d1c-1e8e34a498a7	Personal
 \.
 
+UPDATE public.workspace SET is_deletable = false WHERE lower(name) = 'personal';
+
 
 --
 -- Name: user_role_assignments_role_id_seq; Type: SEQUENCE SET; Schema: public; Owner: todoly_app_user
@@ -1181,6 +1181,14 @@ ALTER TABLE ONLY public.task_properties
 
 ALTER TABLE ONLY public.task_workspaces
     ADD CONSTRAINT task_workspaces_task_id_fkey FOREIGN KEY (task_id) REFERENCES public.task(id) ON DELETE CASCADE;
+
+
+--
+-- Name: task_activity task_activity_task_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: todoly_app_user
+--
+
+ALTER TABLE ONLY public.task_activity
+    ADD CONSTRAINT task_activity_task_id_fkey FOREIGN KEY (task_id) REFERENCES public.task(id) ON DELETE CASCADE;
 
 
 --

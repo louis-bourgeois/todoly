@@ -1,4 +1,28 @@
 export const defaultRecurrence = { type: "none", days: [], endDate: null };
+const dateOnlyPattern = /^\d{4}-\d{2}-\d{2}$/;
+
+const parseDateOnly = (value) => {
+  if (!value) return null;
+  if (value instanceof Date) {
+    return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+  }
+  if (typeof value === "string" && dateOnlyPattern.test(value)) {
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+};
+
+const toDateKey = (value) => {
+  const parsed = parseDateOnly(value);
+  if (!parsed) return null;
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
 
 export const normalizeRecurrence = (recurrence) => {
   if (!recurrence || typeof recurrence !== "object") return defaultRecurrence;
@@ -29,22 +53,22 @@ export const occursOnDate = (task, targetDate) => {
   const startDateValue = task?.due_date || task?.dueDate;
   if (!startDateValue) return false;
 
-  const startDate = new Date(startDateValue);
-  const target = new Date(targetDate);
-  if (Number.isNaN(startDate.getTime()) || Number.isNaN(target.getTime())) {
+  const startDate = parseDateOnly(startDateValue);
+  const target = parseDateOnly(targetDate);
+  if (!startDate || !target) {
     return false;
   }
 
-  const startISO = startDate.toISOString().slice(0, 10);
-  const targetISO = target.toISOString().slice(0, 10);
+  const startISO = toDateKey(startDate);
+  const targetISO = toDateKey(target);
 
   if (recurrence.type === "none") {
     return startISO === targetISO;
   }
 
   if (recurrence.endDate) {
-    const end = new Date(recurrence.endDate);
-    if (target > end) return false;
+    const end = parseDateOnly(recurrence.endDate);
+    if (end && target > end) return false;
   }
 
   if (target < startDate) return false;

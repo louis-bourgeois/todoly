@@ -30,12 +30,20 @@ const port = process.env.PORT
 
 app.set("trust proxy", 1);
 
+const defaultCorsOrigins = [
+  "http://localhost:3000",
+  "http://192.168.1.100:3000",
+  "https://todoly.app",
+  "https://www.todoly.app",
+];
+
+const corsOrigins = (process.env.CORS_ORIGINS ?? defaultCorsOrigins.join(","))
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
 const corsOptions = {
-  origin: [
-    "http://localhost:3000",
-    "http://192.168.1.100:3000",
-    "https://todoly.app",
-  ],
+  origin: corsOrigins,
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],

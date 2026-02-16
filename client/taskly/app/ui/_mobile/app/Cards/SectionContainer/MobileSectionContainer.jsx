@@ -8,6 +8,18 @@ import { useWorkspace } from "../../../../../../context/WorkspaceContext";
 import SectionHeader from "./SectionHeader";
 import { occursOnDate } from "@/app/utils/recurrence";
 
+const dateOnlyPattern = /^\d{4}-\d{2}-\d{2}$/;
+const toDateKey = (value) => {
+  if (!value) return null;
+  if (typeof value === "string" && dateOnlyPattern.test(value)) return value;
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 export default function MobileSectionContainer({
   date,
   selectedWorkspace = undefined,
@@ -79,12 +91,26 @@ export default function MobileSectionContainer({
     }
 
     filteredSections.forEach((section) => {
+      const normalizeStatusForDate = (task) => {
+        if (!date) return task;
+        const recurrenceType = task?.recurrence?.type || "none";
+        if (recurrenceType === "none") return task;
+        const targetISO = toDateKey(date);
+        const lastCompletedISO = toDateKey(task?.last_completed_at);
+        const isDoneThisDay =
+          task.status === "done" && lastCompletedISO === targetISO;
+        return {
+          ...task,
+          status: isDoneThisDay ? "done" : "todo",
+        };
+      };
+
       const sectionTasksFiltered = allTasks.filter(
         (task) =>
           task &&
           task.linked_section === section.id &&
           (selectedWorkspace || !date || occursOnDate(task, date))
-      );
+      ).map(normalizeStatusForDate);
       if (sectionTasksFiltered.length > 0) {
         taskMap.set(section.id, sectionTasksFiltered);
       }
@@ -124,6 +150,7 @@ export default function MobileSectionContainer({
               <MobileTask
                 key={task.id}
                 task={task}
+                viewDate={date}
                 onClick={() => expandTask(task.id)}
               />
             ))}

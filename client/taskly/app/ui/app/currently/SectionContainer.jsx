@@ -10,6 +10,20 @@ import { useWorkspace } from "../../../../context/WorkspaceContext";
 import { useTranslation } from "../../../i18n/client";
 import { occursOnDate } from "@/app/utils/recurrence";
 
+const dateOnlyPattern = /^\d{4}-\d{2}-\d{2}$/;
+const toDateKey = (value) => {
+  if (!value) return null;
+  if (typeof value === "string" && dateOnlyPattern.test(value)) {
+    return value;
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 const SectionContainer = ({
   date = undefined,
   selectedWorkspace = undefined,
@@ -84,10 +98,8 @@ const SectionContainer = ({
       if (!date) return task;
       const recurrenceType = task?.recurrence?.type || "none";
       if (recurrenceType === "none") return task;
-      const targetISO = new Date(date).toISOString().slice(0, 10);
-      const lastCompletedISO = task?.last_completed_at
-        ? new Date(task.last_completed_at).toISOString().slice(0, 10)
-        : null;
+      const targetISO = toDateKey(date);
+      const lastCompletedISO = toDateKey(task?.last_completed_at);
       const isDoneThisDay =
         task.status === "done" && lastCompletedISO === targetISO;
       return {
@@ -197,8 +209,8 @@ const SectionContainer = ({
                       placeholder={t('sectionContainer.placeholder')}
                     />
                   ) : (
-                    <h1 className="text-text font-bold text-xl 4xl:text-2xl whitespace-nowrap overflow-hidden text-ellipsis max-w-[200px]">
-                      {section.name.length > 35 ? (
+                    <h1 className="text-text font-bold text-xl 4xl:text-2xl whitespace-nowrap overflow-hidden text-ellipsis max-w-[400px]">
+                      {section.name.length > 70 ? (
                         <span title={section.name}>{section.name}</span>
                       ) : (
                         section.name
@@ -302,6 +314,7 @@ const SectionContainer = ({
                     task={task}
                     key={task.id}
                     onTaskClick={() => expandTask(task.id)}
+                    viewDate={date}
                     minWidth={Math.max(
                       180,
                       (headerRefs.current[section.id]?.offsetWidth || 0) - 150

@@ -48,11 +48,11 @@ class User {
       
       if (this.phone_number) {
         const insertContact =
-          "INSERT INTO user_contact (user_id, email, phone_number) VALUES ($1, $2, $3);";
+          "INSERT INTO user_contact (user_id, email, phone_number) VALUES ($1, LOWER($2), $3);";
         await client.query(insertContact, [userId, this.email, this.phone_number]);
       } else {
         const insertContact =
-          "INSERT INTO user_contact (user_id, email) VALUES ($1, $2);";
+          "INSERT INTO user_contact (user_id, email) VALUES ($1, LOWER($2));";
         await client.query(insertContact, [userId, this.email]);
       }
 
@@ -95,7 +95,7 @@ class User {
 
       const updateUserContact = `
         UPDATE user_contact
-        SET email = $1
+        SET email = LOWER($1)
         WHERE user_id = $2
       `;
       await client.query(updateUserContact, [email, id]);
@@ -297,7 +297,7 @@ class User {
       {
         value: email,
         query:
-          "SELECT user_profile.id FROM user_profile JOIN user_contact ON user_profile.id = user_contact.user_id WHERE user_contact.email = $1",
+          "SELECT user_profile.id FROM user_profile JOIN user_contact ON user_profile.id = user_contact.user_id WHERE LOWER(user_contact.email) = LOWER($1)",
       },
       {
         value: username,

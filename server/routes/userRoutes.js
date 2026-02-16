@@ -40,7 +40,8 @@ router.post("/login", (req, res, next) => {
     }
     req.login(user, (err) => {
       if (err) return next(err);
-      return res.status(200).json({ message: "Login successful", user: user });
+      const safeUser = Array.isArray(user) ? user[1] : user;
+      return res.status(200).json({ message: "Login successful", user: safeUser });
     });
   })(req, res, next);
 });

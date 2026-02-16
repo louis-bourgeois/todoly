@@ -27,8 +27,8 @@ export async function getTask(req, res) {
 export async function updateTask(req, res) {
   try {
     const { task } = req.body;
-    await Task.update(task);
-    res.sendStatus(200);
+    const updatedTask = await Task.update(task);
+    res.status(200).json({ task: updatedTask });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error updating task" });

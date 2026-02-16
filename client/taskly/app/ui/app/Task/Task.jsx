@@ -10,7 +10,7 @@ const statusColors = {
   in_progress: "bg-ternary",
 };
 
-export default function Task({ task, onTaskClick, minWidth }) {
+export default function Task({ task, onTaskClick, minWidth, viewDate }) {
   const { t } = useTranslation();
   const { modifyTask } = useTask();
   const [taskStatus, setTaskStatus] = useState(task.status);
@@ -24,38 +24,46 @@ export default function Task({ task, onTaskClick, minWidth }) {
     [task?.recurrence]
   );
 
-  const mixColor = useCallback((a, b, weight) => {
-    const clamp = (v) => Math.min(255, Math.max(0, v));
-    return [
-      clamp(a[0] * (1 - weight) + b[0] * weight),
-      clamp(a[1] * (1 - weight) + b[1] * weight),
-      clamp(a[2] * (1 - weight) + b[2] * weight),
-    ];
-  }, []);
-
-  const recurringGradient = useMemo(() => {
+  const recurrenceVisual = useMemo(() => {
     if (!isRecurring) return null;
-    const score = Number(task?.recurrence_consistency ?? 0);
-    const warm = [251, 113, 133];
-    const amber = [249, 115, 22];
-    const cool = [37, 99, 235];
-    const lightCool = [59, 130, 246];
-    const startColor = mixColor(warm, amber, Math.min(1, 0.6 - score * 0.2));
-    const endColor = mixColor(lightCool, cool, Math.min(1, 0.5 + score * 0.4));
-    const startAlpha = 0.25 + score * 0.15;
-    const endAlpha = 0.45 + score * 0.25;
-    return `linear-gradient(135deg, rgba(${startColor
-      .map((c) => Math.round(c))
-      .join(",")},${startAlpha.toFixed(2)}) 0%, rgba(${endColor
-      .map((c) => Math.round(c))
-      .join(",")},${endAlpha.toFixed(2)}) 100%)`;
-  }, [isRecurring, task?.recurrence_consistency, mixColor]);
+    const score = Math.max(0, Math.min(1, Number(task?.recurrence_consistency ?? 0)));
+    const accent =
+      score < 0.34 ? [250, 55, 102] : score < 0.67 ? [255, 159, 10] : [0, 122, 255];
+    const accentRGB = accent.join(",");
+    return {
+      gradient: `linear-gradient(135deg, rgba(${accentRGB},0.22) 0%, rgba(${accentRGB},0.08) 100%)`,
+      border: `rgba(${accentRGB},0.75)`,
+      ring: `rgba(${accentRGB},0.32)`,
+      badgeBg: `rgba(${accentRGB},0.14)`,
+      badgeText: `rgb(${accentRGB})`,
+    };
+  }, [isRecurring, task?.recurrence_consistency]);
+
+  const recurrenceBadgeStyle = useMemo(
+    () =>
+      recurrenceVisual
+        ? {
+            backgroundColor: recurrenceVisual.badgeBg,
+            borderColor: recurrenceVisual.border,
+            color: recurrenceVisual.badgeText,
+          }
+        : undefined,
+    [recurrenceVisual]
+  );
+
   const cardStyle = useMemo(
     () => ({
       minWidth: safeMinWidth,
-      ...(recurringGradient ? { backgroundImage: recurringGradient } : {}),
+      ...(recurrenceVisual
+        ? {
+            backgroundImage: recurrenceVisual.gradient,
+            outline: `1px solid ${recurrenceVisual.border}`,
+            outlineOffset: "-1px",
+            boxShadow: `0 10px 24px rgba(0,0,0,0.18), 0 0 0 1px ${recurrenceVisual.ring} inset`,
+          }
+        : {}),
     }),
-    [safeMinWidth, recurringGradient]
+    [safeMinWidth, recurrenceVisual]
   );
 
   const handleTaskDoneClick = useCallback(
@@ -64,9 +72,21 @@ export default function Task({ task, onTaskClick, minWidth }) {
       console.log()
       const newStatus = taskStatus !== "done" ? "done" : "todo";
       setTaskStatus(newStatus);
-      modifyTask({ ...task, status: newStatus }, "post");
+      const now = new Date();
+      const fallbackDate = `${now.getFullYear()}-${String(
+        now.getMonth() + 1
+      ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      const completionContextDate =
+        typeof viewDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(viewDate)
+          ? viewDate
+          : fallbackDate;
+
+      modifyTask(
+        { ...task, status: newStatus, completion_context_date: completionContextDate },
+        "post"
+      );
     },
-    [taskStatus, task, modifyTask]
+    [taskStatus, task, modifyTask, viewDate]
   );
 
   useEffect(() => {
@@ -102,7 +122,10 @@ export default function Task({ task, onTaskClick, minWidth }) {
               </span>
             )}
             {isRecurring && (
-              <span className="text-[10px] px-2 py-1 rounded-full bg-primary/50 text-text border border-white/10 backdrop-blur-sm">
+              <span
+                className="text-[10px] px-2 py-1 rounded-full border backdrop-blur-sm font-semibold"
+                style={recurrenceBadgeStyle}
+              >
                 {t("task.regularity")}{" "}
                 {Math.round((task?.recurrence_consistency || 0) * 100)}%
               </span>

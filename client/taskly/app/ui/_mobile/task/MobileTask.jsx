@@ -8,7 +8,7 @@ const colors = {
   in_progress: "bg-yellow-500",
 };
 
-export default function MobileTask({ task, onClick }) {
+export default function MobileTask({ task, onClick, viewDate }) {
   const { modifyTask } = useTask();
 
   const shortTitle = task.title.length <= 8;
@@ -20,9 +20,20 @@ export default function MobileTask({ task, onClick }) {
     (e) => {
       e.stopPropagation();
       const newStatus = task.status !== "done" ? "done" : "todo";
-      modifyTask({ ...task, status: newStatus }, "post");
+      const now = new Date();
+      const fallbackDate = `${now.getFullYear()}-${String(
+        now.getMonth() + 1
+      ).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      const completionContextDate =
+        typeof viewDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(viewDate)
+          ? viewDate
+          : fallbackDate;
+      modifyTask(
+        { ...task, status: newStatus, completion_context_date: completionContextDate },
+        "post"
+      );
     },
-    [task, modifyTask]
+    [task, modifyTask, viewDate]
   );
 
   return (

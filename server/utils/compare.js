@@ -1,3 +1,18 @@
+const dateOnlyPattern = /^\d{4}-\d{2}-\d{2}$/;
+
+const normalizeDateValue = (value) => {
+  if (value === undefined || value === null || value === "") return null;
+  if (typeof value === "string" && dateOnlyPattern.test(value)) {
+    return value;
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, "0");
+  const day = String(parsed.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+};
+
 export function compareArrays(original, updated) {
   const added = [];
   const removed = [];
@@ -33,8 +48,8 @@ export function compareObjects(original, updated) {
   Object.keys(updated).forEach((key) => {
     
     if (key.endsWith("_date")) {
-      const originalDate = new Date(original[key]).toISOString().slice(0, 10);
-      const updatedDate = new Date(updated[key]).toISOString().slice(0, 10);
+      const originalDate = normalizeDateValue(original[key]);
+      const updatedDate = normalizeDateValue(updated[key]);
 
       
       if (updatedDate !== originalDate) {

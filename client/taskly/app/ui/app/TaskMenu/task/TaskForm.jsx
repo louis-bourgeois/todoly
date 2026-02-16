@@ -43,7 +43,9 @@ export default function TaskForm({
   const [workspaceSelectMenuOpen, setWorkspaceSelectMenuOpen] = useState(false);
   const [elementPickerMenuOpen, setElementPickerMenuOpen] = useState(false);
 
-  const [dueDate, setDueDate] = useState(new Date());
+  const [dueDate, setDueDate] = useState(
+    () => formatADate(new Date(), "yyyy-MM-dd") || undefined
+  );
   const [task, setTask] = useState(null);
   const [titleValue, setTitleValue] = useState("");
   const [status, setStatus] = useState("todo");
@@ -90,9 +92,7 @@ export default function TaskForm({
         setStatus(foundTask.status || "todo");
         setLinkedSection(foundTask.linked_section || "");
         setPriority(foundTask.priority || 5);
-        setDueDate(
-          foundTask.due_date ? new Date(foundTask.due_date) : new Date()
-        );
+        setDueDate(foundTask.due_date || undefined);
         setTaskTags(foundTask.tags || []);
         setSubtasks(foundTask.subtasks || []);
         setRecurrence(normalizeRecurrence(foundTask.recurrence));
@@ -106,7 +106,7 @@ export default function TaskForm({
       setTitleValue(titleValue || "");
       setStatus(status || "todo");
       setPriority(priority || 5);
-      setDueDate(dueDate || new Date());
+      setDueDate(dueDate || formatADate(new Date(), "yyyy-MM-dd"));
       setTaskTags(taskTags || []);
       setSubtasks(subtasks || []);
       setRecurrence(defaultRecurrence);
@@ -148,14 +148,17 @@ export default function TaskForm({
     setTaskTags([]);
     setSubtasks([]);
     setRecurrence(defaultRecurrence);
+    setRecurrenceSelectMenuOpen(false);
+    setWorkspaceSelectMenuOpen(false);
     setDescriptionValue("");
     setTask(null);
     setElementPickerMenuOpen(false);
     setSectionSelectMenuOpen(false);
+    setDueDate(formatADate(new Date(), "yyyy-MM-dd") || undefined);
     setLinkedSection(getDefaultSection());
     setActiveTask(null);
     setIsDescriptionFocused(false);
-  }, [setActiveTask, currentWorkspace, getDefaultSection]);
+  }, [setActiveTask, currentWorkspace, getDefaultSection, formatADate]);
 
   useEffect(() => {
     if (!isTaskMenuOpen) {
@@ -165,26 +168,26 @@ export default function TaskForm({
 
   const handleDateSelect = useCallback(
     (date) => {
-      if (
-        dueDate &&
-        formatADate(dueDate, "yyyy-MM-dd") === formatADate(date, "yyyy-MM-dd")
-      ) {
-        setDueDate(undefined);
-      } else {
-        setDueDate(date);
-      }
+      const datePattern = /^\d{4}-\d{2}-\d{2}$/;
+      const normalizedDate = date
+        ? datePattern.test(String(date))
+          ? String(date)
+          : formatADate(date, "yyyy-MM-dd")
+        : null;
+      const nextDueDate = normalizedDate || undefined;
+      const persistedDueDate = nextDueDate || null;
+
+      setDueDate(nextDueDate);
 
       if (id) {
-        const updatedTask = { ...task, due_date: date || null };
+        const updatedTask = { ...task, due_date: persistedDueDate };
         setTask(updatedTask);
         modifyTask(updatedTask, "post");
       }
-      if (recurrence.endDate && date) {
-        const recurrenceEnd = new Date(recurrence.endDate);
-        if (recurrenceEnd < date) {
+      if (recurrence.endDate && persistedDueDate && recurrence.endDate < persistedDueDate) {
           const adjustedRecurrence = {
             ...recurrence,
-            endDate: formatADate(date, "yyyy-MM-dd"),
+            endDate: persistedDueDate,
           };
           setRecurrence(adjustedRecurrence);
           if (id) {
@@ -192,10 +195,9 @@ export default function TaskForm({
             setTask(updatedTask);
             modifyTask(updatedTask, "post");
           }
-        }
       }
     },
-    [dueDate, task, id, modifyTask, formatADate, recurrence]
+    [task, id, modifyTask, formatADate, recurrence]
   );
 
   const createTask = useCallback(async () => {
@@ -334,7 +336,7 @@ export default function TaskForm({
           >
             <DatePicker
               onDateSelect={handleDateSelect}
-              selectedDate={dueDate ? formatADate(dueDate, "yyyy-MM-dd") : undefined}
+              selectedDate={dueDate || undefined}
               startOfWeekOnSunday={preferences.Week_Starts_On}
             />
           </TaskMenuSectionContainer>

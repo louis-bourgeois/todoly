@@ -54,6 +54,10 @@ export default function DescriptionContainer({
       const before = text.slice(0, selectionStart);
       const selected = text.slice(selectionStart, selectionEnd);
       const after = text.slice(selectionEnd);
+      const selectionWrappedByMarker =
+        selected.length >= marker.length * 2 &&
+        selected.startsWith(marker) &&
+        selected.endsWith(marker);
 
       const isWrapped =
         selectionStart >= marker.length &&
@@ -61,7 +65,13 @@ export default function DescriptionContainer({
         text.slice(selectionStart - marker.length, selectionStart) === marker &&
         text.slice(selectionEnd, selectionEnd + marker.length) === marker;
 
-      if (isWrapped) {
+      if (selectionWrappedByMarker) {
+        // Remove markers when the user selected the already formatted text including markers
+        const unwrapped = selected.slice(marker.length, selected.length - marker.length);
+        newText = `${before}${unwrapped}${after}`;
+        newSelectionStart = selectionStart;
+        newSelectionEnd = selectionStart + unwrapped.length;
+      } else if (isWrapped) {
         // Remove surrounding markers when selection is already formatted
         newText =
           text.slice(0, selectionStart - marker.length) +

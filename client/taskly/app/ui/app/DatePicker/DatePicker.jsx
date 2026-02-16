@@ -38,6 +38,17 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
     [startOfWeekOnSunday]
   );
 
+  const parseDateOnly = useCallback((value) => {
+    if (!value) return null;
+    if (value instanceof Date) return value;
+    if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      const [year, month, day] = value.split("-").map(Number);
+      return new Date(year, month - 1, day);
+    }
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
+  }, []);
+
   const generateDays = useCallback(
     (date) => {
       const weekStartsOn = startOfWeekOnSunday === "Sunday" ? 0 : 1;
@@ -60,9 +71,12 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
 
   useEffect(() => {
     if (selectedDate) {
-      setCurrentDate(new Date(selectedDate));
+      const parsedDate = parseDateOnly(selectedDate);
+      if (parsedDate) {
+        setCurrentDate(parsedDate);
+      }
     }
-  }, [selectedDate]);
+  }, [selectedDate, parseDateOnly]);
 
   const isPastDate = (date) => {
     const today = new Date();
@@ -70,7 +84,8 @@ const DatePicker = ({ startOfWeekOnSunday, onDateSelect, selectedDate }) => {
   };
 
   const isSelectedDate = (date) => {
-    return selectedDate && isSameDay(new Date(selectedDate), date);
+    const parsedSelectedDate = parseDateOnly(selectedDate);
+    return parsedSelectedDate ? isSameDay(parsedSelectedDate, date) : false;
   };
 
   const handlePreviousMonth = () => {

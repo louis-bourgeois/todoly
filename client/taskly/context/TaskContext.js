@@ -37,13 +37,71 @@ const normalizeSubtasks = (subtasks = []) => {
   });
 };
 
+const dateOnlyPattern = /^\d{4}-\d{2}-\d{2}$/;
+
+const parseDateOnly = (value) => {
+  if (!value) return null;
+  if (value instanceof Date) {
+    return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+  }
+  if (typeof value === "string" && dateOnlyPattern.test(value)) {
+    const [year, month, day] = value.split("-").map(Number);
+    return new Date(year, month - 1, day);
+  }
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return null;
+  return new Date(parsed.getFullYear(), parsed.getMonth(), parsed.getDate());
+};
+
+const countExpectedOccurrences = (startDate, recurrence, endDate) => {
+  if (!startDate || !endDate || endDate < startDate) return 0;
+
+  const activeDays =
+    recurrence.days && recurrence.days.length > 0
+      ? recurrence.days
+      : recurrence.type === "daily"
+      ? [0, 1, 2, 3, 4, 5, 6]
+      : recurrence.type === "weekend"
+      ? [0, 6]
+      : [];
+
+  if (activeDays.length === 0) return 0;
+
+  const cursor = new Date(startDate);
+  let expected = 0;
+  while (cursor <= endDate) {
+    if (activeDays.includes(cursor.getDay())) {
+      expected += 1;
+    }
+    cursor.setDate(cursor.getDate() + 1);
+  }
+
+  return expected;
+};
+
 const computeRecurringConsistency = (task) => {
   const recurrence = normalizeRecurrence(task?.recurrence);
   if (!recurrence || recurrence.type === "none") return null;
-  const completions = Number(task?.completion_count || 0);
-  const reschedules = Number(task?.reschedule_count || 0);
-  const denominator = completions + reschedules || 1;
-  return Math.max(0, Math.min(1, completions / denominator));
+
+  const startDate = parseDateOnly(
+    task?.creation_date || task?.created_at || task?.due_date || task?.dueDate
+  );
+  if (!startDate) return 0;
+
+  const today = parseDateOnly(new Date());
+  const recurrenceEndDate = parseDateOnly(recurrence.endDate);
+  const endDate =
+    recurrenceEndDate && recurrenceEndDate < today ? recurrenceEndDate : today;
+
+  const expectedOccurrences = countExpectedOccurrences(
+    startDate,
+    recurrence,
+    endDate
+  );
+  if (expectedOccurrences <= 0) return 0;
+
+  const completions = Math.max(0, Number(task?.completion_count || 0));
+  return Math.max(0, Math.min(1, completions / expectedOccurrences));
 };
 
 const normalizeTask = (task = {}) => {
@@ -158,15 +216,6 @@ export const TaskProvider = ({ children }) => {
     async (updatedTask) => {
       const existingTask = tasks.find((t) => t.id === updatedTask.id);
       const payload = { ...updatedTask };
-      if (
-        payload.status === "done" &&
-        existingTask &&
-        existingTask.status !== "done"
-      ) {
-        payload.last_completed_at = new Date().toISOString();
-        payload.completion_count = (existingTask.completion_count || 0) + 1;
-        payload.is_overdue = false;
-      }
       try {
         const response = await axios.post(
           `${baseUrl}/update`,
@@ -174,10 +223,17 @@ export const TaskProvider = ({ children }) => {
           { withCredentials: true }
         );
         if (response.status === 200) {
+          const serverTask = response.data?.task
+            ? normalizeTask(response.data.task)
+            : null;
+          const normalized = normalizeTask(
+            serverTask || { ...existingTask, ...payload }
+          );
+
           setTasks((prevTasks) =>
             prevTasks.map((task) =>
               task.id === updatedTask.id
-                ? normalizeTask({ ...task, ...payload })
+                ? normalized
                 : task
             )
           );
@@ -189,10 +245,6 @@ export const TaskProvider = ({ children }) => {
               const hasTask = workspaceTasks.some(
                 (task) => task.id === updatedTask.id
               );
-              const normalized = normalizeTask({
-                ...workspaceTasks.find((t) => t.id === updatedTask.id),
-                ...payload,
-              });
               if (workspace.id === normalized.workspace_id) {
                 const nextTasks = hasTask
                   ? workspaceTasks.map((task) =>

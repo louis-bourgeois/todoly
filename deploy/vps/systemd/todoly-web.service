@@ -1,0 +1,18 @@
+[Unit]
+Description=Todoly Web (Next.js)
+After=network.target todoly-api.service
+Wants=todoly-api.service
+
+[Service]
+Type=simple
+User=__APP_USER__
+WorkingDirectory=__APP_ROOT__/client/taskly
+Environment=NODE_ENV=production
+ExecStart=/usr/bin/npm run start -- --hostname 127.0.0.1 --port 3000
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target
