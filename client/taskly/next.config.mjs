@@ -48,6 +48,7 @@ const pwaConfig = {
   disable: process.env.NODE_ENV === "development",
   register: true,
   skipWaiting: true,
+  clientsClaim: true,
 };
 
 export default withPWA(pwaConfig)(nextConfig);
