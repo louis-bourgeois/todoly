@@ -2,10 +2,15 @@ import pool from "../config/dbConfig.js";
 import { compareObjects } from "../utils/compare.js";
 import { isUUID } from "../utils/validate.js";
 import Section from "./Section.js";
+import TaskActivity from "./TaskActivity.js";
 
 let taskPropsColumnsEnsured = false;
+let taskPropsSchemaVersion = 0;
+const TASK_PROPS_SCHEMA_VERSION = 2;
 async function ensureTaskPropertiesColumns(client = null) {
-  if (taskPropsColumnsEnsured) return;
+  if (taskPropsColumnsEnsured && taskPropsSchemaVersion >= TASK_PROPS_SCHEMA_VERSION) {
+    return;
+  }
   const runner = client ? client.query.bind(client) : pool.query.bind(pool);
   await runner(
     `ALTER TABLE IF EXISTS task_properties ADD COLUMN IF NOT EXISTS subtasks jsonb`
@@ -19,7 +24,38 @@ async function ensureTaskPropertiesColumns(client = null) {
   await runner(
     `UPDATE task_properties SET recurrence = COALESCE(recurrence, '{"type":"none","days":[],"endDate":null}'::jsonb)`
   );
+  await runner(
+    `ALTER TABLE IF EXISTS task_properties ADD COLUMN IF NOT EXISTS is_overdue boolean DEFAULT false`
+  );
+  await runner(
+    `ALTER TABLE IF EXISTS task_properties ADD COLUMN IF NOT EXISTS reschedule_count integer DEFAULT 0`
+  );
+  await runner(
+    `ALTER TABLE IF EXISTS task_properties ADD COLUMN IF NOT EXISTS auto_reschedule_limit integer`
+  );
+  await runner(
+    `ALTER TABLE IF EXISTS task_properties ADD COLUMN IF NOT EXISTS auto_reschedule_enabled boolean DEFAULT true`
+  );
+  await runner(
+    `ALTER TABLE IF EXISTS task_properties ADD COLUMN IF NOT EXISTS last_rescheduled_at timestamp`
+  );
+  await runner(
+    `ALTER TABLE IF EXISTS task_properties ADD COLUMN IF NOT EXISTS last_completed_at timestamp`
+  );
+  await runner(
+    `ALTER TABLE IF EXISTS task_properties ADD COLUMN IF NOT EXISTS completion_count integer DEFAULT 0`
+  );
+  await runner(
+    `UPDATE task_properties 
+      SET 
+        is_overdue = COALESCE(is_overdue, false),
+        reschedule_count = COALESCE(reschedule_count, 0),
+        auto_reschedule_enabled = COALESCE(auto_reschedule_enabled, true),
+        completion_count = COALESCE(completion_count, 0)
+    `
+  );
   taskPropsColumnsEnsured = true;
+  taskPropsSchemaVersion = TASK_PROPS_SCHEMA_VERSION;
 }
 
 class Task {
@@ -34,7 +70,8 @@ class Task {
     description,
     workspaceId,
     subtasks = [],
-    recurrence = { type: "none", days: [], endDate: null }
+    recurrence = { type: "none", days: [], endDate: null },
+    extendedProps = {}
   ) {
     this.owner_id = owner_id;
     this.title = title;
@@ -47,6 +84,15 @@ class Task {
     this.workspaceId = workspaceId;
     this.subtasks = subtasks;
     this.recurrence = recurrence;
+    this.is_overdue = extendedProps.is_overdue ?? false;
+    this.reschedule_count = extendedProps.reschedule_count ?? 0;
+    this.auto_reschedule_limit =
+      extendedProps.auto_reschedule_limit ?? null;
+    this.auto_reschedule_enabled =
+      extendedProps.auto_reschedule_enabled ?? true;
+    this.last_rescheduled_at = extendedProps.last_rescheduled_at ?? null;
+    this.last_completed_at = extendedProps.last_completed_at ?? null;
+    this.completion_count = extendedProps.completion_count ?? 0;
   }
 
   async save() {
@@ -79,8 +125,15 @@ class Task {
           user_id,
           tags,
           description,
-          recurrence
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+          recurrence,
+          is_overdue,
+          reschedule_count,
+          auto_reschedule_limit,
+          auto_reschedule_enabled,
+          last_rescheduled_at,
+          last_completed_at,
+          completion_count
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17)
       `;
 
       await client.query(insertTaskProp, [
@@ -96,11 +149,33 @@ class Task {
         JSON.stringify(
           this.recurrence || { type: "none", days: [], endDate: null }
         ),
+        this.is_overdue,
+        this.reschedule_count,
+        this.auto_reschedule_limit,
+        this.auto_reschedule_enabled,
+        this.last_rescheduled_at,
+        this.last_completed_at,
+        this.completion_count,
       ]);
 
       const twQuery = `INSERT INTO task_workspaces (task_id, workspace_id) VALUES ($1, $2)`;
       const twProps = [taskId, this.workspaceId];
       await client.query(twQuery, twProps);
+
+      await TaskActivity.log(
+        {
+          taskId,
+          userId: this.owner_id,
+          workspaceId: this.workspaceId,
+          eventType: "created",
+          metadata: {
+            dueDate: this.dueDate || null,
+            priority: this.priority,
+            recurrence: this.recurrence,
+          },
+        },
+        client
+      );
       await client.query("COMMIT");
       return result.rows[0].id;
     } catch (e) {
@@ -198,6 +273,21 @@ class Task {
           parsedRow.due_date = `${year}-${month}-${day}`;
         }
 
+        parsedRow.is_overdue = !!row.is_overdue;
+        parsedRow.reschedule_count = Number(row.reschedule_count || 0);
+        parsedRow.auto_reschedule_limit =
+          row.auto_reschedule_limit !== null &&
+          row.auto_reschedule_limit !== undefined
+            ? Number(row.auto_reschedule_limit)
+            : null;
+        parsedRow.auto_reschedule_enabled =
+          row.auto_reschedule_enabled !== undefined
+            ? !!row.auto_reschedule_enabled
+            : true;
+        parsedRow.last_rescheduled_at = row.last_rescheduled_at;
+        parsedRow.last_completed_at = row.last_completed_at;
+        parsedRow.completion_count = Number(row.completion_count || 0);
+
         return parsedRow;
       });
 
@@ -240,18 +330,48 @@ class Task {
     }
   }
 
-  static async update(taskToUpdate) {
+  static async update(taskToUpdate, alreadyRetried = false) {
     const client = await pool.connect();
     try {
+      const sanitizedTask = { ...taskToUpdate };
+      delete sanitizedTask.recurrence_consistency;
+      delete sanitizedTask.recurrenceConsistency;
+      await client.query("BEGIN");
       await ensureTaskPropertiesColumns(client);
-      const [currentTask] = await this.find(undefined, taskToUpdate.id);
+      const [currentTask] = await this.find(undefined, sanitizedTask.id);
 
       if (!currentTask) {
         console.error("Task not found (check Task.js in update)");
         throw new Error("Task not found");
       }
 
-      const changes = compareObjects(currentTask, taskToUpdate);
+      const now = new Date();
+      const statusChangedToDone =
+        sanitizedTask.status === "done" && currentTask.status !== "done";
+      const updatedDue = sanitizedTask.due_date || sanitizedTask.dueDate;
+      const currentDue = currentTask.due_date || currentTask.dueDate;
+      const updatedDueDate =
+        updatedDue && !Number.isNaN(new Date(updatedDue).getTime())
+          ? new Date(updatedDue)
+          : null;
+      const currentDueDate =
+        currentDue && !Number.isNaN(new Date(currentDue).getTime())
+          ? new Date(currentDue)
+          : null;
+      const dueDateChanged =
+        !!updatedDueDate &&
+        (!currentDueDate ||
+          currentDueDate.toISOString().slice(0, 10) !==
+            updatedDueDate.toISOString().slice(0, 10));
+
+      if (statusChangedToDone) {
+        sanitizedTask.last_completed_at = now;
+        sanitizedTask.completion_count =
+          (currentTask.completion_count || 0) + 1;
+        sanitizedTask.is_overdue = false;
+      }
+
+      const changes = compareObjects(currentTask, sanitizedTask);
       const jsonColumns = ["tags", "subtasks", "recurrence"];
       jsonColumns.forEach((key) => {
         if (changes[key] !== undefined) {
@@ -330,10 +450,57 @@ class Task {
           await client.query(sqlQuery, queryParams);
         }
       }
+
+      const workspaceId =
+        sanitizedTask.workspace_id || currentTask.workspace_id || null;
+
+      if (statusChangedToDone) {
+        await TaskActivity.log(
+          {
+            taskId: sanitizedTask.id,
+            userId: currentTask.user_id,
+            workspaceId,
+            eventType: "completed",
+            metadata: {
+              priority: sanitizedTask.priority ?? currentTask.priority,
+              dueDate: updatedDue || currentDue,
+              recurrence: sanitizedTask.recurrence || currentTask.recurrence,
+            },
+            eventDate: now,
+          },
+          client
+        );
+      }
+
+      if (dueDateChanged && !statusChangedToDone) {
+        await TaskActivity.log(
+          {
+            taskId: sanitizedTask.id,
+            userId: currentTask.user_id,
+            workspaceId,
+            eventType: "manual_reschedule",
+            metadata: {
+              from: currentDue,
+              to: updatedDue,
+              priority: taskToUpdate.priority ?? currentTask.priority,
+            },
+            eventDate: now,
+          },
+          client
+        );
+      }
+
+      await client.query("COMMIT");
     } catch (error) {
+      await client.query("ROLLBACK");
       if (error.code === "42703") {
         console.error("Missing columns detected, retrying column creation", error);
-        await ensureTaskPropertiesColumns();
+        taskPropsColumnsEnsured = false;
+        taskPropsSchemaVersion = 0;
+        await ensureTaskPropertiesColumns(client);
+        if (!alreadyRetried) {
+          return await Task.update(sanitizedTask, true);
+        }
       }
       throw error;
     } finally {
@@ -371,6 +538,96 @@ class Task {
         "DELETE FROM task_workspaces WHERE task_id = $1 AND workspace_id = $2";
       await client.query(query, [taskId, workspaceId]);
     } catch (error) {
+      throw error;
+    } finally {
+      client.release();
+    }
+  }
+
+  static async autoRescheduleOverdueTasks() {
+    const client = await pool.connect();
+    try {
+      await client.query("BEGIN");
+      await ensureTaskPropertiesColumns(client);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const todayDate = today.toISOString().slice(0, 10);
+
+      const overdueQuery = `
+        SELECT 
+          t.id, 
+          t.user_id, 
+          tp.due_date, 
+          tp.status, 
+          tp.priority, 
+          tp.recurrence, 
+          tp.reschedule_count, 
+          tp.auto_reschedule_limit, 
+          tp.auto_reschedule_enabled,
+          tw.workspace_id
+        FROM task t
+        INNER JOIN task_properties tp ON t.id = tp.task_id
+        INNER JOIN task_workspaces tw ON t.id = tw.task_id
+        WHERE tp.due_date IS NOT NULL
+          AND tp.status <> 'done'
+          AND tp.due_date < $1
+          AND COALESCE(tp.auto_reschedule_enabled, true) = true
+          AND COALESCE(tp.recurrence->>'type', 'none') = 'none'
+      `;
+
+      const { rows } = await client.query(overdueQuery, [todayDate]);
+
+      for (const row of rows) {
+        const limit = row.auto_reschedule_limit;
+        const reachedLimit =
+          limit !== null && limit !== undefined && row.reschedule_count >= limit;
+
+        if (reachedLimit) {
+          await client.query(
+            `UPDATE task_properties 
+              SET is_overdue = true
+              WHERE task_id = $1`,
+            [row.id]
+          );
+          continue;
+        }
+
+        const newDueDate = todayDate;
+        const newCount = Number(row.reschedule_count || 0) + 1;
+        const now = new Date();
+
+        await client.query(
+          `UPDATE task_properties 
+            SET 
+              due_date = $1,
+              is_overdue = true,
+              reschedule_count = $2,
+              last_rescheduled_at = $3
+            WHERE task_id = $4`,
+          [newDueDate, newCount, now, row.id]
+        );
+
+        await TaskActivity.log(
+          {
+            taskId: row.id,
+            userId: row.user_id,
+            workspaceId: row.workspace_id,
+            eventType: "auto_reschedule",
+            metadata: {
+              fromDueDate: row.due_date,
+              toDueDate: newDueDate,
+              priority: row.priority,
+            },
+            eventDate: now,
+          },
+          client
+        );
+      }
+
+      await client.query("COMMIT");
+    } catch (error) {
+      await client.query("ROLLBACK");
+      console.error("Error while auto-rescheduling overdue tasks:", error);
       throw error;
     } finally {
       client.release();

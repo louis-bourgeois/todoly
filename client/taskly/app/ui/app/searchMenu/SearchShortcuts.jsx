@@ -11,7 +11,7 @@ const SearchShortcuts = () => {
 
   const shortcuts = [
     { keys: ["Ctrl", "K"], label: t("searchShortcuts.searchMenu") },
-    { keys: ["Shift", "A"], label: t("searchShortcuts.addMenu") },
+    { keys: ["Alt", "A"], label: t("searchShortcuts.addMenu") },
     { keys: ["Ctrl", "V"], label: t("searchShortcuts.viewsMenu") },
     { keys: ["Alt", "S"], label: t("searchShortcuts.settings") },
     { keys: ["Esc"], label: t("searchShortcuts.close") },
@@ -19,7 +19,7 @@ const SearchShortcuts = () => {
   ];
 
   return (
-    <div className="w-full mt-3 rounded-2xl gradient-border bg-primary/80 text-text border border-secondary/10 shadow-lg overflow-hidden">
+    <div className="w-full mt-3 rounded-2xl bg-primary text-text border  gradient-border  shadow-lg overflow-hidden">
       <div className="flex items-center justify-between px-[1.5vw] py-[1vw]">
         <div>
           <p className="text-sm font-semibold">{t("searchShortcuts.title")}</p>

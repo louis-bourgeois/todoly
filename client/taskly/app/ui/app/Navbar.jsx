@@ -81,7 +81,7 @@ export default function Navbar() {
     setShowMenu((prev) => !prev);
     setProfilePictureVisibility(true);
   }, []);
-
+  useEffect(() => {console.log(profilePictureVisibility)}, [profilePictureVisibility])
   const handleTaskMenuClick = useCallback(() => {
     toggleTaskMenu("", "", "Task");
   }, [toggleTaskMenu]);

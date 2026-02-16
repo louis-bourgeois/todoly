@@ -90,7 +90,14 @@ CREATE TABLE public.task_properties (
     user_id uuid NOT NULL,
     tags jsonb DEFAULT '[]'::jsonb,
     description text,
-    recurrence jsonb DEFAULT '{"type":"none","days":[],"endDate":null}'::jsonb
+    recurrence jsonb DEFAULT '{"type":"none","days":[],"endDate":null}'::jsonb,
+    is_overdue boolean DEFAULT false,
+    reschedule_count integer DEFAULT 0,
+    auto_reschedule_limit integer,
+    auto_reschedule_enabled boolean DEFAULT true,
+    last_rescheduled_at timestamp without time zone,
+    last_completed_at timestamp without time zone,
+    completion_count integer DEFAULT 0
 );
 
 
@@ -107,6 +114,25 @@ CREATE TABLE public.task_workspaces (
 
 
 ALTER TABLE public.task_workspaces OWNER TO todoly_app_user;
+
+--
+-- Name: task_activity; Type: TABLE; Schema: public; Owner: todoly_app_user
+--
+
+CREATE TABLE IF NOT EXISTS public.task_activity (
+    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
+    task_id uuid NOT NULL,
+    user_id uuid NOT NULL,
+    workspace_id uuid,
+    event_type character varying(64) NOT NULL,
+    event_date timestamp without time zone DEFAULT CURRENT_TIMESTAMP,
+    metadata jsonb DEFAULT '{}'::jsonb
+);
+
+ALTER TABLE public.task_activity OWNER TO todoly_app_user;
+
+ALTER TABLE ONLY public.task_activity
+    ADD CONSTRAINT task_activity_task_id_fkey FOREIGN KEY (task_id) REFERENCES public.task(id) ON DELETE CASCADE;
 
 --
 -- Name: user_contact; Type: TABLE; Schema: public; Owner: todoly_app_user

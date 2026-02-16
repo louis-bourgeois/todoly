@@ -18,6 +18,8 @@ import taskRoutes from "./routes/taskRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import workspaceRoutes from "./routes/workspaceRoutes.js";
 import profileImageRoutes from "./routes/profilImageRoutes.js"
+import statsRoutes from "./routes/statsRoutes.js";
+import { scheduleTaskMaintenance } from "./utils/taskScheduler.js";
 
 dotenv.config();
 
@@ -82,6 +84,7 @@ app.use("/api/tags", tagRoutes);
 app.use("/api/workspaces", workspaceRoutes);
 app.use("/api/preferences", preferenceRoutes);
 app.use("/api/profile", profileImageRoutes);
+app.use("/api/stats", statsRoutes);
 
 app.get("/", (req, res) => {
   res.send(
@@ -148,3 +151,5 @@ passport.deserializeUser(async (id, cb) => {
 server.listen(port, "localhost", () => {
   console.log(`Server running on http://localhost:${port}`);
 });
+
+scheduleTaskMaintenance();

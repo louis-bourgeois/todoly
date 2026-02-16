@@ -96,7 +96,8 @@
     "deleteTask": "Supprimer la tâche",
     "selectDestination": "Sélectionnez la destination",
     "selectWorkspace": "Sélectionnez l'workspace",
-    "newTagName": "Nouveau nom d'tag"
+    "newTagName": "Nouveau nom d'tag",
+    "statistics": "Statistiques"
   },
   "searchShortcuts": {
     "title": "Raccourcis clavier",
@@ -271,11 +272,12 @@
   },
   "defaultContent": {
     "currently": "Actuellement",
-    "all": "Tous"
+    "all": "Tous",
+    "statistics": "Statistiques"
   },
-  "libelles" : {
+  "libelles": {
     "Layout": "Disposition",
-    "Appearance" : "Apparence",
+    "Appearance": "Apparence",
     "Notifications": "Notifications",
     "Languages": "Languages",
     "Integrations": "Intégrations"
@@ -308,7 +310,7 @@
     "nextWeek": "La semaine prochaine",
     "thisWeekend": "Ce week-end"
   },
-    "error": {
+  "error": {
     "tag": "Erreur",
     "accountAlreadyExists": {
       "title": "Le compte existe déjà",
@@ -369,6 +371,52 @@
       "title": "Erreur inattendue",
       "subtitle": "Quelque chose s'est mal passé. Veuillez réessayer ou contacter notre équipe de support si le problème persiste.",
       "action": "Contacter le support"
+    }
+  },
+  "task": {
+    "overdueFlag": "En retard",
+    "regularity": "Régularité"
+  },
+  "statistics": {
+    "title": "Statistiques",
+    "loading": "Chargement des statistiques...",
+    "empty": "Pas encore de données pour cette période.",
+    "metric": {
+      "completion": "Taux de complétion",
+      "reschedule": "Taux de replanification"
+    },
+    "timeframes": {
+      "week": "Cette semaine",
+      "month": "Ce mois-ci",
+      "year": "Cette année",
+      "all": "Long terme"
+    },
+    "filters": {
+      "title": "Filtres",
+      "open": "Filtres",
+      "cancel": "Annuler",
+      "apply": "Appliquer",
+      "workspaces": "Espaces de travail",
+      "sections": "Sections",
+      "tags": "Tags"
+    },
+    "options": {
+      "weightedPriority": "Prendre en compte la priorité",
+      "onlyRecurring": "Uniquement les tâches récurrentes"
+    },
+    "cards": {
+      "title": "Moments clés",
+      "dailyAverage": "Moyenne quotidienne de complétion",
+      "productivityStreak": "Série de productivité",
+      "days": "jours",
+      "topRecurring": "Tâche récurrente la plus réalisée",
+      "bestMonth": "Meilleur mois",
+      "overdue": "Tâches en retard",
+      "autoRescheduled": "Replanifications auto"
+    },
+    "community": {
+      "title": "Volet communautaire en préparation",
+      "subtitle": "Le partage et la compétition arrivent bientôt."
     }
   }
 }

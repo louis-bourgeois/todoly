@@ -76,6 +76,7 @@ export default function MainMenu({
     if (layout === "default" || layout === "settings") {
       setProfilePictureVisibility(true);
     } else {
+      console.log("pp false")
       setProfilePictureVisibility(false);
     }
     const libelle = LIBELLES.find((item) => item.name === layout) || { width: DEFAULT_WIDTH };
@@ -131,6 +132,7 @@ export default function MainMenu({
             transitionStyles=""
             setLayout={setLayout}
             libelles={LIBELLES}
+            setProfilePictureVisibility={setProfilePictureVisibility}
           />
         </div>
       </div>

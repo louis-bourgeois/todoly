@@ -148,8 +148,8 @@ a:active {
 
 .gradient-border {
   position: relative; /* No stacking context here so child z-index can escape */
-
 }
+
 
 .gradient-border::before,
 .gradient-border::after {

@@ -51,8 +51,10 @@ export default function DropdownMenu({
         />
       </svg>
       <div
-        className={`border bg-primary flex flex-col gap-[0.8vw] p-[1vw] absolute top-full mt-[1%] left-0 right-0 shadow-lg rounded-lg transition-opacity duration-300 z-[999] ${
-          menuOpen ? "opacity-100" : "opacity-0 pointer-events-none"
+        className={`border bg-primary/95 backdrop-blur-sm flex flex-col gap-[0.8vw] p-[1vw] absolute top-full mt-[1%] left-0 right-0 shadow-lg rounded-2xl transition-all duration-300 z-[999] ${
+          menuOpen
+            ? "opacity-100 translate-y-1"
+            : "opacity-0 pointer-events-none -translate-y-1"
         }`}
       >
 

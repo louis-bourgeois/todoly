@@ -70,6 +70,33 @@ export default function DefaultContent({ transitionStyles, setShowMenu }) {
           </defs>
         </svg>
       </MenuLines>
+      <MenuLines
+        key="statistics"
+        href="/app/statistique"
+        text={t("defaultContent.statistics")}
+        setShowMenu={setShowMenu}
+      >
+        <svg
+          className="text-text w-[2.5vw] h-[4.44vh] m-[8%]"
+          viewBox="0 0 24 24"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M4 20V9M10 20V4M16 20V12M22 20V7"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M3 20H23"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+          />
+        </svg>
+      </MenuLines>
     </div>
   );
 }

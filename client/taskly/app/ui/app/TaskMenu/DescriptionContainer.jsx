@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useTask } from "../../../../context/TaskContext";
 import TaskMenuSectionContainer from "./TaskMenuSectionContainer";
 import { useTranslation } from "../../../i18n/client";
@@ -13,8 +13,6 @@ export default function DescriptionContainer({
 }) {
   const { modifyTask } = useTask();
   const { t } = useTranslation();
-  const [isBold, setIsBold] = useState(false);
-  const [isItalic, setIsItalic] = useState(false);
   const descriptionRef = useRef(null);
 
   const updateDescription = async (value) => {
@@ -36,11 +34,63 @@ export default function DescriptionContainer({
   };
 
   const toggleFormatting = (type) => {
-    if (type === "bold") {
-      setIsBold((prev) => !prev);
-    } else if (type === "italic") {
-      setIsItalic((prev) => !prev);
+    const textarea = descriptionRef.current;
+    if (!textarea) return;
+
+    const marker = type === "bold" ? "**" : "_";
+    const text = descriptionValue || "";
+    const selectionStart = textarea.selectionStart ?? 0;
+    const selectionEnd = textarea.selectionEnd ?? 0;
+    const hasSelection = selectionEnd > selectionStart;
+
+    let newText = text;
+    let newSelectionStart = selectionStart;
+    let newSelectionEnd = selectionEnd;
+
+    // Ensure the textarea is focused so selection updates apply immediately
+    textarea.focus();
+
+    if (hasSelection) {
+      const before = text.slice(0, selectionStart);
+      const selected = text.slice(selectionStart, selectionEnd);
+      const after = text.slice(selectionEnd);
+
+      const isWrapped =
+        selectionStart >= marker.length &&
+        selectionEnd + marker.length <= text.length &&
+        text.slice(selectionStart - marker.length, selectionStart) === marker &&
+        text.slice(selectionEnd, selectionEnd + marker.length) === marker;
+
+      if (isWrapped) {
+        // Remove surrounding markers when selection is already formatted
+        newText =
+          text.slice(0, selectionStart - marker.length) +
+          selected +
+          text.slice(selectionEnd + marker.length);
+        newSelectionStart = selectionStart - marker.length;
+        newSelectionEnd = selectionEnd - marker.length;
+      } else {
+        // Wrap selection with markers
+        newText = `${before}${marker}${selected}${marker}${after}`;
+        newSelectionStart = selectionStart + marker.length;
+        newSelectionEnd = selectionEnd + marker.length;
+      }
+    } else {
+      // Insert empty markers and place cursor between them when nothing is selected
+      newText =
+        text.slice(0, selectionStart) +
+        marker +
+        marker +
+        text.slice(selectionEnd);
+      newSelectionStart = selectionStart + marker.length;
+      newSelectionEnd = newSelectionStart;
     }
+
+    updateDescription(newText);
+    requestAnimationFrame(() => {
+      textarea.focus();
+      textarea.setSelectionRange(newSelectionStart, newSelectionEnd);
+    });
   };
 
   return (
@@ -54,9 +104,7 @@ export default function DescriptionContainer({
           <button
             type="button"
             onClick={() => toggleFormatting("bold")}
-            className={`p-1 rounded-md border border-secondary transition ${
-              isBold ? "bg-dominant text-primary" : "text-text"
-            }`}
+            className="p-1 rounded-md border border-secondary transition hover:bg-dominant hover:text-primary text-text"
             aria-label={t('descriptionContainer.bold')}
           >
             <svg
@@ -71,9 +119,7 @@ export default function DescriptionContainer({
           <button
             type="button"
             onClick={() => toggleFormatting("italic")}
-            className={`p-1 rounded-md border border-secondary transition ${
-              isItalic ? "bg-dominant text-primary" : "text-text"
-            }`}
+            className="p-1 rounded-md border border-secondary transition hover:bg-dominant hover:text-primary text-text"
             aria-label={t('descriptionContainer.italic')}
           >
             <svg
@@ -95,9 +141,7 @@ export default function DescriptionContainer({
         onChange={(e) => handleDescriptionChange(e)}
         onFocus={() => onFocusChange?.(true)}
         onBlur={() => onFocusChange?.(false)}
-        className={`h-[80%] p-[2.5%] w-full text-base text-text pt-[4%] bg-transparent ${
-          isBold ? "font-bold" : "font-normal"
-        } ${isItalic ? "italic" : ""}`}
+        className="h-[80%] p-[2.5%] w-full text-base text-text pt-[4%] bg-transparent font-normal"
         placeholder={t('descriptionContainer.placeholder')}
       ></textarea>
     </TaskMenuSectionContainer>

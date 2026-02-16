@@ -92,6 +92,7 @@
     "addTag": "Add Tag",
     "currently": "Currently",
     "all": "All",
+    "statistics": "Statistics",
     "updateTask": "Update task",
     "deleteTask": "Delete task",
     "selectDestination": "Select destination",
@@ -107,6 +108,48 @@
     "settings": "Open settings",
     "close": "Close search",
     "navigate": "Navigate results"
+  },
+  "statistics": {
+    "title": "Statistics",
+    "loading": "Loading statistics...",
+    "empty": "No data yet for this period.",
+    "metric": {
+      "completion": "Completion rate",
+      "reschedule": "Reschedule rate"
+    },
+    "timeframes": {
+      "week": "This week",
+      "month": "This month",
+      "year": "This year",
+      "all": "Long range"
+    },
+    "filters": {
+      "title": "Filters",
+      "open": "Filters",
+      "cancel": "Cancel",
+      "apply": "Apply",
+      "workspaces": "Workspaces",
+      "sections": "Sections",
+      "tags": "Tags"
+    },
+    "options": {
+      "weightedPriority": "Weight by priority",
+      "onlyRecurring": "Only recurring tasks"
+    },
+    "cards": {
+      "title": "Highlights",
+      "dailyAverage": "Daily completion average",
+      "productivityStreak": "Productivity streak",
+      "days": "days",
+      "topRecurring": "Most consistent recurring task",
+      "bestMonth": "Best month",
+      "overdue": "Overdue tasks",
+      "autoRescheduled": "Auto-rescheduled"
+    },
+    "community": {
+      "title": "Community layer in progress",
+      "subtitle": "Competitive and sharing features are on the way."
+    }
   },
   "sectionContainer": {
     "placeholder": "Enter section name",
@@ -156,6 +199,10 @@
     "other": "Other",
     "delete": "Delete",
     "create": "Create"
+  },
+  "task": {
+    "overdueFlag": "Overdue",
+    "regularity": "Regularity"
   },
   "tagSelect": {
     "error": {
@@ -271,7 +318,8 @@
   },
   "defaultContent": {
     "currently": "Currently",
-    "all": "All"
+    "all": "All",
+    "statistics": "Statistics"
   },
   "libelles" : {
     "Layout": "Layout",

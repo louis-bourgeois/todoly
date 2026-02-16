@@ -37,12 +37,48 @@ const normalizeSubtasks = (subtasks = []) => {
   });
 };
 
-const normalizeTask = (task = {}) => ({
-  ...task,
-  tags: Array.isArray(task.tags) ? task.tags : [],
-  subtasks: normalizeSubtasks(task.subtasks),
-  recurrence: normalizeRecurrence(task.recurrence),
-});
+const computeRecurringConsistency = (task) => {
+  const recurrence = normalizeRecurrence(task?.recurrence);
+  if (!recurrence || recurrence.type === "none") return null;
+  const completions = Number(task?.completion_count || 0);
+  const reschedules = Number(task?.reschedule_count || 0);
+  const denominator = completions + reschedules || 1;
+  return Math.max(0, Math.min(1, completions / denominator));
+};
+
+const normalizeTask = (task = {}) => {
+  const recurrence = normalizeRecurrence(task.recurrence);
+  const isOverdue =
+    typeof task.is_overdue === "boolean"
+      ? task.is_overdue
+      : !!task?.isOverdue;
+  const rescheduleCount = Number(task.reschedule_count || 0);
+  const completionCount = Number(task.completion_count || 0);
+  const autoRescheduleLimit =
+    task.auto_reschedule_limit !== undefined
+      ? task.auto_reschedule_limit
+      : null;
+  return {
+    ...task,
+    tags: Array.isArray(task.tags) ? task.tags : [],
+    subtasks: normalizeSubtasks(task.subtasks),
+    recurrence,
+    is_overdue: isOverdue,
+    reschedule_count: rescheduleCount,
+    completion_count: completionCount,
+    auto_reschedule_limit: autoRescheduleLimit,
+    auto_reschedule_enabled:
+      task.auto_reschedule_enabled !== undefined
+        ? !!task.auto_reschedule_enabled
+        : true,
+    recurrence_consistency: computeRecurringConsistency({
+      ...task,
+      recurrence,
+      reschedule_count: rescheduleCount,
+      completion_count: completionCount,
+    }),
+  };
+};
 
 export const TaskProvider = ({ children }) => {
   const { handleError } = useError();
@@ -120,17 +156,28 @@ export const TaskProvider = ({ children }) => {
 
   const modifyTask = useCallback(
     async (updatedTask) => {
+      const existingTask = tasks.find((t) => t.id === updatedTask.id);
+      const payload = { ...updatedTask };
+      if (
+        payload.status === "done" &&
+        existingTask &&
+        existingTask.status !== "done"
+      ) {
+        payload.last_completed_at = new Date().toISOString();
+        payload.completion_count = (existingTask.completion_count || 0) + 1;
+        payload.is_overdue = false;
+      }
       try {
         const response = await axios.post(
           `${baseUrl}/update`,
-          { task: updatedTask },
+          { task: payload },
           { withCredentials: true }
         );
         if (response.status === 200) {
           setTasks((prevTasks) =>
             prevTasks.map((task) =>
               task.id === updatedTask.id
-                ? normalizeTask({ ...task, ...updatedTask })
+                ? normalizeTask({ ...task, ...payload })
                 : task
             )
           );
@@ -144,7 +191,7 @@ export const TaskProvider = ({ children }) => {
               );
               const normalized = normalizeTask({
                 ...workspaceTasks.find((t) => t.id === updatedTask.id),
-                ...updatedTask,
+                ...payload,
               });
               if (workspace.id === normalized.workspace_id) {
                 const nextTasks = hasTask
@@ -172,7 +219,7 @@ export const TaskProvider = ({ children }) => {
         handleError(error);
       }
     },
-    [handleError, setWorkspaces]
+    [handleError, setWorkspaces, tasks]
   );
 
   const deleteTask = useCallback(

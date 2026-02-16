@@ -87,6 +87,7 @@ const SearchMenu = () => {
       return [
         { id: "currently", title: t('searchMenu.currently') },
         { id: "all", title: t('searchMenu.all') },
+        { id: "statistique", title: t("searchMenu.statistics") },
       ];
     } else if (
       commandMode === "changeWorkspace" ||

@@ -1,4 +1,5 @@
 "use client"
+import { useEffect } from "react";
 import { useTranslation } from "@/app/i18n/client";
 import { useUserPreferences } from "../../../../../../context/UserPreferencesContext";
 import Circle from "../Circle";
@@ -6,11 +7,18 @@ import DropdownMenu from "../DropdownMenu";
 import SectionTitle from "../SectionTitle";
 import { useRouter } from "next/navigation";
 
-export default function Languages({ transitionStyles }) {
+export default function Languages({ transitionStyles, setProfilePictureVisibility }) {
   const { updatePreference, preferences } = useUserPreferences();
   const lng = preferences?.Language;
   const { t, i18n, ready } = useTranslation(lng);
   const router = useRouter();
+
+  useEffect(() => {
+    if (typeof setProfilePictureVisibility === "function") {
+      setProfilePictureVisibility(false);
+      return () => setProfilePictureVisibility(true);
+    }
+  }, [setProfilePictureVisibility]);
 
   const handleUpdatePreference = async (key, value) => {
     try {

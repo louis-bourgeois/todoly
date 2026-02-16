@@ -24,6 +24,7 @@ const SectionContainer = ({
   const [workspace, setWorkspace] = useState(currentWorkspace);
   const headerRefs = useRef({});
   const [editingSectionId, setEditingSectionId] = useState(null);
+  const editingInputRef = useRef(null);
   const [localSectionName, setLocalSectionName] = useState("");
   const { t } = useTranslation();
 
@@ -79,13 +80,29 @@ const SectionContainer = ({
       filterFunctions[preferences.Show] || (() => true)
     );
 
+    const normalizeStatusForDate = (task) => {
+      if (!date) return task;
+      const recurrenceType = task?.recurrence?.type || "none";
+      if (recurrenceType === "none") return task;
+      const targetISO = new Date(date).toISOString().slice(0, 10);
+      const lastCompletedISO = task?.last_completed_at
+        ? new Date(task.last_completed_at).toISOString().slice(0, 10)
+        : null;
+      const isDoneThisDay =
+        task.status === "done" && lastCompletedISO === targetISO;
+      return {
+        ...task,
+        status: isDoneThisDay ? "done" : "todo",
+      };
+    };
+
     filteredSections.forEach((section) => {
       const sectionTasksFiltered = allTasks.filter(
         (task) =>
           task &&
           task.linked_section === section.id &&
           (!date || occursOnDate(task, date))
-      );
+      ).map(normalizeStatusForDate);
       if (sectionTasksFiltered.length > 0) {
         taskMap.set(section.id, sectionTasksFiltered);
       }
@@ -106,6 +123,13 @@ const SectionContainer = ({
     setEditingSectionId(sectionId);
     setLocalSectionName(sectionName);
   };
+
+  useEffect(() => {
+    if (editingSectionId && editingInputRef.current) {
+      editingInputRef.current.focus();
+      editingInputRef.current.select();
+    }
+  }, [editingSectionId]);
 
   const handleSectionNameChange = async (newName, sectionId) => {
     try {
@@ -160,6 +184,11 @@ const SectionContainer = ({
                 <div className="flex justify-between items-center">
                   {editingSectionId === section.id ? (
                     <AutoResizeInput
+                      ref={(el) => {
+                        if (editingSectionId === section.id) {
+                          editingInputRef.current = el;
+                        }
+                      }}
                       className="font-bold text-xl 4xl:text-2xl text-text bg-transparent focus:outline-none"
                       value={localSectionName}
                       onChange={handleSectionNameInputChange}
