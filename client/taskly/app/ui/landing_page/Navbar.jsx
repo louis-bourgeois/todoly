@@ -1,9 +1,12 @@
 import useSmoothScroll from "@/app/useSmoothScroll";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import CTA from "./CTA";
 
 const Navbar = ({ logo: Logo }) => {
   const scrollToSection = useSmoothScroll();
+  const pathname = usePathname();
+  const isLandingPage = pathname === "/";
 
   return (
     <nav className="flex justify-between items-center py-4 px-4 sm:px-[9vw] w-full">
@@ -16,13 +19,23 @@ const Navbar = ({ logo: Logo }) => {
         </span>
       </a>
       <div className="flex items-center sm:gap-6">
-        <button onClick={() => scrollToSection("pricing")}>          
-          <CTA
-            title="Pricing"
-            type="ghost"
-            className="py-3 px-6 text-base lg:text-lg"
-          />
-        </button>
+        {isLandingPage ? (
+          <button onClick={() => scrollToSection("pricing")}>
+            <CTA
+              title="Pricing"
+              type="ghost"
+              className="py-3 px-6 text-base lg:text-lg"
+            />
+          </button>
+        ) : (
+          <Link href="/#pricing">
+            <CTA
+              title="Pricing"
+              type="ghost"
+              className="py-3 px-6 text-base lg:text-lg"
+            />
+          </Link>
+        )}
         <Link href="/auth/login">
           <CTA
             title="Login"
