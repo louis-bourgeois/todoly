@@ -71,7 +71,7 @@ export const ErrorProvider = ({ children }) => {
       subtitle: t('error.serverError.subtitle'),
       action: {
         text: t('error.serverError.action'),
-        href: "/support/report",
+        href: "mailto:contact@todoly.app",
       },
     },
     UNAUTHORIZED_SIGNUP: {
@@ -83,7 +83,7 @@ export const ErrorProvider = ({ children }) => {
       subtitle: t('error.default.subtitle'),
       action: {
         text: t('error.default.action'),
-        href: "/support/report",
+        href: "mailto:contact@todoly.app",
       },
     },
   }), [t]);
@@ -121,11 +121,20 @@ export const ErrorProvider = ({ children }) => {
         <span>
           {errorInfo.subtitle}{" "}
           {errorInfo.action && (
-            <Link href={errorInfo.action.href} passHref>
-              <span className="text-blue-500 hover:underline cursor-pointer">
+            errorInfo.action.href.startsWith("mailto:") ? (
+              <a
+                href={errorInfo.action.href}
+                className="text-blue-500 hover:underline cursor-pointer"
+              >
                 {errorInfo.action.text}
-              </span>
-            </Link>
+              </a>
+            ) : (
+              <Link href={errorInfo.action.href} passHref>
+                <span className="text-blue-500 hover:underline cursor-pointer">
+                  {errorInfo.action.text}
+                </span>
+              </Link>
+            )
           )}
         </span>
       ),

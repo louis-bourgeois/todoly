@@ -50,6 +50,7 @@ export default function RootLayout({ children, params: { lng } }) {
     >
       <head>
         <CanonicalTag />
+        <meta name="mobile-web-app-capable" content="yes" />
       </head>
       <body>
         <AppProviders>

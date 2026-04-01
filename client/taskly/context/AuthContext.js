@@ -6,6 +6,8 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
+  useRef,
   useState,
 } from "react";
 
@@ -22,6 +24,7 @@ export const AuthProvider = ({ children }) => {
   const { handleError } = useError();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
+  const wasDemoModeRef = useRef(isDemoMode);
   const router = useRouter();
 
   const login = useCallback(async (data) => {
@@ -61,7 +64,9 @@ export const AuthProvider = ({ children }) => {
       const response = await axios.get(`${baseUrl}/users/me`, {
         withCredentials: true,
       });
-      setIsAuthenticated(response.status === 200);
+      setIsAuthenticated(
+        response.status === 200 && !!response.data?.user
+      );
     } catch (error) {
       setIsAuthenticated(false);
     } finally {
@@ -78,35 +83,57 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, [checkAuth, isDemoMode]);
 
-  if (isDemoMode) {
-    return (
-      <AuthContext.Provider
-        value={{
-          isAuthenticated: true,
-          loading: false,
-          authChecked: true,
-          login: async () => ({ status: 200, data: { demo: true } }),
-          logout: async () => {
-            router.push("/");
+  useEffect(() => {
+    wasDemoModeRef.current = isDemoMode;
+  }, [isDemoMode]);
+
+  const isTransitioningFromDemo = wasDemoModeRef.current && !isDemoMode;
+  const effectiveIsAuthenticated = isDemoMode
+    ? true
+    : isTransitioningFromDemo
+    ? false
+    : isAuthenticated;
+  const effectiveLoading = isDemoMode
+    ? false
+    : isTransitioningFromDemo
+    ? true
+    : loading;
+
+  const contextValue = useMemo(
+    () =>
+      isDemoMode
+        ? {
+            isAuthenticated: true,
+            loading: false,
+            authChecked: true,
+            login: async () => ({ status: 200, data: { demo: true } }),
+            logout: async () => {
+              router.push("/");
+            },
+            checkAuth: async () => true,
+          }
+        : {
+            isAuthenticated: effectiveIsAuthenticated,
+            loading: effectiveLoading,
+            authChecked: !effectiveLoading,
+            login,
+            logout,
+            checkAuth,
           },
-          checkAuth: async () => true,
-        }}
-      >
-        {children}
-      </AuthContext.Provider>
-    );
-  }
+    [
+      isDemoMode,
+      effectiveIsAuthenticated,
+      effectiveLoading,
+      login,
+      logout,
+      checkAuth,
+      router,
+    ]
+  );
 
   return (
     <AuthContext.Provider
-      value={{
-        isAuthenticated,
-        loading,
-        authChecked: !loading,
-        login,
-        logout,
-        checkAuth,
-      }}
+      value={contextValue}
     >
       {children}
     </AuthContext.Provider>

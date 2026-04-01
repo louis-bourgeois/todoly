@@ -16,7 +16,7 @@ const router = express.Router();
 router.post("/", getUserData);
 router.get("/me", (req, res) => {
   if (!req.isAuthenticated()) {
-    return res.status(403).send("Not authenticated");
+    return res.json({ user: null });
   }
   return res.json({ user: req.user });
 });
