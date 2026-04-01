@@ -41,22 +41,6 @@ export const SectionProvider = ({ children }) => {
     fetchSections();
   }, [fetchSections, isDemoMode]);
 
-  if (isDemoMode && demoData) {
-    return (
-      <SectionContext.Provider
-        value={{
-          sections: demoData.sections,
-          addSection: demoData.addSection,
-          modifySection: demoData.modifySection,
-          deleteSection: demoData.deleteSection,
-          setSections: demoData.setSections,
-        }}
-      >
-        {children}
-      </SectionContext.Provider>
-    );
-  }
-
   const addSection = useCallback(async (section) => {
     try {
       const response = await axios.post(
@@ -108,16 +92,25 @@ export const SectionProvider = ({ children }) => {
     }
   }, []);
 
+  const contextValue =
+    isDemoMode && demoData
+      ? {
+          sections: demoData.sections,
+          addSection: demoData.addSection,
+          modifySection: demoData.modifySection,
+          deleteSection: demoData.deleteSection,
+          setSections: demoData.setSections,
+        }
+      : {
+          sections,
+          addSection,
+          modifySection,
+          deleteSection,
+          setSections,
+        };
+
   return (
-    <SectionContext.Provider
-      value={{
-        sections,
-        addSection,
-        modifySection,
-        deleteSection,
-        setSections,
-      }}
-    >
+    <SectionContext.Provider value={contextValue}>
       {children}
     </SectionContext.Provider>
   );

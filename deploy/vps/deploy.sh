@@ -52,7 +52,7 @@ fi
 
 log "Installing dependencies..."
 runuser -u "$APP_USER" -- bash -lc "cd '$APP_ROOT/server' && npm ci"
-runuser -u "$APP_USER" -- bash -lc "cd '$APP_ROOT/client/taskly' && npm ci && npm run build"
+runuser -u "$APP_USER" -- bash -lc "cd '$APP_ROOT/client/taskly' && rm -rf .next && npm ci && npm run build"
 
 log "Restarting services..."
 systemctl restart todoly-api todoly-web

@@ -57,33 +57,6 @@ export const WorkspaceProvider = ({ children }) => {
     }
   }, [preferences, isDemoMode]);
 
-  if (isDemoMode && demoData) {
-    return (
-      <WorkspaceContext.Provider
-        value={{
-          workspaces: demoData.workspaces,
-          setWorkspaces: () => {},
-          currentWorkspace: demoData.currentWorkspace,
-          setCurrentWorkspace: demoData.setCurrentWorkspace,
-          createWorkspace: demoData.createWorkspace,
-          deleteWorkspace: demoData.deleteWorkspace,
-          getWorkspace: demoData.getWorkspace,
-          updateWorkspace: demoData.updateWorkspace,
-          addTaskToWorkspace: demoData.addTaskToWorkspace,
-          removeTaskFromWorkspace: demoData.removeTaskFromWorkspace,
-          getUsersFromWorkspace: demoData.getUsersFromWorkspace,
-          getTasksFromWorkspace: demoData.getTasksFromWorkspace,
-          addUserToWorkspace: demoData.addUserToWorkspace,
-          removeUserFromWorkspace: demoData.removeUserFromWorkspace,
-          activeWorkspace: demoData.activeWorkspace,
-          setActiveWorkspace: demoData.setActiveWorkspace,
-        }}
-      >
-        {children}
-      </WorkspaceContext.Provider>
-    );
-  }
-
   const updateCurrentWorkspace = useCallback(
     async (newWorkspace) => {
       if (newWorkspace !== currentWorkspace) {
@@ -243,25 +216,47 @@ export const WorkspaceProvider = ({ children }) => {
   }, []);
 
   const contextValue = useMemo(
-    () => ({
-      workspaces,
-      setWorkspaces,
-      currentWorkspace,
-      setCurrentWorkspace: updateCurrentWorkspace,
-      createWorkspace,
-      deleteWorkspace,
-      getWorkspace,
-      updateWorkspace,
-      addTaskToWorkspace,
-      removeTaskFromWorkspace,
-      getUsersFromWorkspace,
-      getTasksFromWorkspace,
-      addUserToWorkspace,
-      removeUserFromWorkspace,
-      activeWorkspace,
-      setActiveWorkspace,
-    }),
+    () =>
+      isDemoMode && demoData
+        ? {
+            workspaces: demoData.workspaces,
+            setWorkspaces: () => {},
+            currentWorkspace: demoData.currentWorkspace,
+            setCurrentWorkspace: demoData.setCurrentWorkspace,
+            createWorkspace: demoData.createWorkspace,
+            deleteWorkspace: demoData.deleteWorkspace,
+            getWorkspace: demoData.getWorkspace,
+            updateWorkspace: demoData.updateWorkspace,
+            addTaskToWorkspace: demoData.addTaskToWorkspace,
+            removeTaskFromWorkspace: demoData.removeTaskFromWorkspace,
+            getUsersFromWorkspace: demoData.getUsersFromWorkspace,
+            getTasksFromWorkspace: demoData.getTasksFromWorkspace,
+            addUserToWorkspace: demoData.addUserToWorkspace,
+            removeUserFromWorkspace: demoData.removeUserFromWorkspace,
+            activeWorkspace: demoData.activeWorkspace,
+            setActiveWorkspace: demoData.setActiveWorkspace,
+          }
+        : {
+            workspaces,
+            setWorkspaces,
+            currentWorkspace,
+            setCurrentWorkspace: updateCurrentWorkspace,
+            createWorkspace,
+            deleteWorkspace,
+            getWorkspace,
+            updateWorkspace,
+            addTaskToWorkspace,
+            removeTaskFromWorkspace,
+            getUsersFromWorkspace,
+            getTasksFromWorkspace,
+            addUserToWorkspace,
+            removeUserFromWorkspace,
+            activeWorkspace,
+            setActiveWorkspace,
+          },
     [
+      isDemoMode,
+      demoData,
       workspaces,
       currentWorkspace,
       updateCurrentWorkspace,

@@ -58,23 +58,6 @@ export const UserPreferencesProvider = ({ children }) => {
     fetchPreferences();
   }, [fetchPreferences, isDemoMode]);
 
-  if (isDemoMode && demoData) {
-    return (
-      <UserPreferencesContext.Provider
-        value={{
-          updatePreference: demoData.updatePreference,
-          addUserPreference: demoData.addUserPreference,
-          getUserPreferences: demoData.getUserPreferences,
-          preferences: demoData.preferences,
-          setPreferences: demoData.setPreferences,
-          loading: false,
-        }}
-      >
-        {children}
-      </UserPreferencesContext.Provider>
-    );
-  }
-
   const addUserPreference = async (data) => {
     setLoading(true);
     try {
@@ -127,15 +110,34 @@ export const UserPreferencesProvider = ({ children }) => {
   };
 
   const contextValue = useMemo(
-    () => ({
+    () =>
+      isDemoMode && demoData
+        ? {
+            updatePreference: demoData.updatePreference,
+            addUserPreference: demoData.addUserPreference,
+            getUserPreferences: demoData.getUserPreferences,
+            preferences: demoData.preferences,
+            setPreferences: demoData.setPreferences,
+            loading: false,
+          }
+        : {
+            updatePreference,
+            addUserPreference,
+            getUserPreferences,
+            preferences,
+            setPreferences,
+            loading,
+          },
+    [
+      isDemoMode,
+      demoData,
       updatePreference,
       addUserPreference,
       getUserPreferences,
       preferences,
       setPreferences,
       loading,
-    }),
-    [preferences, loading]
+    ]
   );
 
   return (

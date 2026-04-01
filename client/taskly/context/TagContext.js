@@ -39,21 +39,6 @@ export const TagProvider = ({ children }) => {
     fetchTags();
   }, [fetchTags, isDemoMode]);
 
-  if (isDemoMode && demoData) {
-    return (
-      <TagContext.Provider
-        value={{
-          tags: demoData.tags,
-          addTag: demoData.addTag,
-          updateTag: demoData.updateTag,
-          deleteTag: demoData.deleteTag,
-        }}
-      >
-        {children}
-      </TagContext.Provider>
-    );
-  }
-
   const addTag = useCallback(async (name) => {
     try {
       const response = await axios.post(
@@ -102,9 +87,15 @@ export const TagProvider = ({ children }) => {
     }
   }, []);
 
-  return (
-    <TagContext.Provider value={{ tags, addTag, updateTag, deleteTag }}>
-      {children}
-    </TagContext.Provider>
-  );
+  const contextValue =
+    isDemoMode && demoData
+      ? {
+          tags: demoData.tags,
+          addTag: demoData.addTag,
+          updateTag: demoData.updateTag,
+          deleteTag: demoData.deleteTag,
+        }
+      : { tags, addTag, updateTag, deleteTag };
+
+  return <TagContext.Provider value={contextValue}>{children}</TagContext.Provider>;
 };

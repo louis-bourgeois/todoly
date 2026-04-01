@@ -310,35 +310,24 @@ export const TaskProvider = ({ children }) => {
     fetchTasks();
   }, [fetchTasks, isDemoMode]);
 
-  if (isDemoMode && demoData) {
-    return (
-      <TaskContext.Provider
-        value={{
+  const contextValue =
+    isDemoMode && demoData
+      ? {
           tasks: demoData.tasks.map((task) => normalizeTask(task)),
           addTask: demoData.addTask,
           modifyTask: demoData.modifyTask,
           deleteTask: demoData.deleteTask,
           activeTask: demoData.activeTask,
           setActiveTask: demoData.setActiveTask,
-        }}
-      >
-        {children}
-      </TaskContext.Provider>
-    );
-  }
+        }
+      : {
+          tasks,
+          addTask,
+          modifyTask,
+          deleteTask,
+          activeTask,
+          setActiveTask,
+        };
 
-  return (
-    <TaskContext.Provider
-      value={{
-        tasks,
-        addTask,
-        modifyTask,
-        deleteTask,
-        activeTask,
-        setActiveTask,
-      }}
-    >
-      {children}
-    </TaskContext.Provider>
-  );
+  return <TaskContext.Provider value={contextValue}>{children}</TaskContext.Provider>;
 };
