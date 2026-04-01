@@ -16,6 +16,8 @@ demo
 demo/*
 !client/taskly/app/demo/
 !client/taskly/app/demo/**
+!client/taskly/context/demo/
+!client/taskly/context/demo/demoData.js
 
 # sql files 
 *.sql
