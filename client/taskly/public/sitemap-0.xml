@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:news="http://www.google.com/schemas/sitemap-news/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:mobile="http://www.google.com/schemas/sitemap-mobile/1.0" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
-<url><loc>https://todoly.app/auth/signup</loc><lastmod>2025-08-01T10:07:13.140Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://todoly.app/legal_notice</loc><lastmod>2025-08-01T10:07:13.141Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://todoly.app</loc><lastmod>2025-08-01T10:07:13.141Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://todoly.app/auth/login</loc><lastmod>2025-08-01T10:07:13.141Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://todoly.app/terms_of_use</loc><lastmod>2025-08-01T10:07:13.141Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://todoly.app/features</loc><lastmod>2025-08-01T10:07:13.141Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://todoly.app/app/profile</loc><lastmod>2025-08-01T10:07:13.141Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://todoly.app/app</loc><lastmod>2025-08-01T10:07:13.141Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://todoly.app/app/all</loc><lastmod>2025-08-01T10:07:13.141Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
-<url><loc>https://todoly.app/app/currently</loc><lastmod>2025-08-01T10:07:13.141Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://todoly.app/terms_of_use</loc><lastmod>2026-04-01T20:17:17.848Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://todoly.app/legal_notice</loc><lastmod>2026-04-01T20:17:17.848Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://todoly.app/auth/signup</loc><lastmod>2026-04-01T20:17:17.848Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://todoly.app/auth/login</loc><lastmod>2026-04-01T20:17:17.848Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://todoly.app/features</loc><lastmod>2026-04-01T20:17:17.848Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://todoly.app</loc><lastmod>2026-04-01T20:17:17.848Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://todoly.app/app</loc><lastmod>2026-04-01T20:17:17.848Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://todoly.app/app/currently</loc><lastmod>2026-04-01T20:17:17.848Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://todoly.app/app/all</loc><lastmod>2026-04-01T20:17:17.848Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://todoly.app/app/statistique</loc><lastmod>2026-04-01T20:17:17.848Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
+<url><loc>https://todoly.app/app/profile</loc><lastmod>2026-04-01T20:17:17.848Z</lastmod><changefreq>daily</changefreq><priority>0.7</priority></url>
 </urlset>

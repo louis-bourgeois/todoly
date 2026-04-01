@@ -241,7 +241,7 @@ const IconSvg = () => (
 const TermsOfUsePage = () => {
   const [lang, setLang] = useState('fr');
   const content = translations[lang];
-  const contactEmail = "louis.bourgeois.todoly@gmail.com";
+  const contactEmail = "contact@todoly.app";
 
   return (
     <>

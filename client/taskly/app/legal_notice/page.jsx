@@ -10,9 +10,9 @@ const translations = {
       sections: [
         {
           title: "1. Éditeur du site",
-          content: `Ce site est édité par Louis Bourgeois, développeur indépendant.  
+          content: `Ce site est édité par Todoly.  
 Adresse : [adresse personnelle transmise à l’hébergeur conformément à l’article 6-III-2 de la LCEN].  
-Contact : louis.bourgeois.todoly@gmail.com  
+Contact : contact@todoly.app  
 Nom de l’application : Todoly  
 Statut : projet personnel, éducatif et non commercial.`,
         },
@@ -26,18 +26,18 @@ Contact : support@hostinger.com`,
         {
           title: "3. Propriété intellectuelle",
           content: `Tous les éléments accessibles sur l’application Todoly (textes, images, codes sources, logos, etc.) sont protégés par des droits de propriété intellectuelle.  
-Sauf indication contraire, ils sont la propriété exclusive de Louis Bourgeois. Toute reproduction non autorisée est interdite.`,
+Sauf indication contraire, ils sont la propriété exclusive de Todoly. Toute reproduction non autorisée est interdite.`,
         },
         {
           title: "4. Données personnelles",
           list: [
-            "Responsable du traitement : Louis Bourgeois",
+            "Responsable du traitement : Todoly",
             "Données collectées : prénom, nom, email, mot de passe haché, contenu utilisateur (projets, tâches), préférences, date de création de compte.",
             "Finalité : fonctionnement du service, sécurité, personnalisation.",
             "Base légale : exécution du contrat (article 6.1.b RGPD)",
             "Durée : tant que le compte est actif, puis suppression irréversible dans un délai raisonnable.",
             "Droits RGPD : accès, rectification, suppression, portabilité.",
-            "Exercice des droits : louis.bourgeois.todoly@gmail.com",
+            "Exercice des droits : contact@todoly.app",
             "Aucune donnée n’est vendue ou transférée à des tiers."
           ]
         },
@@ -49,7 +49,7 @@ Aucun cookie publicitaire ou d’analyse tiers n’est utilisé sans consentemen
         {
           title: "6. Limitation de responsabilité",
           content: `Todoly est fourni “en l’état”, sans garantie.  
-Louis Bourgeois ne saurait être tenu responsable de bugs, pertes de données ou indisponibilité.  
+Todoly ne saurait être tenu responsable de bugs, pertes de données ou indisponibilité.  
 L’utilisateur est seul responsable de son usage du service.`,
         },
         {
@@ -64,9 +64,9 @@ Tout litige sera soumis à la juridiction exclusive des tribunaux compétents de
       sections: [
         {
           title: "1. Publisher",
-          content: `This site is published by Louis Bourgeois, independent developer.  
+          content: `This site is published by Todoly.  
 Address: [personal address provided to the hosting provider in accordance with article 6-III-2 of the French LCEN law].  
-Contact: louis.bourgeois.todoly@gmail.com
+Contact: contact@todoly.app
 Application name: Todoly  
 Status: personal, educational and non-commercial project.`,
         },
@@ -80,18 +80,18 @@ Contact: support@hostinger.com`,
         {
           title: "3. Intellectual Property",
           content: `All content accessible through Todoly (texts, images, source code, logos, etc.) is protected by intellectual property laws.  
-Unless otherwise stated, all elements are the exclusive property of Louis Bourgeois. Unauthorized reproduction is prohibited.`,
+Unless otherwise stated, all elements are the exclusive property of Todoly. Unauthorized reproduction is prohibited.`,
         },
         {
           title: "4. Personal Data",
           list: [
-            "Data controller: Louis Bourgeois",
+            "Data controller: Todoly",
             "Collected data: first name, last name, email, hashed password, user content (projects, tasks), preferences, account creation date.",
             "Purpose: service operation, security, personalization.",
             "Legal basis: contract performance (Art. 6.1.b GDPR)",
             "Retention: as long as the account is active, then irreversibly deleted within a reasonable timeframe.",
             "GDPR rights: access, rectification, erasure, portability.",
-            "To exercise your rights: louis.bourgeois.todoly@gmail.com",
+            "To exercise your rights: contact@todoly.app",
             "Your data will never be sold or shared with third parties."
           ]
         },
@@ -104,7 +104,7 @@ No advertising or third-party analytics cookies are used without explicit consen
         {
           title: "6. Limitation of Liability",
           content: `Todoly is provided “as is”, without warranty.  
-Louis Bourgeois shall not be held liable for bugs, data loss or service unavailability.  
+Todoly shall not be held liable for bugs, data loss or service unavailability.  
 Users are solely responsible for their use of the service.`,
         },
         {
@@ -142,7 +142,7 @@ const IconSvg = () => (
 const TermsOfUsePage = () => {
   const [lang, setLang] = useState('fr');
   const content = translations.legal[lang];
-  const contactEmail = "louis.bourgeois.todoly@gmail.com";
+  const contactEmail = "contact@todoly.app";
 
   return (
     <>

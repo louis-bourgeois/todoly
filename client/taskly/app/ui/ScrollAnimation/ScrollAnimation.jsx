@@ -97,9 +97,15 @@ const IconSvg = () => (
 const StickyFooterInfo = () => (
   <footer className="fixed bottom-0 left-0 right-0 z-50 w-full gap-2 flex flex-col items-center justify-center p-5 backdrop-blur-sm">
     <p className="text-sm text-white max-w-4xl text-center">
-      Made by Louis Bourgeois, French high school student. Mobile version is in alpha : use desktop for best experience.
+      Todoly helps you stay focused on what matters. Mobile version is in alpha: use desktop for the best experience.
     </p>
-    <p className="text-sm text-white max-w-4xl text-center">  Found a bug? Report it at <Link href="mailto:louis.bourgeois@todoly.com"><span className="text-blue-500">louis.bourgeois@todoly.com</span></Link>.</p>
+    <p className="text-sm text-white max-w-4xl text-center">
+      Found a bug? Report it at{" "}
+      <Link href="mailto:contact@todoly.app">
+        <span className="text-blue-500">contact@todoly.app</span>
+      </Link>
+      .
+    </p>
     <div className=""><Link href="/terms_of_use"><span className="text-blue-500">Terms of use</span></Link> | <Link href="/legal_notice"><span className="text-blue-500">Legal notice</span></Link></div>
   </footer>
 );
