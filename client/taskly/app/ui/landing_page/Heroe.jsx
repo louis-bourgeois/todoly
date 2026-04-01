@@ -37,14 +37,29 @@ const HeroDescription = memo(() => (
 HeroDescription.displayName = "HeroDescription";
 
 const HeroCTA = memo(() => (
-  <Link href="/auth/signup">
-    <CTA
-      title="Simplify Tomorrow"
-      type="primary"
-      className="py-4 px-6 text-base sm:text-lg font-semibold rounded-full hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
-      aria-label="Sign up to simplify your workflow"
-    />
-  </Link>
+  <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col sm:flex-row items-center gap-3">
+      <Link href="/demo/currently">
+        <CTA
+          title="Launch Demo"
+          type="primary"
+          className="py-4 px-7 text-base sm:text-lg font-semibold rounded-full hover:bg-opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+          aria-label="Launch the live demo without creating an account"
+        />
+      </Link>
+      <Link href="/auth/signup">
+        <CTA
+          title="Create Account"
+          type="secondary"
+          className="py-4 px-7 text-base sm:text-lg font-semibold rounded-full transition-colors duration-200"
+          aria-label="Create your own Todoly account"
+        />
+      </Link>
+    </div>
+    <p className="text-xs sm:text-sm text-grey max-w-2xl text-center">
+      No signup required. The demo account resets on refresh.
+    </p>
+  </div>
 ));
 HeroCTA.displayName = "HeroCTA";
 

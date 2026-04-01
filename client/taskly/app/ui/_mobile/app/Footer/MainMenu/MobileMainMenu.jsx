@@ -1,6 +1,7 @@
 "use client";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useDemoMode } from "../../../../../../context/DemoModeContext";
 import NavigationItem from "./NavigationItem";
 
 const AllIcon = () => (
@@ -53,6 +54,7 @@ const DefaultAccountIcon = () => (
 
 export default function MobileMainMenu() {
   const pathname = usePathname();
+  const { mapAppRoute } = useDemoMode();
   const [activeItem, setActiveItem] = useState("");
   useEffect(() => {
     const lastSegment = pathname.split("/").pop() || "currently";
@@ -60,12 +62,12 @@ export default function MobileMainMenu() {
   }, [pathname]);
 
   const menuItems = [
-    { icon: CalendarIcon, label: "Currently", path: "/app/currently" },
-    { icon: AllIcon, label: "All", path: "/app/all" },
+    { icon: CalendarIcon, label: "Currently", path: mapAppRoute("/app/currently") },
+    { icon: AllIcon, label: "All", path: mapAppRoute("/app/all") },
     {
       icon: DefaultAccountIcon,
       label: "Profile",
-      path: "/app/profile",
+      path: mapAppRoute("/app/profile"),
     },
   ];
 

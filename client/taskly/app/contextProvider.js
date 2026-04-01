@@ -1,4 +1,8 @@
+"use client";
+
 import { AuthProvider } from "../context/AuthContext";
+import { DemoDataProvider } from "../context/DemoDataContext";
+import { DemoModeProvider } from "../context/DemoModeContext";
 import { ErrorProvider } from "../context/ErrorContext";
 import { MenuProvider } from "../context/MenuContext";
 import { NotificationsProvider } from "../context/NotificationsContext";
@@ -12,33 +16,35 @@ import { UserPreferencesProvider } from "../context/UserPreferencesContext";
 import { WorkspaceProvider } from "../context/WorkspaceContext";
 import ScreenWrapper from "./ScreenWrapper";
 const AppProviders = ({ children }) => (
-
-    <ScreenProvider>
-      <NotificationsProvider>
-        <ErrorProvider>
-          <AuthProvider>
-            <UserProvider>
-              <UserPreferencesProvider>
-                <SectionProvider>
-                  <WorkspaceProvider>
-                    <TaskProvider>
-                      <TagProvider>
-                        <MenuProvider>
-                          <MobileSearchProvider>
-                            <ScreenWrapper>{children}</ScreenWrapper>
-                          </MobileSearchProvider>
-                        </MenuProvider>
-                      </TagProvider>
-                    </TaskProvider>
-                  </WorkspaceProvider>
-                </SectionProvider>
-              </UserPreferencesProvider>
-            </UserProvider>
-          </AuthProvider>
-        </ErrorProvider>
-      </NotificationsProvider>
-    </ScreenProvider>
-
+  <DemoModeProvider>
+    <DemoDataProvider>
+      <ScreenProvider>
+        <NotificationsProvider>
+          <ErrorProvider>
+            <AuthProvider>
+              <UserProvider>
+                <UserPreferencesProvider>
+                  <SectionProvider>
+                    <WorkspaceProvider>
+                      <TaskProvider>
+                        <TagProvider>
+                          <MenuProvider>
+                            <MobileSearchProvider>
+                              <ScreenWrapper>{children}</ScreenWrapper>
+                            </MobileSearchProvider>
+                          </MenuProvider>
+                        </TagProvider>
+                      </TaskProvider>
+                    </WorkspaceProvider>
+                  </SectionProvider>
+                </UserPreferencesProvider>
+              </UserProvider>
+            </AuthProvider>
+          </ErrorProvider>
+        </NotificationsProvider>
+      </ScreenProvider>
+    </DemoDataProvider>
+  </DemoModeProvider>
 );
 
 export default AppProviders;

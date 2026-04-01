@@ -10,6 +10,8 @@ import {
   useState,
 } from "react";
 import { useAuth } from "./AuthContext";
+import { useDemoData } from "./DemoDataContext";
+import { useDemoMode } from "./DemoModeContext";
 
 const UserPreferencesContext = createContext();
 const baseUrl = "/api/preferences";
@@ -17,6 +19,8 @@ const baseUrl = "/api/preferences";
 export const useUserPreferences = () => useContext(UserPreferencesContext);
 
 export const UserPreferencesProvider = ({ children }) => {
+  const { isDemoMode } = useDemoMode();
+  const demoData = useDemoData();
   const [preferences, setPreferences] = useState({});
   const [loading, setLoading] = useState(true);
   const { isAuthenticated, checkAuth } = useAuth();
@@ -50,8 +54,26 @@ export const UserPreferencesProvider = ({ children }) => {
   }, [isAuthenticated]);
 
   useEffect(() => {
+    if (isDemoMode) return;
     fetchPreferences();
-  }, [fetchPreferences]);
+  }, [fetchPreferences, isDemoMode]);
+
+  if (isDemoMode && demoData) {
+    return (
+      <UserPreferencesContext.Provider
+        value={{
+          updatePreference: demoData.updatePreference,
+          addUserPreference: demoData.addUserPreference,
+          getUserPreferences: demoData.getUserPreferences,
+          preferences: demoData.preferences,
+          setPreferences: demoData.setPreferences,
+          loading: false,
+        }}
+      >
+        {children}
+      </UserPreferencesContext.Provider>
+    );
+  }
 
   const addUserPreference = async (data) => {
     setLoading(true);

@@ -1,6 +1,7 @@
 "use client"
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import { useDemoMode } from "../../../../../../context/DemoModeContext";
 import { useUser } from "../../../../../../context/UserContext";
 import { storage } from "../../../../../../firebaseClientConfig";
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
@@ -33,6 +34,7 @@ async function cropToSquare(file, canvasErrorMessage) {
 }
 
 const ProfilePhoto = ({ size = 150 }) => {
+  const { isDemoMode } = useDemoMode();
   const { user, setUser } = useUser();
   const { t } = useTranslation()
   const [isUploading, setIsUploading] = useState(false);
@@ -55,6 +57,11 @@ const ProfilePhoto = ({ size = 150 }) => {
   
     const localPreview = URL.createObjectURL(file);
     setPreviewUrl(localPreview);
+    if (isDemoMode) {
+      setUser({ ...user, image_url: localPreview });
+      setImageLoaded(true);
+      return;
+    }
     setIsUploading(true);
     setUploadProgress(0);
     setImageLoaded(false);

@@ -9,6 +9,8 @@ import {
   useState,
 } from "react";
 import { useAuth } from "./AuthContext";
+import { useDemoData } from "./DemoDataContext";
+import { useDemoMode } from "./DemoModeContext";
 import { useSection } from "./SectionContext";
 import { useUserPreferences } from "./UserPreferencesContext";
 
@@ -18,6 +20,8 @@ const baseUrlWorkspaces = "/api/workspaces";
 export const useWorkspace = () => useContext(WorkspaceContext);
 
 export const WorkspaceProvider = ({ children }) => {
+  const { isDemoMode } = useDemoMode();
+  const demoData = useDemoData();
   const { updatePreference, preferences } = useUserPreferences();
 
   const [currentWorkspace, setCurrentWorkspace] = useState(null);
@@ -39,17 +43,46 @@ export const WorkspaceProvider = ({ children }) => {
   }, [isAuthenticated]);
 
   useEffect(() => {
+    if (isDemoMode) return;
     fetchWorkspaces();
-  }, [fetchWorkspaces]);
+  }, [fetchWorkspaces, isDemoMode]);
 
   useEffect(() => {
+    if (isDemoMode) return;
     if (
       preferences?.Current_Workspace &&
       preferences.Current_Workspace !== currentWorkspace
     ) {
       setCurrentWorkspace(preferences.Current_Workspace);
     }
-  }, [preferences]);
+  }, [preferences, isDemoMode]);
+
+  if (isDemoMode && demoData) {
+    return (
+      <WorkspaceContext.Provider
+        value={{
+          workspaces: demoData.workspaces,
+          setWorkspaces: () => {},
+          currentWorkspace: demoData.currentWorkspace,
+          setCurrentWorkspace: demoData.setCurrentWorkspace,
+          createWorkspace: demoData.createWorkspace,
+          deleteWorkspace: demoData.deleteWorkspace,
+          getWorkspace: demoData.getWorkspace,
+          updateWorkspace: demoData.updateWorkspace,
+          addTaskToWorkspace: demoData.addTaskToWorkspace,
+          removeTaskFromWorkspace: demoData.removeTaskFromWorkspace,
+          getUsersFromWorkspace: demoData.getUsersFromWorkspace,
+          getTasksFromWorkspace: demoData.getTasksFromWorkspace,
+          addUserToWorkspace: demoData.addUserToWorkspace,
+          removeUserFromWorkspace: demoData.removeUserFromWorkspace,
+          activeWorkspace: demoData.activeWorkspace,
+          setActiveWorkspace: demoData.setActiveWorkspace,
+        }}
+      >
+        {children}
+      </WorkspaceContext.Provider>
+    );
+  }
 
   const updateCurrentWorkspace = useCallback(
     async (newWorkspace) => {

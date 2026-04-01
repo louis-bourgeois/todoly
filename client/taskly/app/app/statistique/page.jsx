@@ -2,6 +2,8 @@
 
 import axios from "axios";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { buildDemoStats } from "../../../context/demo/demoData";
+import { useDemoMode } from "../../../context/DemoModeContext";
 import SlickCarousel from "../../ui/app/SlickCarousel";
 import Slide from "../../ui/app/Slide";
 import PerformanceChart from "../../ui/app/statistics/PerformanceChart";
@@ -10,6 +12,7 @@ import StatsFilters from "../../ui/app/statistics/StatsFilters";
 import DropdownMenu from "../../ui/app/MainMenu/settings/DropdownMenu";
 import Switcher from "../../ui/app/MainMenu/settings/Switcher";
 import { useScreen } from "../../../context/ScreenContext";
+import { useTask } from "../../../context/TaskContext";
 import { useWorkspace } from "../../../context/WorkspaceContext";
 import { useSection } from "../../../context/SectionContext";
 import { useTag } from "../../../context/TagContext";
@@ -22,6 +25,8 @@ const timeframeOptions = ["week", "month", "year", "all"];
 
 export default function StatistiquePage() {
   const { isMobile } = useScreen();
+  const { isDemoMode } = useDemoMode();
+  const { tasks } = useTask();
   const { workspaces } = useWorkspace();
   const { sections } = useSection();
   const { tags } = useTag();
@@ -52,6 +57,19 @@ export default function StatistiquePage() {
   const fetchStats = useCallback(async () => {
     setLoading(true);
     try {
+      if (isDemoMode) {
+        setData(
+          buildDemoStats({
+            tasks,
+            filters,
+            timeframe,
+            weightedPriority,
+            onlyRecurring,
+          })
+        );
+        return;
+      }
+
       const response = await axios.get(baseUrl, {
         params: {
           timeframe,
@@ -71,7 +89,16 @@ export default function StatistiquePage() {
     } finally {
       setLoading(false);
     }
-  }, [timeframe, metric, weightedPriority, onlyRecurring, filters]);
+  }, [
+    timeframe,
+    metric,
+    weightedPriority,
+    onlyRecurring,
+    filters,
+    isDemoMode,
+    tasks,
+    preferences?.Week_Starts_On,
+  ]);
 
   useEffect(() => {
     if (!isMobile) {

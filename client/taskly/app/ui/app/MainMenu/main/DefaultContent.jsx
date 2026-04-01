@@ -1,15 +1,17 @@
 import MenuLines from "../MenuLines";
+import { useDemoMode } from "../../../../../context/DemoModeContext";
 import { useTranslation } from "../../../../i18n/client";
 
 export default function DefaultContent({ transitionStyles, setShowMenu }) {
   const { t } = useTranslation();
+  const { mapAppRoute } = useDemoMode();
   return (
     <div
       className={` flex flex-col justify-between w-full h-full ${transitionStyles}`}
     >
       <MenuLines
         key="currently"
-        href="/app/currently"
+        href={mapAppRoute("/app/currently")}
         text={t('defaultContent.currently')}
         setShowMenu={setShowMenu}
       >
@@ -37,7 +39,7 @@ export default function DefaultContent({ transitionStyles, setShowMenu }) {
           </defs>
         </svg>
       </MenuLines>
-      <MenuLines key="all" href="/app/all" text={t('defaultContent.all')} setShowMenu={setShowMenu}>
+      <MenuLines key="all" href={mapAppRoute("/app/all")} text={t('defaultContent.all')} setShowMenu={setShowMenu}>
         {" "}
         <svg
           className={`text-text w-[2.5vw] h-[4.44vh] m-[8%]`}
@@ -72,7 +74,7 @@ export default function DefaultContent({ transitionStyles, setShowMenu }) {
       </MenuLines>
       <MenuLines
         key="statistics"
-        href="/app/statistique"
+        href={mapAppRoute("/app/statistique")}
         text={t("defaultContent.statistics")}
         setShowMenu={setShowMenu}
       >

@@ -16,11 +16,12 @@ import Navbar from "../ui/app/Navbar.jsx";
 import SearchMenu from "../ui/app/searchMenu/SearchMenu.jsx";
 import TaskMenu from "../ui/app/TaskMenu/TaskMenu.jsx";
 import ViewsMenu from "../ui/app/viewsMenu/ViewsMenu.jsx";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState } from "react";
 import "swiper/css";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { useAuth } from "../../context/AuthContext.js";
+import { useDemoMode } from "../../context/DemoModeContext.js";
 import { useMenu } from "../../context/MenuContext.js";
 import { useScreen } from "../../context/ScreenContext.js";
 import { useTask } from "../../context/TaskContext.js";
@@ -142,11 +143,13 @@ const ScrollableContent = ({ children }) => {
 };
 
 export default function AppLayout({ children }) {
+  const pathname = usePathname();
   const { addUserPreference, preferences } = useUserPreferences();
   const lng = preferences?.Language;
   const { t, i18n } = useTranslation(lng);
   const { isMobile } = useScreen();
   const { loading, isAuthenticated, checkAuth } = useAuth();
+  const { isDemoMode, mapAppRoute } = useDemoMode();
   const { activeTask } = useTask();
   const { currentWorkspace, workspaces, activeWorkspace } = useWorkspace();
   const {
@@ -526,11 +529,20 @@ export default function AppLayout({ children }) {
       </>
     );
   }
-  if (window.location.href === "/app") {
+
+  const appRoot = mapAppRoute("/app");
+  const isAppRoot = pathname === appRoot;
+
+  if (isAppRoot) {
     return <>{children}</>;
-  } else if (window.location.href !== `/app` && preferences.Default_Main_Page) {
+  } else if (!isAppRoot && preferences.Default_Main_Page) {
     return (
       <>
+        {isDemoMode && (
+          <div className="fixed bottom-4 right-4 z-[600] rounded-full border border-dominant/50 bg-primary/90 px-4 py-2 text-xs text-text shadow-shadow_01 backdrop-blur-sm">
+            Demo session. Refresh resets the data.
+          </div>
+        )}
         <Navbar />
         {isViewsMenuOpen && (
           <ViewsMenu

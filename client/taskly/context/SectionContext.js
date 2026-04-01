@@ -8,6 +8,8 @@ import {
   useState,
 } from "react";
 import { useAuth } from "./AuthContext";
+import { useDemoData } from "./DemoDataContext";
+import { useDemoMode } from "./DemoModeContext";
 
 export const SectionContext = createContext();
 const baseUrl = "/api/sections";
@@ -15,6 +17,8 @@ const baseUrl = "/api/sections";
 export const useSection = () => useContext(SectionContext);
 
 export const SectionProvider = ({ children }) => {
+  const { isDemoMode } = useDemoMode();
+  const demoData = useDemoData();
   const [sections, setSections] = useState([]);
   const { isAuthenticated, checkAuth } = useAuth();
 
@@ -33,8 +37,25 @@ export const SectionProvider = ({ children }) => {
   }, [isAuthenticated, setSections]);
 
   useEffect(() => {
+    if (isDemoMode) return;
     fetchSections();
-  }, [fetchSections]);
+  }, [fetchSections, isDemoMode]);
+
+  if (isDemoMode && demoData) {
+    return (
+      <SectionContext.Provider
+        value={{
+          sections: demoData.sections,
+          addSection: demoData.addSection,
+          modifySection: demoData.modifySection,
+          deleteSection: demoData.deleteSection,
+          setSections: demoData.setSections,
+        }}
+      >
+        {children}
+      </SectionContext.Provider>
+    );
+  }
 
   const addSection = useCallback(async (section) => {
     try {

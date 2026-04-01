@@ -8,6 +8,8 @@ import {
   useState,
 } from "react";
 import { useAuth } from "./AuthContext";
+import { useDemoData } from "./DemoDataContext";
+import { useDemoMode } from "./DemoModeContext";
 
 const TagContext = createContext();
 const baseUrl = "/api/tags";
@@ -15,6 +17,8 @@ const baseUrl = "/api/tags";
 export const useTag = () => useContext(TagContext);
 
 export const TagProvider = ({ children }) => {
+  const { isDemoMode } = useDemoMode();
+  const demoData = useDemoData();
   const [tags, setTags] = useState([]);
   const { isAuthenticated, checkAuth } = useAuth();
 
@@ -31,8 +35,24 @@ export const TagProvider = ({ children }) => {
   }, [isAuthenticated]);
 
   useEffect(() => {
+    if (isDemoMode) return;
     fetchTags();
-  }, [fetchTags]);
+  }, [fetchTags, isDemoMode]);
+
+  if (isDemoMode && demoData) {
+    return (
+      <TagContext.Provider
+        value={{
+          tags: demoData.tags,
+          addTag: demoData.addTag,
+          updateTag: demoData.updateTag,
+          deleteTag: demoData.deleteTag,
+        }}
+      >
+        {children}
+      </TagContext.Provider>
+    );
+  }
 
   const addTag = useCallback(async (name) => {
     try {

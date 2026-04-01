@@ -9,6 +9,8 @@ import {
 } from "react";
 
 import { useAuth } from "./AuthContext";
+import { useDemoData } from "./DemoDataContext";
+import { useDemoMode } from "./DemoModeContext";
 import { useError } from "./ErrorContext";
 import { useWorkspace } from "./WorkspaceContext";
 import { normalizeRecurrence } from "@/app/utils/recurrence";
@@ -139,6 +141,8 @@ const normalizeTask = (task = {}) => {
 };
 
 export const TaskProvider = ({ children }) => {
+  const { isDemoMode } = useDemoMode();
+  const demoData = useDemoData();
   const { handleError } = useError();
   const { setWorkspaces } = useWorkspace();
   const [tasks, setTasks] = useState([]);
@@ -302,8 +306,26 @@ export const TaskProvider = ({ children }) => {
   );
 
   useEffect(() => {
+    if (isDemoMode) return;
     fetchTasks();
-  }, [fetchTasks]);
+  }, [fetchTasks, isDemoMode]);
+
+  if (isDemoMode && demoData) {
+    return (
+      <TaskContext.Provider
+        value={{
+          tasks: demoData.tasks.map((task) => normalizeTask(task)),
+          addTask: demoData.addTask,
+          modifyTask: demoData.modifyTask,
+          deleteTask: demoData.deleteTask,
+          activeTask: demoData.activeTask,
+          setActiveTask: demoData.setActiveTask,
+        }}
+      >
+        {children}
+      </TaskContext.Provider>
+    );
+  }
 
   return (
     <TaskContext.Provider

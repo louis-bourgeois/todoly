@@ -340,7 +340,7 @@ export default function TaskForm({
               startOfWeekOnSunday={preferences.Week_Starts_On}
             />
           </TaskMenuSectionContainer>
-          <div className="flex flex-col h-full justify-between ml-[2%] z-[2000] w-[45%] relative overflow-visible">
+          <div className="flex flex-col h-full justify-between ml-[2%] z-[2000] w-[45%] relative overflow-visible isolate">
             <WorkspaceSelect
               handleNewWorkspaceClick={handleElementTypeChange}
               setTask={setTask}

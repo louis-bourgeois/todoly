@@ -98,7 +98,7 @@ export function RecurrenceSelection({
   return (
     <TaskMenuSectionContainer
       allowOverflow
-      othersStyles="rounded-full justify-between items-center min-h-[17.5%] relative cursor-pointer z-[0] overflow-visible px-3"
+      othersStyles="rounded-full justify-between items-center min-h-[17.5%] relative cursor-pointer overflow-visible px-3 z-[1200]"
       onClick={() => setMenuOpen && setMenuOpen(!menuOpen)}
     >
       <div className="flex flex-col items-start pr-3 py-1 min-w-0">
@@ -133,7 +133,7 @@ export function RecurrenceSelection({
       </svg>
 
       <div
-        className={`absolute top-full mt-2 right-0 w-[max(100%,20rem)] max-w-[calc(100vw-3rem)] bg-primary shadow-lg rounded-2xl transition-all duration-200 origin-top z-[1400] ${
+        className={`absolute top-full mt-2 right-0 w-[max(100%,20rem)] max-w-[calc(100vw-3rem)] bg-primary shadow-lg rounded-2xl transition-all duration-200 origin-top z-[1300] ${
           menuOpen
             ? "opacity-100 translate-y-0 scale-100"
             : "opacity-0 -translate-y-1 scale-[0.98] pointer-events-none"

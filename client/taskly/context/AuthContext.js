@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 
+import { useDemoMode } from "./DemoModeContext";
 import { useError } from "./ErrorContext";
 // const baseUrl = `/api`;
 const baseUrl= "/api"
@@ -17,6 +18,7 @@ const AuthContext = createContext();
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
+  const { isDemoMode } = useDemoMode();
   const { handleError } = useError();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -68,12 +70,43 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
+    if (isDemoMode) {
+      setIsAuthenticated(true);
+      setLoading(false);
+      return;
+    }
     checkAuth();
-  }, [checkAuth]);
+  }, [checkAuth, isDemoMode]);
+
+  if (isDemoMode) {
+    return (
+      <AuthContext.Provider
+        value={{
+          isAuthenticated: true,
+          loading: false,
+          authChecked: true,
+          login: async () => ({ status: 200, data: { demo: true } }),
+          logout: async () => {
+            router.push("/");
+          },
+          checkAuth: async () => true,
+        }}
+      >
+        {children}
+      </AuthContext.Provider>
+    );
+  }
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, loading, login, logout, checkAuth }}
+      value={{
+        isAuthenticated,
+        loading,
+        authChecked: !loading,
+        login,
+        logout,
+        checkAuth,
+      }}
     >
       {children}
     </AuthContext.Provider>

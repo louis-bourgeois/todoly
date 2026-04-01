@@ -2,13 +2,15 @@
 import Header from "../../ui/_mobile/app/profile/Header";
 import SettingsScroll from "../../ui/_mobile/app/profile/SettingsScroll";
 import { redirect } from "next/navigation";
+import { useDemoMode } from "../../../context/DemoModeContext";
 import { useScreen } from "../../../context/ScreenContext";
 
 export default function Page() {
   const { isMobile } = useScreen();
+  const { mapAppRoute } = useDemoMode();
 
   if (!isMobile) {
-    redirect("/app");
+    redirect(mapAppRoute("/app"));
   }
 
   return (

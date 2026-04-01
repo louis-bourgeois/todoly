@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../../../../context/AuthContext";
+import { useDemoMode } from "../../../../context/DemoModeContext";
 import { useMenu } from "../../../../context/MenuContext";
 import { useTag } from "../../../../context/TagContext";
 import { useTask } from "../../../../context/TaskContext";
@@ -14,6 +15,7 @@ import { useTranslation } from "../../../i18n/client";
 
 const SearchMenu = () => {
   const router = useRouter();
+  const { mapAppRoute } = useDemoMode();
   const { logout } = useAuth() || {};
   const taskContext = useTask() || {};
   const { tasks = [], deleteTask } = taskContext;
@@ -157,24 +159,24 @@ const SearchMenu = () => {
           if (toggleTaskMenu) toggleTaskMenu("", "", "Workspace");
           break;
         case "openMainMenu":
-          router.push("/app");
+          router.push(mapAppRoute("/app"));
           break;
         case "openSettings":
-          router.push("/app/profile");
+          router.push(mapAppRoute("/app/profile"));
           break;
       }
       closeSearchMenu();
     },
-    [router, toggleTaskMenu, logout, closeSearchMenu]
+    [router, toggleTaskMenu, logout, closeSearchMenu, mapAppRoute]
   );
 
   const navigateTo = useCallback(
     (destination) => {
       if (!destination) return;
-      router.push(`/app/${destination}`);
+      router.push(mapAppRoute(`/app/${destination}`));
       closeSearchMenu();
     },
-    [router, closeSearchMenu]
+    [router, closeSearchMenu, mapAppRoute]
   );
 
   const handleResultSelection = useCallback(
